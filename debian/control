@@ -1,8 +1,8 @@
 Source: fuse-emulator
-Section: user/other
+Section: otherosfs
 Priority: optional
 Maintainer: Alberto Garcia <agarcia@igalia.com>
-Build-Depends: debhelper (>= 4), pkg-config, libosso-dev, libhildonfm2-dev, libhildon1-dev, osso-af-settings, cdbs, sharutils, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev, libbz2-dev, zlib1g-dev
+Build-Depends: debhelper, cdbs, pkg-config, sharutils, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev, libbz2-dev, zlib1g-dev, libglib2.0-dev, libsdl1.2-dev, libsamplerate0-dev
 Standards-Version: 3.6.1
 Homepage: http://fuse-emulator.sourceforge.net/
 
@@ -15,55 +15,3 @@ Description: The Free Unix Spectrum Emulator
  quite faithful emulation of the display and sound. It can load Z80,
  SZX and SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive
  images and DSK floppy disk images, among many others.
-XB-Maemo-Icon-26:
- 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
- l/wb8X++oW8u9iIAAAAASUVORK5CYII=

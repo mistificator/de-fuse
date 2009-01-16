@@ -5,5 +5,3 @@ Categories=Game;Emulator;GNOME;GTK;Application;
 Name=Fuse Spectrum Emulator
 Exec=/usr/bin/fuse
 Icon=fuse
-X-Osso-Service=org.maemo.fuse
-X-Osso-Type=application/x-executable
