@@ -1,7 +1,7 @@
 /* xui.c: Routines for dealing with the Xlib user interface
    Copyright (c) 2000-2003 Philip Kendall
 
-   $Id: xui.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: xui.c 3677 2008-06-15 12:10:33Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,9 +46,6 @@ int xui_screenNum;		/* Which screen are we using on our
 Window xui_mainWindow;		/* Window ID for the main Fuse window */
 
 Cursor nullpointer;
-
-/* FIXME: not a prototype. What should it be? */
-Bool xui_trueFunction();
 
 static Atom delete_window_atom;
 
@@ -196,7 +193,7 @@ int ui_event(void)
 {
   XEvent event;
 
-  while(XCheckIfEvent(display,&event,xui_trueFunction,NULL)) {
+  while(XCheckMaskEvent(display,~NoEventMask,&event)) {
     switch(event.type) {
     case ConfigureNotify:
       xdisplay_configure_notify(event.xconfigure.width,
@@ -238,12 +235,6 @@ int ui_event(void)
     }
   }
   return 0;
-}
-    
-/* FIXME: still doesn't have a prototype */
-Bool xui_trueFunction()
-{
-  return True;
 }
 
 int ui_end(void)

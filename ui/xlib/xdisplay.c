@@ -1,7 +1,7 @@
 /* xdisplay.c: Routines for dealing with drawing the Speccy's screen via Xlib
    Copyright (c) 2000-2005 Philip Kendall, Darren Salt, Gergely Szász
 
-   $Id: xdisplay.c 3137 2007-09-01 18:42:53Z pak21 $
+   $Id: xdisplay.c 3666 2008-06-10 20:43:46Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@
 #include "ui/scaler/scaler.h"
 #include "ui/uidisplay.h"
 #ifdef USE_WIDGET
-#include "widget/widget.h"
+#include "ui/widget/widget.h"
 #endif				/* #ifdef USE_WIDGET */
 #include "scld.h"
 
@@ -96,6 +96,11 @@ static libspectrum_word
   scaled_image[3 * DISPLAY_SCREEN_HEIGHT][3 * DISPLAY_SCREEN_WIDTH];
 static const ptrdiff_t scaled_pitch =
   3 * DISPLAY_SCREEN_WIDTH * 2;
+
+/* A scaled copy of the image displayed on the Spectrum's screen */
+static libspectrum_word
+  rgb_image_backup[2 * ( DISPLAY_SCREEN_HEIGHT + 4 )][2 * ( DISPLAY_SCREEN_WIDTH  + 3 )];
+static const int rgb_backup_pitch = 2 * ( DISPLAY_SCREEN_WIDTH + 3 );
 
 static unsigned long colours[128];
 static int colours_allocated = 0;
@@ -611,11 +616,13 @@ register_scalers( void )
         scaler_register( SCALER_TV2X );
         scaler_register( SCALER_DOTMATRIX );
         scaler_register( SCALER_PALTV2X );
+        scaler_register( SCALER_HQ2X );
 
-	scaler_register( SCALER_TRIPLESIZE );
-	scaler_register( SCALER_ADVMAME3X );
-	scaler_register( SCALER_TV3X );
-	scaler_register( SCALER_PALTV3X );
+        scaler_register( SCALER_TRIPLESIZE );
+        scaler_register( SCALER_ADVMAME3X );
+        scaler_register( SCALER_TV3X );
+        scaler_register( SCALER_PALTV3X );
+        scaler_register( SCALER_HQ3X );
       }
     }
   if( current_scaler != SCALER_NUM )
@@ -734,6 +741,19 @@ uidisplay_frame_end( void )
     xdisplay_update_rect( r->x, r->y, r->w, r->h );
   num_rects = 0;
   xdisplay_force_full_refresh = 0;
+}
+
+void
+uidisplay_frame_save( void )
+{
+  memcpy( rgb_image_backup, rgb_image, sizeof( rgb_image ) );
+}
+
+void
+uidisplay_frame_restore( void )
+{
+  memcpy( rgb_image, rgb_image_backup, sizeof( rgb_image ) );
+  xdisplay_update_rect( 0, 0, image_width, image_height );
 }
 
 void

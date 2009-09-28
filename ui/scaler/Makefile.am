@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001 Philip Kendall
 
-## $Id: Makefile.am 3115 2007-08-19 02:49:14Z fredm $
+## $Id: Makefile.am 3612 2008-05-02 12:56:05Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -40,4 +40,4 @@ scalers32.o: scalers.c
 
 noinst_HEADERS = scaler.h scaler_internals.h
 
-EXTRA_DIST = scalers.c
+EXTRA_DIST = scalers.c scaler_hq2x.c scaler_hq3x.c

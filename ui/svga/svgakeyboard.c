@@ -1,7 +1,7 @@
 /* svgakeyboard.c: svgalib routines for dealing with the keyboard
    Copyright (c) 2000-2004 Philip Kendall, Matan Ziv-Av
 
-   $Id: svgakeyboard.c 3096 2007-08-06 09:20:34Z pak21 $
+   $Id: svgakeyboard.c 3609 2008-05-01 13:17:56Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@
 #include "tape.h"
 #include "utils.h"
 #ifdef USE_WIDGET
-#include "widget/widget.h"
+#include "ui/widget/widget.h"
 #endif				/* #ifdef USE_WIDGET */
 
 static void svgakeyboard_keystroke(int scancode, int press);

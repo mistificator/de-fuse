@@ -2,7 +2,7 @@
    Copyright (c) 2000-2003 Philip Kendall, Matan Ziv-Av, Witold Filipczyk,
 			   Russell Marks
 
-   $Id: svgadisplay.c 3096 2007-08-06 09:20:34Z pak21 $
+   $Id: svgadisplay.c 3666 2008-06-10 20:43:46Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -366,4 +366,18 @@ int svgadisplay_end( void )
 {
   vga_setmode( TEXT );
   return 0;
+}
+
+void
+uidisplay_frame_save( void )
+{
+  /* FIXME: Save current framebuffer state as the widget UI wants to scribble
+     in here */
+}
+
+void
+uidisplay_frame_restore( void )
+{
+  /* FIXME: Restore saved framebuffer state as the widget UI wants to draw a
+     new menu */
 }

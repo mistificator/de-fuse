@@ -2,7 +2,7 @@
    Copyright (c) 2000-2003 Philip Kendall, Matan Ziv-Av, Darren Salt,
 			   Witold Filipczyk
 
-   $Id: fbdisplay.c 3291 2007-11-09 21:51:24Z zubzero $
+   $Id: fbdisplay.c 3666 2008-06-10 20:43:46Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 #include <sys/ioctl.h>
 #include <string.h>
 
+#include "fbdisplay.h"
 #include "fuse.h"
 #include "display.h"
 #include "screenshot.h"
@@ -395,6 +396,7 @@ uidisplay_area( int x, int start, int width, int height)
 int
 uidisplay_end( void )
 {
+  fbdisplay_end();
   display_ui_initialised = 0;
   return 0;
 }
@@ -496,4 +498,18 @@ uidisplay_plot16( int x, int y, libspectrum_word data,
     fbdisplay_image[y][x+14] = ( data & 0x0002 ) ? ink : paper;
     fbdisplay_image[y][x+15] = ( data & 0x0001 ) ? ink : paper;
   }
+}
+
+void
+uidisplay_frame_save( void )
+{
+  /* FIXME: Save current framebuffer state as the widget UI wants to scribble
+     in here */
+}
+
+void
+uidisplay_frame_restore( void )
+{
+  /* FIXME: Restore saved framebuffer state as the widget UI wants to draw a
+     new menu */
 }

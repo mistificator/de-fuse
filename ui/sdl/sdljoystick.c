@@ -1,7 +1,7 @@
 /* sdljoystick.c: routines for dealing with the SDL joystick
    Copyright (c) 2003-2004 Darren Salt, Fredrick Meunier, Philip Kendall
 
-   $Id: sdljoystick.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: sdljoystick.c 3749 2008-08-15 12:47:44Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@
 static SDL_Joystick *joystick1 = NULL;
 static SDL_Joystick *joystick2 = NULL;
 
-static void do_axis( int which, Sint16 value, input_joystick_button negative,
-		     input_joystick_button positive );
+static void do_axis( int which, Sint16 value, input_key negative,
+		     input_key positive );
 
 int
 ui_joystick_init( void )
@@ -145,8 +145,7 @@ sdljoystick_axismove( SDL_JoyAxisEvent *axisevent )
 }
 
 static void
-do_axis( int which, Sint16 value,
-	 input_joystick_button negative, input_joystick_button positive )
+do_axis( int which, Sint16 value, input_key negative, input_key positive )
 {
   input_event_t event1, event2;
 

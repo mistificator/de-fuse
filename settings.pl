@@ -3,7 +3,7 @@
 # settings.pl: generate settings.c from settings.dat
 # Copyright (c) 2002-2005 Philip Kendall
 
-# $Id: settings.pl 3410 2007-12-05 04:25:24Z zubzero $
+# $Id: settings.pl 3599 2008-04-09 13:16:13Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -506,24 +506,23 @@ settings_get_rom_setting( settings_info *settings, size_t which )
   case 23: return &( settings->rom_pentagon_0 );
   case 24: return &( settings->rom_pentagon_1 );
   case 25: return &( settings->rom_pentagon_2 );
-  case 26: return &( settings->rom_pentagon_3 );
-  case 27: return &( settings->rom_pentagon512_0 );
-  case 28: return &( settings->rom_pentagon512_1 );
-  case 29: return &( settings->rom_pentagon512_2 );
-  case 30: return &( settings->rom_pentagon512_3 );
-  case 31: return &( settings->rom_pentagon1024_0 );
-  case 32: return &( settings->rom_pentagon1024_1 );
-  case 33: return &( settings->rom_pentagon1024_2 );
-  case 34: return &( settings->rom_pentagon1024_3 );
-  case 35: return &( settings->rom_scorpion_0 );
-  case 36: return &( settings->rom_scorpion_1 );
-  case 37: return &( settings->rom_scorpion_2 );
-  case 38: return &( settings->rom_scorpion_3 );
-  case 39: return &( settings->rom_spec_se_0 );
-  case 40: return &( settings->rom_spec_se_1 );
-  case 41: return &( settings->rom_interface_i );
-  case 42: return &( settings->rom_beta128 );
-  case 43: return &( settings->rom_plusd );
+  case 26: return &( settings->rom_pentagon512_0 );
+  case 27: return &( settings->rom_pentagon512_1 );
+  case 28: return &( settings->rom_pentagon512_2 );
+  case 29: return &( settings->rom_pentagon512_3 );
+  case 30: return &( settings->rom_pentagon1024_0 );
+  case 31: return &( settings->rom_pentagon1024_1 );
+  case 32: return &( settings->rom_pentagon1024_2 );
+  case 33: return &( settings->rom_pentagon1024_3 );
+  case 34: return &( settings->rom_scorpion_0 );
+  case 35: return &( settings->rom_scorpion_1 );
+  case 36: return &( settings->rom_scorpion_2 );
+  case 37: return &( settings->rom_scorpion_3 );
+  case 38: return &( settings->rom_spec_se_0 );
+  case 39: return &( settings->rom_spec_se_1 );
+  case 40: return &( settings->rom_interface_i );
+  case 41: return &( settings->rom_beta128 );
+  case 42: return &( settings->rom_plusd );
   default: return NULL;
   }
 }

@@ -1,7 +1,7 @@
 /* xerror.c: handle X errors
    Copyright (c) 2002-2004 Philip Kendall
 
-   $Id: xerror.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: xerror.c 3609 2008-05-01 13:17:56Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 
 #include "fuse.h"
 #ifdef USE_WIDGET
-#include "widget/widget.h"
+#include "ui/widget/widget.h"
 #endif				/* #ifdef USE_WIDGET */
 
 /* Are we expecting an X error to occur? */

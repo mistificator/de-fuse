@@ -1,7 +1,7 @@
 /* aosound.c: libao sound I/O
    Copyright (c) 2004 Gergely Szasz, Philip Kendall
 
-   $Id: aosound.c 3232 2007-10-24 15:05:23Z zubzero $
+   $Id: aosound.c 3514 2008-02-09 14:49:36Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ sound_lowlevel_init( const char *device, int *freqptr, int *stereoptr )
   int driver_id = -1;
   static ao_sample_format format = { .bits = 0 };
 
-  // To prevent recursive errors
+  /* To prevent recursive errors */
   static int sound_lowlevel_init_in_progress = 0;
 
   int error;

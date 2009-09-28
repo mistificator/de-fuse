@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
-## Copyright (c) 2001-2004 Philip Kendall
+## Copyright (c) 2001-2008 Philip Kendall
 
-## $Id: Makefile.am 3150 2007-09-05 14:05:00Z pak21 $
+## $Id: Makefile.am 3657 2008-06-08 15:04:37Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -35,7 +35,9 @@ libdebugger_a_SOURCES = breakpoint.c \
 			commandy.y \
 			debugger.c \
 			disassemble.c \
-			expression.c
+			event.c \
+			expression.c \
+			variable.c
 
 commandl.c: commandy.c
 commandy.h: commandy.c

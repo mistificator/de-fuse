@@ -1,7 +1,7 @@
 /* dxsound.c: DirectX sound I/O
    Copyright (c) 2003-2004 Marek Januszewski, Philip Kendall
 
-   $Id: dxsound.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: dxsound.c 3752 2008-08-20 00:50:02Z specu $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,10 +36,10 @@
 /* same as for SDL Sound */
 #define MAX_AUDIO_BUFFER 8192*5
 
-LPDIRECTSOUND lpDS; /* DirectSound object */
-LPDIRECTSOUNDBUFFER lpDSBuffer; /* sound buffer */
+static LPDIRECTSOUND lpDS; /* DirectSound object */
+static LPDIRECTSOUNDBUFFER lpDSBuffer; /* sound buffer */
 
-DWORD nextpos; /* next position in circular buffer */
+static DWORD nextpos; /* next position in circular buffer */
 
 static int sixteenbit;
 
