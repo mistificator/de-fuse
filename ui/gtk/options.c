@@ -127,6 +127,13 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
   gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
 		     dialog.detect_loader );
 
+  dialog.accelerate_loader =
+    gtk_check_button_new_with_label( "Accelerate loaders" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.accelerate_loader ),
+				settings_current.accelerate_loader );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.accelerate_loader );
+
   dialog.auto_load =
     gtk_check_button_new_with_label( "Auto-load media" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.auto_load ),
@@ -170,7 +177,7 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
   gtk_entry_set_text( GTK_ENTRY( dialog.mdr_len ), buffer );
   gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.mdr_len );
 
-  text = gtk_label_new( "block" );
+  text = gtk_label_new( "blocks" );
   gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
 
   dialog.mdr_random_len =
@@ -222,6 +229,13 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
   gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
 		     dialog.joy_prompt );
 
+  dialog.late_timings =
+    gtk_check_button_new_with_label( "Late timings" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.late_timings ),
+				settings_current.late_timings );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.late_timings );
+
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
 			     GTK_SIGNAL_FUNC( menu_options_general_done ),
@@ -261,6 +275,9 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
   settings_current.detect_loader =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->detect_loader ) );
 
+  settings_current.accelerate_loader =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->accelerate_loader ) );
+
   settings_current.auto_load =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->auto_load ) );
 
@@ -296,6 +313,9 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.joy_prompt =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->joy_prompt ) );
+
+  settings_current.late_timings =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->late_timings ) );
 
   gtk_widget_destroy( ptr->dialog );
 
@@ -528,6 +548,13 @@ menu_options_rzx( GtkWidget *widget GCC_UNUSED,
   dialog.dialog = gtkstock_dialog_new( "Fuse - RZX Options", NULL );
 
   /* Create the various widgets */
+  dialog.rzx_autosaves =
+    gtk_check_button_new_with_label( "Create autosaves" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.rzx_autosaves ),
+				settings_current.rzx_autosaves );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.rzx_autosaves );
+
   dialog.rzx_compression =
     gtk_check_button_new_with_label( "Compress RZX data" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.rzx_compression ),
@@ -587,6 +614,9 @@ menu_options_rzx_done( GtkWidget *widget GCC_UNUSED,
 			      gpointer user_data )
 {
   menu_options_rzx_t *ptr = user_data;
+
+  settings_current.rzx_autosaves =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->rzx_autosaves ) );
 
   settings_current.rzx_compression =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->rzx_compression ) );

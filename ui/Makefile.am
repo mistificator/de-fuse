@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2004 Philip Kendall
 
-## $Id: Makefile.am 3115 2007-08-19 02:49:14Z fredm $
+## $Id: Makefile.am 3609 2008-05-01 13:17:56Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,13 +25,14 @@ AUTOMAKE_OPTIONS = foreign
 
 AM_CPPFLAGS = -I$(srcdir)/..
 
-SUBDIRS = @UI@ scaler
+SUBDIRS = @UI@ @WIDGET@ scaler
 
 DIST_SUBDIRS = fb \
 	       gtk \
 	       scaler \
 	       sdl \
 	       svga \
+	       widget \
 	       win32 \
 	       xlib
 

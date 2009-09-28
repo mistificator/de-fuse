@@ -1,7 +1,7 @@
 /* fbkeyboard.c: routines for dealing with the linux fbdev display
    Copyright (c) 2000-2004 Philip Kendall, Matan Ziv-Av, Darren Salt
 
-   $Id: fbkeyboard.c 3155 2007-09-05 16:20:37Z zubzero $
+   $Id: fbkeyboard.c 3609 2008-05-01 13:17:56Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #include "spectrum.h"
 #include "tape.h"
 #ifdef USE_WIDGET
-#include "widget/widget.h"
+#include "ui/widget/widget.h"
 #endif				/* #ifdef USE_WIDGET */
 
 #include "input.h"

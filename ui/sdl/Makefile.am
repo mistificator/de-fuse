@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2004 Philip Kendall
 
-## $Id: Makefile.am 3151 2007-09-05 15:41:46Z zubzero $
+## $Id: Makefile.am 3484 2008-01-08 19:28:12Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ AM_CPPFLAGS = -I$(srcdir)/../..
 noinst_LIBRARIES = libuisdl.a
 
 INCLUDES = @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@ @SDL_CFLAGS@
-LDADD = @SDL_LIBS@
 
 libuisdl_a_SOURCES = sdldisplay.c \
 		     sdljoystick.c \

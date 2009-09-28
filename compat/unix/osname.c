@@ -1,7 +1,7 @@
 /* osname.c: Get a representation of the OS we're running on
    Copyright (c) 1999-2007 Philip Kendall
 
-   $Id: osname.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: osname.c 3626 2008-05-23 10:30:30Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ int compat_osname( char *buffer, size_t length )
   int error;
 
   error = uname( &osname );
-  if( error ) {
+  if( error < 0 ) {
     ui_error( UI_ERROR_ERROR, "error getting system information: %s",
 	      strerror( errno ) );
     return 1;

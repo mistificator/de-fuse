@@ -1,7 +1,7 @@
 /* svgajoystick.c: Joystick emulation (using svgalib)
    Copyright (c) 2003-4 Darren Salt
 
-   $Id: svgajoystick.c 3096 2007-08-06 09:20:34Z pak21 $
+   $Id: svgajoystick.c 3749 2008-08-15 12:47:44Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -97,8 +97,7 @@ ui_joystick_end( void )
 }
 
 static void
-do_axis( int which, int position, input_joystick_button negative,
-	 input_joystick_button positive )
+do_axis( int which, int position, input_key negative, input_key positive )
 {
   input_event_t event1, event2;
 

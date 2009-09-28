@@ -1,7 +1,7 @@
 /* win32keyboard.c: routines for dealing with the Win32 keyboard
    Copyright (c) 2003 Marek Januszewski, Philip Kendall
 
-   $Id: win32keyboard.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: win32keyboard.c 3726 2008-07-23 20:07:22Z specu $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
 #include "spectrum.h"
 #include "tape.h"
 #include "utils.h"
-#include "win32keyboard.h"
+#include "win32internals.h"
 
 void
 win32keyboard_keypress( WPARAM wParam, LPARAM lParam )

@@ -1,7 +1,7 @@
 /* gtkdisplay.c: GTK+ routines for dealing with the Speccy screen
    Copyright (c) 2000-2005 Philip Kendall
 
-   $Id: gtkdisplay.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: gtkdisplay.c 3612 2008-05-02 12:56:05Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -237,6 +237,7 @@ register_scalers( void )
       scaler_register( SCALER_SUPEREAGLE );
       scaler_register( SCALER_DOTMATRIX );
       scaler_register( SCALER_PALTV2X );
+      scaler_register( SCALER_HQ2X );
       if( !scaler_is_supported( current_scaler ) )
 	scaler_select_scaler( SCALER_DOUBLESIZE );
       return 0;
@@ -257,6 +258,7 @@ register_scalers( void )
       scaler_register( SCALER_TV3X );
       scaler_register( SCALER_ADVMAME3X );
       scaler_register( SCALER_PALTV3X );
+      scaler_register( SCALER_HQ3X );
       if( !scaler_is_supported( current_scaler ) )
 	scaler_select_scaler( SCALER_TRIPLESIZE );
       return 0;

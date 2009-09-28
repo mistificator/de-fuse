@@ -1,7 +1,7 @@
 /* paths.c: Path-related compatibility routines
    Copyright (c) 1999-2007 Philip Kendall
 
-   $Id: paths.c 3253 2007-10-26 02:02:17Z zubzero $
+   $Id: paths.c 3844 2008-11-19 21:31:07Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,6 +42,5 @@ compat_get_home_path( void )
 int
 compat_is_absolute_path( const char *path )
 {
-  /* Is this correct? */
-  return path[0] == '/';
+  return strchr(path,':');
 }

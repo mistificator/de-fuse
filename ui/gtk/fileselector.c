@@ -1,7 +1,7 @@
 /* fileselector.c: GTK+ fileselector routines
    Copyright (c) 2000-2007 Philip Kendall
 
-   $Id: fileselector.c 3286 2007-11-09 16:41:57Z zubzero $
+   $Id: fileselector.c 3504 2008-02-02 22:18:32Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ run_dialog( const char *title, GtkFileChooserAction action )
 				 action, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				 button, GTK_RESPONSE_ACCEPT,
 				 NULL );
+
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog ), GTK_RESPONSE_ACCEPT );
 
   if( current_folder )
     gtk_file_chooser_set_current_folder( GTK_FILE_CHOOSER( dialog ), current_folder );

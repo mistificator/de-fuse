@@ -1,7 +1,7 @@
 /* debugger.c: the GTK+ debugger
-   Copyright (c) 2002-2005 Philip Kendall
+   Copyright (c) 2002-2008 Philip Kendall
 
-   $Id: debugger.c 3232 2007-10-24 15:05:23Z zubzero $
+   $Id: debugger.c 3681 2008-06-16 09:40:29Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -253,8 +253,10 @@ ui_debugger_deactivate( int interruptable )
 {
   if( debugger_active ) deactivate_debugger();
 
-  gtk_widget_set_sensitive( continue_button, !interruptable );
-  gtk_widget_set_sensitive( break_button,     interruptable );
+  if( dialog_created ) {
+    gtk_widget_set_sensitive( continue_button, !interruptable );
+    gtk_widget_set_sensitive( break_button,     interruptable );
+  }
 
   return 0;
 }
@@ -820,7 +822,12 @@ update_breakpoints( void )
       break;
 
     case DEBUGGER_BREAKPOINT_TYPE_TIME:
-      snprintf( breakpoint_text[2], 40, "%5d", bp->value.tstates );
+      snprintf( breakpoint_text[2], 40, "%5d", bp->value.time.tstates );
+      break;
+
+    case DEBUGGER_BREAKPOINT_TYPE_EVENT:
+      snprintf( breakpoint_text[2], 40, "%s:%s", bp->value.event.type,
+		bp->value.event.detail );
       break;
 
     }
@@ -893,7 +900,7 @@ add_event( gpointer data, gpointer user_data GCC_UNUSED )
   char *event_text[2] = { &buffer[0], &buffer[40] };
 
   /* Skip events which have been removed */
-  if( ptr->type == EVENT_TYPE_NULL ) return;
+  if( ptr->type == event_type_null ) return;
 
   snprintf( event_text[0], 40, "%d", ptr->tstates );
   strncpy( event_text[1], event_name( ptr->type ), 40 );

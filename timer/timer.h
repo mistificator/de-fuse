@@ -1,7 +1,7 @@
 /* timer.h: Speed routines for Fuse
    Copyright (c) 1999-2004 Philip Kendall
 
-   $Id: timer.h 3089 2007-08-03 12:10:09Z pak21 $
+   $Id: timer.h 3681 2008-06-16 09:40:29Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@ float timer_get_time_difference( timer_type *a, timer_type *b );
 
 int timer_init(void);
 void timer_sleep_ms( int ms );
-int timer_frame( libspectrum_dword last_tstates );
 int timer_end(void);
 
 extern float current_speed;
+extern int timer_event;
 
 /* Internal routines */
 

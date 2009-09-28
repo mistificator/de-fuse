@@ -1,7 +1,7 @@
 /* sdldisplay.c: Routines for dealing with the SDL display
    Copyright (c) 2000-2006 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
 
-   $Id: sdldisplay.c 3126 2007-08-23 11:57:43Z fredm $
+   $Id: sdldisplay.c 3666 2008-06-10 20:43:46Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
 #include "ui/uidisplay.h"
 #include "utils.h"
 #ifdef USE_WIDGET
-#include "widget/widget.h"
+#include "ui/widget/widget.h"
 #endif				/* #ifdef USE_WIDGET */
 
 SDL_Surface *sdldisplay_gc = NULL;   /* Hardware screen */
@@ -122,6 +122,7 @@ init_scalers( void )
   scaler_register( SCALER_ADVMAME3X );
   scaler_register( SCALER_DOTMATRIX );
   scaler_register( SCALER_PALTV );
+  scaler_register( SCALER_HQ2X );
   if( machine_current->timex ) {
     scaler_register( SCALER_HALF ); 
     scaler_register( SCALER_HALFSKIP );
@@ -132,6 +133,7 @@ init_scalers( void )
     scaler_register( SCALER_TV3X );
     scaler_register( SCALER_PALTV2X );
     scaler_register( SCALER_PALTV3X );
+    scaler_register( SCALER_HQ3X );
   }
   
   if( scaler_is_supported( current_scaler ) ) {
@@ -408,6 +410,29 @@ uidisplay_hotswap_gfx_mode( void )
   fuse_emulation_unpause();
 
   return 0;
+}
+
+SDL_Surface *saved = NULL;
+
+void
+uidisplay_frame_save( void )
+{
+  if( saved ) {
+    SDL_FreeSurface( saved );
+    saved = NULL;
+  }
+
+  saved = SDL_ConvertSurface( tmp_screen, tmp_screen->format,
+                              SDL_SWSURFACE );
+}
+
+void
+uidisplay_frame_restore( void )
+{
+  if( saved ) {
+    SDL_BlitSurface( saved, NULL, tmp_screen, NULL );
+    sdldisplay_force_full_refresh = 1;
+  }
 }
 
 static void
@@ -766,11 +791,18 @@ int
 uidisplay_end( void )
 {
   int i;
+
   display_ui_initialised = 0;
+
   if ( tmp_screen ) {
     free( tmp_screen->pixels );
     SDL_FreeSurface( tmp_screen ); tmp_screen = NULL;
   }
+
+  if( saved ) {
+    SDL_FreeSurface( saved ); saved = NULL;
+  }
+
   for( i=0; i<2; i++ ) {
     if ( red_cassette[i] ) {
       SDL_FreeSurface( red_cassette[i] ); red_cassette[i] = NULL;
@@ -791,6 +823,7 @@ uidisplay_end( void )
       SDL_FreeSurface( green_disk[i] ); green_disk[i] = NULL;
     }
   }
+
   return 0;
 }
 

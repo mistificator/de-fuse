@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
-## Copyright (c) 2007 Philip Kendall
+## Copyright (c) 2007-2008 Philip Kendall
 
-## $Id: Makefile.am 3115 2007-08-19 02:49:14Z fredm $
+## $Id: Makefile.am 3687 2008-06-23 11:55:23Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ AM_CPPFLAGS = -I$(srcdir)/../..
 
 noinst_LIBRARIES = libcompatos.a
 
-libcompatos_a_SOURCES = osname.c \
+libcompatos_a_SOURCES = ../unix/file.c \
+			osname.c \
 			../amiga/paths.c
 
 INCLUDES = @GLIB_CFLAGS@ @GTK_CFLAGS@ @LIBSPEC_CFLAGS@

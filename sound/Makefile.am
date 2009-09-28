@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2004 Philip Kendall
 
-## $Id: Makefile.am 3115 2007-08-19 02:49:14Z fredm $
+## $Id: Makefile.am 3509 2008-02-06 15:59:15Z specu $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ AUTOMAKE_OPTIONS = foreign
 
 AM_CPPFLAGS = -I$(srcdir)/..
 
-INCLUDES = @LIBSPEC_CFLAGS@ @GLIB_CFLAGS@ @GTK_CFLAGS@
+INCLUDES = @LIBSPEC_CFLAGS@ @GLIB_CFLAGS@ @GTK_CFLAGS@ @SDL_CFLAGS@
 
 noinst_LIBRARIES = libsound.a
 
@@ -40,7 +40,8 @@ EXTRA_libsound_a_SOURCES = dxsound.c \
 		     	   osssound.c \
 		     	   sdlsound.c \
 		     	   sfifo.c \
-		     	   sunsound.c
+		     	   sunsound.c \
+		     	   win32sound.c
 
 libsound_a_LIBADD = $(SOUND_LIBADD)
 libsound_a_DEPENDENCIES = $(SOUND_LIBADD)

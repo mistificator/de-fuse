@@ -1,7 +1,7 @@
 /* coretest.c: Test program for Fuse's Z80 core
    Copyright (c) 2003 Philip Kendall
 
-   $Id: coretest.c 3414 2007-12-08 22:36:36Z zubzero $
+   $Id: coretest.c 3750 2008-08-18 15:43:28Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "event.h"
 #include "module.h"
 #include "spectrum.h"
 #include "ui/ui.h"
@@ -181,13 +182,15 @@ contend_port_postio( libspectrum_word port )
 libspectrum_byte
 readport( libspectrum_word port )
 {
+  libspectrum_byte r = port >> 8;
+
   contend_port_preio( port );
 
-  printf( "%5d PR %04x %02x\n", tstates, port, 0xff );
+  printf( "%5d PR %04x %02x\n", tstates, port, r );
 
   contend_port_postio( port );
 
-  return 0xff;
+  return r;
 }
 
 void
@@ -436,6 +439,14 @@ beta_unpage( void )
   abort();
 }
 
+int spectrum_frame_event = 0;
+
+int
+event_register( event_fn_t fn GCC_UNUSED, const char *string GCC_UNUSED )
+{
+  return 0;
+}
+
 int plusd_available = 0;
 int plusd_active = 0;
 
@@ -459,6 +470,12 @@ if1_unpage( void )
 
 void
 divide_set_automap( int state GCC_UNUSED )
+{
+  abort();
+}
+
+int
+rzx_frame( void )
 {
   abort();
 }

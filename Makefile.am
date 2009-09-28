@@ -1,7 +1,7 @@
 # Process this file with automake to produce Makefile.in
-## Copyright (c) 1999-2004 Philip Kendall
+## Copyright (c) 1999-2008 Philip Kendall
 
-## $Id: Makefile.am 3318 2007-11-21 19:25:31Z zubzero $
+## $Id: Makefile.am 3818 2008-11-15 13:28:08Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ SUBDIRS = @COMPAT_SUBDIR@ \
 	  sound \
 	  timer \
 	  ui \
-	  @WIDGET@ \
+	  unittests \
 	  z80
 
 DIST_SUBDIRS = debugger \
@@ -53,7 +53,7 @@ DIST_SUBDIRS = debugger \
 	       sound \
 	       timer \
 	       ui \
-	       widget \
+	       unittests \
 	       z80
 
 fuse_SOURCES = ay.c \
@@ -72,6 +72,7 @@ fuse_SOURCES = ay.c \
 	loader.c \
 	machine.c \
 	memory.c \
+	mempool.c \
 	menu.c \
 	module.c \
 	periph.c \
@@ -112,20 +113,21 @@ EXTRA_fuse_SOURCES = windres.rc
 
 fuse_LDADD = debugger/libdebugger.a \
 @UI_LIBS@ \
-disk/libdisk.a \
 machines/libmachines.a \
+disk/libdisk.a \
 pokefinder/libpokefinder.a \
 sound/libsound.a \
 ui/scaler/libscaler.a \
+unittests/libunittests.a \
 debugger/libdebugger.a \
 timer/libtimer.a \
 z80/libz80.a \
-@DSKLIBS@ \
 @LIBSPEC_LIBS@ \
 @GLIB_LIBS@ \
 @PNG_LIBS@ \
 @SOUND_LIBS@ \
 @SAMPLERATE_LIBS@ \
+@SDL_LIBS@ \
 @X_LIBS@ \
 @XML_LIBS@ \
 compat/@COMPAT_OSNAME@/libcompatos.a \
@@ -136,6 +138,7 @@ fuse_DEPENDENCIES = @UI_LIBS@ \
 		    debugger/libdebugger.a \
 		    machines/libmachines.a \
 		    sound/libsound.a \
+		    unittests/libunittests.a\
 		    z80/libz80.a \
 		    @WINDRES_OBJ@
 
@@ -150,8 +153,8 @@ settings.c: settings.pl settings.dat
 settings.h: settings-header.pl settings.dat
 	@PERL@ -I$(srcdir)/perl $(srcdir)/settings-header.pl $(srcdir)/settings.dat > $@.tmp && mv $@.tmp $@
 
-INCLUDES = @GLIB_CFLAGS@ @GTK_CFLAGS@ @LIBSPEC_CFLAGS@ @DSK_CFLAGS@\
-@XML_CFLAGS@ @SAMPLERATE_CFLAGS@ -DFUSEDATADIR="\"${pkgdatadir}\""
+INCLUDES = @GLIB_CFLAGS@ @GTK_CFLAGS@ @LIBSPEC_CFLAGS@ \
+@XML_CFLAGS@ @SAMPLERATE_CFLAGS@ -DFUSEDATADIR="\"${pkgdatadir}\"" @SDL_CFLAGS@
 
 noinst_HEADERS = ay.h \
 	bitmap.h \
@@ -170,6 +173,7 @@ noinst_HEADERS = ay.h \
 	loader.h \
 	machine.h \
 	memory.h \
+	mempool.h \
 	menu.h \
 	module.h \
 	periph.h \
@@ -201,7 +205,8 @@ EXTRA_DIST = AUTHORS \
 	     menu_data.pl \
 	     settings.pl \
 	     settings-header.pl \
-	     settings.dat
+	     settings.dat \
+	     winfuse.ico
 
 CLEANFILES = settings.c \
 	     settings.h

@@ -43,6 +43,7 @@ typedef struct menu_options_general_t {
   GtkWidget *tape_traps;
   GtkWidget *fastload;
   GtkWidget *detect_loader;
+  GtkWidget *accelerate_loader;
   GtkWidget *auto_load;
   GtkWidget *slt_traps;
   GtkWidget *writable_roms;
@@ -55,6 +56,7 @@ typedef struct menu_options_general_t {
   GtkWidget *confirm_actions;
   GtkWidget *statusbar;
   GtkWidget *joy_prompt;
+  GtkWidget *late_timings;
 
 } menu_options_general_t;
 
@@ -88,6 +90,7 @@ typedef struct menu_options_rzx_t {
 
   GtkWidget *dialog;
 
+  GtkWidget *rzx_autosaves;
   GtkWidget *rzx_compression;
   GtkWidget *competition_mode;
   GtkWidget *competition_code;

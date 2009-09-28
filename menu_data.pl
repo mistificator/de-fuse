@@ -3,7 +3,7 @@
 # menu_data.pl: generate the menu structure from menu_data.dat
 # Copyright (c) 2004-2007 Philip Kendall, Stuart Brady, Marek Januszewski
 
-# $Id: menu_data.pl 3295 2007-11-12 00:20:50Z zubzero $
+# $Id: menu_data.pl 3769 2008-09-07 02:26:10Z specu $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ while(<>) {
 
     chomp;
 
-    my( $path, $type, $hotkey, $function, $action ) = split /\s*,\s*/;
+    my( $path, $type, $hotkey, $function, $detail, $action ) = split /\s*,\s*/;
 
     my @segments = split '/', $path;
 
@@ -98,6 +98,8 @@ while(<>) {
 	$entry->{action} = $action if $action;
 
     }
+
+    $entry->{detail} = $detail if $detail;
 
     push @$walk, $entry;
 
@@ -191,12 +193,14 @@ sub _dump_widget ($$) {
 
 	my $cname = cname( $name );
 	
+        my $detail = $item->{detail} || "NULL";
+
 	if( $item->{submenu} ) {
-	    $s .= "${path}_$cname, NULL, 0";
+	    $s .= "${path}_$cname, NULL, $detail, 0";
 	    _dump_widget( $item, "${path}_$cname" );
 	} else {
 	    my $function = $item->{function} || "${path}_$cname";
-	    $s .= "NULL, $function, " . ( $item->{action} || 0 );
+	    $s .= "NULL, $function, $detail, " . ( $item->{action} || 0 );
 	}
 
 	$s .= " },\n";
@@ -273,7 +277,7 @@ sub dump_win32 ($$) {
 	print << "CODE";
 #include "menu_data.h"
 
-void handle_menu( DWORD cmd, HWND okno )
+int handle_menu( DWORD cmd, HWND window )
 {
   switch( cmd )
   {
@@ -298,6 +302,7 @@ CODE
     if( $mode eq 'c' ) {
 	print << "CODE";
   }
+  return 1;
 }
 CODE
     } elsif( $mode eq 'rc' ) {
@@ -361,7 +366,7 @@ sub _dump_win32 ($$$$) {
 	        my $function = $item->{function} || "${path}_$cname";
 		print "    case $idmname:\n";
 		print "      $function( " . ( $item->{action} || 0 ) . " ); "
-		      . "break;\n";
+		      . "return 0;\n";
 	    } elsif( $mode eq 'rc' ) {
 		my $hotkey;
 		if( $item->{hotkey} ) {

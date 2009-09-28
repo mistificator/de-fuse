@@ -4,7 +4,7 @@
 # Copyright (c) 2000-2007 Philip Kendall, Matan Ziv-Av, Russell Marks,
 #			  Fredrick Meunier, Catalin Mihaila, Stuart Brady
 
-# $Id: keysyms.pl 3115 2007-08-19 02:49:14Z fredm $
+# $Id: keysyms.pl 3735 2008-07-28 21:27:56Z specu $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ my $ui = shift;
 $ui = 'gtk' unless defined $ui;
 
 die "$0: unrecognised user interface: $ui\n"
-  unless 0 < grep { $ui eq $_ } ( 'ggi', 'gtk', 'x', 'svga', 'fb', 'sdl', 'win32' );
+  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'svga', 'fb', 'sdl', 'win32' );
 
 sub fb_keysym ($) {
 
@@ -42,53 +42,6 @@ sub fb_keysym ($) {
 
     $keysym =~ tr/a-z/A-Z/;
     substr( $keysym, 0, 4 ) = 'WIN' if substr( $keysym, 0, 5 ) eq 'META_';
-
-    return $keysym;
-}
-
-# The GGI keysyms which start with `GIIK', not `GIIUC'
-my %ggi_giik_keysyms = map { $_ => 1 } qw(
-
-    AltL
-    AltR
-    CapsLock
-    CtrlL
-    CtrlR
-    Down
-    End
-    Home
-    HyperL
-    HyperR
-    Left
-    Menu
-    MetaL
-    MetaR
-    PageUp
-    PageDown
-    Right
-    ShiftL
-    ShiftR
-    SuperL
-    SuperR
-    Up
-
-);
-
-sub ggi_keysym ($) {
-
-    my $keysym = shift;
-
-    # GGI 'long name' keysyms start with a capitial letter
-    $keysym = ucfirst $keysym if length $keysym > 1;
-
-    # and have no underscores
-    $keysym =~ s/_//g;
-
-    if( $ggi_giik_keysyms{ $keysym } ) {
-	$keysym = "GIIK_$keysym";
-    } else {
-	$keysym = "GIIUC_$keysym";
-    }
 
     return $keysym;
 }
@@ -172,19 +125,6 @@ my %ui_data = (
 	          Mode_switch => 'MENU',
 	      },
 	      function => \&fb_keysym
-	    },
-
-    ggi  => { headers => [ 'ggi/ggi.h' ],
-	      max_length => 18,
-	      skips => { },
-	      translations => {
-	          Control_L   => 'CtrlL',
-		  Control_R   => 'CtrlR',
-		  Mode_switch => 'Menu',
-		  apostrophe  => 'DoubleQuote',
-		  numbersign  => 'Hash',
-	      },
-	      function => \&ggi_keysym,
 	    },
 
     gtk  => { headers => [ 'gdk/gdkkeysyms.h' ],
@@ -341,7 +281,15 @@ CODE
 if ( $ui eq 'win32' ) {
     # To allow VK_OEM_{COMMA,MINUS,PERIOD,PLUS} to be used, we must
     # define WINVER to be >= 0x0500 before we include <windows.h>
-    print "#define WINVER 0x0500\n"
+    # But instead of requiring Windows 2000 or later, it's better to
+    # define the missing values
+    print "#if ! (_WIN32_WINNT >= 0x0500)\n"
+        . "#define VK_OEM_PLUS     0xBB\n"
+        . "#define VK_OEM_COMMA    0xBC\n"
+        . "#define VK_OEM_MINUS    0xBD\n"
+        . "#define VK_OEM_PERIOD   0xBE\n"
+        . "#endif\n"
+        . "\n";
 }
 
 print << "CODE";
@@ -390,11 +338,6 @@ foreach( @keys ) {
 
 	printf "  { %-$ui_data{$ui}{max_length}s INPUT_KEY_%-11s },\n",
             "$ui_keysym,", $keysym;
-
-	if( $ui eq 'ggi' and $ui_keysym =~ /GIIUC_[a-z]/ ) {
-#	    printf "  { %-$ui_data{$ui}{max_length}s KEYBOARD_%-9s KEYBOARD_%-6s },\n",
-#	    uc $keysym . ",", "$key1,", $key2;
-	}
 
     }
 

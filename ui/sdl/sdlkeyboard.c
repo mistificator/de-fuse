@@ -1,7 +1,7 @@
 /* sdlkeyboard.c: routines for dealing with the SDL keyboard
    Copyright (c) 2000-2005 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
 
-   $Id: sdlkeyboard.c 3115 2007-08-19 02:49:14Z fredm $
+   $Id: sdlkeyboard.c 3609 2008-05-01 13:17:56Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 #include "tape.h"
 #include "utils.h"
 #ifdef USE_WIDGET
-#include "widget/widget.h"
+#include "ui/widget/widget.h"
 #endif				/* #ifdef USE_WIDGET */
 #include "sdlkeyboard.h"
 
