@@ -2481,7 +2481,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=fuse
- VERSION=0.10.0
+ VERSION=0.10.0.1
 
 
 cat >>confdefs.h <<_ACEOF

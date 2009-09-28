@@ -238,7 +238,8 @@ libuifb_a_SOURCES = fbdisplay.c \
 
 BUILT_SOURCES = keysyms.c
 noinst_HEADERS = fbdisplay.h \
-	         fbkeyboard.h
+	         fbkeyboard.h \
+	         fbmouse.h
 
 CLEANFILES = keysyms.c
 all: $(BUILT_SOURCES)
