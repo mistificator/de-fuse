@@ -1,3 +1,9 @@
+fuse-emulator (0.10.0.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Alberto Garcia <agarcia@igalia.com>  Thu, 11 Dec 2008 13:32:22 +0100
+
 fuse-emulator (0.10.0-1) unstable; urgency=low
 
   * New upstream version.
