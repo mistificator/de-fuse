@@ -1,0 +1,3 @@
+debian/fuse.desktop usr/share/applications/hildon
+debian/fuse.service usr/share/dbus-1/services
+debian/fuse.png /usr/share/icons/hicolor/scalable/apps

@@ -1,0 +1,26 @@
+This package was ported to Maemo and debianized by
+Alberto Garcia <agarcia@igalia.com> on Sat, 25 Oct 2008 02:01:36 +0200.
+
+It was downloaded from http://fuse-emulator.sourceforge.net/
+
+Upstream Author: Philip Kendall <philip-fuse@shadowmagic.org.uk>
+
+Copyright (c) 1999-2008 Philip Kendall and others
+
+See AUTHORS file for details on other contributors.
+
+    fuse is made available under the GNU General Public License,
+    which means that it is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See `COPYING' for
+    the full license.
+
+The fuse.png icon was converted to PNG from the original winfuse.ico
+(by Paul van der Laan) obtained from the Fuse subversion repository
+(revision 3505):
+
+https://fuse-emulator.svn.sourceforge.net/svnroot/fuse-emulator/
+
+The Debian packaging is (C) 2008, Alberto Garcia Gonzalez
+<agarcia@igalia.com> and is licensed under the GPL, see
+`/usr/share/common-licenses/GPL'.
