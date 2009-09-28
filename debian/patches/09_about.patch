@@ -1,0 +1,45 @@
+diff --git a/menu.h b/menu.h
+index 9adab1e..46147a0 100644
+--- a/menu.h
++++ b/menu.h
+@@ -137,6 +137,7 @@ MENU_CALLBACK( menu_machine_pokefinder );
+ MENU_CALLBACK( menu_machine_memorybrowser );
+ 
+ MENU_CALLBACK( menu_help_keyboard );
++MENU_CALLBACK( menu_help_about );
+ 
+ /* Called from elsewhere (generally from one of the routines defined
+    in menu.c) */
+diff --git a/menu_data.dat b/menu_data.dat
+index 6384e8c..453caa7 100644
+--- a/menu_data.dat
++++ b/menu_data.dat
+@@ -331,3 +331,4 @@ Media/IDE/DivIDE/Slave/_Eject, Item,, menu_media_ide_eject, 7
+ 
+ _Help, Branch
+ Help/_Keyboard..., Item
++Help/_About..., Item
+diff --git a/ui/gtk/gtkui.c b/ui/gtk/gtkui.c
+index 8498b5a..8fd6f65 100644
+--- a/ui/gtk/gtkui.c
++++ b/ui/gtk/gtkui.c
+@@ -842,6 +842,19 @@ menu_help_keyboard( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
+   gtkui_picture( "keyboard.scr", 0 );
+ }
+ 
++void
++menu_help_about( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
++{
++  gtk_show_about_dialog (GTK_WINDOW (gtkui_window),
++                         "name", "Fuse",
++                         "comments", "The Free Unix Spectrum Emulator",
++                         "copyright", "(c) 1999-2008 Philip Kendall and others.\n"
++                                      "Maemo port by Alberto Garcia",
++                         "version", VERSION,
++                         "website", "http://fuse-emulator.sourceforge.net/",
++                         NULL);
++}
++
+ /* Generic `tidy-up' callback */
+ void
+ gtkui_destroy_widget_and_quit( GtkWidget *widget, gpointer data GCC_UNUSED )

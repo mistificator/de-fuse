@@ -1,0 +1,162 @@
+diff --git a/display.h b/display.h
+index 9924b9c..35f2584 100644
+--- a/display.h
++++ b/display.h
+@@ -42,7 +42,7 @@
+ 
+ /* The width and height of the (emulated) border */
+ #define DISPLAY_BORDER_WIDTH_COLS  4
+-#define DISPLAY_BORDER_HEIGHT_COLS 3
++#define DISPLAY_BORDER_HEIGHT_COLS 1
+ 
+ /* The width and height of the (emulated) border */
+ /* Each main screen column can produce 16 pixels in hires mode */
+diff --git a/menu.h b/menu.h
+index eb95f38..9adab1e 100644
+--- a/menu.h
++++ b/menu.h
+@@ -63,6 +63,7 @@ MENU_CALLBACK( menu_file_movies_stopmovierecording );
+ 
+ MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_select );
+ MENU_CALLBACK( menu_options_filter );
++MENU_CALLBACK( menu_options_togglefullscreen );
+ MENU_CALLBACK( menu_options_save );
+ 
+ MENU_CALLBACK( menu_machine_profiler_start );
+diff --git a/menu_data.dat b/menu_data.dat
+index 17bd277..252c211 100644
+--- a/menu_data.dat
++++ b/menu_data.dat
+@@ -96,6 +96,7 @@ Options/Select ROMs/_Beta 128..., Item,, menu_options_selectroms_select, 17
+ Options/Select ROMs/+_D..., Item,, menu_options_selectroms_select, 18
+ 
+ Options/_Filter..., Item
++Options/_Toggle Fullscreen, Item, F6
+ 
+ #ifdef HAVE_LIB_XML2
+ Options/separator, Separator
+diff --git a/ui/gtk/gtkui.c b/ui/gtk/gtkui.c
+index f0588de..8498b5a 100644
+--- a/ui/gtk/gtkui.c
++++ b/ui/gtk/gtkui.c
+@@ -73,6 +73,8 @@ GtkItemFactory *popup_factory;
+ /* True if we were paused via the Machine/Pause menu item */
+ static int paused = 0;
+ 
++static gboolean full_screen = 0;
++
+ /* Structure used by the radio button selection widgets (eg the
+    graphics filter selectors and Machine/Select) */
+ typedef struct gtkui_select_info {
+@@ -103,6 +105,27 @@ static gboolean gtkui_delete( GtkWidget *widget, GdkEvent *event,
+ static void menu_options_filter_done( GtkWidget *widget, gpointer user_data );
+ static void menu_machine_select_done( GtkWidget *widget, gpointer user_data );
+ 
++static gboolean
++window_state_cb (GtkWidget *widget, GdkEventWindowState *event, gpointer data)
++{
++  gint hpadding, vpadding;
++  GdkWindowState st = event->new_window_state;
++  GtkWidget *hbox = gtk_widget_get_parent (gtkui_drawing_area);
++  GtkWidget *vbox = gtk_widget_get_parent (hbox);
++
++  full_screen = (st & GDK_WINDOW_STATE_FULLSCREEN);
++
++  hpadding = full_screen ? 80 : 180;
++  vpadding = full_screen ? 15 : 80;
++
++  gtk_box_set_child_packing (GTK_BOX (hbox), gtkui_drawing_area,
++                             TRUE, TRUE, hpadding, GTK_PACK_START);
++  gtk_box_set_child_packing (GTK_BOX (vbox), hbox,
++                             TRUE, TRUE, vpadding, GTK_PACK_START);
++
++  return FALSE;
++}
++
+ int
+ ui_init( int *argc, char ***argv )
+ {
+@@ -110,6 +133,9 @@ ui_init( int *argc, char ***argv )
+   GtkAccelGroup *accel_group;
+   GdkGeometry geometry;
+   GdkWindowHints hints;
++  GtkWidget *hbox;
++  GtkStyle *style;
++  GdkColor black_color = { 0 };
+ 
+   gtk_init(argc,argv);
+   g_set_application_name ("Fuse");
+@@ -145,6 +171,10 @@ ui_init( int *argc, char ***argv )
+   box = gtk_vbox_new( FALSE, 0 );
+   gtk_container_add(GTK_CONTAINER(gtkui_window), box);
+ 
++  style = gtk_widget_get_style (gtkui_window);
++  style->bg[GTK_STATE_NORMAL] = black_color;
++  gtk_widget_set_style (gtkui_window, style);
++
+   gtkui_make_menu( &accel_group, &menu_bar, gtkui_menu_data,
+ 		   gtkui_menu_data_size );
+ 
+@@ -169,7 +199,9 @@ ui_init( int *argc, char ***argv )
+   gtk_signal_connect( GTK_OBJECT( gtkui_drawing_area ), "button-release-event",
+ 		      GTK_SIGNAL_FUNC( gtkmouse_button ), NULL );
+ 
+-  gtk_box_pack_start( GTK_BOX(box), gtkui_drawing_area, TRUE, TRUE, 0 );
++  hbox = gtk_hbox_new (FALSE, 0);
++  gtk_box_pack_start (GTK_BOX (hbox), gtkui_drawing_area, TRUE, TRUE, 180);
++  gtk_box_pack_start( GTK_BOX(box), hbox, TRUE, TRUE, 80 );
+ 
+   /* Create the statusbar */
+   gtkstatusbar_create( GTK_BOX( box ) );
+@@ -201,6 +233,9 @@ ui_init( int *argc, char ***argv )
+ 				 GTK_WIDGET(gtkui_drawing_area),
+ 				 &geometry, hints );
+ 
++  g_signal_connect(G_OBJECT(gtkui_window), "window_state_event",
++                   G_CALLBACK(window_state_cb), NULL);
++
+   if( gtkdisplay_init() ) return 1;
+ 
+   gtk_widget_show_all( gtkui_window );
+@@ -651,6 +686,15 @@ menu_options_filter_done( GtkWidget *widget GCC_UNUSED, gpointer user_data )
+   gtk_main_quit();
+ }
+ 
++void
++menu_options_togglefullscreen( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
++{
++  if (full_screen)
++    gtk_window_unfullscreen (GTK_WINDOW (gtkui_window));
++  else
++    gtk_window_fullscreen (GTK_WINDOW (gtkui_window));
++}
++
+ /* Machine/Pause */
+ void
+ menu_machine_pause( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
+diff --git a/ui/gtk/statusbar.c b/ui/gtk/statusbar.c
+index 76a95c8..798da10 100644
+--- a/ui/gtk/statusbar.c
++++ b/ui/gtk/statusbar.c
+@@ -97,6 +97,7 @@ gtkstatusbar_create( GtkBox *parent )
+ 					   NULL, gtkpixmap_mouse_active );
+ 
+   speed_status = gtk_label_new( "100%" );
++  gtk_label_set_markup (GTK_LABEL (speed_status), "<span color=\"#ffffff\">100%</span>");
+   gtk_box_pack_end( GTK_BOX( status_bar ), speed_status, FALSE, FALSE, 0 );
+ 
+   separator = gtk_vseparator_new();
+@@ -203,10 +204,10 @@ ui_statusbar_update( ui_statusbar_item item, ui_statusbar_state state )
+ int
+ ui_statusbar_update_speed( float speed )
+ {
+-  char buffer[8];
++  char buffer[50];
+ 
+-  snprintf( buffer, 8, "%3.0f%%", speed );
+-  gtk_label_set( GTK_LABEL( speed_status ), buffer );
++  snprintf( buffer, 50, "<span color=\"#ffffff\">%3.0f%%</span>", speed );
++  gtk_label_set_markup ( GTK_LABEL( speed_status ), buffer );
+ 
+   return 0;
+ }

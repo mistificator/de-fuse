@@ -1,0 +1,84 @@
+diff --git a/menu_data.dat b/menu_data.dat
+index 252c211..6384e8c 100644
+--- a/menu_data.dat
++++ b/menu_data.dat
+@@ -22,8 +22,8 @@
+ # Philip Kendall <philip-fuse@shadowmagic.org.uk>
+ 
+ _File, Branch
+-File/_Open..., Item, F3
+-File/_Save Snapshot..., Item, F2
++File/_Open..., Item
++File/_Save Snapshot..., Item
+ 
+ File/_Recording, Branch
+ File/Recording/_Record..., Item
+@@ -60,10 +60,10 @@ File/Save _binary data..., Item
+ #endif
+ 
+ File/separator, Separator
+-File/E_xit..., Item, F10
++File/E_xit..., Item
+ 
+ _Options, Branch
+-Options/_General..., Item, F4
++Options/_General..., Item
+ Options/_Sound..., Item
+ Options/_Peripherals..., Item
+ Options/_RZX..., Item
+@@ -106,12 +106,12 @@ Options/S_ave, Item
+ _Machine, Branch
+ 
+ #ifndef USE_WIDGET
+-Machine/_Pause..., Item, Pause
++Machine/_Pause..., Item, Escape
+ #endif
+ 
+-Machine/_Reset..., Item, F5,, 0
++Machine/_Reset..., Item,,, 0
+ Machine/_Hard reset..., Item,, menu_machine_reset, 1
+-Machine/_Select..., Item, F9
++Machine/_Select..., Item
+ Machine/_Debugger..., Item
+ Machine/P_oke Finder..., Item
+ Machine/_Memory Browser..., Item
+@@ -125,12 +125,12 @@ Machine/_NMI, Item
+ M_edia, Branch
+ 
+ Media/_Tape, Branch
+-Media/Tape/_Open..., Item, F7
+-Media/Tape/_Play, Item, F8
++Media/Tape/_Open..., Item
++Media/Tape/_Play, Item
+ Media/Tape/_Browse..., Item
+ Media/Tape/_Rewind, Item
+ Media/Tape/_Clear, Item
+-Media/Tape/_Write..., Item, F6
++Media/Tape/_Write..., Item
+ Media/Tape/R_ecord Start, Item
+ Media/Tape/Recor_d Stop, Item
+ 
+diff --git a/ui/gtk/keysyms.c b/ui/gtk/keysyms.c
+index 3952d78..8f554b1 100644
+--- a/ui/gtk/keysyms.c
++++ b/ui/gtk/keysyms.c
+@@ -37,7 +37,6 @@ keysyms_map_t keysyms_map[] = {
+ 
+   { GDK_Tab,         INPUT_KEY_Tab         },
+   { GDK_Return,      INPUT_KEY_Return      },
+-  { GDK_Escape,      INPUT_KEY_Escape      },
+   { GDK_space,       INPUT_KEY_space       },
+   { GDK_numbersign,  INPUT_KEY_numbersign  },
+   { GDK_apostrophe,  INPUT_KEY_apostrophe  },
+@@ -124,11 +123,6 @@ keysyms_map_t keysyms_map[] = {
+   { GDK_F1,          INPUT_KEY_F1          },
+   { GDK_F2,          INPUT_KEY_F2          },
+   { GDK_F3,          INPUT_KEY_F3          },
+-  { GDK_F4,          INPUT_KEY_F4          },
+-  { GDK_F5,          INPUT_KEY_F5          },
+-  { GDK_F6,          INPUT_KEY_F6          },
+-  { GDK_F7,          INPUT_KEY_F7          },
+-  { GDK_F8,          INPUT_KEY_F8          },
+   { GDK_F9,          INPUT_KEY_F9          },
+   { GDK_F10,         INPUT_KEY_F10         },
+   { GDK_F11,         INPUT_KEY_F11         },
