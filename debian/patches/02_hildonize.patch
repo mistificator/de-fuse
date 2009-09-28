@@ -1,8 +1,7 @@
 diff --git a/configure b/configure
-index f2a0280..177a843 100755
 --- a/configure
 +++ b/configure
-@@ -22739,7 +22739,7 @@ else
+@@ -23396,7 +23396,7 @@ else
  fi
  
  
@@ -12,7 +11,6 @@ index f2a0280..177a843 100755
    do
        case "$module" in
 diff --git a/ui/gtk/fileselector.c b/ui/gtk/fileselector.c
-index 6f5fd92..09eca50 100644
 --- a/ui/gtk/fileselector.c
 +++ b/ui/gtk/fileselector.c
 @@ -26,6 +26,7 @@
@@ -23,7 +21,7 @@ index 6f5fd92..09eca50 100644
  
  #include "gtkinternals.h"
  
-@@ -45,15 +46,12 @@ run_dialog( const char *title, GtkFileChooserAction action )
+@@ -45,17 +46,14 @@ run_dialog( const char *title, GtkFileChooserAction action )
    }
  
    dialog =
@@ -32,6 +30,9 @@ index 6f5fd92..09eca50 100644
 -				 button, GTK_RESPONSE_ACCEPT,
 -				 NULL );
 +    hildon_file_chooser_dialog_new( GTK_WINDOW( gtkui_window ), action );
+ 
+-  gtk_dialog_set_default_response( GTK_DIALOG( dialog ), GTK_RESPONSE_ACCEPT );
++  gtk_dialog_set_default_response( GTK_DIALOG( dialog ), GTK_RESPONSE_OK );
  
    if( current_folder )
      gtk_file_chooser_set_current_folder( GTK_FILE_CHOOSER( dialog ), current_folder );
@@ -42,7 +43,6 @@ index 6f5fd92..09eca50 100644
      if( new_folder ) {
        g_free( current_folder );
 diff --git a/ui/gtk/gtkui.c b/ui/gtk/gtkui.c
-index e8788a4..0f5309e 100644
 --- a/ui/gtk/gtkui.c
 +++ b/ui/gtk/gtkui.c
 @@ -32,6 +32,7 @@

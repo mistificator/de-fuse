@@ -1,8 +1,7 @@
 diff --git a/configure b/configure
-index 397556a..90c6f53 100755
 --- a/configure
 +++ b/configure
-@@ -19123,7 +19123,7 @@ $rm conftest*
+@@ -19768,7 +19768,7 @@ $rm -r conftest*
  
  # Allow CC to be a program name with arguments.
  lt_save_CC="$CC"
@@ -11,7 +10,7 @@ index 397556a..90c6f53 100755
  compiler=$CC
  compiler_RC=$CC
  for cc_temp in $compiler""; do
-@@ -19615,7 +19615,7 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
+@@ -20266,7 +20266,7 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
  
  if test -n "$ac_tool_prefix"; then
    # Extract the first word of "${ac_tool_prefix}windres", so it can be a program name with args.
@@ -20,7 +19,7 @@ index 397556a..90c6f53 100755
  { echo "$as_me:$LINENO: checking for $ac_word" >&5
  echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
  if test "${ac_cv_prog_WINDRES+set}" = set; then
-@@ -19631,7 +19631,7 @@ do
+@@ -20282,7 +20282,7 @@ do
    test -z "$as_dir" && as_dir=.
    for ac_exec_ext in '' $ac_executable_extensions; do
    if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
@@ -29,7 +28,7 @@ index 397556a..90c6f53 100755
      echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
      break 2
    fi
-@@ -19655,7 +19655,7 @@ fi
+@@ -20306,7 +20306,7 @@ fi
  if test -z "$ac_cv_prog_WINDRES"; then
    ac_ct_WINDRES=$WINDRES
    # Extract the first word of "windres", so it can be a program name with args.
@@ -38,7 +37,7 @@ index 397556a..90c6f53 100755
  { echo "$as_me:$LINENO: checking for $ac_word" >&5
  echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
  if test "${ac_cv_prog_ac_ct_WINDRES+set}" = set; then
-@@ -19671,7 +19671,7 @@ do
+@@ -20322,7 +20322,7 @@ do
    test -z "$as_dir" && as_dir=.
    for ac_exec_ext in '' $ac_executable_extensions; do
    if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
@@ -47,30 +46,12 @@ index 397556a..90c6f53 100755
      echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
      break 2
    fi
-@@ -26575,7 +26575,7 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
+@@ -27232,7 +27232,7 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
    cat >>confdefs.h <<_ACEOF
  #define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
  _ACEOF
 - LIBSPEC_LIBS="$LIBSPEC_LIBS -lspectrum"
-+ LIBSPEC_LIBS="$LIBSPEC_LIBS /usr/lib/libspectrum.a -lz -lbz2"
++ LIBSPEC_LIBS="$LIBSPEC_LIBS /usr/lib/libspectrum.a -lz -lbz2 -lm -lglib-2.0"
  else
    { { echo "$as_me:$LINENO: error: Sorry - I need libspectrum to be available" >&5
  echo "$as_me: error: Sorry - I need libspectrum to be available" >&2;}
-@@ -26837,7 +26837,7 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
-   cat >>confdefs.h <<_ACEOF
- #define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
- _ACEOF
-- DSKLIBS="$DSKLIBS -l765"; lib765=yes
-+ DSKLIBS="$DSKLIBS /usr/lib/lib765.a"; lib765=yes
- else
-   { echo "$as_me:$LINENO: WARNING: 765.h not found - disk support disabled" >&5
- echo "$as_me: WARNING: 765.h not found - disk support disabled" >&2;}
-@@ -26981,7 +26981,7 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
-   cat >>confdefs.h <<_ACEOF
- #define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
- _ACEOF
-- DSKLIBS="$DSKLIBS -ldsk"
-+ DSKLIBS="$DSKLIBS /usr/lib/libdsk.a"
- fi
- 
- done

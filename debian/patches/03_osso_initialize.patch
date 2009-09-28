@@ -1,8 +1,7 @@
 diff --git a/configure b/configure
-index 177a843..519452f 100755
 --- a/configure
 +++ b/configure
-@@ -22739,7 +22739,7 @@ else
+@@ -23396,7 +23396,7 @@ else
  fi
  
  
@@ -12,7 +11,6 @@ index 177a843..519452f 100755
    do
        case "$module" in
 diff --git a/ui/gtk/gtkui.c b/ui/gtk/gtkui.c
-index 0f5309e..4f96214 100644
 --- a/ui/gtk/gtkui.c
 +++ b/ui/gtk/gtkui.c
 @@ -33,6 +33,7 @@

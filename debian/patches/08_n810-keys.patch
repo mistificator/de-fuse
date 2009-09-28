@@ -1,10 +1,9 @@
 diff --git a/ui/gtk/gtkkeyboard.c b/ui/gtk/gtkkeyboard.c
-index 50d9947..88df40e 100644
 --- a/ui/gtk/gtkkeyboard.c
 +++ b/ui/gtk/gtkkeyboard.c
-@@ -62,6 +62,9 @@ gtkkeyboard_keypress( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
+@@ -82,6 +82,9 @@ gtkkeyboard_keypress( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
    fuse_event.type = INPUT_EVENT_KEYPRESS;
-   get_keysyms( &fuse_event, event->key.keyval );
+   get_keysyms( &fuse_event, event->key.hardware_keycode, event->key.keyval );
  
 +  if (event->key.state == GDK_MOD5_MASK)
 +    fuse_event.types.key.spectrum_key = fuse_event.types.key.native_key;
@@ -12,18 +11,16 @@ index 50d9947..88df40e 100644
    return input_event( &fuse_event );
  
    /* FIXME: handle F1 to deal with the pop-up menu */
-@@ -76,6 +79,9 @@ gtkkeyboard_keyrelease( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
+@@ -96,5 +99,8 @@ gtkkeyboard_keyrelease( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
    fuse_event.type = INPUT_EVENT_KEYRELEASE;
-   get_keysyms( &fuse_event, event->key.keyval );
+   get_keysyms( &fuse_event, event->key.hardware_keycode, event->key.keyval );
  
 +  if (event->key.state == GDK_MOD5_MASK)
 +    fuse_event.types.key.spectrum_key = fuse_event.types.key.native_key;
 +
    return input_event( &fuse_event );
  }
- 
 diff --git a/ui/gtk/keysyms.c b/ui/gtk/keysyms.c
-index 8f554b1..6005dba 100644
 --- a/ui/gtk/keysyms.c
 +++ b/ui/gtk/keysyms.c
 @@ -37,6 +37,7 @@ keysyms_map_t keysyms_map[] = {

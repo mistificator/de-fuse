@@ -1,5 +1,4 @@
 diff --git a/display.h b/display.h
-index 9924b9c..35f2584 100644
 --- a/display.h
 +++ b/display.h
 @@ -42,7 +42,7 @@
@@ -12,31 +11,28 @@ index 9924b9c..35f2584 100644
  /* The width and height of the (emulated) border */
  /* Each main screen column can produce 16 pixels in hires mode */
 diff --git a/menu.h b/menu.h
-index eb95f38..9adab1e 100644
 --- a/menu.h
 +++ b/menu.h
-@@ -63,6 +63,7 @@ MENU_CALLBACK( menu_file_movies_stopmovierecording );
- 
+@@ -66,6 +66,7 @@ MENU_CALLBACK( menu_file_movies_stopmovierecording );
  MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_select );
  MENU_CALLBACK( menu_options_filter );
+ MENU_DETAIL( menu_filter_detail );
 +MENU_CALLBACK( menu_options_togglefullscreen );
  MENU_CALLBACK( menu_options_save );
  
  MENU_CALLBACK( menu_machine_profiler_start );
 diff --git a/menu_data.dat b/menu_data.dat
-index 17bd277..252c211 100644
 --- a/menu_data.dat
 +++ b/menu_data.dat
-@@ -96,6 +96,7 @@ Options/Select ROMs/_Beta 128..., Item,, menu_options_selectroms_select, 17
- Options/Select ROMs/+_D..., Item,, menu_options_selectroms_select, 18
+@@ -96,6 +96,7 @@ Options/Select ROMs/_Beta 128..., Item,, menu_options_selectroms_select,, 17
+ Options/Select ROMs/+_D..., Item,, menu_options_selectroms_select,, 18
  
- Options/_Filter..., Item
+ Options/_Filter..., Item,,, menu_filter_detail
 +Options/_Toggle Fullscreen, Item, F6
  
  #ifdef HAVE_LIB_XML2
  Options/separator, Separator
 diff --git a/ui/gtk/gtkui.c b/ui/gtk/gtkui.c
-index f0588de..8498b5a 100644
 --- a/ui/gtk/gtkui.c
 +++ b/ui/gtk/gtkui.c
 @@ -73,6 +73,8 @@ GtkItemFactory *popup_factory;
@@ -86,7 +82,7 @@ index f0588de..8498b5a 100644
  
    gtk_init(argc,argv);
    g_set_application_name ("Fuse");
-@@ -145,6 +171,10 @@ ui_init( int *argc, char ***argv )
+@@ -144,6 +170,10 @@ ui_init( int *argc, char ***argv )
    box = gtk_vbox_new( FALSE, 0 );
    gtk_container_add(GTK_CONTAINER(gtkui_window), box);
  
@@ -97,7 +93,7 @@ index f0588de..8498b5a 100644
    gtkui_make_menu( &accel_group, &menu_bar, gtkui_menu_data,
  		   gtkui_menu_data_size );
  
-@@ -169,7 +199,9 @@ ui_init( int *argc, char ***argv )
+@@ -168,7 +198,9 @@ ui_init( int *argc, char ***argv )
    gtk_signal_connect( GTK_OBJECT( gtkui_drawing_area ), "button-release-event",
  		      GTK_SIGNAL_FUNC( gtkmouse_button ), NULL );
  
@@ -108,7 +104,7 @@ index f0588de..8498b5a 100644
  
    /* Create the statusbar */
    gtkstatusbar_create( GTK_BOX( box ) );
-@@ -201,6 +233,9 @@ ui_init( int *argc, char ***argv )
+@@ -200,6 +232,9 @@ ui_init( int *argc, char ***argv )
  				 GTK_WIDGET(gtkui_drawing_area),
  				 &geometry, hints );
  
@@ -118,7 +114,7 @@ index f0588de..8498b5a 100644
    if( gtkdisplay_init() ) return 1;
  
    gtk_widget_show_all( gtkui_window );
-@@ -651,6 +686,15 @@ menu_options_filter_done( GtkWidget *widget GCC_UNUSED, gpointer user_data )
+@@ -464,6 +499,15 @@ menu_options_filter_done( GtkWidget *widget GCC_UNUSED, gpointer user_data )
    gtk_main_quit();
  }
  
@@ -135,7 +131,6 @@ index f0588de..8498b5a 100644
  void
  menu_machine_pause( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
 diff --git a/ui/gtk/statusbar.c b/ui/gtk/statusbar.c
-index 76a95c8..798da10 100644
 --- a/ui/gtk/statusbar.c
 +++ b/ui/gtk/statusbar.c
 @@ -97,6 +97,7 @@ gtkstatusbar_create( GtkBox *parent )

@@ -1,5 +1,4 @@
 diff --git a/menu_data.dat b/menu_data.dat
-index 252c211..6384e8c 100644
 --- a/menu_data.dat
 +++ b/menu_data.dat
 @@ -22,8 +22,8 @@
@@ -34,18 +33,18 @@ index 252c211..6384e8c 100644
 +Machine/_Pause..., Item, Escape
  #endif
  
--Machine/_Reset..., Item, F5,, 0
-+Machine/_Reset..., Item,,, 0
- Machine/_Hard reset..., Item,, menu_machine_reset, 1
--Machine/_Select..., Item, F9
-+Machine/_Select..., Item
+-Machine/_Reset..., Item, F5,,, 0
++Machine/_Reset..., Item,,,, 0
+ Machine/_Hard reset..., Item,, menu_machine_reset,, 1
+-Machine/_Select..., Item, F9,, menu_machine_detail
++Machine/_Select..., Item,,, menu_machine_detail
  Machine/_Debugger..., Item
  Machine/P_oke Finder..., Item
  Machine/_Memory Browser..., Item
 @@ -125,12 +125,12 @@ Machine/_NMI, Item
  M_edia, Branch
  
- Media/_Tape, Branch
+ Media/_Tape, Branch,,, menu_tape_detail
 -Media/Tape/_Open..., Item, F7
 -Media/Tape/_Play, Item, F8
 +Media/Tape/_Open..., Item
@@ -59,7 +58,6 @@ index 252c211..6384e8c 100644
  Media/Tape/Recor_d Stop, Item
  
 diff --git a/ui/gtk/keysyms.c b/ui/gtk/keysyms.c
-index 3952d78..8f554b1 100644
 --- a/ui/gtk/keysyms.c
 +++ b/ui/gtk/keysyms.c
 @@ -37,7 +37,6 @@ keysyms_map_t keysyms_map[] = {
