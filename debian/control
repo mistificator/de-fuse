@@ -2,7 +2,7 @@ Source: fuse-emulator
 Section: user/other
 Priority: optional
 Maintainer: Alberto Garcia <agarcia@igalia.com>
-Build-Depends: debhelper (>= 4), pkg-config, libosso-dev, libhildonfm2-dev, libhildon1-dev, osso-af-settings, cdbs, sharutils, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev, libdsk-dev, lib765-dev, libbz2-dev, zlib1g-dev
+Build-Depends: debhelper (>= 4), pkg-config, libosso-dev, libhildonfm2-dev, libhildon1-dev, osso-af-settings, cdbs, sharutils, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev, libbz2-dev, zlib1g-dev
 Standards-Version: 3.6.1
 Homepage: http://fuse-emulator.sourceforge.net/
 
