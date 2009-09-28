@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2007 Stuart Brady
 
-## $Id: Makefile.am 3546 2008-03-14 17:21:35Z specu $
+## $Id: Makefile.am 3960 2009-01-15 09:09:50Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 AUTOMAKE_OPTIONS = foreign
 
 EXTRA_DIST = disk_active.bmp disk_inactive.bmp \
+	     mdr_active.bmp mdr_inactive.bmp \
+	     mouse_active.bmp mouse_inactive.bmp \
 	     pause_active.bmp pause_inactive.bmp \
 	     tape_active.bmp tape_inactive.bmp \
 	     tape_marker.bmp tape_marker_mask.bmp

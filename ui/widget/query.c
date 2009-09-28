@@ -1,7 +1,7 @@
 /* query.c: The query widgets
    Copyright (c) 2004-2008 Darren Salt, Fredrick Meunier
 
-   $Id: query.c 3749 2008-08-15 12:47:44Z fredm $
+   $Id: query.c 3942 2009-01-10 14:18:46Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ widget_save_click( void )
 static void
 widget_dont_save_click( void )
 {
-  widget_query.save = UI_CONFIRM_SAVE_CANCEL;
+  widget_query.save = UI_CONFIRM_SAVE_DONTSAVE;
 }
 
 static void
