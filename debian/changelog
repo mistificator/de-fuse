@@ -1,3 +1,11 @@
+fuse-emulator (0.10.0.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Remove debian/docs
+  * Replace debian/dirs with DEB_INSTALL_DIRS_ALL
+
+ -- Alberto Garcia <agarcia@igalia.com>  Fri, 16 Jan 2009 10:48:04 +0100
+
 fuse-emulator (0.10.0.1-1) unstable; urgency=low
 
   * New upstream release.

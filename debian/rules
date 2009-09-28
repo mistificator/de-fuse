@@ -6,6 +6,8 @@ include /usr/share/cdbs/1/class/autotools.mk
 
 DEB_CONFIGURE_EXTRA_FLAGS := --with-x
 
+DEB_INSTALL_DIRS_ALL := usr/bin
+
 configure/fuse-emulator::
 	rm -f ui/gtk/menu_data.c ui/gtk/options.c
 	( cd debian && uudecode fuse.png.uu )
