@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2004 Philip Kendall
 
-## $Id: Makefile.am 3153 2007-09-05 15:57:59Z zubzero $
+## $Id: Makefile.am 3892 2008-12-06 10:06:53Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ keysyms.c: $(srcdir)/../../keysyms.pl $(srcdir)/../../keysyms.dat
 	@PERL@ -I$(srcdir)/../../perl $(srcdir)/../../keysyms.pl fb $(srcdir)/../../keysyms.dat > $@.tmp && mv $@.tmp $@
 
 noinst_HEADERS = fbdisplay.h \
-	         fbkeyboard.h
+	         fbkeyboard.h \
+	         fbmouse.h
 
 CLEANFILES = keysyms.c

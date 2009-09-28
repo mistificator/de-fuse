@@ -1,7 +1,7 @@
 # Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2008 Philip Kendall
 
-## $Id: Makefile.am 3818 2008-11-15 13:28:08Z pak21 $
+## $Id: Makefile.am 3894 2008-12-10 09:45:32Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -134,6 +134,7 @@ compat/@COMPAT_OSNAME@/libcompatos.a \
 @WINDRES_OBJ@
 
 fuse_DEPENDENCIES = @UI_LIBS@ \
+                    compat/@COMPAT_OSNAME@/libcompatos.a
 		    disk/libdisk.a \
 		    debugger/libdebugger.a \
 		    machines/libmachines.a \

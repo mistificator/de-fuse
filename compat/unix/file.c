@@ -1,7 +1,7 @@
 /* file.c: File-related compatibility routines
    Copyright (c) 2008 Philip Kendall
 
-   $Id: file.c 3776 2008-10-06 00:49:45Z fredm $
+   $Id: file.c 3894 2008-12-10 09:45:32Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,8 @@ const compat_fd COMPAT_FILE_OPEN_FAILED = -1;
 compat_fd
 compat_file_open( const char *path, int write )
 {
-  int flags = write ? O_WRONLY | O_CREAT | O_BINARY : O_RDONLY | O_BINARY;
+  int flags = O_BINARY;
+  flags |= write ? O_WRONLY | O_CREAT | O_TRUNC : O_RDONLY;
   return open( path, flags, 0666 );
 }
 
