@@ -1,7 +1,7 @@
 /* memorybrowser.c: the Win32 memory browser
    Copyright (c) 2008 Marek Januszewski
 
-   $Id: memorybrowser.c 3768 2008-09-07 01:33:19Z specu $
+   $Id: memorybrowser.c 3922 2008-12-31 19:01:31Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /* gtkui.c: GTK+ routines for dealing with the user interface
    Copyright (c) 2000-2005 Philip Kendall, Russell Marks
 
-   $Id: gtkui.c 3694 2008-06-26 13:52:18Z pak21 $
+   $Id: gtkui.c 4176 2010-10-06 10:56:05Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,20 +38,22 @@
 #include "debugger/debugger.h"
 #include "fuse.h"
 #include "gtkinternals.h"
+#include "ide/simpleide.h"
+#include "ide/zxatasp.h"
+#include "ide/zxcf.h"
+#include "joystick.h"
 #include "keyboard.h"
 #include "machine.h"
+#include "machines/specplus3.h"
 #include "menu.h"
 #include "psg.h"
 #include "rzx.h"
 #include "screenshot.h"
 #include "settings.h"
-#include "simpleide.h"
 #include "snapshot.h"
-#include "machines/specplus3.h"
 #include "timer/timer.h"
 #include "ui/ui.h"
-#include "zxatasp.h"
-#include "zxcf.h"
+#include "utils.h"
 
 /* The main Fuse window */
 GtkWidget *gtkui_window;
@@ -101,13 +103,48 @@ static gboolean gtkui_delete( GtkWidget *widget, GdkEvent *event,
 static void menu_options_filter_done( GtkWidget *widget, gpointer user_data );
 static void menu_machine_select_done( GtkWidget *widget, gpointer user_data );
 
+static const GtkTargetEntry drag_types[] =
+{
+    { "text/uri-list", GTK_TARGET_OTHER_APP, 0 }
+};
+
+static void gtkui_drag_data_received( GtkWidget *widget,
+                                      GdkDragContext *drag_context,
+                                      gint x, gint y,
+                                      GtkSelectionData *data,
+                                      guint info, guint time )
+{
+  static char uri_prefix[] = "file://";
+  char *filename, *p, *data_end;
+
+  if ( data && data->length > sizeof( uri_prefix ) ) {
+    filename = ( char * )( data->data + sizeof( uri_prefix ) - 1 );
+    data_end = ( char * )( data->data + data->length );
+    p = filename; 
+    do {
+      if ( *p == '\r' || *p == '\n' ) {
+        *p = '\0';
+	break;
+      }
+    } while ( p++ != data_end );
+
+    if ( ( filename = g_uri_unescape_string( filename, NULL ) ) != NULL ) {
+      fuse_emulation_pause();
+      utils_open_file( filename, settings_current.auto_load, NULL );
+      free( filename );
+      display_refresh_all();
+      fuse_emulation_unpause();
+    }
+  }
+  gtk_drag_finish(drag_context, FALSE, FALSE, time);
+}
+
 int
 ui_init( int *argc, char ***argv )
 {
   GtkWidget *box, *menu_bar;
   GtkAccelGroup *accel_group;
-  GdkGeometry geometry;
-  GdkWindowHints hints;
+  GtkSettings *settings;
 
   gtk_init(argc,argv);
 
@@ -118,11 +155,10 @@ ui_init( int *argc, char ***argv )
 
   gtkui_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+  settings = gtk_widget_get_settings( GTK_WIDGET( gtkui_window ) );
+  g_object_set( settings, "gtk-menu-bar-accel", "F1", NULL );
   gtk_window_set_title( GTK_WINDOW(gtkui_window), "Fuse" );
   gtk_window_set_wmclass( GTK_WINDOW(gtkui_window), fuse_progname, "Fuse" );
-
-  gtk_window_set_default_size( GTK_WINDOW(gtkui_window),
-			       DISPLAY_ASPECT_WIDTH, DISPLAY_SCREEN_HEIGHT );
 
   gtk_signal_connect(GTK_OBJECT(gtkui_window), "delete-event",
 		     GTK_SIGNAL_FUNC(gtkui_delete), NULL);
@@ -138,6 +174,16 @@ ui_init( int *argc, char ***argv )
   gtk_signal_connect( GTK_OBJECT( gtkui_window ), "focus-in-event",
 		      GTK_SIGNAL_FUNC( gtkui_gain_focus ), NULL );
 
+  gtk_drag_dest_set( GTK_WIDGET( gtkui_window ),
+                     GTK_DEST_DEFAULT_ALL,
+                     drag_types,
+                     G_N_ELEMENTS( drag_types ),
+                     GDK_ACTION_COPY | GDK_ACTION_PRIVATE );
+                     /* GDK_ACTION_PRIVATE alone DNW with ROX-Filer */
+
+  gtk_signal_connect( GTK_OBJECT( gtkui_window ), "drag-data-received",
+		      GTK_SIGNAL_FUNC( gtkui_drag_data_received ), NULL );
+
   box = gtk_vbox_new( FALSE, 0 );
   gtk_container_add(GTK_CONTAINER(gtkui_window), box);
 
@@ -146,15 +192,13 @@ ui_init( int *argc, char ***argv )
 
   gtk_window_add_accel_group( GTK_WINDOW(gtkui_window), accel_group );
   gtk_box_pack_start( GTK_BOX(box), menu_bar, FALSE, FALSE, 0 );
-  
+
   gtkui_drawing_area = gtk_drawing_area_new();
   if(!gtkui_drawing_area) {
     fprintf(stderr,"%s: couldn't create drawing area at %s:%d\n",
 	    fuse_progname,__FILE__,__LINE__);
     return 1;
   }
-  gtk_drawing_area_size( GTK_DRAWING_AREA(gtkui_drawing_area),
-			 DISPLAY_ASPECT_WIDTH, DISPLAY_SCREEN_HEIGHT );
 
   gtk_widget_add_events( GTK_WIDGET( gtkui_drawing_area ),
     GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK );
@@ -169,35 +213,6 @@ ui_init( int *argc, char ***argv )
 
   /* Create the statusbar */
   gtkstatusbar_create( GTK_BOX( box ) );
-
-  hints = GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE |
-          GDK_HINT_BASE_SIZE | GDK_HINT_RESIZE_INC;
-
-  geometry.min_width = DISPLAY_ASPECT_WIDTH;
-  geometry.min_height = DISPLAY_SCREEN_HEIGHT;
-  geometry.max_width = 3 * DISPLAY_ASPECT_WIDTH;
-  geometry.max_height = 3 * DISPLAY_SCREEN_HEIGHT;
-  geometry.base_width = 0;
-  geometry.base_height = 0;
-  geometry.width_inc = DISPLAY_ASPECT_WIDTH;
-  geometry.height_inc = DISPLAY_SCREEN_HEIGHT;
-
-  if( settings_current.aspect_hint ) {
-    hints |= GDK_HINT_ASPECT;
-    if( settings_current.strict_aspect_hint ) {
-      geometry.min_aspect = geometry.max_aspect =
-	(float)DISPLAY_ASPECT_WIDTH / DISPLAY_SCREEN_HEIGHT;
-    } else {
-      geometry.min_aspect = 1.2;
-      geometry.max_aspect = 1.5;
-    }
-  }
-
-  gtk_window_set_geometry_hints( GTK_WINDOW(gtkui_window),
-				 GTK_WIDGET(gtkui_drawing_area),
-				 &geometry, hints );
-
-  if( gtkdisplay_init() ) return 1;
 
   gtk_widget_show_all( gtkui_window );
   gtkstatusbar_set_visibility( settings_current.statusbar );
@@ -214,10 +229,11 @@ gtkui_menu_deactivate( GtkMenuShell *menu GCC_UNUSED,
   ui_mouse_resume();
 }
 
-static gboolean gtkui_make_menu(GtkAccelGroup **accel_group,
-				GtkWidget **menu_bar,
-				GtkItemFactoryEntry *menu_data,
-				guint menu_data_size)
+static gboolean
+gtkui_make_menu(GtkAccelGroup **accel_group,
+                GtkWidget **menu_bar,
+                GtkItemFactoryEntry *menu_data,
+                guint menu_data_size)
 {
   *accel_group = gtk_accel_group_new();
   menu_factory = gtk_item_factory_new( GTK_TYPE_MENU_BAR, "<main>",
@@ -253,35 +269,27 @@ gtkui_popup_menu_pos( GtkMenu *menu GCC_UNUSED, gint *xp, gint *yp,
 }
 
 /* Popup main menu, as invoked by F1. */
-void gtkui_popup_menu(void)
+void
+gtkui_popup_menu(void)
 {
   gtk_menu_popup( GTK_MENU(gtkui_menu_popup), NULL, NULL,
 		  (GtkMenuPositionFunc)gtkui_popup_menu_pos, NULL,
 		  0, 0 );
 }
 
-int ui_event(void)
+int
+ui_event(void)
 {
   while(gtk_events_pending())
     gtk_main_iteration();
   return 0;
 }
 
-int ui_end(void)
+int
+ui_end(void)
 {
-  int error;
-  
   /* Don't display the window whilst doing all this! */
-  gtk_widget_hide(gtkui_window);
-
-  /* Tidy up the low-level stuff */
-  error = gtkdisplay_end(); if( error ) return error;
-
-  /* Now free up the window itself */
-/*    XDestroyWindow(display,mainWindow); */
-
-  /* And disconnect from the X server */
-/*    XCloseDisplay(display); */
+  gtk_widget_hide( gtkui_window );
 
   return 0;
 }
@@ -329,7 +337,7 @@ ui_error_specific( ui_error_level severity, const char *message )
 
   return 0;
 }
-  
+
 /* The callbacks used by various routines */
 
 static gboolean
@@ -390,7 +398,7 @@ menu_get_scaler( scaler_available_fn selector )
 
   /* No scaler currently selected */
   dialog.selected = SCALER_NUM;
-  
+
   /* Some space to store the radio buttons in */
   dialog.buttons = malloc( SCALER_NUM * sizeof(GtkWidget* ) );
   if( dialog.buttons == NULL ) {
@@ -480,7 +488,7 @@ menu_machine_pause( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
       ui_error( UI_ERROR_INFO, "Stopping competition mode RZX recording" );
       error = rzx_stop_recording(); if( error ) return;
     }
-      
+
     paused = 1;
     ui_statusbar_update( UI_STATUSBAR_ITEM_PAUSED, UI_STATUSBAR_STATE_ACTIVE );
     gtk_main();
@@ -509,7 +517,7 @@ menu_machine_select( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
   gtkui_select_info dialog;
 
   int i;
-  
+
   /* Some space to store the radio buttons in */
   dialog.buttons = malloc( machine_count * sizeof(GtkWidget* ) );
   if( dialog.buttons == NULL ) {
@@ -598,6 +606,18 @@ menu_help_keyboard( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
   gtkui_picture( "keyboard.scr", 0 );
 }
 
+void
+menu_help_about( GtkWidget *widget GCC_UNUSED, gpointer data GCC_UNUSED )
+{
+  gtk_show_about_dialog( GTK_WINDOW( gtkui_window ),
+                         "name", "Fuse",
+                         "comments", "The Free Unix Spectrum Emulator",
+                         "copyright", "(c) 1999-2008 Philip Kendall and others.",
+                         "version", VERSION,
+                         "website", "http://fuse-emulator.sourceforge.net/",
+                         NULL );
+}
+
 /* Generic `tidy-up' callback */
 void
 gtkui_destroy_widget_and_quit( GtkWidget *widget, gpointer data GCC_UNUSED )
@@ -632,23 +652,13 @@ ui_menu_item_set_active( const char *path, int active )
   return 0;
 }
 
-static const char *joystick_connection[] = {
-  "None",
-  "Keyboard",
-  "Joystick 1",
-  "Joystick 2",
-};
-
-static const size_t joystick_connection_size =
-  sizeof( joystick_connection ) / sizeof( joystick_connection[0] );
-
 static void
 confirm_joystick_done( GtkWidget *widget GCC_UNUSED, gpointer user_data )
 {
   int i;
   gtkui_select_info *ptr = user_data;
 
-  for( i = 0; i < joystick_connection_size; i++ ) {
+  for( i = 0; i < JOYSTICK_CONN_COUNT; i++ ) {
 
     GtkToggleButton *button = GTK_TOGGLE_BUTTON( ptr->buttons[ i ] );
 
@@ -672,10 +682,10 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type,
   GSList *group = NULL;
 
   if( !settings_current.joy_prompt ) return UI_CONFIRM_JOYSTICK_NONE;
-  
+
   /* Some space to store the radio buttons in */
   dialog.buttons =
-    malloc( joystick_connection_size * sizeof( *dialog.buttons ) );
+    malloc( JOYSTICK_CONN_COUNT * sizeof( *dialog.buttons ) );
   if( !dialog.buttons ) {
     ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
     return UI_CONFIRM_JOYSTICK_NONE;
@@ -689,7 +699,7 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type,
 	    libspectrum_joystick_name( libspectrum_type ) );
   dialog.dialog = gtkstock_dialog_new( title, NULL );
 
-  for( i = 0; i < joystick_connection_size; i++ ) {
+  for( i = 0; i < JOYSTICK_CONN_COUNT; i++ ) {
 
     GtkWidget **button = &( dialog.buttons[ i ] );
 
@@ -745,7 +755,7 @@ void
 gtkui_set_font( GtkWidget *widget, gtkui_font font )
 {
   gtk_widget_modify_font( widget, font );
-}  
+}
 
 static void
 key_scroll_event( GtkCList *clist GCC_UNUSED, GtkScrollType scroll,

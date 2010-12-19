@@ -122,6 +122,8 @@ int handle_menu( DWORD cmd, HWND window )
       menu_options_selectroms_select( 18 ); return 0;
     case IDM_MENU_OPTIONS_FILTER:
       menu_options_filter( 0 ); return 0;
+    case IDM_MENU_OPTIONS_DISKOPTIONS:
+      menu_options_diskoptions( 0 ); return 0;
     case IDM_MENU_OPTIONS_SAVE:
       menu_options_save( 0 ); return 0;
     case IDM_MENU_MACHINE_PAUSE:
@@ -166,7 +168,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x31 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE1_EJECT:
       menu_media_eject( 0x031 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE1_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE1_SAVE:
+      menu_media_eject( 0x231 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE1_SAVEAS:
       menu_media_eject( 0x131 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE1_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x131 ); return 0;
@@ -178,7 +182,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x32 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE2_EJECT:
       menu_media_eject( 0x032 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE2_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE2_SAVE:
+      menu_media_eject( 0x232 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE2_SAVEAS:
       menu_media_eject( 0x132 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE2_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x132 ); return 0;
@@ -190,7 +196,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x33 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE3_EJECT:
       menu_media_eject( 0x033 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE3_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE3_SAVE:
+      menu_media_eject( 0x233 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE3_SAVEAS:
       menu_media_eject( 0x133 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE3_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x133 ); return 0;
@@ -202,7 +210,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x34 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE4_EJECT:
       menu_media_eject( 0x034 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE4_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE4_SAVE:
+      menu_media_eject( 0x234 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE4_SAVEAS:
       menu_media_eject( 0x134 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE4_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x134 ); return 0;
@@ -214,7 +224,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x35 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE5_EJECT:
       menu_media_eject( 0x035 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE5_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE5_SAVE:
+      menu_media_eject( 0x235 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE5_SAVEAS:
       menu_media_eject( 0x135 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE5_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x135 ); return 0;
@@ -226,7 +238,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x36 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE6_EJECT:
       menu_media_eject( 0x036 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE6_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE6_SAVE:
+      menu_media_eject( 0x236 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE6_SAVEAS:
       menu_media_eject( 0x136 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE6_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x136 ); return 0;
@@ -238,7 +252,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x37 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE7_EJECT:
       menu_media_eject( 0x037 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE7_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE7_SAVE:
+      menu_media_eject( 0x237 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE7_SAVEAS:
       menu_media_eject( 0x137 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE7_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x137 ); return 0;
@@ -250,7 +266,9 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x38 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE8_EJECT:
       menu_media_eject( 0x038 ); return 0;
-    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE8_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE8_SAVE:
+      menu_media_eject( 0x238 ); return 0;
+    case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE8_SAVEAS:
       menu_media_eject( 0x138 ); return 0;
     case IDM_MENU_MEDIA_INTERFACEI_MICRODRIVE8_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x138 ); return 0;
@@ -270,8 +288,14 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x01 ); return 0;
     case IDM_MENU_MEDIA_DISK_3_DRIVEA_EJECT:
       menu_media_eject( 0x01 ); return 0;
-    case IDM_MENU_MEDIA_DISK_3_DRIVEA_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_3_DRIVEA_SAVE:
+      menu_media_eject( 0x201 ); return 0;
+    case IDM_MENU_MEDIA_DISK_3_DRIVEA_SAVEAS:
       menu_media_eject( 0x101 ); return 0;
+    case IDM_MENU_MEDIA_DISK_3_DRIVEA_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x101 ); return 0;
+    case IDM_MENU_MEDIA_DISK_3_DRIVEA_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x001 ); return 0;
     case IDM_MENU_MEDIA_DISK_3_DRIVEA_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x101 ); return 0;
     case IDM_MENU_MEDIA_DISK_3_DRIVEA_WRITEPROTECT_DISABLE:
@@ -282,8 +306,14 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x02 ); return 0;
     case IDM_MENU_MEDIA_DISK_3_DRIVEB_EJECT:
       menu_media_eject( 0x02 ); return 0;
-    case IDM_MENU_MEDIA_DISK_3_DRIVEB_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_3_DRIVEB_SAVE:
+      menu_media_eject( 0x202 ); return 0;
+    case IDM_MENU_MEDIA_DISK_3_DRIVEB_SAVEAS:
       menu_media_eject( 0x102 ); return 0;
+    case IDM_MENU_MEDIA_DISK_3_DRIVEB_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x102 ); return 0;
+    case IDM_MENU_MEDIA_DISK_3_DRIVEB_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x002 ); return 0;
     case IDM_MENU_MEDIA_DISK_3_DRIVEB_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x102 ); return 0;
     case IDM_MENU_MEDIA_DISK_3_DRIVEB_WRITEPROTECT_DISABLE:
@@ -294,8 +324,14 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x11 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_EJECT:
       menu_media_eject( 0x11 ); return 0;
-    case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_SAVE:
+      menu_media_eject( 0x211 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_SAVEAS:
       menu_media_eject( 0x111 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x111 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x011 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x111 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEA_WRITEPROTECT_DISABLE:
@@ -306,8 +342,14 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x12 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_EJECT:
       menu_media_eject( 0x012 ); return 0;
-    case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_SAVE:
+      menu_media_eject( 0x212 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_SAVEAS:
       menu_media_eject( 0x112 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x112 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x012 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x112 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEB_WRITEPROTECT_DISABLE:
@@ -318,8 +360,14 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x13 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_EJECT:
       menu_media_eject( 0x013 ); return 0;
-    case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_SAVE:
+      menu_media_eject( 0x213 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_SAVEAS:
       menu_media_eject( 0x113 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x113 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x013 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x113 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVEC_WRITEPROTECT_DISABLE:
@@ -330,8 +378,14 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x14 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVED_EJECT:
       menu_media_eject( 0x014 ); return 0;
-    case IDM_MENU_MEDIA_DISK_BETA_DRIVED_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVED_SAVE:
+      menu_media_eject( 0x214 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVED_SAVEAS:
       menu_media_eject( 0x114 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVED_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x114 ); return 0;
+    case IDM_MENU_MEDIA_DISK_BETA_DRIVED_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x014 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVED_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x114 ); return 0;
     case IDM_MENU_MEDIA_DISK_BETA_DRIVED_WRITEPROTECT_DISABLE:
@@ -342,8 +396,14 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x21 ); return 0;
     case IDM_MENU_MEDIA_DISK_D_DRIVE1_EJECT:
       menu_media_eject( 0x021 ); return 0;
-    case IDM_MENU_MEDIA_DISK_D_DRIVE1_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_D_DRIVE1_SAVE:
+      menu_media_eject( 0x221 ); return 0;
+    case IDM_MENU_MEDIA_DISK_D_DRIVE1_SAVEAS:
       menu_media_eject( 0x121 ); return 0;
+    case IDM_MENU_MEDIA_DISK_D_DRIVE1_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x121 ); return 0;
+    case IDM_MENU_MEDIA_DISK_D_DRIVE1_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x021 ); return 0;
     case IDM_MENU_MEDIA_DISK_D_DRIVE1_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x121 ); return 0;
     case IDM_MENU_MEDIA_DISK_D_DRIVE1_WRITEPROTECT_DISABLE:
@@ -354,12 +414,54 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_insert( 0x22 ); return 0;
     case IDM_MENU_MEDIA_DISK_D_DRIVE2_EJECT:
       menu_media_eject( 0x022 ); return 0;
-    case IDM_MENU_MEDIA_DISK_D_DRIVE2_EJECTANDWRITE:
+    case IDM_MENU_MEDIA_DISK_D_DRIVE2_SAVE:
+      menu_media_eject( 0x222 ); return 0;
+    case IDM_MENU_MEDIA_DISK_D_DRIVE2_SAVEAS:
       menu_media_eject( 0x122 ); return 0;
+    case IDM_MENU_MEDIA_DISK_D_DRIVE2_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x122 ); return 0;
+    case IDM_MENU_MEDIA_DISK_D_DRIVE2_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x022 ); return 0;
     case IDM_MENU_MEDIA_DISK_D_DRIVE2_WRITEPROTECT_ENABLE:
       menu_media_writeprotect( 0x122 ); return 0;
     case IDM_MENU_MEDIA_DISK_D_DRIVE2_WRITEPROTECT_DISABLE:
       menu_media_writeprotect( 0x022 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_INSERTNEW:
+      menu_media_insert_new( 0x41 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_INSERT:
+      menu_media_insert( 0x41 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_EJECT:
+      menu_media_eject( 0x041 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_SAVE:
+      menu_media_eject( 0x241 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_SAVEAS:
+      menu_media_eject( 0x141 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x141 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x041 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_WRITEPROTECT_ENABLE:
+      menu_media_writeprotect( 0x141 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE1_WRITEPROTECT_DISABLE:
+      menu_media_writeprotect( 0x041 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_INSERTNEW:
+      menu_media_insert_new( 0x42 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_INSERT:
+      menu_media_insert( 0x42 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_EJECT:
+      menu_media_eject( 0x042 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_SAVE:
+      menu_media_eject( 0x242 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_SAVEAS:
+      menu_media_eject( 0x142 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_FLIPDISK_TURNUPSIDEDOWN:
+      menu_media_flip( 0x142 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_FLIPDISK_TURNBACK:
+      menu_media_flip( 0x042 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_WRITEPROTECT_ENABLE:
+      menu_media_writeprotect( 0x142 ); return 0;
+    case IDM_MENU_MEDIA_DISK_OPUS_DRIVE2_WRITEPROTECT_DISABLE:
+      menu_media_writeprotect( 0x042 ); return 0;
     case IDM_MENU_MEDIA_CARTRIDGE_TIMEXDOCK_INSERT:
       menu_media_cartridge_timexdock_insert( 0 ); return 0;
     case IDM_MENU_MEDIA_CARTRIDGE_TIMEXDOCK_EJECT:
@@ -412,6 +514,8 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_ide_eject( 7 ); return 0;
     case IDM_MENU_HELP_KEYBOARD:
       menu_help_keyboard( 0 ); return 0;
+    case IDM_MENU_HELP_ABOUT:
+      menu_help_about( 0 ); return 0;
   }
   return 1;
 }

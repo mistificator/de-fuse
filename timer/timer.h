@@ -1,7 +1,7 @@
 /* timer.h: Speed routines for Fuse
-   Copyright (c) 1999-2004 Philip Kendall
+   Copyright (c) 1999-2008 Philip Kendall
 
-   $Id: timer.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: timer.h 3934 2009-01-06 13:01:37Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,24 +28,18 @@
 
 #include <libspectrum.h>
 
-#include TIMER_HEADER
-
-typedef TIMER_TYPE timer_type;
-
 int timer_estimate_reset( void );
 int timer_estimate_speed( void );
-int timer_get_real_time( timer_type *real_time );
-float timer_get_time_difference( timer_type *a, timer_type *b );
 
 int timer_init(void);
-void timer_sleep_ms( int ms );
-int timer_end(void);
+void timer_end( void );
 
 extern float current_speed;
 extern int timer_event;
 
 /* Internal routines */
 
-void timer_add_time_difference( timer_type *a, long msec );
+double timer_get_time( void );
+void timer_sleep( int ms );
 
 #endif			/* #ifndef FUSE_TIMER_H */

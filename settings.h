@@ -1,5 +1,5 @@
 /* settings.h: Handling configuration settings
-   Copyright (c) Copyright (c) 2001-2003 Philip Kendall
+   Copyright (c) 2001-2003 Philip Kendall
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,16 +46,32 @@ typedef struct settings_info {
   char *dck_file;
   char *debugger_command;
    int detect_loader;
+   int disk_ask_merge;
+  char *disk_try_merge;
    int divide_enabled;
   char *divide_master_file;
   char *divide_slave_file;
    int divide_wp;
    int doublescan_mode;
+   int drive_40_max_track;
+   int drive_80_max_track;
+  char *drive_beta128a_type;
+  char *drive_beta128b_type;
+  char *drive_beta128c_type;
+  char *drive_beta128d_type;
+  char *drive_opus1_type;
+  char *drive_opus2_type;
+  char *drive_plus3a_type;
+  char *drive_plus3b_type;
+  char *drive_plusd1_type;
+  char *drive_plusd2_type;
    int embed_snapshot;
    int emulation_speed;
    int fastload;
+   int fb_mode;
    int frame_rate;
    int full_screen;
+   int fuller;
   char *if2_file;
    int interface1;
    int interface2;
@@ -104,8 +120,13 @@ typedef struct settings_info {
   char *mdr_file8;
    int mdr_len;
    int mdr_random_len;
+   int melodik;
+   int mouse_swap_buttons;
+   int opus;
+  char *opusdisk_file;
    int pal_tv2x;
   char *playback_file;
+   int plus3_detect_speedlock;
   char *plus3disk_file;
    int plusd;
   char *plusddisk_file;
@@ -120,6 +141,7 @@ typedef struct settings_info {
   char *rom_48;
   char *rom_beta128;
   char *rom_interface_i;
+  char *rom_opus;
   char *rom_pentagon1024_0;
   char *rom_pentagon1024_1;
   char *rom_pentagon1024_2;
@@ -172,18 +194,19 @@ typedef struct settings_info {
   char *sound_device;
    int sound_force_8bit;
    int sound_freq;
-   int sound_hifi;
    int sound_load;
+  char *speaker_type;
   char *start_machine;
   char *start_scaler_mode;
    int statusbar;
    int stereo_ay;
-   int stereo_beeper;
    int strict_aspect_hint;
-   int svga_mode;
+  char *svga_modes;
   char *tape_file;
    int tape_traps;
    int unittests;
+   int volume_ay;
+   int volume_beeper;
    int writable_roms;
    int zxatasp_active;
   char *zxatasp_master_file;

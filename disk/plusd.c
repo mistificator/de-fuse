@@ -2,7 +2,7 @@
    Copyright (c) 1999-2007 Stuart Brady, Fredrick Meunier, Philip Kendall,
    Dmitry Sanarin, Darren Salt
 
-   $Id: plusd.c 3942 2009-01-10 14:18:46Z pak21 $
+   $Id: plusd.c 4180 2010-10-09 12:59:37Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,6 +40,13 @@
 #include "settings.h"
 #include "ui/ui.h"
 #include "wd_fdc.h"
+#include "options.h"	/* needed for get combo options */
+
+#define DISK_TRY_MERGE(heads) ( option_enumerate_diskoptions_disk_try_merge() == 2 || \
+				( option_enumerate_diskoptions_disk_try_merge() == 1 && heads == 1 ) )
+
+/* Two 8Kb memory chunks accessible by the Z80 when /ROMCS is low */
+static memory_page plusd_memory_map_romcs[2];
 
 int plusd_available = 0;
 int plusd_active = 0;
@@ -96,8 +103,8 @@ plusd_memory_map( void )
 {
   if( !plusd_active ) return;
 
-  memory_map_read[ 0 ] = memory_map_write[ 0 ] = memory_map_romcs[ 0 ];
-  memory_map_read[ 1 ] = memory_map_write[ 1 ] = memory_map_romcs[ 1 ];
+  memory_map_read[ 0 ] = memory_map_write[ 0 ] = plusd_memory_map_romcs[ 0 ];
+  memory_map_read[ 1 ] = memory_map_write[ 1 ] = plusd_memory_map_romcs[ 1 ];
 }
 
 const periph_t plusd_peripherals[] = {
@@ -131,7 +138,7 @@ plusd_init( void )
 
   for( i = 0; i < PLUSD_NUM_DRIVES; i++ ) {
     d = &plusd_drives[ i ];
-    fdd_init( &d->fdd, FDD_SHUGART, 0, 0 );	/* drive geometry 'autodetect' */
+    fdd_init( &d->fdd, FDD_SHUGART, NULL, 0 );
     d->disk.flag = DISK_FLAG_NONE;
   }
 
@@ -147,6 +154,7 @@ plusd_init( void )
   index_event = event_register( plusd_event_index, "+D index" );
 
   module_register( &plusd_module_info );
+  for( i = 0; i < 2; i++ ) plusd_memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
 
   return 0;
 }
@@ -156,6 +164,7 @@ plusd_reset( int hard_reset )
 {
   int i;
   wd_fdc_drive *d;
+  const fdd_params_t *dt;
 
   plusd_active = 0;
   plusd_available = 0;
@@ -165,19 +174,19 @@ plusd_reset( int hard_reset )
   if( !periph_plusd_active )
     return;
 
-  machine_load_rom_bank( memory_map_romcs, 0, 0,
+  machine_load_rom_bank( plusd_memory_map_romcs, 0, 0,
 			 settings_current.rom_plusd,
 			 settings_default.rom_plusd, 0x2000 );
 
-  memory_map_romcs[0].source = MEMORY_SOURCE_PERIPHERAL;
+  plusd_memory_map_romcs[0].source = MEMORY_SOURCE_PERIPHERAL;
 
-  memory_map_romcs[1].page = plusd_ram;
-  memory_map_romcs[1].source = MEMORY_SOURCE_PERIPHERAL;
+  plusd_memory_map_romcs[1].page = plusd_ram;
+  plusd_memory_map_romcs[1].source = MEMORY_SOURCE_PERIPHERAL;
 
   machine_current->ram.romcs = 0;
 
-  memory_map_romcs[ 0 ].writable = 0;
-  memory_map_romcs[ 1 ].writable = 1;
+  plusd_memory_map_romcs[ 0 ].writable = 0;
+  plusd_memory_map_romcs[ 1 ].writable = 1;
 
   plusd_available = 1;
   plusd_active = 1;
@@ -196,14 +205,27 @@ plusd_reset( int hard_reset )
   }
 
   /* We can eject disks only if they are currently present */
+  dt = &fdd_params[ option_enumerate_diskoptions_drive_plusd1_type() + 1 ];
+  fdd_init( &plusd_drives[ PLUSD_DRIVE_1 ].fdd, FDD_SHUGART, dt, 1 );
+  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1, dt->enabled );
   ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_EJECT,
 		    plusd_drives[ PLUSD_DRIVE_1 ].fdd.loaded );
+  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_FLIP_SET,
+		    !plusd_drives[ PLUSD_DRIVE_1 ].fdd.upsidedown );
   ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_WP_SET,
 		    !plusd_drives[ PLUSD_DRIVE_1 ].fdd.wrprot );
+
+
+  dt = &fdd_params[ option_enumerate_diskoptions_drive_plusd2_type() ];
+  fdd_init( &plusd_drives[ PLUSD_DRIVE_2 ].fdd, dt->enabled ? FDD_SHUGART : FDD_TYPE_NONE, dt, 1 );
+  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2, dt->enabled );
   ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_EJECT,
 		    plusd_drives[ PLUSD_DRIVE_2 ].fdd.loaded );
+  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_FLIP_SET,
+		    !plusd_drives[ PLUSD_DRIVE_2 ].fdd.upsidedown );
   ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_WP_SET,
 		    !plusd_drives[ PLUSD_DRIVE_2 ].fdd.wrprot );
+
 
   plusd_fdc->current_drive = &plusd_drives[ 0 ];
   fdd_select( &plusd_drives[ 0 ].fdd, 1 );
@@ -366,6 +388,7 @@ plusd_disk_insert( plusd_drive_number which, const char *filename,
 {
   int error;
   wd_fdc_drive *d;
+  const fdd_params_t *dt;
 
   if( which >= PLUSD_NUM_DRIVES ) {
     ui_error( UI_ERROR_ERROR, "plusd_disk_insert: unknown drive %d",
@@ -382,14 +405,23 @@ plusd_disk_insert( plusd_drive_number which, const char *filename,
   }
 
   if( filename ) {
-    error = disk_open( &d->disk, filename, 0 );
+    error = disk_open( &d->disk, filename, 0, DISK_TRY_MERGE( d->fdd.fdd_heads ) );
     if( error != DISK_OK ) {
       ui_error( UI_ERROR_ERROR, "Failed to open disk image: %s",
 				disk_strerror( error ) );
       return 1;
     }
   } else {
-    error = disk_new( &d->disk, 2, 80, DISK_DENS_AUTO, DISK_UDI );
+    switch( which ) {
+    case 0:
+      dt = &fdd_params[ option_enumerate_diskoptions_drive_plusd1_type() + 1 ];	/* +1 => there is no `Disabled' */
+      break;
+    case 1:
+    default:
+      dt = &fdd_params[ option_enumerate_diskoptions_drive_plusd2_type() ];
+      break;
+    }
+    error = disk_new( &d->disk, dt->heads, dt->cylinders, DISK_DENS_AUTO, DISK_UDI );
     if( error != DISK_OK ) {
       ui_error( UI_ERROR_ERROR, "Failed to create disk image: %s",
 				disk_strerror( error ) );
@@ -403,11 +435,15 @@ plusd_disk_insert( plusd_drive_number which, const char *filename,
   switch( which ) {
   case PLUSD_DRIVE_1:
     ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_EJECT, 1 );
+    ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_FLIP_SET,
+		      !plusd_drives[ PLUSD_DRIVE_1 ].fdd.upsidedown );
     ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_WP_SET,
 		      !plusd_drives[ PLUSD_DRIVE_1 ].fdd.wrprot );
     break;
   case PLUSD_DRIVE_2:
     ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_EJECT, 1 );
+    ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_FLIP_SET,
+		      !plusd_drives[ PLUSD_DRIVE_2 ].fdd.upsidedown );
     ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_WP_SET,
 		      !plusd_drives[ PLUSD_DRIVE_2 ].fdd.wrprot );
     break;
@@ -421,7 +457,7 @@ plusd_disk_insert( plusd_drive_number which, const char *filename,
 }
 
 int
-plusd_disk_eject( plusd_drive_number which, int write )
+plusd_disk_eject( plusd_drive_number which, int saveas )
 {
   wd_fdc_drive *d;
 
@@ -433,9 +469,12 @@ plusd_disk_eject( plusd_drive_number which, int write )
   if( d->disk.type == DISK_TYPE_NONE )
     return 0;
 
-  if( write ) {
+  if( saveas ) {	/* 1 -> save as.., 2 -> save */
 
-    if( ui_plusd_disk_write( which ) ) return 1;
+    if( d->disk.filename == NULL ) saveas = 1;
+    if( ui_plusd_disk_write( which, 2 - saveas ) ) return 1;
+    d->disk.dirty = 0;
+    return 0;
 
   } else {
 
@@ -450,7 +489,7 @@ plusd_disk_eject( plusd_drive_number which, int write )
       switch( confirm ) {
 
       case UI_CONFIRM_SAVE_SAVE:
-	if( ui_plusd_disk_write( which ) ) return 1;
+	if( plusd_disk_eject( which, 2 ) ) return 1;	/* first save */
 	break;
 
       case UI_CONFIRM_SAVE_DONTSAVE: break;
@@ -470,6 +509,35 @@ plusd_disk_eject( plusd_drive_number which, int write )
     break;
   case PLUSD_DRIVE_2:
     ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_EJECT, 0 );
+    break;
+  }
+  return 0;
+}
+
+int
+plusd_disk_flip( plusd_drive_number which, int flip )
+{
+  wd_fdc_drive *d;
+
+  if( which >= PLUSD_NUM_DRIVES )
+    return 1;
+
+  d = &plusd_drives[ which ];
+
+  if( !d->fdd.loaded )
+    return 1;
+
+  fdd_flip( &d->fdd, flip );
+
+  /* Update the 'write flip' menu item */
+  switch( which ) {
+  case PLUSD_DRIVE_1:
+    ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_FLIP_SET,
+		      !plusd_drives[ PLUSD_DRIVE_1 ].fdd.upsidedown );
+    break;
+  case PLUSD_DRIVE_2:
+    ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_FLIP_SET,
+		      !plusd_drives[ PLUSD_DRIVE_2 ].fdd.upsidedown );
     break;
   }
   return 0;
@@ -504,13 +572,15 @@ plusd_disk_writeprotect( plusd_drive_number which, int wrprot )
   return 0;
 }
 
+/***TODO most part of the next routine could be move to a common place... */
 int
 plusd_disk_write( plusd_drive_number which, const char *filename )
 {
   wd_fdc_drive *d = &plusd_drives[ which ];
   int error;
-  
+
   d->disk.type = DISK_TYPE_NONE;
+  if( filename == NULL ) filename = d->disk.filename;	/* write over original file */
   error = disk_write( &d->disk, filename );
 
   if( error != DISK_OK ) {
@@ -518,8 +588,18 @@ plusd_disk_write( plusd_drive_number which, const char *filename )
 	      disk_strerror( error ) );
     return 1;
   }
+  if( d->disk.filename && strcmp( filename, d->disk.filename ) ) {
+    free( d->disk.filename );
+    d->disk.filename = strdup( filename );
+  }
 
   return 0;
+}
+
+fdd_t *
+plusd_get_fdd( plusd_drive_number which )
+{
+  return &( plusd_drives[ which ].fdd );
 }
 
 static void
@@ -574,7 +654,7 @@ plusd_from_snapshot( libspectrum_snap *snap )
   if( libspectrum_snap_plusd_custom_rom( snap ) &&
       libspectrum_snap_plusd_rom( snap, 0 ) &&
       machine_load_rom_bank_from_buffer(
-                             memory_map_romcs, 0, 0,
+                             plusd_memory_map_romcs, 0, 0,
                              libspectrum_snap_plusd_rom( snap, 0 ),
                              MEMORY_PAGE_SIZE,
                              1 ) )
@@ -585,7 +665,12 @@ plusd_from_snapshot( libspectrum_snap *snap )
             libspectrum_snap_plusd_ram( snap, 0 ), 0x2000 );
   }
 
-  plusd_fdc->direction = libspectrum_snap_beta_direction( snap );
+  /* ignore drive count for now, there will be an issue with loading snaps where
+     drives have been disabled
+  libspectrum_snap_plusd_drive_count( snap )
+   */
+
+  plusd_fdc->direction = libspectrum_snap_plusd_direction( snap );
 
   plusd_cr_write ( 0x00e3, libspectrum_snap_plusd_status ( snap ) );
   plusd_tr_write ( 0x00eb, libspectrum_snap_plusd_track  ( snap ) );
@@ -604,20 +689,25 @@ static void
 plusd_to_snapshot( libspectrum_snap *snap GCC_UNUSED )
 {
   libspectrum_byte *buffer;
+  int drive_count = 0;
 
   if( !periph_plusd_active ) return;
 
   libspectrum_snap_set_plusd_active( snap, 1 );
 
-  buffer = alloc_and_copy_page( memory_map_romcs[0].page );
+  buffer = alloc_and_copy_page( plusd_memory_map_romcs[0].page );
   if( !buffer ) return;
   libspectrum_snap_set_plusd_rom( snap, 0, buffer );
-  if( memory_map_romcs[0].source == MEMORY_SOURCE_CUSTOMROM )
+  if( plusd_memory_map_romcs[0].source == MEMORY_SOURCE_CUSTOMROM )
     libspectrum_snap_set_plusd_custom_rom( snap, 1 );
 
   buffer = alloc_and_copy_page( plusd_ram );
   if( !buffer ) return;
   libspectrum_snap_set_plusd_ram( snap, 0, buffer );
+
+  drive_count++; /* Drive 1 is not removable */
+  if( option_enumerate_diskoptions_drive_plusd2_type() > 0 ) drive_count++;
+  libspectrum_snap_set_plusd_drive_count( snap, drive_count );
 
   libspectrum_snap_set_plusd_paged ( snap, plusd_active );
   libspectrum_snap_set_plusd_direction( snap, plusd_fdc->direction );

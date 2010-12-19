@@ -1,7 +1,7 @@
 /* spec128.c: Spectrum 128K specific routines
    Copyright (c) 1999-2007 Philip Kendall
 
-   $Id: spec128.c 3566 2008-03-18 12:59:16Z pak21 $
+   $Id: spec128.c 4060 2009-07-30 13:21:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -74,7 +74,6 @@ int spec128_init( fuse_machine_info *machine )
   machine->memory_map = spec128_memory_map;
 
   return 0;
-
 }
 
 static int
@@ -98,12 +97,15 @@ spec128_reset( void )
   periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
   periph_setup_interface1( PERIPH_PRESENT_OPTIONAL );
   periph_setup_interface2( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_opus( PERIPH_PRESENT_OPTIONAL );
   periph_setup_plusd( PERIPH_PRESENT_OPTIONAL );
   periph_setup_beta128( PERIPH_PRESENT_OPTIONAL );
   periph_update();
 
   periph_register_beta128();
   beta_builtin = 0;
+
+  spec48_common_display_setup();
 
   return 0;
 }

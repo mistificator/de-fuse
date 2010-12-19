@@ -1,7 +1,7 @@
 /* pokefinder.c: Win32 interface to the poke finder
    Copyright (c) 2004 Marek Januszwski
 
-   $Id: pokefinder.c 3768 2008-09-07 01:33:19Z specu $
+   $Id: pokefinder.c 3987 2009-03-06 18:45:00Z specu $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -266,7 +266,7 @@ possible_click( LPNMITEMACTIVATE lpnmitem )
   row = lpnmitem->iItem;
   
   error = debugger_breakpoint_add_address(
-    DEBUGGER_BREAKPOINT_TYPE_WRITE, possible_page[ row ],
+    DEBUGGER_BREAKPOINT_TYPE_WRITE, possible_page[ row ] + 1,
     possible_offset[ row ], 0, DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
   );
   if( error ) return;

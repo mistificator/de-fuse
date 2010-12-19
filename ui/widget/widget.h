@@ -1,7 +1,7 @@
 /* widget.h: Simple dialog boxes for all user interfaces.
    Copyright (c) 2001-2004 Matan Ziv-Av, Philip Kendall
 
-   $Id: widget.h 3697 2008-06-29 20:51:29Z fredm $
+   $Id: widget.h 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
 #include "ui/scaler/scaler.h"
 #include "ui/ui.h"
 
-/* How many levels deep have we recursed through widgets; -1 => none */
-extern int widget_level;
-
 /* Code called at start and end of emulation */
 int widget_init( void );
 int widget_end( void );
@@ -58,7 +55,7 @@ typedef enum widget_type {
   WIDGET_TYPE_PERIPHERALS,	/* Peripherals options */
   WIDGET_TYPE_QUERY,		/* Query (yes/no) */
   WIDGET_TYPE_QUERY_SAVE,	/* Query (save/don't save/cancel) */
-
+  WIDGET_TYPE_DISKOPTIONS,	/* Disk options widget */
 } widget_type;
 
 /* Activate a widget */

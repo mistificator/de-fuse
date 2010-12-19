@@ -1,7 +1,7 @@
 /* xdisplay.c: Routines for dealing with drawing the Speccy's screen via Xlib
    Copyright (c) 2000-2005 Philip Kendall, Darren Salt, Gergely Szász
 
-   $Id: xdisplay.c 3666 2008-06-10 20:43:46Z fredm $
+   $Id: xdisplay.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -59,10 +59,8 @@
 #include "xdisplay.h"
 #include "xui.h"
 #include "ui/scaler/scaler.h"
+#include "ui/ui.h"
 #include "ui/uidisplay.h"
-#ifdef USE_WIDGET
-#include "ui/widget/widget.h"
-#endif				/* #ifdef USE_WIDGET */
 #include "scld.h"
 
 typedef enum {
@@ -729,11 +727,7 @@ uidisplay_frame_end( void )
     updated_rects[0].h = image_height;
   }
 
-#ifdef USE_WIDGET
-  if ( !( widget_level >= 0 ) && num_rects == 0 ) return;
-#else                   /* #ifdef USE_WIDGET */
-  if ( num_rects == 0 ) return;
-#endif                  /* #ifdef USE_WIDGET */
+  if ( !( ui_widget_level >= 0 ) && num_rects == 0 ) return;
 
   last_rect = updated_rects + num_rects;
 

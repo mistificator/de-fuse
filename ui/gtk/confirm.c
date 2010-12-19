@@ -1,7 +1,7 @@
 /* confirm.c: Confirmation dialog box
    Copyright (c) 2000-2003 Philip Kendall, Russell Marks
 
-   $Id: confirm.c 3288 2007-11-09 18:12:45Z zubzero $
+   $Id: confirm.c 4012 2009-04-16 12:42:14Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -112,6 +112,12 @@ ui_confirm_save_specific( const char *message )
   fuse_emulation_unpause();
 
   return confirm;
+}
+
+int
+ui_query( const char *message )
+{
+  return gtkui_confirm( message );
 }
 
 static void

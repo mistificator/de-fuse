@@ -1,7 +1,7 @@
-/* ide.h: Generic routines shared between the various IDE devices
-   Copyright (c) 2005 Philip Kendall
+/* fuller.h: Routines for handling the Fuller Box
+   Copyright (c) 2007-2009 Stuart Brady, Fredrick Meunier
 
-   $Id: ide.h 2889 2007-05-26 17:45:08Z zubzero $
+   $Id: fuller.h 4030 2009-06-07 14:38:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,24 +19,22 @@
 
    Author contact information:
 
-   E-mail: Philip Kendall <philip-fuse@shadowmagic.org.uk>
+   Philip: philip-fuse@shadowmagic.org.uk
+
+   Stuart: sdbrady@ntlworld.com
 
 */
 
-#ifndef FUSE_IDE_H
-#define FUSE_IDE_H
+#ifndef FUSE_FULLER_H
+#define FUSE_FULLER_H
 
-#include "ui/ui.h"
+#include <libspectrum.h>
 
-int
-ide_insert( const char *filename, libspectrum_ide_channel *chn,
-	    libspectrum_ide_unit unit,
-	    int (*commit_fn)( libspectrum_ide_unit unit ), char **setting,
-	    ui_menu_item item );
+#include "periph.h"
 
-int
-ide_eject( libspectrum_ide_channel *chn, libspectrum_ide_unit unit,
-	   int (*commit_fn)( libspectrum_ide_unit unit ), char **setting,
-	   ui_menu_item item );
+extern const periph_t fuller_peripherals[];
+extern const size_t fuller_peripherals_count;
 
-#endif			/* #ifndef FUSE_IDE_H */
+int fuller_init( void );
+
+#endif				/* #ifndef FUSE_FULLER_H */

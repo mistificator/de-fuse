@@ -1,7 +1,7 @@
 /* z80_ops.c: Process the next opcode
    Copyright (c) 1999-2005 Philip Kendall, Witold Filipczyk
 
-   $Id: z80_ops.c 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: z80_ops.c 4060 2009-07-30 13:21:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,9 +29,10 @@
 
 #include "debugger/debugger.h"
 #include "disk/beta.h"
+#include "disk/opus.h"
 #include "disk/plusd.h"
-#include "divide.h"
 #include "event.h"
+#include "ide/divide.h"
 #include "machine.h"
 #include "memory.h"
 #include "periph.h"
@@ -159,13 +160,16 @@ z80_do_opcodes( void )
 
     CHECK( beta, beta_available )
 
+#define NOT_128_TYPE_OR_IS_48_TYPE ( !( machine_current->capabilities & \
+            LIBSPECTRUM_MACHINE_CAPABILITY_128_MEMORY ) || \
+            machine_current->ram.current_rom )
+
     if( beta_active ) {
-      if( machine_current->ram.current_rom &&
-	  PC >= 16384 ) {
+      if( NOT_128_TYPE_OR_IS_48_TYPE && PC >= 16384 ) {
 	beta_unpage();
       }
-    } else if( ( PC & 0xff00 ) == 0x3d00 &&
-	       machine_current->ram.current_rom ) {
+    } else if( ( PC & beta_pc_mask ) == beta_pc_value &&
+               NOT_128_TYPE_OR_IS_48_TYPE ) {
       beta_page();
     }
 
@@ -228,6 +232,18 @@ z80_do_opcodes( void )
       divide_set_automap( 1 );
     }
     
+    END_CHECK
+
+    CHECK( opus, opus_available )
+
+    if( opus_active ) {
+      if( PC == 0x1748 ) {
+        opus_unpage();
+      }
+    } else if( PC == 0x0008 || PC == 0x0048 || PC == 0x1708 ) {
+      opus_page();
+    }
+
     END_CHECK
 
   end_opcode:

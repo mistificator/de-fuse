@@ -1,7 +1,7 @@
 /* sdl.c: SDL speed routines for Fuse
-   Copyright (c) 1999-2007 Philip Kendall, Marek Januszewski, Fredrick Meunier
+   Copyright (c) 1999-2008 Philip Kendall, Marek Januszewski, Fredrick Meunier
 
-   $Id: sdl.c 3087 2007-07-31 19:08:50Z zubzero $
+   $Id: sdl.c 3934 2009-01-06 13:01:37Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,31 +25,18 @@
 
 #include <config.h>
 
+#include <SDL.h>
+
 #include "timer.h"
 
-int
-timer_get_real_time( timer_type *real_time )
+double
+timer_get_time( void )
 {
-  *real_time = SDL_GetTicks();
-
-  return 0;
-}
-
-float
-timer_get_time_difference( timer_type *a, timer_type *b )
-{
-  return ( (long)*a - (long)*b ) / 1000.0;
+  return SDL_GetTicks() / 1000.0;
 }
 
 void
-timer_add_time_difference( timer_type *a, long msec )
-{
-  *a += msec;
-}
-
-void
-timer_sleep_ms( int ms )
+timer_sleep( int ms )
 {
   SDL_Delay( ms );
 }
-

@@ -1,8 +1,7 @@
-/* zxatasp.h: ZXATASP interface routines
-   Copyright (c) 2003-2004 Garry Lancaster,
-		 2004 Philip Kendall
+/* osname.c: Get a representation of the OS we're running on
+   Copyright (c) 1999-2009 Philip Kendall, Bjoern Giesler
 
-   $Id: zxatasp.h 2993 2007-06-17 13:54:49Z pak21 $
+   $Id: osname.c 3945 2009-01-10 18:44:42Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,23 +19,21 @@
 
    Author contact information:
 
-   E-mail: Philip Kendall <philip-fuse@shadowmagic.org.uk>
+   E-mail: philip-fuse@shadowmagic.org.uk
 
 */
 
-#ifndef FUSE_ZXATASP_H
-#define FUSE_ZXATASP_H
+#include <config.h>
 
-#include <libspectrum.h>
-#include "periph.h"
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
-extern const periph_t zxatasp_peripherals[];
-extern const size_t zxatasp_peripherals_count;
+#include "ui/ui.h"
 
-int zxatasp_init( void );
-int zxatasp_end( void );
-int zxatasp_insert( const char *filename, libspectrum_ide_unit unit );
-int zxatasp_commit( libspectrum_ide_unit unit );
-int zxatasp_eject( libspectrum_ide_unit unit );
-
-#endif			/* #ifndef FUSE_ZXATASP_H */
+int
+compat_osname( char *buffer, size_t length )
+{
+  snprintf(buffer, length, "Wii");
+  return 0;
+}

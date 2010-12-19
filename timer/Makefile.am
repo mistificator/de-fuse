@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
-## Copyright (c) 2004 Philip Kendall
+## Copyright (c) 2004-2008 Philip Kendall
 
-## $Id: Makefile.am 3484 2008-01-08 19:28:12Z pak21 $
+## $Id: Makefile.am 3934 2009-01-06 13:01:37Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,9 +31,8 @@ noinst_LIBRARIES = libtimer.a
 
 libtimer_a_SOURCES = timer.c
 
-EXTRA_libtimer_a_SOURCES = sdl.c \
-			   unix.c \
-			   win32.c	
+EXTRA_libtimer_a_SOURCES = native.c \
+			   sdl.c
 
 libtimer_a_LIBADD = $(TIMER_LIBADD)
 libtimer_a_DEPENDENCIES = $(TIMER_LIBADD)

@@ -1,7 +1,7 @@
 /* debugger.c: the Win32 debugger
    Copyright (c) 2004 Philip Kendall, Marek Januszewski
 
-   $Id: debugger.c 3768 2008-09-07 01:33:19Z specu $
+   $Id: debugger.c 3920 2008-12-25 23:03:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 #include "debugger/debugger.h"
 #include "event.h"
 #include "fuse.h"
+#include "ide/zxcf.h"
 #include "scld.h"
 #include "settings.h"
 #include "ui/ui.h"
@@ -44,7 +45,6 @@
 #include "win32internals.h"
 #include "z80/z80.h"
 #include "z80/z80_macros.h"
-#include "zxcf.h"
 
 #include "debugger.h"
 

@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2004 Philip Kendall
 
-## $Id: Makefile.am 3612 2008-05-02 12:56:05Z fredm $
+## $Id: Makefile.am 4010 2009-04-15 13:01:27Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ libuigtk_la_LIBADD = @GTK_LIBS@ -lX11
 BUILT_SOURCES = keysyms.c \
 		menu_data.c \
 		options.c \
-		options.h
+		options_internals.h
 
 keysyms.c: $(srcdir)/../../keysyms.pl $(srcdir)/../../keysyms.dat
 	@PERL@ -I$(srcdir)/../../perl $(srcdir)/../../keysyms.pl gtk $(srcdir)/../../keysyms.dat > $@.tmp && mv $@.tmp $@
@@ -67,15 +67,15 @@ menu_data.c: $(srcdir)/../../perl/cpp-perl.pl $(srcdir)/../../menu_data.pl $(src
 options.c: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options.pl $(srcdir)/../../ui/options.dat $(srcdir)/../../perl/Fuse.pm $(srcdir)/../../perl/Fuse/Dialog.pm
 	@PERL@ $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/../../ui/options.dat | @PERL@ -I$(srcdir)/../../perl $(srcdir)/options.pl - > $@.tmp && mv $@.tmp $@
 
-options.h: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options-header.pl $(srcdir)/../../ui/options.dat $(srcdir)/../../perl/Fuse.pm $(srcdir)/../../perl/Fuse/Dialog.pm
+options_internals.h: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options-header.pl $(srcdir)/../../ui/options.dat $(srcdir)/../../perl/Fuse.pm $(srcdir)/../../perl/Fuse/Dialog.pm
 	@PERL@ $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/../../ui/options.dat | @PERL@ -I$(srcdir)/../../perl $(srcdir)/options-header.pl - > $@.tmp && mv $@.tmp $@
 
 noinst_HEADERS = gtkinternals.h \
-		 options.h \
+		 options_internals.h \
 		 options.pl \
 		 options-header.pl
 
 CLEANFILES = keysyms.c \
 	     menu_data.c \
 	     options.c \
-	     options.h
+	     options_internals.h

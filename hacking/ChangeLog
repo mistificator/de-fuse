@@ -1,4 +1,4 @@
-snapshot.c: use the fully encapsulated libspectrum_snap
+20030505 snapshot.c: use the fully encapsulated libspectrum_snap
 	 implementation
 20030506 ui/gtk/options.pl: make 'cancel via Escape' GTK+ 2.0 compatible
 	 (Matthew Westcott)
@@ -2934,7 +2934,7 @@ snapshot.c: use the fully encapsulated libspectrum_snap
 20081116 ChangeLog,machines/{specplus2a.c,specplus3.c}: reading from the
 	 AY data port on the +2A/+3 is the same as reading from the
          register port (thanks, Mark Woodmass).
-20081117 ocnfigure.in: bump version number for 0.10.0-pre1 release
+20081117 configure.in: bump version number for 0.10.0-pre1 release
 	 (Release_0_10_0-branch).
 20081118 rzx.c: don't autosave rzx snapshots when we are recording in compo
          mode (Fred).
@@ -2954,24 +2954,421 @@ snapshot.c: use the fully encapsulated libspectrum_snap
 20081129 configure.in,man/fuse.1,README: final tweaks for 0.10.0 release
 	 (Release_0_10_0-branch).
 20081201 fuse.c: update libspectrum version needed (Release_0_10_0-branch).
+20081202 ui/gtk/debugger.c: begin replacing the deprecated GtkCList interface
+	 with GtkTreeView/GtkTreeModel.
+20081203 configure.in,fuse.c,hacking/{ChangeLog,Makefile.am},Makefile.am,
+	 man/fuse.1,README,ui/win32/Makefile.am: merge Release_0_10_0-branch
+	 changes onto trunk.
 20081206 ui/fb/Makefile.am: distribute fbmouse.h (thanks, rkd77) (Fred).
 20081210 Makefile.am,compat/unix/file.c: must open files for writing with
          O_TRUNC to ensure that any old data is cleared out. Also fix a
          dependency problem (thanks, Matthew Westcott).
 20081210 ChangeLog,configure.in,man/fuse.1,README: update for 0.10.0.1 release.
-20090110 Merge changes from trunk:
-	 * disk/disk.c: relax "Track-Info" check (Gergely Szasz; thanks, Simon
-	   Owen).
-	 * ui/widget/options-header.pl: remove unnecessary use directive (Fred).
-	 * event.[ch],disk/fdd.c: fix issue with FDD motor events preventing
-           both +3 disk drives from being used (bug #2424700) (Gergely Szasz).
-	 * ui/widget/query.c: make "Don't Save" return the correct enum (Fred).
-	 * disk/plusd.c: support +D switching between the two drives when the
-           motor on signal is 'ON' as when copying between drives (fixes bug
-           #2465540) (Gergely Szasz).
-	 * fuse.c: update copyright date.
-	 * loader.c: don't call readbyte_internal macro with an argument that
-	   has side effects (fixes accelerated loaders with gcc 3.x; thanks,
-	   Carlos Almeida, Alberto Garcia and Alexander Yurchenko).
-20090114 ui/win32/{Makefile.am,icons/Makefile.am}: Win32: Fixed autotools
-	 scripts so that 'make dist' works properly for win32 ui (Marek).
+20081210 ui/gtk/debugger.c: final bit of GtkCList removal from this file.
+20081210 snapshot.c: remove fallback from +3/+3e to +2A as +3 will now
+	 always be available.
+20081214 disk/disk.c: relax "Track-Info" check (Gergely Szasz; thanks, Simon
+	 Owen).
+20081215 ui/widget/options-header.pl: remove unnecessary use directive (Fred).
+20081215 event.[ch],disk/fdd.c: fix issue with FDD motor events preventing
+         both +3 disk drives from being used (bug #2424700) (Gergely Szasz).
+20081215 event.[ch],rzx.c,spectrum.c,tape.c,timer/timer.[ch]: tidy new event
+	 removal function a bit, and make functions which can't error return
+	 void.
+20081222 menu_data.dat,menu.h,ui/gtk/gtkui.c,ui/widget/menu.c: add Help/About
+         dialog box (Alberto Garcia/Philip Kendall).
+20081225 ui/widget/query.c: make "Don't Save" return the correct enum (Fred).
+20081225 disk/plusd.c: support +D switching between the two drives when the
+         motor on signal is 'ON' as when copying between drives (fixes bug
+         #2465540) (Gergely Szasz).
+20081226 Makefile.am,compat/wii,configure.in,fuse.c,ide/{Makefile.am,
+         divide.[ch],ide.[ch],simpleide.[ch],zxatasp.[ch],zxcf.[ch]},menu.c,
+         periph.c,snapshot.c,ui/gtk/{debugger.c,gtkui.c},
+         ui/widget/{debugger.c,menu.c},ui/win32/debugger.c,utils.c,
+         z80/z80_ops.c: move ide related files to their own sub-directory
+         (Fred).
+20090102 ide/Makefile.am: ensure we pick up glib in GTK+ builds.
+20090102 fuse.c: update copyright date.
+20090106 compat.h,compat/{amiga/Makefile.am,morphos/Makefile.am,
+         unix/{Makefile.am,timer.c},win32/{Makefile.am,timer.c}},configure.in,
+         hacking/timer.txt,Makefile.am,timer/{Makefile.am,native.c,sdl.c,
+         timer.c,timer.h,unix.c,win32.c},ui/widget/widget.c: move better
+         abstraction of timer routines from the Wii branch.
+20090107 Makefile.am,compat.h,compat/{amiga/Makefile.am,morphos/Makefile.am,
+         unix/{Makefile.am,dir.c},win32/Makefile.am},ui/widget/filesel.c:
+         add compatibility layer for directory reading routines (needed for
+         Wii port).
+20090107 compat.h,compat/unix/{dir.c,file.c},machine.c,utils.[ch]:
+         utils_find_auxiliary_file needs to return a compat_fd, not an int
+         (from Wii branch).
+20090107 utils.h: fix utils_read_fd prototype (from Wii branch).
+20090109 loader.c: don't call readbyte_internal macro with an argument that
+	 has side effects (fixes accelerated loaders with gcc 3.x; thanks,
+	 Carlos Almeida, Alberto Garcia and Alexander Yurchenko).
+20090110 AUTHORS,compat.h,compat/{Makefile.am,wii/{file.c,osname.c,paths.c,
+	 timer.c}},configure.in,disk/disk.c,fuse.c,keysyms.pl,menu_data.dat,
+	 README,settings.pl,sound/wiisound.c,tape.c,ui/{Makefile.am,
+	 widget/{filesel.c,menu.c,widget.c,widget_internals.h},
+	 wii/{Makefile.am,wiidisplay.[ch],wiijoystick.c,wiikeyboard.[ch],
+	 wiikeysyms.h,wiimouse.[ch],wiiui.c}},utils.c: merge Wii port to
+	 trunk (Bjoern Giesler/Philip Kendall).
+20090111 configure.in: Wii: Modified configure script so that USE_JOYSTICK is
+	 always defined if Wii ui is used (Marek).
+20090111 ui/wii/wiimouse.c: Wii: Made wii remote arrows send joystick key codes
+	 instead of cursor key codes to the menu since widget now support
+	 joystick a little better. This fixed inability to check the checkboxes
+	 in the menu (Marek).
+20090112 ui/win32/win32ui.c: Win32: Created a simple Help->About message box
+	 (Marek).
+20090112 compat/win32/timer.c: Win32: Added missing include (Marek).
+20090112 configure.in: Win32: Added missing library link needed by the joystick
+	 code (Marek).
+20090112 ui/win32/{installer/{Makefile.am,fuse.nsi},Makefile.am}: Win32: Added
+	 NSIS (nsis.sf.net) installer script (Marek).
+20090112 ui/win32/win32joystick.c: Win32: Small correction to the file's header
+	 info (Marek).
+20090112 ui/win32/installer/fuse.nsi: Win32: Added information and license to
+	 the header of the NSIS installer script (Marek).
+20090114 configure.in,ui/win32/{Makefile.am,icons/Makefile.am}: Win32: Fixed
+	 autotools scripts so that 'make dist' works properly for win32 ui (Marek).
+20090118 ui/wii/wiimouse.c: Wii: Changed menu navigation so that it's navigated
+	 using wii remote in horizontal position, consistently to how wii
+	 remote is used during emulation (Marek).
+20090118 ui/wii/Makefile.am: Wii: Added wiikeysyms.h to the autotools script
+	 (Marek).
+20090118 compat/wii/paths.c: Wii: Changed the home path location to absolute
+	 path, since the relative doesn't seem to work when saving settings
+	 (Marek).
+20090122 ui/widget/filesel.c: Widget: Fixed potential problem with length of
+	 dirent.d_name and made windows version use constant FILENAME_MAX
+	 instead of NAME_MAX (Marek).
+20090124 ui/widget/menu.c: Widget: Added capability to define joystick buttons
+	 (Marek).
+20090126 input.c,ui/wii/wiijoystick.c: Wii: Added support for configuring A, B,
+	 Plus and Minus Wii Remote keys (Marek).
+20090202 menu.c: fix saving PNG movies (fixes bug #2551259) (Gergely Szasz).
+20090210 settings.dat,ui.c,ui/options.dat: allow user to swap Kempston mouse
+         buttons as some combinations of physical hardware and spectrum
+         software make it hard to use the standard mapping e.g. right clicking
+         and moving the cursor on Mac notebooks (thanks, Andrew Owen) (Fred).
+20090211 compat/unix/timer.c: added include <sys/time.h> for gettimeofday
+         (Fred).
+20090211 joystick.[ch],ui/gtk/gtkui.c,ui/widget/widget.c: remove duplication of
+         joystick_connection array (patch #1991669) (Gergely Szasz).
+20090301 options.pl,select.c: allow the use of the home and end keys in option
+         and selection dialogs in the widget UIs (patch #2637459) (Gergely
+         Szasz).
+20090303 perl/cpp-perl.pl: extend cpp-perl.pl to handle all of #ifdef; #ifndef;
+         #if defined; #if ! defined; #elif defined; #elif !defined; #else;
+         #undef; #define (fixes bug #2065518) (Gergely Szasz).
+20090304 disk/disk.[ch],machines/specplus3.c: preformat new disks on +3 to
+         allow format command on +3 to work (fixes bug #2602397) (Gergely
+         Szasz).
+20090306 ui/{gtk,win32}/pokefinder.c: Win32,GTK: Fixed Poke Finder passing the
+         wrong page for the possible found location to the debugger (Marek).
+20090309 ui/widget/text.c: fix display of widget text entry boxes (Fred).
+20090309 ui/widget/options.pl: fixes for widget options when multiple options
+         are changed in one session (fixes bug #2673198) (Gergely Szasz).
+20090315 ui/widget/{menu.c,widget_internals.h,select.c,widget.c,options.pl},
+         ui/gtk/{options-header.pl,options.pl},
+         ui/win32/{options-resource.pl,options-header.pl}: add a new "Combo"
+         type for options entry, for a selection from a defined list (patch
+         #2637346) (Gergely Szasz).
+20090329 disk/{beta.c,fdd.[ch],plusd.c},machines/{specplus3.[ch},specplus3e.c},
+         menu.h,menu_data.dat,settings.dat,ui.c,ui/gtk/options.pl,
+         ui/{options.dat,ui.h},ui/widget/{menu.c,options.pl,widget.[ch]}:
+         allow the configuration of the drives attached to the various disk
+         interfaces (part of patch #2030341, also resolves feature request
+         #1724331) (Gergely Szasz).
+20090329 man/fuse.1,fuse.c,settings.dat,ui/fb/fbdisplay.c,ui/svga/svgadisplay.c:
+         add support for the full range of bit depths and the full range of
+         scalers to the SVGA UI (patch #1745520) (Gergely Szasz).
+20090403 ui/wii/{wiimouse.c,wiijoystick.c}: Wii: Added support for 2 controllers
+	 (Marek).
+20090404 ui/widget/menu.c,ui/wii/{wiimouse.c,wiijoystick.c}: Wii: Added nunchuck
+	 support (Marek).
+20090404 ui/wii/wiimouse.c: Wii: Swapped the functions of 1 and 2 Wii remote
+	 buttons in the menu (Marek).
+20090408 menu_data.dat,ui/wii/wiidisplay.c: Wii: Implemented scalers/filters
+	 (Marek).
+20090414 disk/fdd.c: fix warning.
+20090415 Makefile.am,configure.in,disk/{beta.c,fdd.[ch],plusd.c},
+         machines/specplus3.c,menu_data.pl,
+         ui/gtk/{Makefile.am,options-header.pl,options.pl},
+         ui/widget/{Makefile.am,options-header.pl,options.pl,widget.c},
+         ui/win32/{Makefile.am,options-header.pl}: enumerate combo box options
+         to eliminate duplicated strings (patch #2722074) (Gergely Szasz).
+20090416 ui/widget/options.pl: have current option selected when entering a
+         combo selection screen (more from patch #2722074) (Gergely Szasz).
+20090416 disk/{beta.[ch],disk.[ch],fdd.[ch],plusd.[ch]},machines/specplus3.[ch],
+         menu.[ch],menu_data.dat,settings.dat,ui.c,ui/gtk/confirm.c,
+         ui/options.dat,ui/ui.h,ui/widget/widget.c: add support for flipping
+         drive images in single sided drives and for automatically merging both
+         both drive images where they are named with the text
+         [Ss]ide[ _][abAB12] (patch #2726922) (Gergely Szasz).
+20090504 ui/uijoystick.c: poll_joystick() should fire an input_event for each
+         button (fixes bug #2784357) (Anonymous).
+20090504 input.c,ui/svga/{svgaui.c,svgajoystick.c}: switch SVGA joystick code
+         from the polling interface to the event interface (patch #2785333)
+         (Anonymous).
+20090509 settings.dat,settings.pl,ui/gtk/options.pl,ui/widget/options.pl:
+         defend against segfaults when trying to deal with empty options XML
+         elements (thanks, Anonymous from patch #2788548) (Fred).
+20090518 ui/gtk/options.pl: add <string.h> for strcmp (Fred).
+20090518 man/fuse.1,ui/gtk/{gtkinternals.h,gtkdisplay.c,gtkui.c}: allow scalers
+         to set window size in GTK+ UI (patch #2790063 rkd77 and Fred, also
+         resolves feature requests #1841504 and #1729198).
+20090529 Makefile.am,README,compat.h,configure.in,hacking/ChangeLog,man/fuse.1,
+         settings.dat,sound.[c|cpp|h],sound/{Blip_Buffer.[cpp|h],Makefile.am},
+         tape.c,ui/options.dat,ula.c: switch from libsamplerate to Blip_Buffer
+         (by Shay Green) for alias noise reduction for beeper and AY (Fred).
+20090530 ui/gtk/gtkui.c: remove unused variable (Fred).
+20090530 timer/timer.c: fixes for speed estimation (part of patch in bug
+         #2688741) (Gergely Szasz).
+20090530 configure.in: try harder to find libpng (Fred).
+20090530 ui/gtk/gtkdisplay.c: don't allow double or triple size filters for the
+         Timex machines (Fred).
+20090530 display.c: fix border colour recorded in display_last_screen so it
+         can handle bright borders like in Timex HiRes mode (fixes bug
+         #2788244) (Fred).
+20090531 ui/widget/options.pl: fix options widget drawing bug in segfault
+         protection (Fred).
+20090531 configure.in: seem to be trying too hard to find libpng (Fred).
+20090605 disk/{beta.[ch]},machines/{spec48.c,tc2048.c},man/fuse.1,
+         z80/{coretest.c,z80.c,z80_ops.c}: enable Beta 128 interface in 48K and
+         TC2048 machines (thanks, Omikron) (Fred).
+20090608 Makefile.am,ay.[ch],fuller.[ch],fuse.c,joystick.[ch],kempmouse.c,
+         machines/{spec16.c,spec48.c,tc2048.c},man/fuse.1,periph.[ch],
+         settings.dat,sound.cpp,ui/options.dat: add emulation of the Fuller Box
+         (feature request #1764994) (Stuart & Fred).
+20090608 sound.[cpp|h],sound/{alsasound.c,coreaudiosound.c,sdlsound.c}: allow
+         sound to run from 2% speed up (patch #2799477) (Fred).
+20090610 Makefile.am,ay.[ch],fuse.c,joystick.[ch],kempmouse.c,
+         machines/{spec16.c,spec48.c,tc2048.c},man/fuse.1,melodik.[ch],
+         periph.[ch],settings.dat,sound.cpp,ui/options.dat: add emulation of
+         the Melodik and similar AY interfaces (feature request #1841501)
+         (Fred).
+20090611 sound.cpp: correct AY capability check (thanks, Stuary Brady) (Fred).
+20090613 sound.cpp: ACB stereo fixes (Fred).
+20090613 man/fuse.1,sound.cpp,ui/options.dat: tweak sound output options based
+         on listening tests against real hardware, narrow options to a default
+         similar to MIC output and one similar to the internal beeper (Fred).
+20090613 disk/disk.c: support non-standard TRD images with 41-83 tracks per
+         side (fixes bug #2805766) (Gergely Szasz).
+20090625 display.[ch],machines/{pentagon.c,pentagon1024.c,pentagon512.c,
+         scorpion.c,spec128.c,spec16.c,spec48.[ch],spec_se.c,specplus2.c,
+         specplus2a.c,specplus3.c,specplus3e.c,tc2048.c,tc2068.[ch]},
+         memory.[ch]: add support for Pentagon 1024SL v2.2 16 colour mode
+         (Fred).
+20090627 compat.h,compat/unix/file.c,compat/wii/{Makefile.am,file.c}: switch
+         UNIX file compat routines to use the C standard file I/O, switch Wii
+         to use the UNIX file routines (patch #2808481) (Gergely Szasz).
+20090627 display.c: mark pentagon_16c_get_colour as inline and static (Fred).
+20090706 machines/pentagon1024.c: initialise memory port before doing
+         periph_update as that triggers a memory map call (Fred).
+20090707 AUTHORS: Add Shay Green (Fred).
+20090707 ChangeLog: chuck in a few entries as we go, mostly OS X port visible
+         items at the moment (Fred).
+20090710 disk/{fdd.c,wd_fdc.c}: save disk selected status over reset and
+         reset motor or head when resetting WD FDC to fix Mr Gluck ROM handling
+         on reset with a disk present (patch #2819220) (Gergely Szasz).
+20090730 AUTHORS,ChangeLog,README,
+         disk/{Makefile.am,beta.c,disk.c,opus.[ch],plusd.c,wd_fdc.[ch]},fuse.c,
+         machines/{spec128.c,spec16.c,spec48.c,spec_se.c,specplus2.c,tc2048.c},
+         man/fuse.1,memory.c,menu.[ch],menu_data.dat,periph.[ch],
+         roms/Makefile.am,roms/opus.rom,settings.dat,tape.c,ui.c,ui/options.dat,
+         ui/sdl/sdldisplay.c,ui/ui.h,utils.c,z80/coretest.c,z80/z80_checks.h,
+         z80/z80_ops.c: add Opus Discovery support (patch #2823760) (Gergely
+         Szasz and Fredrick Meunier).
+20090731 disk/disk.c: tweak sector padding to fix ATC+Technician Ted.dsk Opus
+         disk (thanks, Simon Owen) (Gergely Szasz).
+20090803 man/fuse.1: tweak some details in the Opus and +D sections (Fred).
+20090813 compat/wii/paths.c: Wii: Modified compat_is_absolute_path function to
+	 recognize 'sd:/' prefix (Marek).
+20090830 settings-header.pl,settings.pl: Minor correction to the perl code that
+	 was creating duplicate 'Copyright (c)' string in generated c files.
+	 (Marek).
+20090830 fuse.c,ui/wii/wiidisplay.c: Wii: Moved filesystem init to main() where
+	 it belongs (Marek).
+20090830 utils.c,fuse.c,compat.h,disk/disk.c,input.c,README,settings.pl
+	 ui/widget/{menu.c,filesel.c}: Wii: Use GEKKO macro instead of UI_WII
+	 for non-UI code that needs to be compiled when compiling for Wii. This
+	 will allow to compile Fuse for Wii either native or SDL UI (Marek).
+20090830 Makefile.am,ui/win32/{options-resource.pl,confirm.c,options.pl}: Win32:
+	 Fixes to compile fuse for win32 again (patch #2801706) (Gergely Szasz).
+20090830 README: Win32: Added some instructions to README about cross-compiling
+	 fuse with MinGW (patch #2801706) (Gergely Szasz).
+20090831 menu.c,configure.in,menu_data.dat,settings.pl: Added ability to
+	 read/write the config file in ini format in case libxml2 is not
+	 present (patch #2801706) (Marek).
+20090831 compat/unix/file.c: Added 'b' to mode argument of fopen in
+	 compat_file_open - this is ignored for POSIX systems, but for others,
+	 like Win32, it is neccessary (Marek).
+20090831 Makefile.am: Win32: Fixed building the main resource file and made
+	 sure it is rebuilt if any of the included resource files are rebuilt
+	 (Marek).
+20090831 windres.rc: Win32: Added version information to the executable
+	 (Marek).
+20090902 sound/coreaudiosound.c: add missing header and clean up some format
+         warnings (Fred).
+20090902 configure.in: apparently AC_TRY_COMPILE should just have the body of
+         the function, which is placed inside main() (Fred).
+20090902 z80/z80.c: NMI is intended to advance time (Fred).
+20090902 display.c: remove unused variable start in copy_critical_region_line
+         (Fred).
+20090902 rzx.c: rzx_sentinel is intended to reduce tstates by
+         RZX_SENTINEL_TIME_REDUCE (Fred).
+20090902 tape.c: remove unused variable block from tape_play (Fred).
+20090902 debugger/disassemble.c,printer.c: reduce GCC 4.2 string format warnings
+         (Fred).
+20090902 ui/win32/{options.pl,options-{resource,header}.pl}: Win32: Implemented
+	 comboboxes in options dialogs (Marek).
+20090903 disk/disk.c: remove a couple of unneeded settings of bpt (Fred).
+20090903 ui/gtk/picture.c: use a compat_fd rather than an int (Fred).
+20090903 debugger/{command.c,debugger_internals.h}: we put a size_t argument in
+         the result argument of debugger_command_input rather than an int
+         (Fred).
+20090903 ui/win32/picture.c: use a compat_fd rather than an int (Fred).
+20090916 README: change reference to CVS to be Subversion (Fred).
+20091006 ui/uijoystick.c: only send a joystick button event if there has been
+         an actual change in button state since last poll in the libjsw code
+         (fixes bug #2863656) (thanks, Phil Reynolds) (Fred).
+20091007 settings.pl: numeric settings don't need to be non-zero to save into
+         the settings file (fixes bug #2873277) (thanks, Phil Reynolds) (Fred).
+20091016 man/fuse.1: update link to ResiDOS homepage in fuse man page (patch
+         #2875612) (Gergely Szasz).
+20091019 disk/disk.c: correct mapping of sector length to SECLEN_* macros
+         (patch #2875613) (Gergely Szasz).
+20091022 disk/{beta.[ch],opus.c,plusd.c},ide/{divide.c,zxatasp.c,zxcf.c},if1.c,
+         if2.c,machines/{pentagon.c,pentagon1024.c,pentagon512.c,scorpion.c},
+         memory.[ch]: make each peripheral/machine that uses memory paged in via
+         /ROMCS have its own copy of the relevant struct (part of patch
+         #2880415) (Gergely Szasz).
+20091113 man/fuse.1,menu.[ch],menu_data.dat: add a menu item with a hot key to
+         allow full screen and windowed mode switching for SDL (feature
+         request #1515888) (György Szombathelyi).
+20091118 sound/coreaudiosound.c: replace some deprecated functions (Fred).
+20091121 input.h,keyboard.[c|dat|pl],ui/widget/{browse.c,debugger.c,error.c,
+         filesel.c,memory.c,menu.c,options.pl,picture.c,pokefinder.c,query.c,
+         roms.c,select.c,text.c}: some notebooks wire the "standard" return
+         key to the same keysym as enter on the number pad, so treat the two
+         equivalently (thanks, Marce) (Fred).
+20091215 Makefile.am,display.c,rectangle.[ch]: extract dirty rectangle handling
+         to its own files (Fred).
+20091215 man/fuse.1: fix typo (Fred).
+20091216 configure.in: add a '--without-png' option for Gentoo (patch #2915091)
+         (José Manuel Ferrer Ortiz).
+20091227 fuse.c,input.c,menu.c,ui.c,ui/fb/{fbkeyboard.c,fbui.c},
+         ui/sdl/{sdldisplay.c,sdlkeyboard.c,sdlui.c},
+         ui/svga/{svgadisplay.c,svgakeyboard.c,svgaui.c},
+         ui/ui.h,ui/widget/widget.[ch],ui/wii/{wiikeyboard.c,wiiui.c},
+         ui/xlib/{xdisplay.c,xerror.c,xkeyboard.c,xui.c}: move widget UI hooks
+         to the UI code, remove unnecessary #ifdef WIDGET_UI (patch #2918210)
+         (Gergely Szasz).
+20091230 ui.c: include widget.h for widget_init and widget_end definitions (more
+         from patch #2918210) (Gergely Szasz).
+20100107 ui.c: supply dummy ui_widget_init and ui_widget_end definitions (more
+         from patch #2918210) (Gergely Szasz).
+20100107 Makefile.am,configure.in,sound.[c|cpp],
+         sound/{Blip_Buffer.[cpp|h],Makefile.am,blipbuffer.[ch]}: convert
+         Blip_Buffer to plain C (patch #2922796) (Gergely Szasz).
+20100116 disk/{disk.[ch],fdd.[ch],upd_fdc.[ch]},machines/specplus3.[ch],
+         man/fuse.1,periph.c,settings.dat,ui/options.dat: add weak data handling
+         capability so Fuse can deal with weak data if it present in the disk
+         image (EDSK/UDI) (patch #2927624) (Gergely Szasz).
+20100215 ui/gtk/gtkkeyboard.c: account for group setting on key events to make
+         intertional keyboards work based on key positions rather than default
+         symbol (patch #2951275) (Michal Jurica).
+20100302 ui/gtk/gtkui.c: implement drag and drop support (patch #2961519)
+         (Dmitry Semyonov).
+20100506 debugger/{command.c,debugger_internals.h},ula.c: fix gcc 4.4 warnings.
+20100515 disk/upd_fdc.c: fix valgrind warning.
+20100515 ChangeLog: update.
+20100516 ui/ui.h: include widget.h if we are going to refer to widget_finish()
+         (Fred)
+20100516 ui/widget/menu.c: supply a format to avoid warnings (Fred)
+20100516 debugger/commandl.l: have a second go at eliminating warnings when
+         calling debugger_command_input() on platforms where yy_size_t isn't an
+         int in a way that works for platforms where it is (Fred)
+20100519 disk/{beta.c,fdd.[ch],opus.c,plusd.c},machines/specplus3.c,
+         settings.dat: extend 80 track drives to accept disks up to 84 tracks
+         and 40 track drives to accept disks up to 42 tracks. Also add options
+         to allow these limits to be overridden (fixes bug #3002653) (Gergely
+         Szasz).
+20100520 ChangeLog,README,configure.in,man/fuse.1: merge Release_0_10_0-branch
+         changes from 0.10.0.2 onto trunk (Fred).
+20100521 ChangeLog: remove duplicate entry (Fred).
+20100522 sound.c: allow a little more treble in the TV Speaker mode (Fred).
+20100527 sound/coreaudiosound.c: add some casts in output statements to avoid
+         annoying warnings about format mismatches (Fred).
+20100530 ChangeLog: remove another duplicate entry (Fred).
+20100627 ui/gtk/gtkdisplay.c: ensure an appropriate scaler is selected when
+         the Fuse window is resized by the user.
+20100719 disk/disk.c: set track lengths when inserting a new disk (fixes bug
+         #3031299) (Gergely Szasz).
+20100819 disk/beta.c: correct writing of status and system regeisters to
+         snapshots (Patrik Rak).
+20100825 machine.c,machines/{Makefile.am,machines.h},tape.c: reintegrate
+         NTSC Spectrum branch.
+20100831 lib/[un]compressed/{disk_plus3.szx,tape_128.szx,tape_16.szx,
+         tape_2048.szx,tape_2068.szx,tape_48.szx,tape_pentagon.szx,
+         tape_plus2.szx,tape_plus2a.szx,tape_plus3.szx,tape_plus3e.szx,
+         tape_scorpion.szx,tape_se.szx,tape_ts2068.szx}: swap A and F and A'
+         and F' registers in autoload snapshots which were written when
+         libspectrum still suffered from bug #2857419 (fixes bug #3040262)
+         (thanks, Gergely Szasz) (Fred).
+20100831 machines/spec48_ntsc.c: add some more peripherals and add display
+         setup code (Fred).
+20100901 lib/{[un]compressed/tape_48_ntsc.szx,Makefile.am}: add autoload
+         snapshot for NTSC Spectrum (Fred).
+20100905 tape.c: remove obsolete reference to munmap (Fred).
+20100909 settings.pl: remove the 80 character limit in ini file settings
+         names+values and change 256 char path lengths to MAX_PATH (patch
+         #3013768) (Gergely Szasz).
+20100912 menu.c,rzx.[ch]: query for an initial snapshot when opening a rzx file
+         which doesn't have one as is common in competition mode rzx files
+         (patch #3054536) (Sergio Baldovi).
+20100912 configure.in,windres.rc: enhancements to Windows version encoding
+         (patch #3061430) (Sergio Baldovi).
+20100913 fuse.c,menu.[ch],rzx.[ch],utils.[ch]: extend RZX playback handling of
+         files without initial embedded snapshots to cover File->Open, the
+         command line and some miscellaneous RZX playback initialisation bugs
+         (more from patch #3054536) (Sergio Baldovi).
+20100919 ui/win32/installer/fuse.nsi: windows installer improvements; correct
+         uninstall registry key, parameterise installation directory path, add
+         version information fields, optionally register file types, make start
+         menu shortcuts optional and add desktop shortcut (patch #3069264)
+         (Sergio Baldovi).
+20100930 ChangeLog,fuse.c,man/fuse.1,README: first updates for a "1.0" release.
+20101002 lib/{compressed,uncompressed}/*.szx: update libspectrum signature in
+         each file so we know they don't have the A-F swap bug.
+20101003 README: small update to mention WoS forums.
+20101006 configure.in: update header check for XShm.h (patch #3081497) (Gergely
+         Szasz).
+20101006 ui/gtk/{gtkkeyboard.c,gtkui.c,statusbar.c,stock.c}: use F1 as shortcut
+         to open menus, set window dialogs as transient for the main window and
+         set a fixed width for the emulation speed display (patch #3081729)
+         (Sergio Baldovi).
+20101007 ui.c: don't close a disk or mdr if a write fails (patch #3058156)
+         (thanks, Crisis) (Gergely Szasz).
+20101007 ui/widget/query.c: fix colour of dialog Cancel entry and correct action
+         returned when cancel is selected (patch #3083619) (Gergely Szasz).
+20101009 disk/{beta.c,disk.[ch],opus.c,plusd.c},if1.c,machines/specplus3.c,
+         man/fuse.1,menu.c,menu_data.dat,ui.c,ui/ui.h: change "Eject and write"
+         menu items to "Save" and "Save as" (patch #3083639) (Gergely Szasz).
+20101010 configure.in: pad version number for Win32 if needed (patch #3084574)
+         (Sergio Baldovi).
+20101011 ui/gtk/gtkdisplay.c: resize window when machine selection switches
+         between Timex and non-Timex modes (fixes bug #3084862) (thanks, Phil)
+         (Fred).
+20101025 memory.c: writable_roms preference shouldn't affect the 16K machine
+         "empty" page (thanks, Andrew Owen) (Fred).
+20101029 man/fuse.1: some updates to bring things a bit more up to date (Fred).
+20101102 man/fuse.1: remove reference to fixed issue in RZX playback command
+         line ordering (patch #3100707) (Sergio Baldovi).
+20101129 ui/fb/fbdisplay.c: only call fbdisplay_end() when display is
+         initialised (fixes bug #3119382) (rkd77).
+20101129 ChangeLog,README,man/fuse.1: more 1.0 updates.
+20101203 ui/fb/fbdisplay.c: improve fb colour handling and initialise scaler
+         system (fixes bugs #3124787 and #3124788) (rkd77).
+20101216 ChangeLog,README,configure.in,man/fuse.1: update for 1.0.0 release.

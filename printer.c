@@ -1,7 +1,7 @@
 /* printer.c: Printer support
    Copyright (c) 2001-2004 Ian Collier, Russell Marks, Philip Kendall
 
-   $Id: printer.c 3389 2007-12-03 12:54:17Z fredm $
+   $Id: printer.c 4087 2009-09-02 13:42:00Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ if((printer_graphics_file=fopen(settings_current.printer_graphics_filename,
 if(overwrite)
   {
   /* we reserve 10 chars for height */
-  fprintf(printer_graphics_file,pbmstart);
+  fputs(pbmstart,printer_graphics_file);
   fprintf(printer_graphics_file,"%10d\n",0);
   }
 else

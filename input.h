@@ -1,7 +1,7 @@
 /* input.h: generalised input events layer for Fuse
    Copyright (c) 2004 Philip Kendall
 
-   $Id: input.h 3749 2008-08-15 12:47:44Z fredm $
+   $Id: input.h 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -126,6 +126,8 @@ typedef enum input_key {
   INPUT_KEY_z,
 
   INPUT_KEY_BackSpace = 0x7f,
+
+  INPUT_KEY_KP_Enter = 0x8d,
 
   INPUT_KEY_Up = 0x100,
   INPUT_KEY_Down,

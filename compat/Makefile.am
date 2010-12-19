@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2003-2007 Philip Kendall
 
-## $Id: Makefile.am 3283 2007-11-09 12:21:06Z fredm $
+## $Id: Makefile.am 3944 2009-01-10 18:17:04Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ AM_CPPFLAGS += -I$(srcdir)/compat
 DIST_SUBDIRS += compat/amiga \
 	       compat/morphos \
 	       compat/unix \
+	       compat/wii \
 	       compat/win32
 
 EXTRA_fuse_SOURCES += compat/dirname.c \

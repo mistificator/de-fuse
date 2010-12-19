@@ -1,7 +1,7 @@
 /* fdd.h: Header for handling raw disk images
-   Copyright (c) 2007 Gergely Szasz
+   Copyright (c) 2007-2010 Gergely Szasz
 
-   $Id: fdd.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: fdd.h 4131 2010-05-19 10:52:37Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,12 +36,14 @@ typedef enum fdd_error_t {
   FDD_GEOM,
   FDD_DATA,
   FDD_RDONLY,
+  FDD_NONE,		/* FDD not exist (disabled) */
   
   FDD_LAST_ERROR,
 } fdd_error_t;
 
 typedef enum fdd_type_t {
-  FDD_SHUGART = 0,		/* head load when selected */
+  FDD_TYPE_NONE = 0,	/* FDD not exist/disabled */
+  FDD_SHUGART,		/* head load when selected */
   /* 
      .. In a single drive system (program shunt position
         "MX" shorted), with program shunt position "HL"
@@ -84,30 +86,41 @@ typedef struct fdd_t {
   int index;		/* index hole */
   int wrprot;		/* write protect */
   int data;		/* read/write to data byte 0x00nn or 0xffnn */
-  
+  int marks;		/* read/write other marks 0x01 -> FM 0x02 -> WEAK */
+
   disk_t *disk;		/* pointer to inserted disk */
   int loaded;		/* disk loaded */
   int upsidedown;	/* flipped disk */
   int selected;		/* Drive Select line active */
   int ready;		/* some disk drive offer a ready signal */
-  
+
   fdd_error_t status;
 
 /*--private section, fdc may never use it */
   int unreadable;	/* disk unreadable in this drive */
+  int do_read_weak;
   int c_head;		/* current head (side) */
   int c_cylinder;	/* current cylinder number (0 -> TR00) */
+  int c_bpt;		/* current track length in bytes */
   int motoron;		/* motor on */
   int loadhead;		/* head loaded */
 
 } fdd_t;
+
+typedef struct fdd_params_t {
+  int enabled;
+  int heads;
+  int cylinders;
+} fdd_params_t;
+
+extern const fdd_params_t fdd_params[];
 
 /* initialize the event codes */
 int fdd_init_events( void );
 
 const char *fdd_strerror( int error );
 /* initialize the fdd_t struct, and set fdd_heads and cylinders (e.g. 2/83 ) */
-int fdd_init( fdd_t *d, fdd_type_t type, int heads, int cyls );
+int fdd_init( fdd_t *d, fdd_type_t type, const fdd_params_t *dt, int reinit );
 /* load the given disk into the fdd. if upsidedown = 1, floppy upsidedown in drive :) */
 int fdd_load( fdd_t *d, disk_t *disk, int upsidedown );
 /* unload the disk from fdd */
@@ -134,5 +147,7 @@ int fdd_read_write_data( fdd_t *d, fdd_write_t write );
 void fdd_wrprot( fdd_t *d, int wrprot );
 /* to reach index hole */
 void fdd_wait_index_hole( fdd_t *d );
+/* set floppy position ( upsidedown or not )*/
+void fdd_flip( fdd_t *d, int upsidedown );
 
 #endif 	/* FUSE_FDD_H */

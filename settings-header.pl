@@ -3,7 +3,7 @@
 # settings-header.pl: generate settings.h from settings.dat
 # Copyright (c) 2002-2003 Philip Kendall
 
-# $Id: settings-header.pl 2889 2007-05-26 17:45:08Z zubzero $
+# $Id: settings-header.pl 4066 2009-08-30 18:54:15Z specu $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ while(<>) {
 }
 
 print Fuse::GPL( 'settings.h: Handling configuration settings',
-		 'Copyright (c) 2001-2003 Philip Kendall' );
+		 '2001-2003 Philip Kendall' );
 
 print << 'CODE';
 

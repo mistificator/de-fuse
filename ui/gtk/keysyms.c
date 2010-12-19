@@ -110,6 +110,7 @@ keysyms_map_t keysyms_map[] = {
   { GDK_y,           INPUT_KEY_y           },
   { GDK_z,           INPUT_KEY_z           },
   { GDK_BackSpace,   INPUT_KEY_BackSpace   },
+  { GDK_KP_Enter,    INPUT_KEY_KP_Enter    },
   { GDK_Up,          INPUT_KEY_Up          },
   { GDK_Down,        INPUT_KEY_Down        },
   { GDK_Left,        INPUT_KEY_Left        },

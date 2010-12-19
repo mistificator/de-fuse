@@ -1,7 +1,7 @@
-/* simpleide.h: Simple 8-bit IDE interface routines
-   Copyright (c) 2003-2004 Garry Lancaster
+/* native.c: native speed routines for Fuse
+   Copyright (c) 1999-2008 Philip Kendall, Marek Januszewski, Fredrick Meunier
 
-   $Id: simpleide.h 2995 2007-06-17 14:31:36Z pak21 $
+   $Id: native.c 3945 2009-01-10 18:44:42Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,22 +19,24 @@
 
    Author contact information:
 
+   E-mail: philip-fuse@shadowmagic.org.uk
+
 */
 
-#ifndef FUSE_SIMPLEIDE_H
-#define FUSE_SIMPLEIDE_H
+#include <config.h>
 
-#include <libspectrum.h>
-#include "periph.h"
+#include "compat.h"
+#include "timer.h"
 
-extern const periph_t simpleide_peripherals[];
-extern const size_t simpleide_peripherals_count;
+double
+timer_get_time( void )
+{
+  return compat_timer_get_time();
+}
 
-int simpleide_init( void );
-int simpleide_end( void );
-void simpleide_reset( int hard_reset );
-int simpleide_insert( const char *filename, libspectrum_ide_unit unit );
-int simpleide_commit( libspectrum_ide_unit unit );
-int simpleide_eject( libspectrum_ide_unit unit );
+void
+timer_sleep( int ms )
+{
+  compat_timer_sleep( ms );
+}
 
-#endif                 /* #ifndef FUSE_SIMPLEIDE_H */

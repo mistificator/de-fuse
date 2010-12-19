@@ -2,7 +2,7 @@
    Copyright (c) 2003-2004 Garry Lancaster,
 		 2004 Philip Kendall
 
-   $Id: zxcf.h 3021 2007-06-28 15:43:05Z zubzero $
+   $Id: zxcf.h 4207 2010-12-05 10:01:23Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

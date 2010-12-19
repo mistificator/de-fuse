@@ -1,7 +1,7 @@
 /* select.c: generic selection widget
    Copyright (c) 2001-2004 Philip Kendall, Witold Filipczyk
 
-   $Id: select.c 3749 2008-08-15 12:47:44Z fredm $
+   $Id: select.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ static size_t highlight_line;
 
 const char *title;
 const char **options;
+static int finish_all;
 static size_t count;
 static int *result;
 
@@ -81,6 +82,7 @@ widget_select_draw( void *data )
     options = ptr->options;
     count = ptr->count;
     result = &( ptr->result );
+    finish_all = ptr->finish_all;
 
     highlight_line = ptr->current;
 
@@ -128,6 +130,7 @@ widget_select_keyhandler( input_key key )
     return;
 
   case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
   case INPUT_JOYSTICK_FIRE_1:
     widget_end_widget( WIDGET_FINISHED_OK );
     return;
@@ -146,6 +149,20 @@ widget_select_keyhandler( input_key key )
   case INPUT_JOYSTICK_DOWN:
     if ( highlight_line + 1 < (ptrdiff_t)count ) {
       new_highlight_line = highlight_line + 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_Home:
+    if ( highlight_line ) {
+      new_highlight_line = 0;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_End:
+    if ( highlight_line + 2 < (ptrdiff_t)count ) {
+      new_highlight_line = (ptrdiff_t)count - 1;
       cursor_pressed = 1;
     }
     break;
@@ -185,7 +202,8 @@ int widget_select_finish( widget_finish_state finished )
 {
   if( finished == WIDGET_FINISHED_OK ) {
     *result = highlight_line;
-    widget_end_all( WIDGET_FINISHED_OK );
+    if( finish_all )
+      widget_end_all( WIDGET_FINISHED_OK );
   } else {
     *result = -1;
   }

@@ -109,6 +109,7 @@ keysyms_map_t keysyms_map[] = {
   {  21, INPUT_KEY_y           },
   {  44, INPUT_KEY_z           },
   {  14, INPUT_KEY_BackSpace   },
+  {  96, INPUT_KEY_KP_Enter    },
   { 103, INPUT_KEY_Up          },
   { 108, INPUT_KEY_Down        },
   { 105, INPUT_KEY_Left        },

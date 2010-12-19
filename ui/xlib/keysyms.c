@@ -110,6 +110,7 @@ keysyms_map_t keysyms_map[] = {
   { XK_y,           INPUT_KEY_y           },
   { XK_z,           INPUT_KEY_z           },
   { XK_BackSpace,   INPUT_KEY_BackSpace   },
+  { XK_KP_Enter,    INPUT_KEY_KP_Enter    },
   { XK_Up,          INPUT_KEY_Up          },
   { XK_Down,        INPUT_KEY_Down        },
   { XK_Left,        INPUT_KEY_Left        },

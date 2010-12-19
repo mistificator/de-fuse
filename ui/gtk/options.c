@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -38,9 +39,21 @@
 #include "display.h"
 #include "fuse.h"
 #include "gtkinternals.h"
-#include "options.h"
+#include "options_internals.h"
 #include "periph.h"
 #include "settings.h"
+
+static int
+option_enumerate_combo( char **options, char *value, guint count, int def ) {
+  int i;
+  if( value != NULL ) {
+    for( i = 0; i < count; i++) {
+      if( !strcmp( value, options[ i ] ) )
+        return i;
+    }
+  }
+  return def;
+}
 
 static void menu_options_general_done( GtkWidget *widget,
 					  gpointer user_data );
@@ -50,12 +63,14 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
   menu_options_general_t dialog;
-  GtkWidget *frame, *hbox, *text;
+  GtkWidget *frame, *hbox, *text, *combo;
   gchar buffer[80];
+  int i;
 
-  frame = hbox = text = NULL;
+  i = 0;
+  combo = frame = hbox = text = NULL;
   buffer[0] = '\0';		/* Shut gcc up */
-  
+
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
@@ -324,7 +339,6 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
 
   gtk_main_quit();
 }
-
 static void menu_options_peripherals_done( GtkWidget *widget,
 					  gpointer user_data );
 
@@ -333,12 +347,14 @@ menu_options_peripherals( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
   menu_options_peripherals_t dialog;
-  GtkWidget *frame, *hbox, *text;
+  GtkWidget *frame, *hbox, *text, *combo;
   gchar buffer[80];
+  int i;
 
-  frame = hbox = text = NULL;
+  i = 0;
+  combo = frame = hbox = text = NULL;
   buffer[0] = '\0';		/* Shut gcc up */
-  
+
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
@@ -359,6 +375,27 @@ menu_options_peripherals( GtkWidget *widget GCC_UNUSED,
 				settings_current.kempston_mouse );
   gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
 		     dialog.kempston_mouse );
+
+  dialog.mouse_swap_buttons =
+    gtk_check_button_new_with_label( "Swap mouse buttons" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.mouse_swap_buttons ),
+				settings_current.mouse_swap_buttons );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.mouse_swap_buttons );
+
+  dialog.fuller =
+    gtk_check_button_new_with_label( "Fuller Box" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.fuller ),
+				settings_current.fuller );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.fuller );
+
+  dialog.melodik =
+    gtk_check_button_new_with_label( "Melodik" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.melodik ),
+				settings_current.melodik );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.melodik );
 
   dialog.interface1 =
     gtk_check_button_new_with_label( "Interface I" );
@@ -451,6 +488,13 @@ menu_options_peripherals( GtkWidget *widget GCC_UNUSED,
   gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
 		     dialog.beta128 );
 
+  dialog.opus =
+    gtk_check_button_new_with_label( "Opus Discovery interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.opus ),
+				settings_current.opus );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.opus );
+
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
 			     GTK_SIGNAL_FUNC( menu_options_peripherals_done ),
@@ -477,6 +521,15 @@ menu_options_peripherals_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.kempston_mouse =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->kempston_mouse ) );
+
+  settings_current.mouse_swap_buttons =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->mouse_swap_buttons ) );
+
+  settings_current.fuller =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->fuller ) );
+
+  settings_current.melodik =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->melodik ) );
 
   settings_current.interface1 =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->interface1 ) );
@@ -517,6 +570,9 @@ menu_options_peripherals_done( GtkWidget *widget GCC_UNUSED,
   settings_current.beta128 =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->beta128 ) );
 
+  settings_current.opus =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->opus ) );
+
   gtk_widget_destroy( ptr->dialog );
 
   periph_update();
@@ -526,7 +582,6 @@ menu_options_peripherals_done( GtkWidget *widget GCC_UNUSED,
 
   gtk_main_quit();
 }
-
 static void menu_options_rzx_done( GtkWidget *widget,
 					  gpointer user_data );
 
@@ -535,12 +590,14 @@ menu_options_rzx( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
   menu_options_rzx_t dialog;
-  GtkWidget *frame, *hbox, *text;
+  GtkWidget *frame, *hbox, *text, *combo;
   gchar buffer[80];
+  int i;
 
-  frame = hbox = text = NULL;
+  i = 0;
+  combo = frame = hbox = text = NULL;
   buffer[0] = '\0';		/* Shut gcc up */
-  
+
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
@@ -638,6 +695,21 @@ menu_options_rzx_done( GtkWidget *widget GCC_UNUSED,
   gtk_main_quit();
 }
 
+static char * sound_speaker_type_combo[] = {
+  "TV speaker",
+  "Beeper",
+};
+
+static const guint sound_speaker_type_combo_count = 2;
+
+int
+option_enumerate_sound_speaker_type() {
+  return option_enumerate_combo( sound_speaker_type_combo,
+				 settings_current.speaker_type,
+				 sound_speaker_type_combo_count,
+				 0 );
+}
+
 static void menu_options_sound_done( GtkWidget *widget,
 					  gpointer user_data );
 
@@ -646,12 +718,14 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
   menu_options_sound_t dialog;
-  GtkWidget *frame, *hbox, *text;
+  GtkWidget *frame, *hbox, *text, *combo;
   gchar buffer[80];
+  int i;
 
-  frame = hbox = text = NULL;
+  i = 0;
+  combo = frame = hbox = text = NULL;
   buffer[0] = '\0';		/* Shut gcc up */
-  
+
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
@@ -680,13 +754,6 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
   gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
 		     dialog.stereo_ay );
 
-  dialog.stereo_beeper =
-    gtk_check_button_new_with_label( "Beeper pseudo-stereo" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.stereo_beeper ),
-				settings_current.stereo_beeper );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.stereo_beeper );
-
   dialog.sound_force_8bit =
     gtk_check_button_new_with_label( "Force 8-bit" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.sound_force_8bit ),
@@ -694,12 +761,66 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
   gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
 		     dialog.sound_force_8bit );
 
-  dialog.sound_hifi =
-    gtk_check_button_new_with_label( "Hi-fi beeper" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.sound_hifi ),
-				settings_current.sound_hifi );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.sound_hifi );
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Speaker type" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), sound_speaker_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+  if( settings_current.speaker_type != NULL ) {
+    for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.speaker_type, sound_speaker_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.speaker_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.speaker_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  frame = gtk_frame_new( "AY volume" );
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       frame );
+				    
+  hbox = gtk_hbox_new( FALSE, 0 );
+  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+
+  dialog.volume_ay = gtk_entry_new();
+  gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_ay ),
+	   		    3 );
+  snprintf( buffer, 80, "%d", settings_current.volume_ay );
+  gtk_entry_set_text( GTK_ENTRY( dialog.volume_ay ), buffer );
+  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.volume_ay );
+
+  text = gtk_label_new( "%" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+
+  frame = gtk_frame_new( "Beeper volume" );
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       frame );
+				    
+  hbox = gtk_hbox_new( FALSE, 0 );
+  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+
+  dialog.volume_beeper = gtk_entry_new();
+  gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_beeper ),
+	   		    3 );
+  snprintf( buffer, 80, "%d", settings_current.volume_beeper );
+  gtk_entry_set_text( GTK_ENTRY( dialog.volume_beeper ), buffer );
+  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.volume_beeper );
+
+  text = gtk_label_new( "%" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
@@ -731,14 +852,550 @@ menu_options_sound_done( GtkWidget *widget GCC_UNUSED,
   settings_current.stereo_ay =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->stereo_ay ) );
 
-  settings_current.stereo_beeper =
-    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->stereo_beeper ) );
-
   settings_current.sound_force_8bit =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->sound_force_8bit ) );
 
-  settings_current.sound_hifi =
-    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->sound_hifi ) );
+  free( settings_current.speaker_type );
+  settings_current.speaker_type = strdup( sound_speaker_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->speaker_type ) ) ] );
+
+  settings_current.volume_ay =
+    atoi( gtk_entry_get_text( GTK_ENTRY( ptr->volume_ay ) ) );
+
+  settings_current.volume_beeper =
+    atoi( gtk_entry_get_text( GTK_ENTRY( ptr->volume_beeper ) ) );
+
+  gtk_widget_destroy( ptr->dialog );
+
+  gtkstatusbar_set_visibility( settings_current.statusbar );
+  display_refresh_all();
+
+  gtk_main_quit();
+}
+
+static char * diskoptions_drive_plus3a_type_combo[] = {
+  "Single-sided 40 track",
+  "Double-sided 40 track",
+  "Single-sided 80 track",
+  "Double-sided 80 track",
+};
+
+static const guint diskoptions_drive_plus3a_type_combo_count = 4;
+
+int
+option_enumerate_diskoptions_drive_plus3a_type() {
+  return option_enumerate_combo( diskoptions_drive_plus3a_type_combo,
+				 settings_current.drive_plus3a_type,
+				 diskoptions_drive_plus3a_type_combo_count,
+				 0 );
+}
+
+
+static char * diskoptions_drive_plus3b_type_combo[] = {
+  "Disabled",
+  "Single-sided 40 track",
+  "Double-sided 40 track",
+  "Single-sided 80 track",
+  "Double-sided 80 track",
+};
+
+static const guint diskoptions_drive_plus3b_type_combo_count = 5;
+
+int
+option_enumerate_diskoptions_drive_plus3b_type() {
+  return option_enumerate_combo( diskoptions_drive_plus3b_type_combo,
+				 settings_current.drive_plus3b_type,
+				 diskoptions_drive_plus3b_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_beta128a_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_beta128a_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128a_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128a_type_combo,
+				 settings_current.drive_beta128a_type,
+				 diskoptions_drive_beta128a_type_combo_count,
+				 3 );
+}
+
+#define diskoptions_drive_beta128b_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_beta128b_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128b_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128b_type_combo,
+				 settings_current.drive_beta128b_type,
+				 diskoptions_drive_beta128b_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_beta128c_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_beta128c_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128c_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128c_type_combo,
+				 settings_current.drive_beta128c_type,
+				 diskoptions_drive_beta128c_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_beta128d_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_beta128d_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128d_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128d_type_combo,
+				 settings_current.drive_beta128d_type,
+				 diskoptions_drive_beta128d_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_plusd1_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_plusd1_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_plusd1_type() {
+  return option_enumerate_combo( diskoptions_drive_plusd1_type_combo,
+				 settings_current.drive_plusd1_type,
+				 diskoptions_drive_plusd1_type_combo_count,
+				 3 );
+}
+
+#define diskoptions_drive_plusd2_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_plusd2_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_plusd2_type() {
+  return option_enumerate_combo( diskoptions_drive_plusd2_type_combo,
+				 settings_current.drive_plusd2_type,
+				 diskoptions_drive_plusd2_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_opus1_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_opus1_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_opus1_type() {
+  return option_enumerate_combo( diskoptions_drive_opus1_type_combo,
+				 settings_current.drive_opus1_type,
+				 diskoptions_drive_opus1_type_combo_count,
+				 0 );
+}
+
+#define diskoptions_drive_opus2_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_opus2_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_opus2_type() {
+  return option_enumerate_combo( diskoptions_drive_opus2_type_combo,
+				 settings_current.drive_opus2_type,
+				 diskoptions_drive_opus2_type_combo_count,
+				 1 );
+}
+
+
+static char * diskoptions_disk_try_merge_combo[] = {
+  "Never",
+  "With single-sided drives",
+  "Always",
+};
+
+static const guint diskoptions_disk_try_merge_combo_count = 3;
+
+int
+option_enumerate_diskoptions_disk_try_merge() {
+  return option_enumerate_combo( diskoptions_disk_try_merge_combo,
+				 settings_current.disk_try_merge,
+				 diskoptions_disk_try_merge_combo_count,
+				 1 );
+}
+
+static void menu_options_diskoptions_done( GtkWidget *widget,
+					  gpointer user_data );
+
+void
+menu_options_diskoptions( GtkWidget *widget GCC_UNUSED,
+			 gpointer data GCC_UNUSED )
+{
+  menu_options_diskoptions_t dialog;
+  GtkWidget *frame, *hbox, *text, *combo;
+  gchar buffer[80];
+  int i;
+
+  i = 0;
+  combo = frame = hbox = text = NULL;
+  buffer[0] = '\0';		/* Shut gcc up */
+
+  /* Firstly, stop emulation */
+  fuse_emulation_pause();
+
+  /* Create the necessary widgets */
+  dialog.dialog = gtkstock_dialog_new( "Fuse - Drives Setup", NULL );
+
+  /* Create the various widgets */
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "+3 Drive A" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_plus3a_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plus3a_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+  if( settings_current.drive_plus3a_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_plus3a_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_plus3a_type, diskoptions_drive_plus3a_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_plus3a_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plus3a_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "+3 Drive B" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plus3b_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+  if( settings_current.drive_plus3b_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_plus3b_type, diskoptions_drive_plus3b_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_plus3b_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plus3b_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  dialog.plus3_detect_speedlock =
+    gtk_check_button_new_with_label( "+3 Detect Speedlock" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.plus3_detect_speedlock ),
+				settings_current.plus3_detect_speedlock );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.plus3_detect_speedlock );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Beta 128 Drive A" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128a_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 3 );
+  if( settings_current.drive_beta128a_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_beta128a_type, diskoptions_drive_beta128a_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_beta128a_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128a_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Beta 128 Drive B" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128b_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+  if( settings_current.drive_beta128b_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_beta128b_type, diskoptions_drive_beta128b_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_beta128b_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128b_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Beta 128 Drive C" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128c_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+  if( settings_current.drive_beta128c_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_beta128c_type, diskoptions_drive_beta128c_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_beta128c_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128c_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Beta 128 Drive D" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128d_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+  if( settings_current.drive_beta128d_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_beta128d_type, diskoptions_drive_beta128d_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_beta128d_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128d_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "+D Drive 1" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plusd1_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 3 );
+  if( settings_current.drive_plusd1_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_plusd1_type, diskoptions_drive_plusd1_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_plusd1_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plusd1_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "+D Drive 2" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plusd2_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+  if( settings_current.drive_plusd2_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_plusd2_type, diskoptions_drive_plusd2_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_plusd2_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plusd2_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Opus Drive 1" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_opus1_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+  if( settings_current.drive_opus1_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_opus1_type, diskoptions_drive_opus1_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_opus1_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_opus1_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Opus Drive 2" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_opus2_type_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 1 );
+  if( settings_current.drive_opus2_type != NULL ) {
+    for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
+      if( !strcmp( settings_current.drive_opus2_type, diskoptions_drive_opus2_type_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.drive_opus2_type = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_opus2_type, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "Try merge 'B' side of disks" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_disk_try_merge_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 1 );
+  if( settings_current.disk_try_merge != NULL ) {
+    for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
+      if( !strcmp( settings_current.disk_try_merge, diskoptions_disk_try_merge_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.disk_try_merge = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.disk_try_merge, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+  dialog.disk_ask_merge =
+    gtk_check_button_new_with_label( "Confirm merge disk sides" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.disk_ask_merge ),
+				settings_current.disk_ask_merge );
+  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
+		     dialog.disk_ask_merge );
+
+  /* Create the OK and Cancel buttons */
+  gtkstock_create_ok_cancel( dialog.dialog, NULL,
+			     GTK_SIGNAL_FUNC( menu_options_diskoptions_done ),
+			     (gpointer) &dialog, NULL );
+
+  /* Display the window */
+  gtk_widget_show_all( dialog.dialog );
+
+  /* Process events until the window is done with */
+  gtk_main();
+
+  /* And then carry on with emulation again */
+  fuse_emulation_unpause();
+}
+
+static void
+menu_options_diskoptions_done( GtkWidget *widget GCC_UNUSED,
+			      gpointer user_data )
+{
+  menu_options_diskoptions_t *ptr = user_data;
+
+  free( settings_current.drive_plus3a_type );
+  settings_current.drive_plus3a_type = strdup( diskoptions_drive_plus3a_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plus3a_type ) ) ] );
+
+  free( settings_current.drive_plus3b_type );
+  settings_current.drive_plus3b_type = strdup( diskoptions_drive_plus3b_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plus3b_type ) ) ] );
+
+  settings_current.plus3_detect_speedlock =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->plus3_detect_speedlock ) );
+
+  free( settings_current.drive_beta128a_type );
+  settings_current.drive_beta128a_type = strdup( diskoptions_drive_beta128a_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128a_type ) ) ] );
+
+  free( settings_current.drive_beta128b_type );
+  settings_current.drive_beta128b_type = strdup( diskoptions_drive_beta128b_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128b_type ) ) ] );
+
+  free( settings_current.drive_beta128c_type );
+  settings_current.drive_beta128c_type = strdup( diskoptions_drive_beta128c_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128c_type ) ) ] );
+
+  free( settings_current.drive_beta128d_type );
+  settings_current.drive_beta128d_type = strdup( diskoptions_drive_beta128d_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128d_type ) ) ] );
+
+  free( settings_current.drive_plusd1_type );
+  settings_current.drive_plusd1_type = strdup( diskoptions_drive_plusd1_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plusd1_type ) ) ] );
+
+  free( settings_current.drive_plusd2_type );
+  settings_current.drive_plusd2_type = strdup( diskoptions_drive_plusd2_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plusd2_type ) ) ] );
+
+  free( settings_current.drive_opus1_type );
+  settings_current.drive_opus1_type = strdup( diskoptions_drive_opus1_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_opus1_type ) ) ] );
+
+  free( settings_current.drive_opus2_type );
+  settings_current.drive_opus2_type = strdup( diskoptions_drive_opus2_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_opus2_type ) ) ] );
+
+  free( settings_current.disk_try_merge );
+  settings_current.disk_try_merge = strdup( diskoptions_disk_try_merge_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->disk_try_merge ) ) ] );
+
+  settings_current.disk_ask_merge =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->disk_ask_merge ) );
 
   gtk_widget_destroy( ptr->dialog );
 

@@ -1,7 +1,7 @@
 /* memory.c: memory browser widget
    Copyright (c) 2004 Darren Salt
 
-   $Id: memory.c 3676 2008-06-15 11:58:24Z fredm $
+   $Id: memory.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,6 +78,7 @@ widget_memory_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_Return:	/* Close widget */
+  case INPUT_KEY_KP_Enter:
     widget_end_all( WIDGET_FINISHED_OK );
     break;
 

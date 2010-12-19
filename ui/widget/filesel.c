@@ -2,7 +2,7 @@
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall, Russell Marks,
 			   Marek Januszewski
 
-   $Id: filesel.c 3749 2008-08-15 12:47:44Z fredm $
+   $Id: filesel.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #include <config.h>
 
 #include <sys/types.h>
-#include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -92,7 +91,7 @@ static char *widget_get_filename( const char *title, int saving );
 static int widget_add_filename( int *allocated, int *number,
 				struct widget_dirent ***namelist, char *name );
 static void widget_scan( char *dir );
-static int widget_select_file( const struct dirent *dirent );
+static int widget_select_file( const char *name );
 static int widget_scan_compare( const widget_dirent **a,
 				const widget_dirent **b );
 
@@ -267,19 +266,20 @@ amiga_asl( char *title ) {
 #else /* ifdef AMIGA */
 
 static int widget_scandir( const char *dir, struct widget_dirent ***namelist,
-			   int (*select_fn)(const struct dirent*) )
+			   int (*select_fn)(const char*) )
 {
-  DIR *directory; struct dirent *dirent;
+  compat_dir directory;
 
   int allocated, number;
   int i;
+  int done = 0;
 
   *namelist = malloc( 32 * sizeof(**namelist) );
   if( !*namelist ) return -1;
 
   allocated = 32; number = 0;
 
-  directory = opendir( dir );
+  directory = compat_opendir( dir );
   if( !directory ) {
     free( *namelist );
     *namelist = NULL;
@@ -291,40 +291,51 @@ static int widget_scandir( const char *dir, struct widget_dirent ***namelist,
   is_rootdir = 1;
 #endif				/* #ifdef WIN32 */
 
-  while( 1 ) {
-    errno = 0;
-    dirent = readdir( directory );
+  while( !done ) {
+    
+#ifndef WIN32
+    char name[ NAME_MAX + 1 ];
+#else				/* #ifndef WIN32 */
+     /* mingw's dirent implementation doesn't have NAME_MAX */
+     char name[ FILENAME_MAX ];
+#endif				/* #ifndef WIN32 */
 
-    if( !dirent ) {
-      if( errno == 0 ) {	/* End of directory */
-	break;
-      } else {
-	for( i=0; i<number; i++ ) {
-	  free( (*namelist)[i]->name );
-	  free( (*namelist)[i] );
-	}
-	free( *namelist );
-	*namelist = NULL;
-	closedir( directory );
-	return -1;
-      }
-    }
+    compat_dir_result_t result = compat_readdir( directory, name, sizeof( name ) );
 
-    if( select_fn( dirent ) ) {
+    switch( result )
+    {
+    case COMPAT_DIR_RESULT_OK:
+      if( select_fn( name ) ) {
 #ifdef WIN32
-      if( is_rootdir && !strcmp( dirent->d_name, ".." ) ) {
-	is_rootdir = 0;
-      }
+        if( is_rootdir && !strcmp( name, ".." ) ) {
+          is_rootdir = 0;
+        }
 #endif				/* #ifdef WIN32 */
-      if( widget_add_filename( &allocated, &number, namelist,
-			       dirent->d_name ) ) {
-	closedir( directory );
-	return -1;
+        if( widget_add_filename( &allocated, &number, namelist, name ) ) {
+          compat_closedir( directory );
+          return -1;
+        }
       }
+      break;
+
+    case COMPAT_DIR_RESULT_END:
+      done = 1;
+      break;
+
+    case COMPAT_DIR_RESULT_ERROR:
+      for( i=0; i<number; i++ ) {
+        free( (*namelist)[i]->name );
+        free( (*namelist)[i] );
+      }
+      free( *namelist );
+      *namelist = NULL;
+      compat_closedir( directory );
+      return -1;
     }
+
   }
 
-  if( closedir( directory ) ) {
+  if( compat_closedir( directory ) ) {
     for( i=0; i<number; i++ ) {
       free( (*namelist)[i]->name );
       free( (*namelist)[i] );
@@ -420,8 +431,10 @@ static void widget_scan( char *dir )
 
 }
 
-static int widget_select_file(const struct dirent *dirent){
-  return( dirent->d_name && strcmp( dirent->d_name, "." ) );
+static int
+widget_select_file( const char *name )
+{
+  return( name && strcmp( name, "." ) );
 }
 
 static int widget_scan_compare( const struct widget_dirent **a,
@@ -746,7 +759,10 @@ widget_filesel_chdir( void )
     widget_end_widget( WIDGET_FINISHED_CANCEL );
     return 1;
   }
+#ifndef GEKKO
+  /* Wii getcwd() already has the slash on the end */
   strcat( fn, FUSE_DIR_SEP_STR );
+#endif				/* #ifndef GEKKO */
   strcat( fn, widget_filenames[ current_file ]->name );
 
 /*
@@ -781,6 +797,12 @@ http://thread.gmane.org/gmane.comp.gnu.mingw.user/9197
 void
 widget_filesel_keyhandler( input_key key )
 {
+  /* If there are no files (possible on the Wii), can't really do anything */
+  if( widget_numfiles == 0 ) {
+    if( key == INPUT_KEY_Escape ) widget_end_widget( WIDGET_FINISHED_CANCEL );
+    return;
+  }
+  
 #if defined AMIGA || defined __MORPHOS__
   if( exit_all_widgets ) {
     widget_end_all( err );
@@ -895,6 +917,7 @@ widget_filesel_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
   case INPUT_JOYSTICK_FIRE_1:
 #ifdef WIN32
     if( is_drivesel ) {

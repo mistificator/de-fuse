@@ -1,7 +1,7 @@
 /* utils.c: some useful helper functions
    Copyright (c) 1999-2008 Philip Kendall
 
-   $Id: utils.c 3846 2008-11-20 07:17:21Z fredm $
+   $Id: utils.c 4159 2010-09-13 11:51:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,20 +38,20 @@
 
 #include "dck.h"
 #include "disk/beta.h"
-#include "divide.h"
 #include "fuse.h"
+#include "ide/divide.h"
+#include "ide/simpleide.h"
+#include "ide/zxatasp.h"
+#include "ide/zxcf.h"
 #include "if1.h"
 #include "if2.h"
 #include "machines/specplus3.h"
 #include "memory.h"
 #include "rzx.h"
 #include "settings.h"
-#include "simpleide.h"
 #include "snapshot.h"
 #include "tape.h"
 #include "utils.h"
-#include "zxatasp.h"
-#include "zxcf.h"
 
 typedef struct path_context {
 
@@ -76,6 +76,11 @@ utils_open_file( const char *filename, int autoload,
   libspectrum_class_t class;
   int error;
 
+  error = 0;
+  if( rzx_recording ) error = rzx_stop_recording();
+  if( rzx_playback  ) error = rzx_stop_playback( 1 );
+  if( error ) return error;
+
   /* Read the file into a buffer */
   if( utils_read_file( filename, &file ) ) return 1;
 
@@ -85,8 +90,6 @@ utils_open_file( const char *filename, int autoload,
     utils_close_file( &file );
     return 1;
   }
-
-  error = 0;
 
   switch( class ) {
     
@@ -121,6 +124,11 @@ utils_open_file( const char *filename, int autoload,
   case LIBSPECTRUM_CLASS_DISK_PLUSD:
 
     error = plusd_disk_insert( PLUSD_DRIVE_1, filename, autoload );
+    break;
+
+  case LIBSPECTRUM_CLASS_DISK_OPUS:
+
+    error = opus_disk_insert( OPUS_DRIVE_1, filename, autoload );
     break;
 
   case LIBSPECTRUM_CLASS_DISK_TRDOS:
@@ -203,9 +211,24 @@ utils_open_file( const char *filename, int autoload,
   return 0;
 }
 
+/* Request a snapshot file from the user and it */
+int
+utils_open_snap( void )
+{
+  char *filename;
+  int error;
+
+  filename = ui_get_open_filename( "Fuse - Load Snapshot" );
+  if( !filename ) return -1;
+
+  error = snapshot_read( filename );
+  free( filename );
+  return error;
+}
+
 /* Find the auxiliary file called `filename'; returns a fd for the
    file on success, -1 if it couldn't find the file */
-int
+compat_fd
 utils_find_auxiliary_file( const char *filename, utils_aux_type type )
 {
   compat_fd fd;
@@ -232,7 +255,7 @@ utils_find_auxiliary_file( const char *filename, utils_aux_type type )
   }
 
   /* Give up. Couldn't find this file */
-  return -1;
+  return COMPAT_FILE_OPEN_FAILED;
 }
 
 
@@ -326,11 +349,15 @@ get_next_path( path_context *ctx )
     /* Then where we may have installed the data files */
   case 2:
 
+#ifdef GEKKO 
+    path2 = "sd:/apps/fuse";
+#else				/* #ifdef GEKKO */
 #ifndef ROMSDIR
     path2 = FUSEDATADIR;
 #else				/* #ifndef ROMSDIR */
     path2 = ctx->type == UTILS_AUXILIARY_ROM ? ROMSDIR : FUSEDATADIR;
 #endif				/* #ifndef ROMSDIR */
+#endif				/* #ifdef GEKKO */
     strncpy( ctx->path, path2, PATH_MAX ); buffer[ PATH_MAX - 1 ] = '\0';
     return 1;
 

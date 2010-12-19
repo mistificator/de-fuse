@@ -1,7 +1,7 @@
 /* fuse.c: The Free Unix Spectrum Emulator
-   Copyright (c) 1999-2009 Philip Kendall
+   Copyright (c) 1999-2010 Philip Kendall and others
 
-   $Id: fuse.c 3942 2009-01-10 14:18:46Z pak21 $
+   $Id: fuse.c 4165 2010-09-30 21:55:05Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,21 +43,30 @@
 #include <SDL.h>		/* Needed on MacOS X and Windows */
 #endif				/* #ifdef UI_SDL */
 
+#ifdef GEKKO
+#include <fat.h>
+#endif				/* #ifdef GEKKO */
+
 #include "ay.h"
 #include "dck.h"
 #include "debugger/debugger.h"
 #include "disk/beta.h"
 #include "disk/fdd.h"
 #include "display.h"
-#include "divide.h"
 #include "event.h"
+#include "fuller.h"
 #include "fuse.h"
+#include "ide/divide.h"
+#include "ide/simpleide.h"
+#include "ide/zxatasp.h"
+#include "ide/zxcf.h"
 #include "if1.h"
 #include "if2.h"
 #include "joystick.h"
-#include "keyboard.h"
 #include "kempmouse.h"
+#include "keyboard.h"
 #include "machine.h"
+#include "melodik.h"
 #include "memory.h"
 #include "pokefinder/pokefinder.h"
 #include "printer.h"
@@ -66,24 +75,17 @@
 #include "rzx.h"
 #include "scld.h"
 #include "settings.h"
-#include "simpleide.h"
 #include "slt.h"
 #include "snapshot.h"
 #include "sound.h"
 #include "spectrum.h"
 #include "tape.h"
 #include "timer/timer.h"
-#include "ui/ui.h"
 #include "ui/scaler/scaler.h"
+#include "ui/ui.h"
 #include "ula.h"
 #include "unittests/unittests.h"
 #include "utils.h"
-#include "zxatasp.h"
-#include "zxcf.h"
-
-#ifdef USE_WIDGET
-#include "ui/widget/widget.h"
-#endif                          /* #ifdef USE_WIDGET */
 
 #include "z80/z80.h"
 
@@ -109,6 +111,7 @@ static const char *LIBSPECTRUM_MIN_VERSION = "0.5.0";
 typedef struct start_files_t {
 
   const char *disk_plus3;
+  const char *disk_opus;
   const char *disk_plusd;
   const char *disk_beta;
   const char *dock;
@@ -152,6 +155,10 @@ int main(int argc, char **argv)
   SetErrorMode( SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX );
 #endif
 
+#ifdef GEKKO
+  fatInitDefault();
+#endif				/* #ifdef GEKKO */
+  
   if(fuse_init(argc,argv)) {
     fprintf(stderr,"%s: error initialising -- giving up!\n", fuse_progname);
     return 1;
@@ -188,8 +195,19 @@ static int fuse_init(int argc, char **argv)
      generator with the current time */
   srand( (unsigned)time( NULL ) );
 
-  fuse_progname=argv[0];
+  /* Some platforms (e.g. Wii) do not have argc/argv */
+  if(argc > 0)
+    fuse_progname = argv[0];
+  else
+    fuse_progname = "fuse";
+  
   libspectrum_error_function = ui_libspectrum_error;
+
+#ifdef GEKKO
+  /* On the Wii, init the display first so we have a way of outputting
+     messages */
+  if( display_init(&argc,&argv) ) return 1;
+#endif
 
   if( !getcwd( fuse_directory, PATH_MAX - 1 ) ) {
     ui_error( UI_ERROR_ERROR, "error getting current working directory: %s",
@@ -227,13 +245,11 @@ static int fuse_init(int argc, char **argv)
   fuse_joystick_init ();
   fuse_keyboard_init();
 
-#ifdef USE_WIDGET
-  if( widget_init() ) return 1;
-#endif				/* #ifdef USE_WIDGET */
-
   if( event_init() ) return 1;
   
+#ifndef GEKKO
   if( display_init(&argc,&argv) ) return 1;
+#endif
 
   if( libspectrum_check_version( LIBSPECTRUM_MIN_VERSION ) ) {
     if( libspectrum_init() ) return 1;
@@ -263,6 +279,7 @@ static int fuse_init(int argc, char **argv)
   if( rzx_init() ) return 1;
   if( psg_init() ) return 1;
   if( beta_init() ) return 1;
+  if( opus_init() ) return 1;
   if( plusd_init() ) return 1;
   if( fdd_init_events() ) return 1;
   if( simpleide_init() ) return 1;
@@ -277,6 +294,8 @@ static int fuse_init(int argc, char **argv)
   if( slt_init() ) return 1;
   if( profile_init() ) return 1;
   if( kempmouse_init() ) return 1;
+  if( fuller_init() ) return 1;
+  if( melodik_init() ) return 1;
 
   error = pokefinder_clear(); if( error ) return error;
 
@@ -374,7 +393,7 @@ static void fuse_show_copyright(void)
   printf( "\n" );
   fuse_show_version();
   printf(
-   "Copyright (c) 1999-2009 Philip Kendall and others; see the file\n"
+   "Copyright (c) 1999-2010 Philip Kendall and others; see the file\n"
    "'AUTHORS' for more details.\n"
    "\n"
    "For help, please mail <fuse-emulator-devel@lists.sf.net> or use\n"
@@ -417,7 +436,7 @@ static void fuse_show_help( void )
    "--record <filename>    Record to RZX file <filename>.\n"
    "--snapshot <filename>  Load snapshot <filename>.\n"
    "--speed <percentage>   How fast should emulation run?\n"
-   "--svga-mode <mode>     Which mode should be used for SVGAlib?\n"
+   "--fb-mode <mode>       Which mode should be used for FB?\n"
    "--tape <filename>      Open tape file <filename>.\n"
    "--version              Print version number and exit.\n\n" );
 }
@@ -466,6 +485,7 @@ static int
 setup_start_files( start_files_t *start_files )
 {
   start_files->disk_plus3 = settings_current.plus3disk_file;
+  start_files->disk_opus = settings_current.opusdisk_file;
   start_files->disk_plusd = settings_current.plusddisk_file;
   start_files->disk_beta = settings_current.betadisk_file;
   start_files->dock = settings_current.dck_file;
@@ -510,6 +530,11 @@ parse_nonoption_args( int argc, char **argv, int first_arg,
   libspectrum_class_t class;
   int error;
 
+#ifdef GEKKO
+  /* No argv on the Wii. Just return */
+  return 0;
+#endif
+
   for( i = first_arg; i < (size_t)argc; i++ ) {
 
     filename = argv[i];
@@ -548,6 +573,9 @@ parse_nonoption_args( int argc, char **argv, int first_arg,
     case LIBSPECTRUM_CLASS_DISK_PLUS3:
       start_files->disk_plus3 = filename; break;
 
+    case LIBSPECTRUM_CLASS_DISK_OPUS:
+      start_files->disk_opus = filename; break;
+
     case LIBSPECTRUM_CLASS_DISK_PLUSD:
       start_files->disk_plusd = filename; break;
 
@@ -568,6 +596,8 @@ parse_nonoption_args( int argc, char **argv, int first_arg,
           start_files->disk_beta = filename; 
         else if( periph_plusd_active )
           start_files->disk_plusd = filename;
+        else if( periph_opus_active )
+          start_files->disk_opus = filename;
       }
       break;
 
@@ -608,7 +638,7 @@ parse_nonoption_args( int argc, char **argv, int first_arg,
 static int
 do_start_files( start_files_t *start_files )
 {
-  int autoload, error, i;
+  int autoload, error, i, check_snapshot;
 
   /* Can't do both input recording and playback */
   if( start_files->playback && start_files->recording ) {
@@ -664,6 +694,11 @@ do_start_files( start_files_t *start_files )
 
   if( start_files->disk_plusd ) {
     error = utils_open_file( start_files->disk_plusd, autoload, NULL );
+    if( error ) return error;
+  }
+
+  if( start_files->disk_opus ) {
+    error = utils_open_file( start_files->disk_opus, autoload, NULL );
     if( error ) return error;
   }
 
@@ -748,7 +783,8 @@ do_start_files( start_files_t *start_files )
   /* Input recordings */
 
   if( start_files->playback ) {
-    error = utils_open_file( start_files->playback, autoload, NULL );
+    check_snapshot = start_files->snapshot ? 0 : 1;
+    error = rzx_start_playback( start_files->playback, check_snapshot );
     if( error ) return error;
   }
 
@@ -780,6 +816,7 @@ static int fuse_end(void)
   zxcf_end();
   if1_end();
   divide_end();
+  opus_end();
   plusd_end();
 
   machine_end();
@@ -790,10 +827,6 @@ static int fuse_end(void)
   event_end();
   fuse_joystick_end();
   ui_end();
-
-#ifdef USE_WIDGET
-  widget_end();
-#endif                          /* #ifdef USE_WIDGET */
 
   libspectrum_creator_free( fuse_creator );
 

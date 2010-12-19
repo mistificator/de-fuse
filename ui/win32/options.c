@@ -1,5 +1,5 @@
 /* options.c: options dialog boxes
-   Copyright (c) 2001-2007 Philip Kendall, Marek Januszewski, Stuart Brady
+   Copyright (c) 2001-2009 Philip Kendall, Marek Januszewski, Stuart Brady
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,16 +32,30 @@
 
 #include "display.h"
 #include "fuse.h"
-#include "options.h"
+#include "options_internals.h"
 #include "periph.h"
 #include "settings.h"
 #include "win32internals.h"
 
+static int
+option_enumerate_combo( char **options, char *value, int count, int def ) {
+  int i;
+  if( value != NULL ) {
+    for( i = 0; i < count; i++) {
+      if( !strcmp( value, options[ i ] ) )
+        return i;
+    }
+  }
+  return def;
+}
 
 static BOOL CALLBACK
 menu_options_general_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
   char buffer[80];
+  int i;
+  
+  i = 0;
   buffer[0] = '\0';		/* Shut gcc up */
   
   switch( msg )
@@ -188,11 +202,13 @@ menu_options_general( int action )
   fuse_emulation_unpause();
 }
 
-
 static BOOL CALLBACK
 menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
   char buffer[80];
+  int i;
+  
+  i = 0;
   buffer[0] = '\0';		/* Shut gcc up */
   
   switch( msg )
@@ -210,6 +226,12 @@ menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
         settings_current.joy_kempston ? BST_CHECKED : BST_UNCHECKED, 0 );
       SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_KEMPSTON_MOUSE, BM_SETCHECK,
         settings_current.kempston_mouse ? BST_CHECKED : BST_UNCHECKED, 0 );
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_MOUSE_SWAP_BUTTONS, BM_SETCHECK,
+        settings_current.mouse_swap_buttons ? BST_CHECKED : BST_UNCHECKED, 0 );
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_FULLER, BM_SETCHECK,
+        settings_current.fuller ? BST_CHECKED : BST_UNCHECKED, 0 );
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_MELODIK, BM_SETCHECK,
+        settings_current.melodik ? BST_CHECKED : BST_UNCHECKED, 0 );
       SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_INTERFACE1, BM_SETCHECK,
         settings_current.interface1 ? BST_CHECKED : BST_UNCHECKED, 0 );
       SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_INTERFACE2, BM_SETCHECK,
@@ -236,6 +258,8 @@ menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
         settings_current.plusd ? BST_CHECKED : BST_UNCHECKED, 0 );
       SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_BETA128, BM_SETCHECK,
         settings_current.beta128 ? BST_CHECKED : BST_UNCHECKED, 0 );
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_OPUS, BM_SETCHECK,
+        settings_current.opus ? BST_CHECKED : BST_UNCHECKED, 0 );
 
       return FALSE;
     }
@@ -250,6 +274,12 @@ menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
             IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_JOY_KEMPSTON );
           settings_current.kempston_mouse =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_KEMPSTON_MOUSE );
+          settings_current.mouse_swap_buttons =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_MOUSE_SWAP_BUTTONS );
+          settings_current.fuller =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_FULLER );
+          settings_current.melodik =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_MELODIK );
           settings_current.interface1 =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_INTERFACE1 );
           settings_current.interface2 =
@@ -276,6 +306,8 @@ menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
             IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_PLUSD );
           settings_current.beta128 =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_BETA128 );
+          settings_current.opus =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_OPUS );
           periph_update();
 
           win32statusbar_set_visibility( settings_current.statusbar );
@@ -309,11 +341,13 @@ menu_options_peripherals( int action )
   fuse_emulation_unpause();
 }
 
-
 static BOOL CALLBACK
 menu_options_rzx_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
   char buffer[80];
+  int i;
+  
+  i = 0;
   buffer[0] = '\0';		/* Shut gcc up */
   
   switch( msg )
@@ -393,10 +427,28 @@ menu_options_rzx( int action )
 }
 
 
+static char * sound_speaker_type_combo[] = {
+  "TV speaker",
+  "Beeper",
+};
+
+static const int sound_speaker_type_combo_count = 2;
+
+int
+option_enumerate_sound_speaker_type() {
+  return option_enumerate_combo( sound_speaker_type_combo,
+				 settings_current.speaker_type,
+				 sound_speaker_type_combo_count,
+				 0 );
+}
+
 static BOOL CALLBACK
 menu_options_sound_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
   char buffer[80];
+  int i;
+  
+  i = 0;
   buffer[0] = '\0';		/* Shut gcc up */
   
   switch( msg )
@@ -416,12 +468,32 @@ menu_options_sound_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
         settings_current.sound_load ? BST_CHECKED : BST_UNCHECKED, 0 );
       SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_STEREO_AY, BM_SETCHECK,
         settings_current.stereo_ay ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_STEREO_BEEPER, BM_SETCHECK,
-        settings_current.stereo_beeper ? BST_CHECKED : BST_UNCHECKED, 0 );
       SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SOUND_FORCE_8BIT, BM_SETCHECK,
         settings_current.sound_force_8bit ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SOUND_HIFI, BM_SETCHECK,
-        settings_current.sound_hifi ? BST_CHECKED : BST_UNCHECKED, 0 );
+      for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SPEAKER_TYPE, CB_ADDSTRING,
+          0, (LPARAM) sound_speaker_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SPEAKER_TYPE, CB_SETCURSEL,
+        (LPARAM) 0, 0 );
+      if( settings_current.speaker_type != NULL ) {
+        for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.speaker_type,
+                       sound_speaker_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SPEAKER_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+      snprintf( buffer, 80, "%d", settings_current.volume_ay );
+      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_AY, WM_SETTEXT,
+        0, (LPARAM) buffer );
+      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+      snprintf( buffer, 80, "%d", settings_current.volume_beeper );
+      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_BEEPER, WM_SETTEXT,
+        0, (LPARAM) buffer );
 
       return FALSE;
     }
@@ -438,12 +510,21 @@ menu_options_sound_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
             IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_SOUND_LOAD );
           settings_current.stereo_ay =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_STEREO_AY );
-          settings_current.stereo_beeper =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_STEREO_BEEPER );
           settings_current.sound_force_8bit =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_SOUND_FORCE_8BIT );
-          settings_current.sound_hifi =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_SOUND_HIFI );
+      free( settings_current.speaker_type );
+      settings_current.speaker_type =
+        strdup( sound_speaker_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SPEAKER_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_AY, WM_GETTEXT,
+        80, (LPARAM) buffer );
+      settings_current.volume_ay = atoi( buffer );  
+      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_BEEPER, WM_GETTEXT,
+        80, (LPARAM) buffer );
+      settings_current.volume_beeper = atoi( buffer );  
           win32statusbar_set_visibility( settings_current.statusbar );
           display_refresh_all();
 
@@ -471,6 +552,448 @@ menu_options_sound( int action )
 
   DialogBox( fuse_hInstance, MAKEINTRESOURCE( IDD_OPT_SOUND ),
              fuse_hWnd, (DLGPROC) menu_options_sound_proc );
+
+  fuse_emulation_unpause();
+}
+
+
+static char * diskoptions_drive_plus3a_type_combo[] = {
+  "Single-sided 40 track",
+  "Double-sided 40 track",
+  "Single-sided 80 track",
+  "Double-sided 80 track",
+};
+
+static const int diskoptions_drive_plus3a_type_combo_count = 4;
+
+int
+option_enumerate_diskoptions_drive_plus3a_type() {
+  return option_enumerate_combo( diskoptions_drive_plus3a_type_combo,
+				 settings_current.drive_plus3a_type,
+				 diskoptions_drive_plus3a_type_combo_count,
+				 0 );
+}
+
+
+static char * diskoptions_drive_plus3b_type_combo[] = {
+  "Disabled",
+  "Single-sided 40 track",
+  "Double-sided 40 track",
+  "Single-sided 80 track",
+  "Double-sided 80 track",
+};
+
+static const int diskoptions_drive_plus3b_type_combo_count = 5;
+
+int
+option_enumerate_diskoptions_drive_plus3b_type() {
+  return option_enumerate_combo( diskoptions_drive_plus3b_type_combo,
+				 settings_current.drive_plus3b_type,
+				 diskoptions_drive_plus3b_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_beta128a_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_beta128a_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128a_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128a_type_combo,
+				 settings_current.drive_beta128a_type,
+				 diskoptions_drive_beta128a_type_combo_count,
+				 3 );
+}
+
+#define diskoptions_drive_beta128b_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_beta128b_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128b_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128b_type_combo,
+				 settings_current.drive_beta128b_type,
+				 diskoptions_drive_beta128b_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_beta128c_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_beta128c_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128c_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128c_type_combo,
+				 settings_current.drive_beta128c_type,
+				 diskoptions_drive_beta128c_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_beta128d_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_beta128d_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_beta128d_type() {
+  return option_enumerate_combo( diskoptions_drive_beta128d_type_combo,
+				 settings_current.drive_beta128d_type,
+				 diskoptions_drive_beta128d_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_plusd1_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_plusd1_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_plusd1_type() {
+  return option_enumerate_combo( diskoptions_drive_plusd1_type_combo,
+				 settings_current.drive_plusd1_type,
+				 diskoptions_drive_plusd1_type_combo_count,
+				 3 );
+}
+
+#define diskoptions_drive_plusd2_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_plusd2_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_plusd2_type() {
+  return option_enumerate_combo( diskoptions_drive_plusd2_type_combo,
+				 settings_current.drive_plusd2_type,
+				 diskoptions_drive_plusd2_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_opus1_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_opus1_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_opus1_type() {
+  return option_enumerate_combo( diskoptions_drive_opus1_type_combo,
+				 settings_current.drive_opus1_type,
+				 diskoptions_drive_opus1_type_combo_count,
+				 0 );
+}
+
+#define diskoptions_drive_opus2_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_opus2_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_opus2_type() {
+  return option_enumerate_combo( diskoptions_drive_opus2_type_combo,
+				 settings_current.drive_opus2_type,
+				 diskoptions_drive_opus2_type_combo_count,
+				 1 );
+}
+
+
+static char * diskoptions_disk_try_merge_combo[] = {
+  "Never",
+  "With single-sided drives",
+  "Always",
+};
+
+static const int diskoptions_disk_try_merge_combo_count = 3;
+
+int
+option_enumerate_diskoptions_disk_try_merge() {
+  return option_enumerate_combo( diskoptions_disk_try_merge_combo,
+				 settings_current.disk_try_merge,
+				 diskoptions_disk_try_merge_combo_count,
+				 1 );
+}
+
+static BOOL CALLBACK
+menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+  char buffer[80];
+  int i;
+  
+  i = 0;
+  buffer[0] = '\0';		/* Shut gcc up */
+  
+  switch( msg )
+  {
+    case WM_INITDIALOG:
+    {
+      /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
+      SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
+	(LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+
+      /* initialize the controls with current settings */
+
+      /* FIXME split *_init and *_done functions out of *_proc function */
+      for( i = 0; i < diskoptions_drive_plus3a_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3A_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_plus3a_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3A_TYPE, CB_SETCURSEL,
+        (LPARAM) 0, 0 );
+      if( settings_current.drive_plus3a_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_plus3a_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_plus3a_type,
+                       diskoptions_drive_plus3a_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3A_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3B_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_plus3b_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3B_TYPE, CB_SETCURSEL,
+        (LPARAM) 4, 0 );
+      if( settings_current.drive_plus3b_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_plus3b_type,
+                       diskoptions_drive_plus3b_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3B_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_PLUS3_DETECT_SPEEDLOCK, BM_SETCHECK,
+        settings_current.plus3_detect_speedlock ? BST_CHECKED : BST_UNCHECKED, 0 );
+      for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128A_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_beta128a_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128A_TYPE, CB_SETCURSEL,
+        (LPARAM) 3, 0 );
+      if( settings_current.drive_beta128a_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_beta128a_type,
+                       diskoptions_drive_beta128a_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128A_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128B_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_beta128b_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128B_TYPE, CB_SETCURSEL,
+        (LPARAM) 4, 0 );
+      if( settings_current.drive_beta128b_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_beta128b_type,
+                       diskoptions_drive_beta128b_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128B_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128C_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_beta128c_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128C_TYPE, CB_SETCURSEL,
+        (LPARAM) 4, 0 );
+      if( settings_current.drive_beta128c_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_beta128c_type,
+                       diskoptions_drive_beta128c_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128C_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128D_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_beta128d_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128D_TYPE, CB_SETCURSEL,
+        (LPARAM) 4, 0 );
+      if( settings_current.drive_beta128d_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_beta128d_type,
+                       diskoptions_drive_beta128d_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128D_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD1_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_plusd1_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD1_TYPE, CB_SETCURSEL,
+        (LPARAM) 3, 0 );
+      if( settings_current.drive_plusd1_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_plusd1_type,
+                       diskoptions_drive_plusd1_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD1_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD2_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_plusd2_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD2_TYPE, CB_SETCURSEL,
+        (LPARAM) 4, 0 );
+      if( settings_current.drive_plusd2_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_plusd2_type,
+                       diskoptions_drive_plusd2_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD2_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS1_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_opus1_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS1_TYPE, CB_SETCURSEL,
+        (LPARAM) 0, 0 );
+      if( settings_current.drive_opus1_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_opus1_type,
+                       diskoptions_drive_opus1_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS1_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS2_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_opus2_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS2_TYPE, CB_SETCURSEL,
+        (LPARAM) 1, 0 );
+      if( settings_current.drive_opus2_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_opus2_type,
+                       diskoptions_drive_opus2_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS2_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_TRY_MERGE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_disk_try_merge_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_TRY_MERGE, CB_SETCURSEL,
+        (LPARAM) 1, 0 );
+      if( settings_current.disk_try_merge != NULL ) {
+        for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
+          if( !strcmp( settings_current.disk_try_merge,
+                       diskoptions_disk_try_merge_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_TRY_MERGE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_ASK_MERGE, BM_SETCHECK,
+        settings_current.disk_ask_merge ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      return FALSE;
+    }
+
+    case WM_COMMAND:
+      switch( LOWORD( wParam ) )
+      {
+	case IDOK:
+	{
+          /* Read the controls and apply the settings */
+      free( settings_current.drive_plus3a_type );
+      settings_current.drive_plus3a_type =
+        strdup( diskoptions_drive_plus3a_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3A_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_plus3b_type );
+      settings_current.drive_plus3b_type =
+        strdup( diskoptions_drive_plus3b_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3B_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+          settings_current.plus3_detect_speedlock =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_DISKOPTIONS_PLUS3_DETECT_SPEEDLOCK );
+      free( settings_current.drive_beta128a_type );
+      settings_current.drive_beta128a_type =
+        strdup( diskoptions_drive_beta128a_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128A_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_beta128b_type );
+      settings_current.drive_beta128b_type =
+        strdup( diskoptions_drive_beta128b_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128B_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_beta128c_type );
+      settings_current.drive_beta128c_type =
+        strdup( diskoptions_drive_beta128c_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128C_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_beta128d_type );
+      settings_current.drive_beta128d_type =
+        strdup( diskoptions_drive_beta128d_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128D_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_plusd1_type );
+      settings_current.drive_plusd1_type =
+        strdup( diskoptions_drive_plusd1_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD1_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_plusd2_type );
+      settings_current.drive_plusd2_type =
+        strdup( diskoptions_drive_plusd2_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD2_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_opus1_type );
+      settings_current.drive_opus1_type =
+        strdup( diskoptions_drive_opus1_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS1_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.drive_opus2_type );
+      settings_current.drive_opus2_type =
+        strdup( diskoptions_drive_opus2_type_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS2_TYPE,
+          CB_GETCURSEL, 0, 0 ) ] );
+      free( settings_current.disk_try_merge );
+      settings_current.disk_try_merge =
+        strdup( diskoptions_disk_try_merge_combo[
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_TRY_MERGE,
+          CB_GETCURSEL, 0, 0 ) ] );
+          settings_current.disk_ask_merge =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_ASK_MERGE );
+          win32statusbar_set_visibility( settings_current.statusbar );
+          display_refresh_all();
+
+	  EndDialog( hwndDlg, 0 );
+	  return 0;
+	}
+
+	case IDCANCEL:
+	  EndDialog( hwndDlg, 0 );
+	  return 0;
+      }
+      break;
+
+    case WM_CLOSE:
+      EndDialog( hwndDlg, 0 );
+      return 0;
+  }
+  return FALSE;
+}
+
+void
+menu_options_diskoptions( int action )
+{
+  fuse_emulation_pause();
+
+  DialogBox( fuse_hInstance, MAKEINTRESOURCE( IDD_OPT_DISKOPTIONS ),
+             fuse_hWnd, (DLGPROC) menu_options_diskoptions_proc );
 
   fuse_emulation_unpause();
 }

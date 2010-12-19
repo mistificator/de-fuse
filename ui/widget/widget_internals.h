@@ -1,7 +1,7 @@
 /* widget_internals.h: Functions internal to the widget code
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall
 
-   $Id: widget_internals.h 3680 2008-06-15 18:00:39Z fredm $
+   $Id: widget_internals.h 3990 2009-03-15 01:25:58Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #define FUSE_WIDGET_INTERNALS_H
 
 #include <sys/types.h>
-#include <dirent.h>
 #include <stdlib.h>
 
 #include <libspectrum.h>
@@ -168,6 +167,7 @@ typedef struct widget_select_t {
   size_t current;	/* Which option starts active? */
 
   int result;		/* What was selected? ( -1 if dialog cancelled ) */
+  int finish_all;	/* close all widget or not */
 
 } widget_select_t;
 

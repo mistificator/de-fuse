@@ -1,7 +1,7 @@
 /* rzx.h: .rzx files
    Copyright (c) 2002-2003 Philip Kendall
 
-   $Id: rzx.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: rzx.h 4159 2010-09-13 11:51:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ int rzx_init( void );
 int rzx_start_recording( const char *filename, int embed_snapshot );
 int rzx_stop_recording( void );
 
-int rzx_start_playback( const char *filename );
+int rzx_start_playback( const char *filename, int check_snapshot );
 int
 rzx_start_playback_from_buffer( const unsigned char *buffer, size_t length );
 

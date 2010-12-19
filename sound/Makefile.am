@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2004 Philip Kendall
 
-## $Id: Makefile.am 3509 2008-02-06 15:59:15Z specu $
+## $Id: Makefile.am 4112 2010-01-08 11:03:43Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ INCLUDES = @LIBSPEC_CFLAGS@ @GLIB_CFLAGS@ @GTK_CFLAGS@ @SDL_CFLAGS@
 
 noinst_LIBRARIES = libsound.a
 
-libsound_a_SOURCES =
+libsound_a_SOURCES = blipbuffer.c
 
 EXTRA_libsound_a_SOURCES = dxsound.c \
 		     	   alsasound.c \
@@ -46,4 +46,4 @@ EXTRA_libsound_a_SOURCES = dxsound.c \
 libsound_a_LIBADD = $(SOUND_LIBADD)
 libsound_a_DEPENDENCIES = $(SOUND_LIBADD)
 
-noinst_HEADERS = sfifo.h
+noinst_HEADERS = sfifo.h blipbuffer.h

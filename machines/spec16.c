@@ -1,7 +1,7 @@
 /* spec16.c: Spectrum 16K specific routines
-   Copyright (c) 1999-2007 Philip Kendall
+   Copyright (c) 1999-2009 Philip Kendall
 
-   $Id: spec16.c 3566 2008-03-18 12:59:16Z pak21 $
+   $Id: spec16.c 4060 2009-07-30 13:21:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ int spec16_init( fuse_machine_info *machine )
   machine->memory_map = spec48_memory_map;
 
   return 0;
-
 }
 
 static int
@@ -100,7 +99,11 @@ spec16_reset( void )
   periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
   periph_setup_interface1( PERIPH_PRESENT_OPTIONAL );
   periph_setup_interface2( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_opus( PERIPH_PRESENT_OPTIONAL );
   periph_setup_plusd( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_beta128( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_fuller( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_melodik( PERIPH_PRESENT_OPTIONAL );
   periph_update();
 
   /* ROM 0, RAM 5, nothing, nothing */
@@ -124,6 +127,8 @@ spec16_reset( void )
 
   memory_current_screen = 5;
   memory_screen_mask = 0xffff;
+
+  spec48_common_display_setup();
 
   return 0;
 }

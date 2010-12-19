@@ -4,7 +4,7 @@
 # Copyright (c) 2000-2007 Philip Kendall, Matan Ziv-Av, Russell Marks,
 #			  Fredrick Meunier, Catalin Mihaila, Stuart Brady
 
-# $Id: keysyms.pl 3735 2008-07-28 21:27:56Z specu $
+# $Id: keysyms.pl 4103 2009-11-21 10:16:36Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ my $ui = shift;
 $ui = 'gtk' unless defined $ui;
 
 die "$0: unrecognised user interface: $ui\n"
-  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'svga', 'fb', 'sdl', 'win32' );
+  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'svga', 'fb', 'sdl', 'win32', 'wii' );
 
 sub fb_keysym ($) {
 
@@ -44,6 +44,13 @@ sub fb_keysym ($) {
     substr( $keysym, 0, 4 ) = 'WIN' if substr( $keysym, 0, 5 ) eq 'META_';
 
     return $keysym;
+}
+
+sub wii_keysym ($) {
+    my $keysym = shift;
+
+    $keysym =~ tr/a-z/A-Z/;
+    return "WII_KEY_$keysym";
 }
 
 sub sdl_keysym ($) {
@@ -127,6 +134,20 @@ my %ui_data = (
 	      function => \&fb_keysym
 	    },
 
+    wii => { headers => [ 'ui/wii/wiikeysyms.h' ],
+	      # max_length not used
+	      skips => { map { $_ => 1 } ( 'numbersign',
+					   'Shift_L', 'Shift_R',
+					   'Control_L', 'Control_R',
+					   'Alt_L', 'Alt_R',
+					   'Meta_L', 'Meta_R',
+					   'Hyper_L','Hyper_R',
+					   'Super_L','Super_R',
+					   'KP_Enter',
+					   'Mode_switch' ) },
+	      function => \&wii_keysym
+	    },
+
     gtk  => { headers => [ 'gdk/gdkkeysyms.h' ],
 	      max_length => 16,
 	      skips => { },
@@ -143,7 +164,7 @@ my %ui_data = (
                          BackSpace Tab Caps_Lock Return Shift_L Shift_R
                          Control_L Control_R Alt_L Alt_R Meta_L Meta_R
                          Super_L Super_R Mode_switch Up Down Left Right
-                         Insert Delete Home End Page_Up Page_Down ) },
+                         Insert Delete Home End Page_Up Page_Down KP_Enter ) },
 	      translations => {
 		  apostrophe  => 'QUOTE',
 		  Control_L   => 'LCTRL',	 
@@ -199,6 +220,7 @@ my %ui_data = (
 					   'Alt_R','Meta_R',
 					   'Hyper_L','Hyper_R',
 					   'Super_L','Super_R',
+					   'KP_Enter',
 					   'A' .. 'Z' ) },
 	      translations => { 
 		  numbersign  => 'OEM_5',

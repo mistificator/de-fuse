@@ -1,7 +1,7 @@
-/* win32.c: Win32 speed routines for Fuse
-   Copyright (c) 1999-2007 Philip Kendall, Marek Januszewski, Fredrick Meunier
+/* dir.c: Directory-related compatibility routines
+   Copyright (c) 2009 Philip Kendall
 
-   $Id: win32.c 3087 2007-07-31 19:08:50Z zubzero $
+   $Id: dir.c 3945 2009-01-10 18:44:42Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,30 +25,39 @@
 
 #include <config.h>
 
-#include "timer.h"
+#include <errno.h>
+#include <string.h>
+
+#include "compat.h"
+
+compat_dir
+compat_opendir( const char *path )
+{
+  return opendir( path );
+}
+
+compat_dir_result_t
+compat_readdir( compat_dir directory, char *name, size_t length )
+{
+  compat_dir_result_t r;
+  struct dirent *dirent;
+
+  errno = 0;
+  dirent = readdir( directory );
+
+  if( dirent ) {
+    r = COMPAT_DIR_RESULT_OK;
+    strncpy( name, dirent->d_name, length );
+    name[ length - 1 ] = 0;
+  } else {
+    r = ( errno == 0 ? COMPAT_DIR_RESULT_END : COMPAT_DIR_RESULT_ERROR );
+  }
+
+  return r;
+}
 
 int
-timer_get_real_time( timer_type *real_time )
+compat_closedir( compat_dir directory )
 {
-  *real_time = GetTickCount();
-
-  return 0;
-}
-
-float
-timer_get_time_difference( timer_type *a, timer_type *b )
-{
-  return ( (long)*a - (long)*b ) / 1000.0;
-}
-
-void
-timer_add_time_difference( timer_type *a, long msec )
-{
-  *a += msec;
-}
-
-void
-timer_sleep_ms( int ms )
-{
-  Sleep( ms );
+  return closedir( directory );
 }

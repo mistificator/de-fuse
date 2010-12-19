@@ -1,7 +1,7 @@
 /* memory.h: memory access routines
    Copyright (c) 2003-2004 Philip Kendall
 
-   $Id: memory.h 3603 2008-04-15 13:33:24Z fredm $
+   $Id: memory.h 4099 2009-10-22 10:59:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -70,9 +70,6 @@ typedef struct memory_page {
 extern memory_page memory_map_read[8];
 extern memory_page memory_map_write[8];
 
-/* Two 8Kb memory chunks accessible by the Z80 when /ROMCS is low */
-extern memory_page memory_map_romcs[2];
-
 /* 8 8Kb memory chunks accessible by the Z80 for normal RAM (home) and
    the Timex Dock and Exrom */
 extern memory_page *memory_map_home[8];
@@ -118,5 +115,14 @@ libspectrum_byte readbyte_internal( libspectrum_word address );
 
 void writebyte( libspectrum_word address, libspectrum_byte b );
 void writebyte_internal( libspectrum_word address, libspectrum_byte b );
+
+typedef void (*memory_display_dirty_fn)( libspectrum_word address,
+                                         libspectrum_byte b );
+extern memory_display_dirty_fn memory_display_dirty;
+
+void memory_display_dirty_sinclair( libspectrum_word address,
+                                    libspectrum_byte b );
+void memory_display_dirty_pentagon_16_col( libspectrum_word address,
+                                           libspectrum_byte b );
 
 #endif				/* #ifndef FUSE_MEMORY_H */

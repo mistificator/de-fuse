@@ -1,7 +1,7 @@
 /* if1.c: Interface I handling routines
    Copyright (c) 2004-2008 Gergely Szasz, Philip Kendall
 
-   $Id: if1.c 3703 2008-06-30 20:36:11Z pak21 $
+   $Id: if1.c 4180 2010-10-09 12:59:37Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ enum {
  
 typedef struct microdrive_t {
   utils_file file;
+  char *filename;		/* old filename */
   int inserted;
   int modified;
   int motor_on;
@@ -152,6 +153,9 @@ RS232:
       if fuse lost send 0x00 + 0x3f (?)
     every other 0x00 + 0x## are discarded
 */
+
+/* Two 8Kb memory chunks accessible by the Z80 when /ROMCS is low */
+static memory_page if1_memory_map_romcs[2];
 
 /* IF1 paged out ROM activated? */
 int if1_active = 0;
@@ -285,7 +289,7 @@ update_menu( enum if1_menu_item what )
 int
 if1_init( void )
 {
-  int m;
+  int m, i;
 
   if1_ula.fd_r = -1;
   if1_ula.fd_t = -1;
@@ -323,6 +327,7 @@ if1_init( void )
   }
 
   module_register( &if1_module_info );
+  for( i = 0; i < 2; i++ ) if1_memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
 
   if( periph_register_paging_events( event_type_string, &page_event,
 				     &unpage_event ) )
@@ -359,12 +364,12 @@ if1_reset( int hard_reset GCC_UNUSED )
 
   if( !periph_interface1_active ) return;
 
-  machine_load_rom_bank( memory_map_romcs, 0, 0,
+  machine_load_rom_bank( if1_memory_map_romcs, 0, 0,
 			 settings_current.rom_interface_i,
 			 settings_default.rom_interface_i,
 			 MEMORY_PAGE_SIZE );
 
-  memory_map_romcs[0].source = MEMORY_SOURCE_PERIPHERAL;
+  if1_memory_map_romcs[0].source = MEMORY_SOURCE_PERIPHERAL;
 
   machine_current->ram.romcs = 0;
   
@@ -410,7 +415,7 @@ if1_memory_map( void )
 {
   if( !if1_active ) return;
 
-  memory_map_read[0] = memory_map_write[0] = memory_map_romcs[0];
+  memory_map_read[0] = memory_map_write[0] = if1_memory_map_romcs[0];
 }
 
 static void
@@ -428,7 +433,7 @@ if1_from_snapshot( libspectrum_snap *snap )
   if( libspectrum_snap_interface1_custom_rom( snap ) &&
       libspectrum_snap_interface1_rom( snap, 0 ) &&
       machine_load_rom_bank_from_buffer(
-                             memory_map_romcs, 0, 0,
+                             if1_memory_map_romcs, 0, 0,
                              libspectrum_snap_interface1_rom( snap, 0 ),
                              libspectrum_snap_interface1_rom_length( snap, 0 ),
                              1 ) )
@@ -452,10 +457,10 @@ if1_to_snapshot( libspectrum_snap *snap )
   libspectrum_snap_set_interface1_paged ( snap, if1_active );
   libspectrum_snap_set_interface1_drive_count( snap, 8 );
 
-  if( memory_map_romcs[0].source == MEMORY_SOURCE_CUSTOMROM ) {
+  if( if1_memory_map_romcs[0].source == MEMORY_SOURCE_CUSTOMROM ) {
     size_t rom_length = MEMORY_PAGE_SIZE;
 
-    if( memory_map_romcs[1].source == MEMORY_SOURCE_CUSTOMROM ) {
+    if( if1_memory_map_romcs[1].source == MEMORY_SOURCE_CUSTOMROM ) {
       rom_length <<= 1;
     }
 
@@ -468,10 +473,10 @@ if1_to_snapshot( libspectrum_snap *snap )
       return;
     }
 
-    memcpy( buffer, memory_map_romcs[0].page, MEMORY_PAGE_SIZE );
+    memcpy( buffer, if1_memory_map_romcs[0].page, MEMORY_PAGE_SIZE );
 
     if( rom_length == MEMORY_PAGE_SIZE*2 ) {
-      memcpy( buffer + MEMORY_PAGE_SIZE, memory_map_romcs[1].page,
+      memcpy( buffer + MEMORY_PAGE_SIZE, if1_memory_map_romcs[1].page,
               MEMORY_PAGE_SIZE );
     }
 
@@ -1048,6 +1053,7 @@ if1_mdr_new( microdrive_t *mdr )
   libspectrum_byte len;
   long int i;
 
+  mdr->filename = NULL;
   if( settings_current.mdr_random_len ) {	/* Random length */
     len = 171 + ( ( rand() >> 2 ) + ( rand() >> 2 ) +
                   ( rand() >> 2 ) + ( rand() >> 2 ) )
@@ -1131,6 +1137,7 @@ if1_mdr_insert( int which, const char *filename )
 
   mdr->inserted = 1;
   mdr->modified = 0;
+  mdr->filename = strdup( filename );
   /* we assume formatted cartridges */
   for( i = libspectrum_microdrive_cartridge_len( mdr->cartridge );
 	i > 0; i-- )
@@ -1142,7 +1149,7 @@ if1_mdr_insert( int which, const char *filename )
 }
 
 int
-if1_mdr_eject( int which, int write )
+if1_mdr_eject( int which, int saveas )
 {
   microdrive_t *mdr;
 
@@ -1154,9 +1161,12 @@ if1_mdr_eject( int which, int write )
   if( !mdr->inserted )
     return 0;
 
-  if( write ) {
+  if( saveas ) {	/* 1 -> save as.., 2 -> save */
 
-    if( ui_mdr_write( which ) ) return 1;
+    if( mdr->filename == NULL ) saveas = 1;
+    if( ui_mdr_write( which, 2 - saveas ) ) return 1;
+    mdr->modified = 0;
+    return 0;
 
   } else {
 
@@ -1171,7 +1181,7 @@ if1_mdr_eject( int which, int write )
       switch( confirm ) {
 
       case UI_CONFIRM_SAVE_SAVE:
-	if( ui_mdr_write( which ) ) return 1;
+	if( if1_mdr_eject( which, 2 ) ) return 1;	/* first save */
 	break;
 
       case UI_CONFIRM_SAVE_DONTSAVE: break;
@@ -1182,7 +1192,11 @@ if1_mdr_eject( int which, int write )
   }
 
   mdr->inserted = 0;
-  
+  if( mdr->filename != NULL ) {
+    free( mdr->filename );
+    mdr->filename = NULL;
+  }
+
   update_menu( UMENU_MDRV1 + which );
   return 0;
 }
@@ -1194,10 +1208,16 @@ if1_mdr_write( int which, const char *filename )
   
   libspectrum_microdrive_mdr_write( mdr->cartridge, &mdr->file.buffer,
 			            &mdr->file.length );
-    
+
+  if( filename == NULL ) filename = mdr->filename;	/* Write over the original file */
+
   if( utils_write_file( filename, mdr->file.buffer, mdr->file.length ) )
     return 1;
 
+  if( mdr->filename && strcmp( filename, mdr->filename ) ) {
+    free( mdr->filename );
+    mdr->filename = strdup( filename );
+  }
   return 0;
 }
 

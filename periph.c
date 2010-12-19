@@ -1,7 +1,7 @@
 /* periph.c: code for handling peripherals
-   Copyright (c) 2005-2007 Philip Kendall
+   Copyright (c) 2005-2009 Philip Kendall
 
-   $Id: periph.c 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: periph.c 4114 2010-01-15 13:45:51Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,20 +28,23 @@
 #include <libspectrum.h>
 
 #include "debugger/debugger.h"
-#include "divide.h"
 #include "event.h"
+#include "fuller.h"
+#include "disk/opus.h"
+#include "ide/divide.h"
+#include "ide/simpleide.h"
+#include "ide/zxatasp.h"
+#include "ide/zxcf.h"
 #include "if1.h"
 #include "if2.h"
 #include "joystick.h"
 #include "kempmouse.h"
+#include "melodik.h"
 #include "periph.h"
 #include "rzx.h"
 #include "settings.h"
-#include "simpleide.h"
 #include "ui/ui.h"
 #include "ula.h"
-#include "zxatasp.h"
-#include "zxcf.h"
 
 /*
  * General peripheral list handling routines
@@ -322,6 +325,24 @@ periph_present beta128_present;
 /* Is the Beta 128 currently active */
 int periph_beta128_active;
 
+/* What sort of Opus interface does the current machine have */
+periph_present opus_present;
+
+/* Is the Opus currently active */
+int periph_opus_active;
+
+/* What sort of Fuller Box does the current machine have */
+periph_present fuller_present;
+
+/* Is the Fuller Box currently active */
+int periph_fuller_active;
+
+/* What sort of Melodik does the current machine have */
+periph_present melodik_present;
+
+/* Is the Melodik currently active */
+int periph_melodik_active;
+
 int
 periph_setup( const periph_t *peripherals_list, size_t n )
 {
@@ -348,6 +369,9 @@ periph_setup( const periph_t *peripherals_list, size_t n )
   interface2_present = PERIPH_PRESENT_NEVER;
   plusd_present = PERIPH_PRESENT_NEVER;
   beta128_present = PERIPH_PRESENT_NEVER;
+  opus_present = PERIPH_PRESENT_NEVER;
+  fuller_present = PERIPH_PRESENT_NEVER;
+  melodik_present = PERIPH_PRESENT_NEVER;
 
   return 0;
 }
@@ -380,6 +404,21 @@ periph_setup_beta128( periph_present present ) {
 void
 periph_register_beta128( void ) {
   periph_register_n( beta_peripherals, beta_peripherals_count );
+}
+
+void
+periph_setup_opus( periph_present present ) {
+  opus_present = present;
+}
+
+void
+periph_setup_fuller( periph_present present ) {
+  fuller_present = present;
+}
+
+void
+periph_setup_melodik( periph_present present ) {
+  melodik_present = present;
 }
 
 static void
@@ -467,6 +506,13 @@ periph_update( void )
     break;
   }
 
+  switch( opus_present ) {
+  case PERIPH_PRESENT_NEVER: periph_opus_active = 0; break;
+  case PERIPH_PRESENT_OPTIONAL:
+    periph_opus_active = settings_current.opus; break;
+  case PERIPH_PRESENT_ALWAYS: periph_opus_active = 1; break;
+  }
+
   if( ui_mouse_present ) {
     if( settings_current.kempston_mouse ) {
       if( !ui_mouse_grabbed ) ui_mouse_grabbed = ui_mouse_grab( 1 );
@@ -475,9 +521,32 @@ periph_update( void )
     }
   }
 
+  switch( fuller_present ) {
+  case PERIPH_PRESENT_NEVER: periph_fuller_active = 0; break;
+  case PERIPH_PRESENT_OPTIONAL:
+    periph_fuller_active = settings_current.fuller; break;
+  case PERIPH_PRESENT_ALWAYS: periph_fuller_active = 1; break;
+  }
+
+  if( periph_fuller_active ) {
+    periph_register_n( fuller_peripherals, fuller_peripherals_count );
+  }
+
+  switch( melodik_present ) {
+  case PERIPH_PRESENT_NEVER: periph_melodik_active = 0; break;
+  case PERIPH_PRESENT_OPTIONAL:
+    periph_melodik_active = settings_current.melodik; break;
+  case PERIPH_PRESENT_ALWAYS: periph_melodik_active = 1; break;
+  }
+
+  if( periph_melodik_active ) {
+    periph_register_n( melodik_peripherals, melodik_peripherals_count );
+  }
+
   update_cartridge_menu();
   update_ide_menu();
   if1_update_menu();
+  specplus3_765_update_fdd();
   machine_current->memory_map();
 }
 

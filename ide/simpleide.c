@@ -3,7 +3,7 @@
 		 2004 Philip Kendall,
 		 2008 Fredrick Meunier
 
-   $Id: simpleide.c 3703 2008-06-30 20:36:11Z pak21 $
+   $Id: simpleide.c 4207 2010-12-05 10:01:23Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

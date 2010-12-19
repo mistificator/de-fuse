@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2001 Philip Kendall
 
-## $Id: Makefile.am 3238 2007-10-24 19:35:33Z zubzero $
+## $Id: Makefile.am 4060 2009-07-30 13:21:38Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ AUTOMAKE_OPTIONS = foreign
 
 ROMS =  128-0.rom 128-1.rom \
 	48.rom \
+	opus.rom \
 	plus2-0.rom plus2-1.rom \
 	plus3-0.rom plus3-1.rom plus3-2.rom plus3-3.rom \
 	plus3e-0.rom plus3e-1.rom plus3e-2.rom plus3e-3.rom \

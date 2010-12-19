@@ -2,7 +2,7 @@
    Copyright (c) 1999-2006 Philip Kendall, Thomas Harte, Witold Filipczyk
                            and Fredrick Meunier
 
-   $Id: display.c 3482 2008-01-07 12:32:26Z pak21 $
+   $Id: display.c 4105 2009-12-15 10:15:43Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 #include "event.h"
 #include "fuse.h"
 #include "machine.h"
+#include "rectangle.h"
 #include "screenshot.h"
 #include "settings.h"
 #include "spectrum.h"
@@ -101,17 +102,6 @@ static int display_redraw_all;
 /* Value used to signify a border line has more than one colour on it. */
 static const int display_border_mixed = 0xff;
 
-/* Used for grouping screen writes together */
-struct rectangle { int x,y; int w,h; };
-
-/* Those rectangles which were modified on the last line to be displayed */
-struct rectangle *active_rectangle = NULL;
-size_t active_rectangle_count = 0, active_rectangle_allocated = 0;
-
-/* Those rectangles which weren't */
-struct rectangle *inactive_rectangle = NULL;
-size_t inactive_rectangle_count = 0, inactive_rectangle_allocated = 0;
-
 /* The last point at which we updated the screen display */
 int critical_region_x = 0, critical_region_y = 0;
 
@@ -120,6 +110,9 @@ struct border_change_t {
   int x, y;
   int colour;
 };
+
+display_dirty_fn display_dirty;
+display_write_if_dirty_fn display_write_if_dirty;
 
 static struct border_change_t border_change_end_sentinel =
   { DISPLAY_SCREEN_WIDTH_COLS, DISPLAY_SCREEN_HEIGHT - 1, 0 };
@@ -132,11 +125,6 @@ static void display_dirty64( libspectrum_word address );
 
 static void display_get_attr( int x, int y,
 			      libspectrum_byte *ink, libspectrum_byte *paper);
-
-static int add_rectangle( int y, int x, int w );
-static int end_line( int y );
-
-static void display_dirty_flashing(void);
 
 static int border_changes_last = 0;
 static struct border_change_t *border_changes = NULL;
@@ -224,171 +212,10 @@ display_init( int *argc, char ***argv )
   return 0;
 }
 
-/* Add the rectangle { x, line, w, 1 } to the list of rectangles to be
-   redrawn, either by extending an existing rectangle or creating a
-   new one */
-static int
-add_rectangle( int y, int x, int w )
-{
-  size_t i;
-  struct rectangle *ptr;
-
-  /* Check through all 'active' rectangles (those which were modified
-     on the previous line) and see if we can use this new rectangle
-     to extend them */
-  for( i = 0; i < active_rectangle_count; i++ ) {
-
-    if( active_rectangle[i].x == x &&
-	active_rectangle[i].w == w    ) {
-      active_rectangle[i].h++;
-      return 0;
-    }
-  }
-
-  /* We couldn't find a rectangle to extend, so create a new one */
-  if( ++active_rectangle_count > active_rectangle_allocated ) {
-
-    size_t new_alloc;
-
-    new_alloc = active_rectangle_allocated     ?
-                2 * active_rectangle_allocated :
-                8;
-
-    ptr = realloc( active_rectangle, new_alloc * sizeof( struct rectangle ) );
-    if( !ptr ) {
-      ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-      return 1;
-    }
-
-    active_rectangle_allocated = new_alloc; active_rectangle = ptr;
-  }
-
-  ptr = &active_rectangle[ active_rectangle_count - 1 ];
-
-  ptr->x = x; ptr->y = y;
-  ptr->w = w; ptr->h = 1;
-
-  return 0;
-}
-
-#ifndef MAX
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
-#endif
-
-inline static int
-compare_and_merge_rectangles( struct rectangle *source )
-{
-  size_t z;
-
-  /* Now look to see if there is an overlapping rectangle in the inactive
-     list.  These occur when frame skip is on and the same lines are
-     covered more than once... */
-  for( z = 0; z < inactive_rectangle_count; z++ ) {
-    if( inactive_rectangle[z].x == source->x &&
-          inactive_rectangle[z].w == source->w ) {
-      if( inactive_rectangle[z].y == source->y &&
-            inactive_rectangle[z].h == source->h )
-        return 1;
-
-      if( ( inactive_rectangle[z].y < source->y && 
-          ( source->y < ( inactive_rectangle[z].y +
-            inactive_rectangle[z].h + 1 ) ) ) ||
-          ( source->y < inactive_rectangle[z].y && 
-          ( inactive_rectangle[z].y < ( source->y + source->h + 1 ) ) ) ) {
-        /* rects overlap or touch in the y dimension, merge */
-        inactive_rectangle[z].h = MAX( inactive_rectangle[z].y +
-                                    inactive_rectangle[z].h,
-                                    source->y + source->h ) -
-                                  MIN( inactive_rectangle[z].y, source->y );
-        inactive_rectangle[z].y = MIN( inactive_rectangle[z].y, source->y );
-
-        return 1;
-      }
-    }
-    if( inactive_rectangle[z].y == source->y &&
-          inactive_rectangle[z].h == source->h ) {
-
-      if( (inactive_rectangle[z].x < source->x && 
-          ( source->x < ( inactive_rectangle[z].x +
-            inactive_rectangle[z].w + 1 ) ) ) ||
-          ( source->x < inactive_rectangle[z].x && 
-          ( inactive_rectangle[z].x < ( source->x + source->w + 1 ) ) ) ) {
-        /* rects overlap or touch in the x dimension, merge */
-        inactive_rectangle[z].w = MAX( inactive_rectangle[z].x +
-          inactive_rectangle[z].w, source->x +
-          source->w ) - MIN( inactive_rectangle[z].x, source->x );
-        inactive_rectangle[z].x = MIN( inactive_rectangle[z].x, source->x );
-        return 1;
-      }
-    }
-     /* Handle overlaps offset by both x and y? how much overlap and hence 
-        overdraw can be tolerated? */
-  }
-  return 0;
-}
-
-/* Move all rectangles not updated on this line to the inactive list */
-static int
-end_line( int y )
-{
-  size_t i;
-  struct rectangle *ptr;
-
-  for( i = 0; i < active_rectangle_count; i++ ) {
-
-    /* Skip if this rectangle was updated this line */
-    if( active_rectangle[i].y + active_rectangle[i].h == y + 1 ) continue;
-
-    if ( settings_current.frame_rate > 1 &&
-	 compare_and_merge_rectangles( &active_rectangle[i] ) ) {
-
-      /* Mark the active rectangle as done */
-      active_rectangle[i].h = 0;
-      continue;
-    }
-
-    /* We couldn't find a rectangle to extend, so create a new one */
-    if( ++inactive_rectangle_count > inactive_rectangle_allocated ) {
-
-      size_t new_alloc;
-
-      new_alloc = inactive_rectangle_allocated     ?
-	          2 * inactive_rectangle_allocated :
-	          8;
-
-      ptr = realloc( inactive_rectangle,
-		     new_alloc * sizeof( struct rectangle ) );
-      if( !ptr ) {
-	ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d",
-		  __FILE__, __LINE__ );
-	return 1;
-      }
-
-      inactive_rectangle_allocated = new_alloc; inactive_rectangle = ptr;
-    }
-
-    inactive_rectangle[ inactive_rectangle_count - 1 ] = active_rectangle[i];
-
-    /* Mark the active rectangle as done */
-    active_rectangle[i].h = 0;
-  }
-
-  /* Compress the list of active rectangles */
-  for( i = 0, ptr = active_rectangle; i < active_rectangle_count; i++ ) {
-    if( active_rectangle[i].h == 0 ) continue;
-    *ptr = active_rectangle[i]; ptr++;
-  }
-
-  active_rectangle_count = ptr - active_rectangle;
-
-  return 0;
-}
-
 /* Mark as 'dirty' the pixels which have been changed by a write to
    'offset' within the RAM page containing the screen */
 void
-display_dirty( libspectrum_word offset )
+display_dirty_timex( libspectrum_word offset )
 {
   switch ( scld_last_dec.mask.scrnmode ) {
 
@@ -431,6 +258,29 @@ display_dirty( libspectrum_word offset )
   }
 }
 
+void
+display_dirty_pentagon_16_col( libspectrum_word offset )
+{
+  /* The only relevant sections of the page will be the two 6144 byte sections
+     separated by ALTDFILE_OFFSET, which have the same display offset */
+  if( offset >= 0x2000 ) offset -= ALTDFILE_OFFSET;
+  /* No attributes are relevent in this mode */
+  if( offset <  0x1800 ) {		/* 0x1800 = first attributes byte */
+    display_dirty8( offset );
+  }
+}
+
+void
+display_dirty_sinclair( libspectrum_word offset )
+{
+  if( offset >= 0x1b00 ) return;
+  if( offset <  0x1800 ) {		/* 0x1800 = first attributes byte */
+    display_dirty8( offset );
+  } else {
+    display_dirty64( offset );
+  }
+}
+
 /* Get the attribute byte or equivalent for the eight pixels starting at
    ( (8*x) , y ) */
 static inline libspectrum_byte
@@ -461,7 +311,7 @@ display_get_attr_byte( int x, int y )
 static void
 update_dirty_rects( void )
 {
-  int start, y, error;
+  int start, y;
 
   for( y=0; y<DISPLAY_SCREEN_HEIGHT; y++ ) {
     int x = 0;
@@ -481,26 +331,25 @@ update_dirty_rects( void )
         x++;
       } while( display_is_dirty[y] & 0x01 );
 
-      error = add_rectangle( y, start, x - start );
-      if( error ) return;
+      rectangle_add( y, start, x - start );
     }
 
     /* compress the active rectangles list */
-    error = end_line( y ); if( error ) return;
+    rectangle_end_line( y );
   }
 
   /* Force all rectangles into the inactive list */
-  error = end_line( DISPLAY_SCREEN_HEIGHT ); if( error ) return;
+  rectangle_end_line( DISPLAY_SCREEN_HEIGHT );
 }
 
-static void
-write_if_dirty( int x, int y )
+void
+display_write_if_dirty_timex( int x, int y )
 {
   int beam_x, beam_y;
   int index;
   libspectrum_word offset;
   libspectrum_byte *screen;
-  libspectrum_dword data, data2;
+  libspectrum_byte data, data2;
   libspectrum_dword mode_data;
   libspectrum_dword last_chunk_detail;
 
@@ -561,12 +410,127 @@ write_if_dirty( int x, int y )
   }
 }
 
+inline static void
+pentagon_16c_get_colour( libspectrum_byte data, libspectrum_byte *colour1,
+                         libspectrum_byte *colour2 )
+{
+  *colour1 = (data & 0x07) + ( (data & 0x40) >> 3 );
+  *colour2 = ( (data & 0x38) >> 3 ) + ( (data & 0x80) >> 4 );
+}
+
+/* In this mode we need to gather the pixel information for the 8 pixels to
+   be displayed, if current screen is 5 we need to read from pages 5 and 4,
+   and if current screen is 7 we need to read from pages 7 and 6. */
+void
+display_write_if_dirty_pentagon_16_col( int x, int y )
+{
+  int beam_x, beam_y;
+  int index;
+  libspectrum_word offset;
+  libspectrum_byte *screen;
+  libspectrum_byte data1, data2, data3, data4;
+  libspectrum_dword last_chunk_detail;
+  libspectrum_byte colour1, colour2;
+
+  /* We need to read the pixels from the appropriate two pages and write them
+     out to the frame buffer */
+  int memory_screen_page_1 = 5;
+  int memory_screen_page_2 = 4;
+
+  if( memory_current_screen == 7 ) {
+    memory_screen_page_1 = 7;
+    memory_screen_page_2 = 6;
+  }
+
+  beam_x = x + DISPLAY_BORDER_WIDTH_COLS;
+  beam_y = y + DISPLAY_BORDER_HEIGHT;
+  offset = display_get_addr( x, y );
+
+  /* Read byte, atrr/byte, and screen mode */
+  screen = RAM[ memory_screen_page_1 ];
+  data2 = screen[ offset ];
+  data4 = screen[ offset + ALTDFILE_OFFSET ];
+  screen = RAM[ memory_screen_page_2 ];
+  data1 = screen[ offset ];
+  data3 = screen[ offset + ALTDFILE_OFFSET ];
+
+  /* This is a bit of a cheat - we'd normally encode the screen mode in here
+     as well to support screen mode mixing. I doubt there is much call for
+     mixing 16 colour mode with other modes so will assume that as long as
+     we are in 16 colour mode the screen we draw is in that mode as it seems
+     a shame to chuck more memory at supporting just this obscure mode */
+  last_chunk_detail = (data4 << 24) | (data3 << 16) | (data2 << 8) | data1;
+
+  /* And draw it if it is different to what was there last time */
+  index = beam_x + beam_y * DISPLAY_SCREEN_WIDTH_COLS;
+
+  if( display_last_screen[ index ] != last_chunk_detail ) {
+    /* Print pixel 1 & 2 from screen_page_2 base, pixel 3 & 4 from
+       screen_page_1 base, pixel 5 & 6 from screen_page_2 ALTDFILE_OFFSET,
+       pixel 7 & 8 from screen_page_1 ALTDFILE_OFFSET */
+
+    int draw_x = beam_x << 3;
+    pentagon_16c_get_colour( data1, &colour1, &colour2 );
+    uidisplay_putpixel( draw_x++, beam_y, colour1 );
+    uidisplay_putpixel( draw_x++, beam_y, colour2 );
+    pentagon_16c_get_colour( data2, &colour1, &colour2 );
+    uidisplay_putpixel( draw_x++, beam_y, colour1 );
+    uidisplay_putpixel( draw_x++, beam_y, colour2 );
+    pentagon_16c_get_colour( data3, &colour1, &colour2 );
+    uidisplay_putpixel( draw_x++, beam_y, colour1 );
+    uidisplay_putpixel( draw_x++, beam_y, colour2 );
+    pentagon_16c_get_colour( data4, &colour1, &colour2 );
+    uidisplay_putpixel( draw_x++, beam_y, colour1 );
+    uidisplay_putpixel( draw_x  , beam_y, colour2 );
+
+    /* Update last display record */
+    display_last_screen[ index ] = last_chunk_detail;
+
+    /* And now mark it dirty */
+    display_is_dirty[ beam_y ] |= ( (libspectrum_qword)1 << beam_x );
+  }
+}
+
+void
+display_write_if_dirty_sinclair( int x, int y )
+{
+  int beam_x, beam_y;
+  int index;
+  libspectrum_word offset;
+  libspectrum_byte *screen;
+  libspectrum_byte data, data2;
+  libspectrum_dword last_chunk_detail;
+
+  beam_x = x + DISPLAY_BORDER_WIDTH_COLS;
+  beam_y = y + DISPLAY_BORDER_HEIGHT;
+  offset = display_get_addr( x, y );
+
+  /* Read byte, atrr/byte, and screen mode */
+  screen = RAM[ memory_current_screen ];
+  data = screen[ offset ];
+  data2 = display_get_attr_byte( x, y );
+
+  last_chunk_detail = (display_flash_reversed << 24) | (data2 << 8) | data;
+  /* And draw it if it is different to what was there last time */
+  index = beam_x + beam_y * DISPLAY_SCREEN_WIDTH_COLS;
+  if( display_last_screen[ index ] != last_chunk_detail ) {
+    libspectrum_byte ink, paper;
+    display_parse_attr( data2, &ink, &paper );
+    uidisplay_plot8( beam_x, beam_y, data, ink, paper );
+
+    /* Update last display record */
+    display_last_screen[ index ] = last_chunk_detail;
+
+    /* And now mark it dirty */
+    display_is_dirty[ beam_y ] |= ( (libspectrum_qword)1 << beam_x );
+  }
+}
+
 /* Plot any dirty data from ( x, y ) to ( end, y ) of the critical
    region to the drawing region */
 static void
 copy_critical_region_line( int y, int x, int end )
 {
-  int start;
   libspectrum_dword bit_mask, dirty;
 
   if( x < DISPLAY_WIDTH_COLS ) {
@@ -600,13 +564,11 @@ copy_critical_region_line( int y, int x, int end )
 
     }
 
-    start = x;
-
     /* Walk to the end of the dirty region, writing the bytes to the
        drawing area along the way */
     do {
 
-      write_if_dirty( x, y );
+      display_write_if_dirty( x, y );
 
       dirty >>= 1;
       x++;
@@ -801,14 +763,14 @@ display_set_hires_border( int colour )
 static void
 set_border( int y, int start, int end, int colour )
 {
-  libspectrum_dword chunk_detail = 0x000000ff | colour << 8;
+  libspectrum_dword chunk_detail = colour << 11;
   int index = start + y * DISPLAY_SCREEN_WIDTH_COLS;
 
   for( ; start < end; start++ ) {
     /* Draw it if it is different to what was there last time - we know that
     data and mode will have been the same */
     if( display_last_screen[ index ] != chunk_detail ) {
-      uidisplay_plot8( start, y, 0xff, colour, 0 );
+      uidisplay_plot8( start, y, 0x00, 0, colour );
 
       /* Update last display record */
       display_last_screen[ index ] = chunk_detail;
@@ -929,15 +891,15 @@ update_ui_screen( void )
 		      scale * DISPLAY_SCREEN_HEIGHT );
       display_redraw_all = 0;
     } else {
-      for( i = 0, ptr = inactive_rectangle;
-	   i < inactive_rectangle_count;
+      for( i = 0, ptr = rectangle_inactive;
+	   i < rectangle_inactive_count;
 	   i++, ptr++ ) {
             uidisplay_area( 8 * scale * ptr->x, scale * ptr->y,
 			8 * scale * ptr->w, scale * ptr->h );
       }
     }
 
-    inactive_rectangle_count = 0;
+    rectangle_inactive_count = 0;
     
     uidisplay_frame_end();
   }
@@ -987,7 +949,10 @@ display_frame( void )
   return 0;
 }
 
-static void display_dirty_flashing(void)
+display_dirty_flashing_fn display_dirty_flashing;
+
+void
+display_dirty_flashing_timex(void)
 {
   libspectrum_word offset;
   libspectrum_byte *screen, attr;
@@ -1011,12 +976,30 @@ static void display_dirty_flashing(void)
 
     } else { /* Standard Speccy screen */
 
-      for( offset = 0x1800; offset < 0x1b00; offset++ ) {
-        attr = screen[ offset ];
-        if( attr & 0x80 ) display_dirty64( offset );
-      }
+      display_dirty_flashing_sinclair();
 
     }
+  }
+}
+
+void
+display_dirty_flashing_pentagon_16_col(void)
+{
+  /* No flash attribute in 16 colour mode */
+}
+
+void
+display_dirty_flashing_sinclair(void)
+{
+  libspectrum_word offset;
+  libspectrum_byte *screen, attr;
+
+  screen = RAM[ memory_current_screen ];
+  
+  /* Standard Speccy screen */
+  for( offset = 0x1800; offset < 0x1b00; offset++ ) {
+    attr = screen[ offset ];
+    if( attr & 0x80 ) display_dirty64( offset );
   }
 }
 
