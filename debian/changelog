@@ -1,3 +1,11 @@
+fuse-emulator (1.0.0-1) unstable; urgency=low
+
+  * New upstream version
+  * debian/copyright: update copyright year
+  * debian/control: drop build dependency on libsamplerate
+
+ -- Alberto Garcia <agarcia@igalia.com>  Sun, 19 Dec 2010 18:16:09 +0100
+
 fuse-emulator (0.10.0.2-1) unstable; urgency=low
 
   * New upstream release

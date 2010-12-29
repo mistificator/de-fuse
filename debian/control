@@ -2,7 +2,7 @@ Source: fuse-emulator
 Section: otherosfs
 Priority: optional
 Maintainer: Alberto Garcia <agarcia@igalia.com>
-Build-Depends: debhelper, cdbs, pkg-config, sharutils, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev, libbz2-dev, zlib1g-dev, libglib2.0-dev, libsdl1.2-dev, libsamplerate0-dev
+Build-Depends: debhelper, cdbs, pkg-config, sharutils, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev, libbz2-dev, zlib1g-dev, libglib2.0-dev, libsdl1.2-dev
 Standards-Version: 3.6.1
 Homepage: http://fuse-emulator.sourceforge.net/
 
