@@ -1,15 +1,25 @@
 #!/usr/bin/make -f
+%:
+	dh $@
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/autotools.mk
+override_dh_auto_configure:
 
-DEB_CONFIGURE_EXTRA_FLAGS := --with-sdl
+override_dh_auto_build:
+	rm -f ui/gtk/options.c
+	convert winfuse.ico winfuse.png 2> /dev/null || true
+	convert winfuse-0.png -scale 64x64 fuse.png
+	rm -f winfuse-?.png
+	touch aclocal.m4 Makefile.in configure config.h.in
+	dh_auto_configure -- --with-roms-dir=/usr/share/spectrum-roms \
+		--with-x
+	dh_auto_build
+	mv fuse fuse-gtk
+	dh_auto_clean
+	dh_auto_configure -- --with-roms-dir=/usr/share/spectrum-roms \
+		--with-sdl
+	dh_auto_build
+	cp fuse fuse-sdl
 
-DEB_INSTALL_DIRS_ALL := usr/bin
-
-configure/fuse-emulator::
-	rm -f ui/gtk/menu_data.c ui/gtk/options.c
-	( cd debian && uudecode fuse.png.uu )
-
-cleanbuilddir/fuse-emulator::
-	rm -f debian/fuse.png
+override_dh_clean:
+	rm -f fuse.png
+	dh_clean

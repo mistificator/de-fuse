@@ -1,26 +1,32 @@
-This package was ported to Maemo and debianized by
-Alberto Garcia <agarcia@igalia.com> on Sat, 25 Oct 2008 02:01:36 +0200.
+This package was debianized by Alberto Garcia <agarcia@igalia.com> on
+Tue, 28 Dec 2010 00:48:45 +0100.
 
 It was downloaded from http://fuse-emulator.sourceforge.net/
 
+The source tarball comes without the roms/ directory, which contains
+software that is either non-free or whose legal status is unclear.
+See the README.Debian file for details.
+
 Upstream Author: Philip Kendall <philip-fuse@shadowmagic.org.uk>
 
-Copyright (c) 1999-2010 Philip Kendall and others
+Copyright © 1999-2010 Philip Kendall and others
 
 See AUTHORS file for details on other contributors.
 
-    fuse is made available under the GNU General Public License,
-    which means that it is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See `COPYING' for
-    the full license.
+License:
 
-The fuse.png icon was converted to PNG from the original winfuse.ico
-(by Paul van der Laan) obtained from the Fuse subversion repository
-(revision 3505):
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-https://fuse-emulator.svn.sourceforge.net/svnroot/fuse-emulator/
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-The Debian packaging is (C) 2008, Alberto Garcia Gonzalez
-<agarcia@igalia.com> and is licensed under the GPL, see
-`/usr/share/common-licenses/GPL'.
+  On Debian systems, the complete text of the license can be found in
+  the file /usr/share/common-licenses/GPL-2
+
+The Debian packaging is © 2010, Alberto Garcia <agarcia@igalia.com>
+and is licensed under the GPLv3, see
+`/usr/share/common-licenses/GPL-3'.

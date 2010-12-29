@@ -1,0 +1,39 @@
+Notes about the Debian Fuse package
+===================================
+
+Fuse is a Sinclair ZX Spectrum emulator, and is distributed with a set
+of ROMs required to function properly.
+
+None of those ROMs is DFSG-compliant, and as such, all of them have
+been removed from the Debian Fuse package. Some of them might not even
+be legally distributed since their legal status is unclear.
+
+Those that are free to use are already available in the
+'spectrum-roms' package, and are sufficient to emulate all the
+original Spectrum models.
+
+The others are not essential for most uses, but are required to
+emulate some peripherals and less known models. If you still want to
+use them you can get them from the original Fuse package:
+
+  http://sourceforge.net/projects/fuse-emulator/files/fuse/
+
+Put ROMs in ~/.fuse-emulator/roms or /var/lib/fuse-emulator/roms
+and Fuse will automatically find them. Or you can use the --rom-*
+command-line options (see the fuse manual page for more details).
+
+For a comprehensive list of Spectrum ROMs (not necessarily distributed
+or supported by Fuse) with information about their legal status, visit
+Philip Kendall's Spectrum ROMs collection:
+
+  http://www.shadowmagic.org.uk/spectrum/roms.html
+
+As a last thing, there's the Open82 project, which aims to provide a
+free replacement for the original Spectrum ROM. Open82 is distributed
+under the GNU GPL but is still incomplete. However it is known to run
+a number of Spectrum programs so it might suit your needs.
+
+  http://open82.sourceforge.net/
+  http://scratchpad.wikia.com/wiki/Open82
+
+ -- Alberto Garcia <agarcia@igalia.com>, Tue, 28 Dec 2010 17:54:39 +0100

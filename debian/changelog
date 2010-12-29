@@ -1,36 +1,5 @@
-fuse-emulator (1.0.0-1) unstable; urgency=low
+fuse-emulator (1.0.0+dfsg1-1) unstable; urgency=low
 
-  * New upstream version
-  * debian/copyright: update copyright year
-  * debian/control: drop build dependency on libsamplerate
+  * Initial release (Closes: #608203).
 
- -- Alberto Garcia <agarcia@igalia.com>  Sun, 19 Dec 2010 18:16:09 +0100
-
-fuse-emulator (0.10.0.2-1) unstable; urgency=low
-
-  * New upstream release
-  * Remove debian/docs
-  * Replace debian/dirs with DEB_INSTALL_DIRS_ALL
-
- -- Alberto Garcia <agarcia@igalia.com>  Fri, 16 Jan 2009 10:48:04 +0100
-
-fuse-emulator (0.10.0.1-1) unstable; urgency=low
-
-  * New upstream release.
-
- -- Alberto Garcia <agarcia@igalia.com>  Thu, 11 Dec 2008 13:32:22 +0100
-
-fuse-emulator (0.10.0-1) unstable; urgency=low
-
-  * New upstream version.
-  * Remove dependency on libdsk-dev and lib765-dev, as they're no longer
-    used.
-  * Resync patches against 0.10.0
-
- -- Alberto Garcia <agarcia@igalia.com>  Wed, 10 Dec 2008 23:44:44 +0100
-
-fuse-emulator (0.9.0-1) unstable; urgency=low
-
-  * Initial Release.
-
- -- Alberto Garcia <agarcia@igalia.com>  Sat, 25 Oct 2008 02:02:38 +0200
+ -- Alberto Garcia <agarcia@igalia.com>  Tue, 28 Dec 2010 18:10:50 +0100

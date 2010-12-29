@@ -1,0 +1,33 @@
+Look for ROM files under ~/.fuse-emulator/roms and /var/lib/fuse-emulator/roms
+See README.Debian for details
+Index: fuse-emulator/utils.c
+===================================================================
+--- fuse-emulator.orig/utils.c
++++ fuse-emulator/utils.c
+@@ -346,8 +346,16 @@ get_next_path( path_context *ctx )
+               path_segment );
+     return 1;
+ 
+-    /* Then where we may have installed the data files */
+   case 2:
++    snprintf( ctx->path, PATH_MAX, "%s/.fuse-emulator/roms", compat_get_home_path() );
++    return 1;
++
++  case 3:
++    strncpy( ctx->path, "/var/lib/fuse-emulator/roms", PATH_MAX );
++    return 1;
++
++    /* Then where we may have installed the data files */
++  case 4:
+ 
+ #ifdef GEKKO 
+     path2 = "sd:/apps/fuse";
+@@ -361,7 +369,7 @@ get_next_path( path_context *ctx )
+     strncpy( ctx->path, path2, PATH_MAX ); buffer[ PATH_MAX - 1 ] = '\0';
+     return 1;
+ 
+-  case 3: return 0;
++  case 5: return 0;
+   }
+   ui_error( UI_ERROR_ERROR, "unknown path_context state %d", ctx->state );
+   fuse_abort();

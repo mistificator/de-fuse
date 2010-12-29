@@ -1,0 +1,52 @@
+New speaker type for unfiltered audio output (upstream SVN commit 4231)
+Index: fuse-emulator/man/fuse.1
+===================================================================
+--- fuse-emulator.orig/man/fuse.1
++++ fuse-emulator/man/fuse.1
+@@ -771,8 +771,8 @@ option.
+ .PP
+ .I "\-\-speaker\-type type"
+ .RS
+-Select the output speaker emulation, type can be TV speaker or Beeper.
+-Same as the Sound Options dialog's
++Select the output speaker emulation, type can be TV speaker, Beeper
++or Unfiltered. Same as the Sound Options dialog's
+ .I "Speaker type"
+ option.
+ .RE
+@@ -1669,7 +1669,8 @@ This option allows the emulation of the
+ modified. Different choices of speaker limit the bass and treble
+ response that can be produced from the machine. Choose between a
+ "TV" type speaker and a small beeper type speaker that significantly
+-limits bass and treble response.
++limits bass and treble response. Choose "Unfiltered" to get
++unmodified (but less accurate) sound output.
+ .RE
+ .PP
+ .I "AY volume"
+Index: fuse-emulator/sound.c
+===================================================================
+--- fuse-emulator.orig/sound.c
++++ fuse-emulator/sound.c
+@@ -100,7 +100,7 @@ struct speaker_type_tag
+ };
+ 
+ static struct speaker_type_tag speaker_type[] =
+-  { { 200, -37.0 }, { 1000, -67.0 } };
++  { { 200, -37.0 }, { 1000, -67.0 }, { 0, 0.0 } };
+ 
+ static double
+ sound_get_volume( int volume )
+Index: fuse-emulator/ui/options.dat
+===================================================================
+--- fuse-emulator.orig/ui/options.dat
++++ fuse-emulator/ui/options.dat
+@@ -64,7 +64,7 @@ Checkbox, (S)ound enabled, sound, INPUT_
+ Checkbox, (L)oading sound, sound_load, INPUT_KEY_l
+ Checkbox, (A)Y stereo separation, stereo_ay, INPUT_KEY_a
+ Checkbox, (F)orce 8-bit, sound_force_8bit, INPUT_KEY_f
+-Combo, Speaker (t)ype, speaker_type, INPUT_KEY_t, *TV speaker|Beeper
++Combo, Speaker (t)ype, speaker_type, INPUT_KEY_t, *TV speaker|Beeper|Unfiltered
+ Entry, A(Y) volume, volume_ay, INPUT_KEY_y, 3, %
+ Entry, B(e)eper volume, volume_beeper, INPUT_KEY_e, 3, %
+ 

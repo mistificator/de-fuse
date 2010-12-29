@@ -1,0 +1,5 @@
+01_compile-without-roms.patch
+02_missing-roms-help.patch
+03_rom-search-path.patch
+04_unfiltered-audio.patch
+05_fix-missing-roms-crash.patch

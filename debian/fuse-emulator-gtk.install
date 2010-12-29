@@ -1,0 +1,2 @@
+debian/fuse-gtk.desktop usr/share/applications
+fuse-gtk usr/bin

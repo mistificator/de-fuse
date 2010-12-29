@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Categories=Game;Emulator;Application;
+Name=Fuse Spectrum Emulator (SDL version)
+Exec=/usr/bin/fuse-sdl
+Icon=fuse

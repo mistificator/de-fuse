@@ -1,17 +1,48 @@
 Source: fuse-emulator
-Section: otherosfs
 Priority: optional
+Section: contrib/otherosfs
 Maintainer: Alberto Garcia <agarcia@igalia.com>
-Build-Depends: debhelper, cdbs, pkg-config, sharutils, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev, libbz2-dev, zlib1g-dev, libglib2.0-dev, libsdl1.2-dev
-Standards-Version: 3.6.1
+Build-Depends: debhelper (>= 7.0.50), imagemagick, flex, bison, libpng12-dev, libasound2-dev, libxml2-dev, libspectrum-dev (>= 1.0.0), libsdl1.2-dev, libgtk2.0-dev
+Standards-Version: 3.9.1
 Homepage: http://fuse-emulator.sourceforge.net/
 
-Package: fuse-emulator
-Architecture: any
-Depends: ${shlibs:Depends}
-Description: The Free Unix Spectrum Emulator
+Package: fuse-emulator-common
+Architecture: all
+Depends: fuse-emulator, spectrum-roms, ${misc:Depends}
+Suggests: fuse-emulator-utils
+Description: The Free Unix Spectrum Emulator (common files)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models
- (including 16K/48K/128K/+2/+2A/+3 and some Russian clones), with
- quite faithful emulation of the display and sound. It can load Z80,
- SZX and SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive
- images and DSK floppy disk images, among many others.
+ (including 16K/48K/128K/+2/+2A/+3 and some clones), with quite
+ faithful emulation of the display and sound. It can load Z80, SZX and
+ SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive images
+ and DSK floppy disk images, among many others.
+ .
+ This package provides files common to all versions of the emulator.
+ To get the actual emulator, install fuse-emulator-gtk or
+ fuse-emulator-sdl.
+
+Package: fuse-emulator-gtk
+Architecture: any
+Provides: fuse-emulator
+Depends: ${shlibs:Depends}, ${misc:Depends}, fuse-emulator-common (= ${source:Version})
+Description: The Free Unix Spectrum Emulator (GTK+ version)
+ Fuse is a Sinclair ZX Spectrum emulator. It supports several models
+ (including 16K/48K/128K/+2/+2A/+3 and some clones), with quite
+ faithful emulation of the display and sound. It can load Z80, SZX and
+ SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive images
+ and DSK floppy disk images, among many others.
+ .
+ This package provides binaries for the GTK+ version of Fuse.
+
+Package: fuse-emulator-sdl
+Architecture: any
+Provides: fuse-emulator
+Depends: ${shlibs:Depends}, ${misc:Depends}, fuse-emulator-common (= ${source:Version})
+Description: The Free Unix Spectrum Emulator (SDL version)
+ Fuse is a Sinclair ZX Spectrum emulator. It supports several models
+ (including 16K/48K/128K/+2/+2A/+3 and some clones), with quite
+ faithful emulation of the display and sound. It can load Z80, SZX and
+ SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive images
+ and DSK floppy disk images, among many others.
+ .
+ This package provides binaries for the SDL version of Fuse.

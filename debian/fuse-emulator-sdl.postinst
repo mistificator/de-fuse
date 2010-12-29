@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+update-alternatives --install /usr/bin/fuse \
+   fuse /usr/bin/fuse-sdl 6
+
+#DEBHELPER#
