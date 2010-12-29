@@ -1,7 +1,7 @@
 /* debugger_internals.h: The internals of Fuse's monitor/debugger
    Copyright (c) 2002-2008 Philip Kendall
 
-   $Id: debugger_internals.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: debugger_internals.h 4125 2010-05-06 22:18:50Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

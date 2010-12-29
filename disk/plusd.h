@@ -1,7 +1,7 @@
 /* plusd.h: Routines for handling the +D interface
    Copyright (c) 2005-2007 Stuart Brady
 
-   $Id: plusd.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: plusd.h 4012 2009-04-16 12:42:14Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ typedef enum plusd_drive_number {
 #include <libspectrum.h>
 
 #include "periph.h"
+#include "disk/fdd.h"
 
 extern int plusd_available;  /* Is the +D available for use? */
 extern int plusd_active;     /* +D enabled? */
@@ -76,6 +77,8 @@ int plusd_disk_insert( plusd_drive_number which, const char *filename,
 		       int autoload );
 int plusd_disk_eject( plusd_drive_number which, int write );
 int plusd_disk_write( plusd_drive_number which, const char *filename );
+int plusd_disk_flip( plusd_drive_number which, int flip );
 int plusd_disk_writeprotect( plusd_drive_number which, int wrprot );
+fdd_t *plusd_get_fdd( plusd_drive_number which );
 
 #endif                  /* #ifndef FUSE_PLUSD_H */

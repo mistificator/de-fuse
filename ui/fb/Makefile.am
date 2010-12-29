@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2004 Philip Kendall
 
-## $Id: Makefile.am 3892 2008-12-06 10:06:53Z fredm $
+## $Id: Makefile.am 3891 2008-12-06 09:16:09Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

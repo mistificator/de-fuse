@@ -1,7 +1,7 @@
 /* xui.c: Routines for dealing with the Xlib user interface
    Copyright (c) 2000-2003 Philip Kendall
 
-   $Id: xui.c 3677 2008-06-15 12:10:33Z fredm $
+   $Id: xui.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,6 +62,8 @@ ui_init( int *argc, char ***argv )
   XSetWindowAttributes windowAttributes;
 
   /* Allocate memory for various things */
+
+  if( ui_widget_init() ) return 1;
 
   if(!(wmHints = XAllocWMHints())) {
     fprintf(stderr,"%s: failure allocating memory\n", fuse_progname);
@@ -252,6 +254,8 @@ int ui_end(void)
 
   /* And disconnect from the X server */
   XCloseDisplay(display);
+
+  ui_widget_end();
 
   return 0;
 }

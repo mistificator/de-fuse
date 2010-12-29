@@ -1,7 +1,7 @@
 /* fbui.c: Routines for dealing with the linux fbdev user interface
    Copyright (c) 2000-2004 Philip Kendall, Matan Ziv-Av, Witold Filipczyk
 
-   $Id: fbui.c 3096 2007-08-06 09:20:34Z pak21 $
+   $Id: fbui.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,6 +44,8 @@ ui_init( int *argc, char ***argv )
 {
   struct sigaction handler;
   int error;
+
+  if( ui_widget_init() ) return 1;
 
   error = atexit( fb_end );
   if( error ) {
@@ -93,6 +95,8 @@ int ui_end(void)
   
   error = fbkeyboard_end(); if( error ) return error;
   error = fbdisplay_end(); if( error ) return error;
+
+  ui_widget_end();
 
   return 0;
 }

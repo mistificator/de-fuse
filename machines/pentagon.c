@@ -3,7 +3,7 @@
                Russian Speccy FAQ and emulated on most Spectrum emulators.
    Copyright (c) 1999-2007 Philip Kendall and Fredrick Meunier
 
-   $Id: pentagon.c 3599 2008-04-09 13:16:13Z fredm $
+   $Id: pentagon.c 4099 2009-10-22 10:59:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 #include "pentagon.h"
 #include "periph.h"
 #include "settings.h"
+#include "spec48.h"
 #include "spec128.h"
 #include "ula.h"
 
@@ -100,6 +101,8 @@ pentagon_port_from_ula( libspectrum_word port GCC_UNUSED )
 int
 pentagon_init( fuse_machine_info *machine )
 {
+  int i;
+
   machine->machine = LIBSPECTRUM_MACHINE_PENT;
   machine->id = "pentagon";
 
@@ -115,6 +118,7 @@ pentagon_init( fuse_machine_info *machine )
   machine->shutdown = NULL;
 
   machine->memory_map = spec128_memory_map;
+  for( i = 0; i < 2; i++ ) beta_memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
 
   return 0;
 }
@@ -130,7 +134,7 @@ pentagon_reset(void)
   error = machine_load_rom( 2, 1, settings_current.rom_pentagon_1,
                             settings_default.rom_pentagon_1, 0x4000 );
   if( error ) return error;
-  error = machine_load_rom_bank( memory_map_romcs, 0, 0,
+  error = machine_load_rom_bank( beta_memory_map_romcs, 0, 0,
                                  settings_current.rom_pentagon_2,
                                  settings_default.rom_pentagon_2, 0x4000 );
   if( error ) return error;
@@ -149,6 +153,8 @@ pentagon_reset(void)
 
   machine_current->ram.last_byte2 = 0;
   machine_current->ram.special = 0;
+
+  spec48_common_display_setup();
 
   return 0;
 }

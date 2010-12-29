@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2004 Philip Kendall
 
-## $Id: Makefile.am 3341 2007-11-26 14:48:01Z zubzero $
+## $Id: Makefile.am 4148 2010-08-25 21:20:50Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ libmachines_a_SOURCES = pentagon.c \
 			spec128.c \
 			spec16.c \
 			spec48.c \
+			spec48_ntsc.c \
 			specplus2.c \
 			spec_se.c \
 			specplus2a.c \

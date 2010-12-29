@@ -84,6 +84,7 @@ keysyms_map_t keysyms_map[] = {
   { SDLK_y,         INPUT_KEY_y           },
   { SDLK_z,         INPUT_KEY_z           },
   { SDLK_BACKSPACE, INPUT_KEY_BackSpace   },
+  { SDLK_KP_ENTER,  INPUT_KEY_KP_Enter    },
   { SDLK_UP,        INPUT_KEY_Up          },
   { SDLK_DOWN,      INPUT_KEY_Down        },
   { SDLK_LEFT,      INPUT_KEY_Left        },

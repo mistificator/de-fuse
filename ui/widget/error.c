@@ -1,7 +1,7 @@
 /* error.c: The error reporting widget
    Copyright (c) 2002-2005 Philip Kendall
 
-   $Id: error.c 3666 2008-06-10 20:43:46Z fredm $
+   $Id: error.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -173,6 +173,7 @@ widget_error_keyhandler( input_key key )
     return;
 
   case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
     widget_end_widget( WIDGET_FINISHED_OK );
     return;
 

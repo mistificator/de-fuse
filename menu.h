@@ -1,7 +1,7 @@
 /* menu.h: general menu callbacks
    Copyright (c) 2004 Philip Kendall
 
-   $Id: menu.h 3714 2008-07-06 18:10:29Z fredm $
+   $Id: menu.h 4159 2010-09-13 11:51:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -66,6 +66,7 @@ MENU_CALLBACK( menu_file_movies_stopmovierecording );
 MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_select );
 MENU_CALLBACK( menu_options_filter );
 MENU_DETAIL( menu_filter_detail );
+MENU_CALLBACK( menu_options_fullscreen );
 MENU_CALLBACK( menu_options_save );
 
 MENU_CALLBACK( menu_machine_profiler_start );
@@ -85,6 +86,7 @@ MENU_DETAIL( menu_tape_detail );
 MENU_CALLBACK_WITH_ACTION( menu_media_insert_new );
 MENU_CALLBACK_WITH_ACTION( menu_media_insert );
 MENU_CALLBACK_WITH_ACTION( menu_media_eject );
+MENU_CALLBACK_WITH_ACTION( menu_media_flip );
 MENU_CALLBACK_WITH_ACTION( menu_media_writeprotect );
 
 MENU_CALLBACK_WITH_ACTION( menu_media_if1_rs232 );
@@ -102,8 +104,6 @@ MENU_CALLBACK( menu_media_ide_zxatasp_upload );
 MENU_CALLBACK( menu_media_ide_zxatasp_writeprotect );
 MENU_CALLBACK( menu_media_ide_zxcf_upload );
 MENU_CALLBACK( menu_media_ide_divide_writeprotect );
-
-int menu_open_snap( void );
 
 /*
  * Things to be defined elsewhere
@@ -130,6 +130,17 @@ MENU_CALLBACK( menu_options_general );
 MENU_CALLBACK( menu_options_sound );
 MENU_CALLBACK( menu_options_peripherals );
 MENU_CALLBACK( menu_options_rzx );
+MENU_CALLBACK( menu_options_diskoptions );
+MENU_DETAIL( menu_plus3a_detail );
+MENU_DETAIL( menu_plus3b_detail );
+MENU_DETAIL( menu_beta128a_detail );
+MENU_DETAIL( menu_beta128b_detail );
+MENU_DETAIL( menu_beta128c_detail );
+MENU_DETAIL( menu_beta128d_detail );
+MENU_DETAIL( menu_opus1_detail );
+MENU_DETAIL( menu_opus2_detail );
+MENU_DETAIL( menu_plusd1_detail );
+MENU_DETAIL( menu_plusd2_detail );
 MENU_CALLBACK_WITH_ACTION( menu_options_joysticks_select );
 MENU_DETAIL( menu_keyboard_joystick_detail );
 MENU_DETAIL( menu_joystick_1_detail );
@@ -144,6 +155,7 @@ MENU_CALLBACK( menu_machine_pokefinder );
 MENU_CALLBACK( menu_machine_memorybrowser );
 
 MENU_CALLBACK( menu_help_keyboard );
+MENU_CALLBACK( menu_help_about );
 
 /* Called from elsewhere (generally from one of the routines defined
    in menu.c) */

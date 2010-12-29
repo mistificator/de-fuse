@@ -6,7 +6,7 @@
                   Spectaculator, xzx-pro etc. etc.)..
    Copyright (c) 1999-2007 Philip Kendall and Fredrick Meunier
 
-   $Id: pentagon512.c 3599 2008-04-09 13:16:13Z fredm $
+   $Id: pentagon512.c 4099 2009-10-22 10:59:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
 #include "periph.h"
 #include "settings.h"
 #include "spec128.h"
+#include "spec48.h"
 #include "ula.h"
 
 static int pentagon_reset( void );
@@ -50,6 +51,8 @@ static int pentagon_memory_map( void );
 int 
 pentagon512_init( fuse_machine_info *machine )
 {
+  int i;
+
   machine->machine = LIBSPECTRUM_MACHINE_PENT512;
   machine->id = "pentagon512";
 
@@ -65,6 +68,7 @@ pentagon512_init( fuse_machine_info *machine )
   machine->shutdown = NULL;
 
   machine->memory_map = pentagon_memory_map;
+  for( i = 0; i < 2; i++ ) beta_memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
 
   return 0;
 }
@@ -84,7 +88,7 @@ pentagon_reset(void)
   error = machine_load_rom( 4, 2, settings_current.rom_pentagon512_3,
                             settings_default.rom_pentagon512_3, 0x4000 );
   if( error ) return error;
-  error = machine_load_rom_bank( memory_map_romcs, 0, 0,
+  error = machine_load_rom_bank( beta_memory_map_romcs, 0, 0,
                                  settings_current.rom_pentagon512_2,
                                  settings_default.rom_pentagon512_2, 0x4000 );
   if( error ) return error;
@@ -107,6 +111,8 @@ pentagon_reset(void)
   /* Mark the least 384K as present/writeable */
   for( i = 16; i < 64; i++ )
     memory_map_ram[i].writable = 1;
+
+  spec48_common_display_setup();
 
   return 0;
 }

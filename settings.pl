@@ -3,7 +3,7 @@
 # settings.pl: generate settings.c from settings.dat
 # Copyright (c) 2002-2005 Philip Kendall
 
-# $Id: settings.pl 3599 2008-04-09 13:16:13Z fredm $
+# $Id: settings.pl 4156 2010-09-09 13:01:38Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ while(<>) {
 }
 
 print Fuse::GPL( 'settings.c: Handling configuration settings',
-		 'Copyright (c) 2002 Philip Kendall' );
+		 '2002 Philip Kendall' );
 
 print hashline( __LINE__ ), << 'CODE';
 
@@ -119,9 +119,12 @@ print hashline( __LINE__ ), << 'CODE';
   /* show_version */ 0,
 };
 
-#ifdef HAVE_LIB_XML2
 static int read_config_file( settings_info *settings );
+
+#ifdef HAVE_LIB_XML2
 static int parse_xml( xmlDocPtr doc, settings_info *settings );
+#else				/* #ifdef HAVE_LIB_XML2 */
+static int parse_ini( utils_file *file, settings_info *settings );
 #endif				/* #ifdef HAVE_LIB_XML2 */
 
 static int settings_command_line( settings_info *settings, int *first_arg,
@@ -141,10 +144,8 @@ settings_init( int *first_arg, int argc, char **argv )
     return error;
   }
 
-#ifdef HAVE_LIB_XML2
   error = read_config_file( &settings_current );
   if( error ) return error;
-#endif				/* #ifdef HAVE_LIB_XML2 */
 
   error = settings_command_line( &settings_current, first_arg, argc, argv );
   if( error ) return error;
@@ -165,14 +166,14 @@ int settings_defaults( settings_info *settings )
 static int
 read_config_file( settings_info *settings )
 {
-  const char *home; char path[256];
+  const char *home; char path[ PATH_MAX ];
   struct stat stat_info;
 
   xmlDocPtr doc;
 
   home = compat_get_home_path(); if( !home ) return 1;
 
-  snprintf( path, 256, "%s/%s", home, CONFIG_FILE_NAME );
+  snprintf( path, PATH_MAX, "%s/%s", home, CONFIG_FILE_NAME );
 
   /* See if the file exists; if doesn't, it's not a problem */
   if( stat( path, &stat_info ) ) {
@@ -224,8 +225,10 @@ foreach my $name ( sort keys %options ) {
 	print << "CODE";
     if( !strcmp( (const char*)node->name, "$options{$name}->{configfile}" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
-      settings->$name = atoi( (char*)xmlstring );
-      xmlFree( xmlstring );
+      if( xmlstring ) {
+        settings->$name = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
     } else
 CODE
 
@@ -234,9 +237,11 @@ CODE
 	    print << "CODE";
     if( !strcmp( (const char*)node->name, "$options{$name}->{configfile}" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
-      free( settings->$name );
-      settings->$name = strdup( (char*)xmlstring );
-      xmlFree( xmlstring );
+      if( xmlstring ) {
+        free( settings->$name );
+        settings->$name = strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
     } else
 CODE
 
@@ -270,13 +275,13 @@ print hashline( __LINE__ ), << 'CODE';
 int
 settings_write_config( settings_info *settings )
 {
-  const char *home; char path[256], buffer[80]; 
+  const char *home; char path[ PATH_MAX ], buffer[80]; 
 
   xmlDocPtr doc; xmlNodePtr root;
 
   home = compat_get_home_path(); if( !home ) return 1;
 
-  snprintf( path, 256, "%s/%s", home, CONFIG_FILE_NAME );
+  snprintf( path, PATH_MAX, "%s/%s", home, CONFIG_FILE_NAME );
 
   /* Create the XML document */
   doc = xmlNewDoc( (const xmlChar*)"1.0" );
@@ -300,10 +305,8 @@ foreach my $name ( sort keys %options ) {
 CODE
     } elsif( $type eq 'numeric' ) {
 	print << "CODE";
-  if( settings->$name ) {
-    snprintf( buffer, 80, "%d", settings->$name );
-    xmlNewTextChild( root, NULL, (const xmlChar*)"$options{$name}->{configfile}", (const xmlChar*)buffer );
-  }
+  snprintf( buffer, 80, "%d", settings->$name );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"$options{$name}->{configfile}", (const xmlChar*)buffer );
 CODE
     } elsif( $type eq 'null' ) {
 	# Do nothing
@@ -319,6 +322,249 @@ CODE
   return 0;
 }
 
+#else				/* #ifdef HAVE_LIB_XML2 */
+
+/* Read options from the config file as ini file (if libxml2 is not available) */
+
+static int
+read_config_file( settings_info *settings )
+{
+  const char *home; char path[ PATH_MAX ];
+  struct stat stat_info;
+  int error;
+
+  utils_file file;
+
+  home = compat_get_home_path(); if( !home ) return 1;
+
+  snprintf( path, PATH_MAX, "%s/%s", home, CONFIG_FILE_NAME );
+
+  /* See if the file exists; if doesn't, it's not a problem */
+  if( stat( path, &stat_info ) ) {
+    if( errno == ENOENT ) {
+      return 0;
+    } else {
+      ui_error( UI_ERROR_ERROR, "couldn't stat '%s': %s", path,
+		strerror( errno ) );
+      return 1;
+    }
+  }
+
+  error = utils_read_file( path, &file );
+  if( error ) {
+    ui_error( UI_ERROR_ERROR, "error reading config file" );
+    return 1;
+  }
+
+  if( parse_ini( &file, settings ) ) { utils_close_file( &file ); return 1; }
+
+  utils_close_file( &file );
+
+  return 0;
+}
+
+static int
+settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
+              int **val_int, char ***val_char, unsigned char **next  )
+{
+  unsigned char* cpos;
+  size_t n;
+
+  *val_int = NULL;
+  *val_char = NULL;
+
+  *next = name;
+  while( name < last && ( *name == ' ' || *name == '\t' || *name == '\r' ||
+                          *name == '\n' ) ) {
+    *next = ++name;					/* seek to first char */
+  }
+  cpos = name;
+
+  while( cpos < last && ( *cpos != '=' && *cpos != ' ' && *cpos != '\t' &&
+                          *cpos != '\r' && *cpos != '\n' ) ) cpos++;
+  *next = cpos;
+  n = cpos - name;		/* length of name */
+
+  while( *next < last && **next != '=' ) {		/* search for '=' */
+    if( **next != ' ' && **next != '\t' && **next != '\r' && **next != '\n' )
+      return 1;	/* error in value */
+    (*next)++;
+  }
+  if( *next < last) (*next)++;		/* set after '=' */
+/*  ui_error( UI_ERROR_WARNING, "Config: (%5s): ", name ); */
+
+CODE
+my %type = ('null' => 0, 'boolean' => 1, 'numeric' => 1, 'string' => 2 );
+foreach my $name ( sort keys %options ) {
+    my $len = length $options{$name}->{configfile};
+
+    print << "CODE";
+  if( n == $len && !strncmp( (const char *)name, "$options{$name}->{configfile}", n ) ) {
+CODE
+    print "    *val_int = \&settings->$name;\n" if( $options{$name}->{type} eq 'boolean' or $options{$name}->{type} eq 'numeric' );
+    print "    *val_char = \&settings->$name;\n" if( $options{$name}->{type} eq 'string' );
+    print "/*    *val_null = \&settings->$name; */\n" if( $options{$name}->{type} eq 'null' );
+    print << "CODE";
+    return 0;
+  }
+CODE
+}
+    print << "CODE";
+  return 1;
+}
+
+static int
+parse_ini( utils_file *file, settings_info *settings )
+{
+  unsigned char *cpos, *cpos_new;
+  int *val_int;
+  char **val_char;
+
+  cpos = file->buffer;
+
+  /* Read until the end of file */
+  while( cpos < file->buffer + file->length ) {
+    if( settings_var( settings, cpos, file->buffer + file->length, &val_int,
+                      &val_char, &cpos_new ) ) {
+      /* error in name or something else ... */
+      cpos = cpos_new + 1;
+      ui_error( UI_ERROR_WARNING,
+                "Unknown and/or invalid setting '%s' in config file", cpos );
+      continue;
+    }
+    cpos = cpos_new;
+    if( val_int ) {
+	*val_int = atoi( (char *)cpos );
+	while( cpos < file->buffer + file->length && 
+		( *cpos != '\\0' && *cpos != '\\r' && *cpos != '\\n' ) ) cpos++;
+    } else if( val_char ) {
+	char *value = (char *)cpos;
+	size_t n = 0;
+	while( cpos < file->buffer + file->length && 
+		( *cpos != '\\0' && *cpos != '\\r' && *cpos != '\\n' ) ) cpos++;
+	n = (char *)cpos - value;
+	if( n > 0 ) {
+	  if( *val_char != NULL ) {
+	    free( *val_char );
+	    *val_char = NULL;
+	  }
+	  *val_char = malloc( n + 1 );
+	  if( ! *val_char ) {
+	    ui_error( UI_ERROR_WARNING, "Out of memory!" );
+	    return 1;
+	  }
+	  (*val_char)[n] = '\\0';
+	  memcpy( *val_char, value, n );
+	}
+    }
+    /* skip 'new line' like chars */
+    while( ( cpos < ( file->buffer + file->length ) ) &&
+           ( *cpos == '\\r' || *cpos == '\\n' ) ) cpos++;
+
+CODE
+print hashline( __LINE__ ), << 'CODE';
+  }
+
+  return 0;
+}
+
+static int
+settings_file_write( compat_fd fd, const char *buffer, size_t length )
+{
+  return compat_file_write( fd, (const unsigned char *)buffer, length );
+}
+
+static int
+settings_string_write( compat_fd doc, const char* name, const char* config )
+{
+  if( config != NULL &&
+      ( settings_file_write( doc, name, strlen( name ) ) ||
+        settings_file_write( doc, "=", 1 ) ||
+        settings_file_write( doc, config, strlen( config ) ) ||
+        settings_file_write( doc, "\n", 1 ) ) )
+    return 1;
+  return 0;
+}
+
+static int
+settings_boolean_write( compat_fd doc, const char* name, int config )
+{
+  return settings_string_write( doc, name, config ? "1" : "0" );
+}
+
+static int
+settings_numeric_write( compat_fd doc, const char* name, int config )
+{
+  char buffer[80]; 
+  snprintf( buffer, sizeof( buffer ), "%d", config );
+  return settings_string_write( doc, name, buffer );
+}
+
+int
+settings_write_config( settings_info *settings )
+{
+  const char *home; char path[ PATH_MAX ];
+
+  compat_fd doc;
+
+  home = compat_get_home_path(); if( !home ) return 1;
+
+  snprintf( path, PATH_MAX, "%s/%s", home, CONFIG_FILE_NAME );
+
+  doc = compat_file_open( path, 1 );
+  if( doc == COMPAT_FILE_OPEN_FAILED ) {
+    ui_error( UI_ERROR_ERROR, "couldn't open `%s' for writing: %s\n",
+	      path, strerror( errno ) );
+    return 1;
+  }
+
+CODE
+
+foreach my $name ( sort keys %options ) {
+
+    my $type = $options{$name}->{type};
+    my $len = length "$options{$name}->{configfile}";
+
+    if( $type eq 'boolean' ) {
+
+	print << "CODE";
+  if( settings_boolean_write( doc, "$options{$name}->{configfile}",
+                              settings->$name ) )
+    goto error;
+CODE
+
+    } elsif( $type eq 'string' ) {
+	print << "CODE";
+  if( settings_string_write( doc, "$options{$name}->{configfile}",
+                             settings->$name ) )
+    goto error;
+CODE
+
+    } elsif( $type eq 'numeric' ) {
+	print << "CODE";
+  if( settings_numeric_write( doc, "$options{$name}->{configfile}",
+                              settings->$name ) )
+    goto error;
+CODE
+
+    } elsif( $type eq 'null' ) {
+	# Do nothing
+    } else {
+	die "Unknown setting type `$type'";
+    }
+}
+
+  print hashline( __LINE__ ), << 'CODE';
+
+  compat_file_close( doc );
+
+  return 0;
+error:
+  compat_file_close( doc );
+
+  return 1;
+}
+
 #endif				/* #ifdef HAVE_LIB_XML2 */
 
 /* Read options from the command line */
@@ -326,6 +572,10 @@ static int
 settings_command_line( settings_info *settings, int *first_arg,
                        int argc, char **argv )
 {
+#ifdef GEKKO
+  /* No argv on the Wii. Just return */
+  return 0;
+#endif
 
 #if !defined AMIGA && !defined __MORPHOS__
 
@@ -563,10 +813,8 @@ print hashline( __LINE__ ), << 'CODE';
 int
 settings_end( void )
 {
-#ifdef HAVE_LIB_XML2
   if( settings_current.autosave_settings )
     settings_write_config( &settings_current );
-#endif			/* #ifdef HAVE_LIB_XML2 */
 
   settings_free( &settings_current );
 

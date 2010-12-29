@@ -5,7 +5,7 @@
    Copyright (c) 1999-2002 Philip Kendall
    Copyright (c) 2002-2003 Fredrick Meunier
 
-   $Id: spec_se.c 3566 2008-03-18 12:59:16Z pak21 $
+   $Id: spec_se.c 4060 2009-07-30 13:21:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -148,6 +148,9 @@ spec_se_reset( void )
   periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
   periph_setup_interface1( PERIPH_PRESENT_OPTIONAL );
   periph_setup_interface2( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_opus( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_plusd( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_beta128( PERIPH_PRESENT_OPTIONAL );
   periph_update();
 
   /* Mark as present/writeable */
@@ -200,6 +203,8 @@ spec_se_reset( void )
   scld_dec_write( 0x00ff, 0x00 );
   scld_hsr_write( 0x00f4, 0x00 );
 
+  tc2068_tc2048_common_display_setup();
+
   return 0;
 }
 
@@ -241,4 +246,3 @@ spec_se_memoryport_write( libspectrum_word port GCC_UNUSED,
 
   machine_current->memory_map();
 }
-

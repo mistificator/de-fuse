@@ -66,7 +66,7 @@ int z80_interrupt_event, z80_nmi_event;
 static void z80_init_tables(void);
 static void z80_from_snapshot( libspectrum_snap *snap );
 static void z80_to_snapshot( libspectrum_snap *snap );
-static void z80_nmi( libspectrum_dword tstates, int type, void *user_data );
+static void z80_nmi( libspectrum_dword ts, int type, void *user_data );
 
 static module_info_t z80_module_info = {
 
@@ -194,7 +194,7 @@ z80_interrupt( void )
 
 /* Process a z80 non-maskable interrupt */
 static void
-z80_nmi( libspectrum_dword tstates, int type, void *user_data )
+z80_nmi( libspectrum_dword ts, int type, void *user_data )
 {
   if( z80.halted ) { PC++; z80.halted = 0; }
 
@@ -208,8 +208,7 @@ z80_nmi( libspectrum_dword tstates, int type, void *user_data )
     /* Page in ROM 2 */
     writeport_internal( 0x1ffd, machine_current->ram.last_byte2 | 0x02 );
 
-  } else if( machine_current->capabilities &
-	     LIBSPECTRUM_MACHINE_CAPABILITY_TRDOS_DISK ) {
+  } else if( beta_available ) {
 
     /* Page in TR-DOS ROM */
     beta_page();

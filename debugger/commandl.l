@@ -1,7 +1,7 @@
 /* commandl.l: Debugger command lexical scanner
    Copyright (c) 2002-2008 Philip Kendall
 
-   $Id: commandl.l 3712 2008-07-06 11:45:24Z pak21 $
+   $Id: commandl.l 4130 2010-05-18 12:06:19Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,9 @@
 
 #define YY_INPUT(buf,result,max_size) \
 { \
-  if( !debugger_command_input( buf, &result, max_size ) ) result = YY_NULL; \
+  int retval; \
+  if( !debugger_command_input( buf, &retval, max_size ) ) retval = YY_NULL; \
+  result = (yy_size_t)retval; \
 }
 
 #define YY_NO_INPUT

@@ -1,7 +1,7 @@
 /* sdlkeyboard.c: routines for dealing with the SDL keyboard
    Copyright (c) 2000-2005 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
 
-   $Id: sdlkeyboard.c 3609 2008-05-01 13:17:56Z fredm $
+   $Id: sdlkeyboard.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,10 +37,8 @@
 #include "snapshot.h"
 #include "spectrum.h"
 #include "tape.h"
+#include "ui/ui.h"
 #include "utils.h"
-#ifdef USE_WIDGET
-#include "ui/widget/widget.h"
-#endif				/* #ifdef USE_WIDGET */
 #include "sdlkeyboard.h"
 
 /* Map low byte of UCS-2(?) Unicode to Fuse input layer keysym for

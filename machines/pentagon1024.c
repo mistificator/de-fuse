@@ -2,7 +2,7 @@
                   be a post-1996 Pentagon (a 1024k v2.2 1024SL?).
    Copyright (c) 1999-2007 Philip Kendall and Fredrick Meunier
 
-   $Id: pentagon1024.c 3599 2008-04-09 13:16:13Z fredm $
+   $Id: pentagon1024.c 4099 2009-10-22 10:59:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 #include "periph.h"
 #include "settings.h"
 #include "spec128.h"
+#include "spec48.h"
 #include "ula.h"
 
 static int pentagon1024_reset( void );
@@ -66,6 +67,8 @@ static const size_t peripherals_count =
 int
 pentagon1024_init( fuse_machine_info *machine )
 {
+  int i;
+
   machine->machine = LIBSPECTRUM_MACHINE_PENT1024;
   machine->id = "pentagon1024";
 
@@ -81,6 +84,8 @@ pentagon1024_init( fuse_machine_info *machine )
   machine->shutdown = NULL;
 
   machine->memory_map = pentagon1024_memory_map;
+
+  for( i = 0; i < 2; i++ ) beta_memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
 
   return 0;
 }
@@ -100,7 +105,7 @@ pentagon1024_reset(void)
   error = machine_load_rom( 4, 2, settings_current.rom_pentagon1024_3,
                             settings_default.rom_pentagon1024_3, 0x4000 );
   if( error ) return error;
-  error = machine_load_rom_bank( memory_map_romcs, 0, 0,
+  error = machine_load_rom_bank( beta_memory_map_romcs, 0, 0,
                                  settings_current.rom_pentagon1024_2,
                                  settings_default.rom_pentagon1024_2, 0x4000 );
   if( error ) return error;
@@ -108,21 +113,23 @@ pentagon1024_reset(void)
   error = spec128_common_reset( 0 );
   if( error ) return error;
 
-  error = periph_setup( peripherals, peripherals_count );
-  if( error ) return error;
-  periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
-  periph_setup_beta128( PERIPH_PRESENT_ALWAYS );
-  periph_update();
-
-  beta_builtin = 1;
-  beta_active = 1;
-
   machine_current->ram.last_byte2 = 0;
   machine_current->ram.special = 0;
 
   /* Mark the least 896K as present/writeable */
   for( i = 16; i < 128; i++ )
     memory_map_ram[i].writable = 1;
+
+  beta_builtin = 1;
+  beta_active = 1;
+
+  error = periph_setup( peripherals, peripherals_count );
+  if( error ) return error;
+  periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
+  periph_setup_beta128( PERIPH_PRESENT_ALWAYS );
+  periph_update();
+
+  spec48_common_display_setup();
 
   return 0;
 }
@@ -147,6 +154,14 @@ pentagon1024_v22_memoryport_write( libspectrum_word port GCC_UNUSED,
   if( machine_current->ram.locked ) return;
 
   machine_current->ram.last_byte2 = b;
+  if( b & 0x01 ) {
+    display_dirty = display_dirty_pentagon_16_col;
+    display_write_if_dirty = display_write_if_dirty_pentagon_16_col;
+    display_dirty_flashing = display_dirty_flashing_pentagon_16_col;
+    memory_display_dirty = memory_display_dirty_pentagon_16_col;
+  } else {
+    spec48_common_display_setup();
+  }
   machine_current->memory_map();
 }
 

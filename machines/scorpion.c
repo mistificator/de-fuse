@@ -1,7 +1,7 @@
 /* scorpion.c: Scorpion 256K specific routines
    Copyright (c) 1999-2007 Philip Kendall, Fredrick Meunier and Stuart Brady
 
-   $Id: scorpion.c 3566 2008-03-18 12:59:16Z pak21 $
+   $Id: scorpion.c 4099 2009-10-22 10:59:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
 #include "settings.h"
 #include "scorpion.h"
 #include "spec128.h"
+#include "spec48.h"
 #include "specplus3.h"
 #include "spectrum.h"
 #include "ula.h"
@@ -68,6 +69,8 @@ static const size_t peripherals_count =
 int
 scorpion_init( fuse_machine_info *machine )
 {
+  int i;
+
   machine->machine = LIBSPECTRUM_MACHINE_SCORP;
   machine->id = "scorpion";
 
@@ -83,6 +86,7 @@ scorpion_init( fuse_machine_info *machine )
   machine->shutdown = NULL;
 
   machine->memory_map = scorpion_memory_map;
+  for( i = 0; i < 2; i++ ) beta_memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
 
   return 0;
 }
@@ -101,7 +105,7 @@ scorpion_reset(void)
   error = machine_load_rom( 4, 2, settings_current.rom_scorpion_2,
                             settings_default.rom_scorpion_2, 0x4000 );
   if( error ) return error;
-  error = machine_load_rom_bank( memory_map_romcs, 0, 0,
+  error = machine_load_rom_bank( beta_memory_map_romcs, 0, 0,
                                  settings_current.rom_scorpion_3,
                                  settings_default.rom_scorpion_3, 0x4000 );
   if( error ) return error;
@@ -124,6 +128,8 @@ scorpion_reset(void)
 
   beta_builtin = 1;
   beta_active = 0;
+
+  spec48_common_display_setup();
 
   return 0;
 }

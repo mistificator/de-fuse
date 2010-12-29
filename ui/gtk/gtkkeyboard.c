@@ -1,7 +1,7 @@
 /* gtkkeyboard.c: GTK+ routines for dealing with the keyboard
    Copyright (c) 2000-2008 Philip Kendall, Russell Marks
 
-   $Id: gtkkeyboard.c 3683 2008-06-19 08:19:05Z pak21 $
+   $Id: gtkkeyboard.c 4176 2010-10-06 10:56:05Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,19 +38,25 @@
 /* Given a hardware keycode, return the keyval which would have been returned if
    the key were unshifted */
 static guint
-unshift_keysym( guint keycode )
+unshift_keysym( guint keycode, gint group )
 {
   GdkKeymapKey *maps;
-  guint *keyvals, i, r = GDK_VoidSymbol;
+  guint *keyvals, i, r = GDK_VoidSymbol, r2 = GDK_VoidSymbol;
   gint count;
 
   gdk_keymap_get_entries_for_keycode( NULL, keycode, &maps, &keyvals, &count );
 
-  for( i = 0; i < count; i++ )
-    if( maps[i].group == 0 && maps[i].level == 0 ) {
+  for( i = 0; i < count; i++ ) {
+    if( maps[i].group == group && maps[i].level == 0 ) {
       r = keyvals[i];
       break;
     }
+    if( maps[i].group == 0 && maps[i].level == 0 ) {
+      r2 = keyvals[i];
+    }
+  }
+  if (i == count)
+	  r = r2;
 
   g_free( keyvals ); g_free( maps );
 
@@ -58,7 +64,7 @@ unshift_keysym( guint keycode )
 }
 
 static void
-get_keysyms( input_event_t *event, guint keycode, guint keysym )
+get_keysyms( input_event_t *event, guint keycode, guint keysym, gint group )
 {
   guint unshifted;
 
@@ -66,7 +72,7 @@ get_keysyms( input_event_t *event, guint keycode, guint keysym )
      but we may as well set it up anyway as we've got it */
   event->types.key.native_key = keysyms_remap( keysym );
 
-  unshifted = unshift_keysym( keycode );
+  unshifted = unshift_keysym( keycode, group );
   event->types.key.spectrum_key = keysyms_remap( unshifted );
 }
 
@@ -76,11 +82,11 @@ gtkkeyboard_keypress( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
 {
   input_event_t fuse_event;
 
-  if( event->key.keyval == GDK_F10 && event->key.state == 0 )
+  if( event->key.keyval == GDK_F1 && event->key.state == 0 )
     ui_mouse_suspend();
 
   fuse_event.type = INPUT_EVENT_KEYPRESS;
-  get_keysyms( &fuse_event, event->key.hardware_keycode, event->key.keyval );
+  get_keysyms( &fuse_event, event->key.hardware_keycode, event->key.keyval, event->key.group );
 
   return input_event( &fuse_event );
 
@@ -94,7 +100,7 @@ gtkkeyboard_keyrelease( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
   input_event_t fuse_event;
 
   fuse_event.type = INPUT_EVENT_KEYRELEASE;
-  get_keysyms( &fuse_event, event->key.hardware_keycode, event->key.keyval );
+  get_keysyms( &fuse_event, event->key.hardware_keycode, event->key.keyval, event->key.group );
 
   return input_event( &fuse_event );
 }

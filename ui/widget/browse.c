@@ -1,7 +1,7 @@
 /* browse.c: tape browser widget
    Copyright (c) 2002-2004 Philip Kendall
 
-   $Id: browse.c 3749 2008-08-15 12:47:44Z fredm $
+   $Id: browse.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -198,6 +198,7 @@ widget_browse_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
   case INPUT_JOYSTICK_FIRE_1:
     widget_end_widget( WIDGET_FINISHED_OK );
     return;

@@ -1,7 +1,7 @@
 /* specplus3e.c: Spectrum +3e specific routines
    Copyright (c) 1999-2004 Philip Kendall, Darren Salt
 
-   $Id: specplus3e.c 3601 2008-04-09 13:32:12Z fredm $
+   $Id: specplus3e.c 4038 2009-06-24 14:25:23Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "machines.h"
 #include "periph.h"
 #include "settings.h"
+#include "spec48.h"
 #include "specplus3.h"
 #include "ui/ui.h"
 
@@ -83,9 +84,10 @@ specplus3e_reset( void )
   periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
   periph_setup_interface1( PERIPH_PRESENT_OPTIONAL );
   periph_update();
-
-  upd_fdc_master_reset( specplus3_fdc );
+  specplus3_765_reset();
   specplus3_menu_items();
+
+  spec48_common_display_setup();
 
   return 0;
 }

@@ -1,7 +1,7 @@
 /* gtkinternals.h: stuff internal to the GTK+ UI
    Copyright (c) 2003-2005 Philip Kendall
 
-   $Id: gtkinternals.h 3038 2007-07-01 15:32:03Z pak21 $
+   $Id: gtkinternals.h 4020 2009-05-18 11:33:30Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,9 +35,6 @@
 
 /* The colour palette in use */
 extern libspectrum_dword gtkdisplay_colours[ 16 ];
-
-int gtkdisplay_init( void );
-int gtkdisplay_end( void );
 
 /*
  * Keyboard routines (gtkkeyboard.c)

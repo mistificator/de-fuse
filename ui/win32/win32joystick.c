@@ -1,7 +1,7 @@
-/* gtkjoystick.c: Joystick emulation
+/* win32joystick.c: Joystick emulation
    Copyright (c) 2003-2008 Darren Salt, Philip Kendall, Marek Januszewski
 
-   $Id: win32joystick.c 3804 2008-11-03 04:21:02Z specu $
+   $Id: win32joystick.c 3954 2009-01-12 19:58:08Z specu $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

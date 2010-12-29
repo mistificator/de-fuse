@@ -1,7 +1,7 @@
 /* scld.c: Routines for handling the Timex SCLD
    Copyright (c) 2002-2006 Fredrick Meunier, Philip Kendall, Witold Filipczyk
 
-   $Id: scld.c 3849 2008-11-25 02:10:31Z fredm $
+   $Id: scld.c 3848 2008-11-25 02:05:16Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

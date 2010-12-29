@@ -2,7 +2,7 @@
    Copyright (c) 2003-2007 Stuart Brady, Fredrick Meunier, Philip Kendall,
    Gergely Szasz
 
-   $Id: wd_fdc.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: wd_fdc.h 4060 2009-07-30 13:21:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ static const int WD_FDC_SR_BUSY    = 1<<0; /* Busy (command under execution) */
 static const int WD_FLAG_NONE      = 0;
 static const int WD_FLAG_BETA128   = 1<<0; /* Beta128 connects HLD output pin to READY input pin and
 					      MOTOR ON pin on FDD interface */
+static const int WD_FLAG_OPUS      = 1<<1; /* Opus Discovery need `datarq' line for every byte */
 
 typedef enum wd_type_t {
   WD1773 = 0,		/* WD1773 */
@@ -70,7 +71,7 @@ typedef struct wd_fdc {
   wd_fdc_drive *current_drive;
 
   wd_type_t type;		/* WD1770, WD1772, WD1773 */
-  
+
   int rates[ 4 ];
   int spin_cycles;
   fdd_dir_t direction;		/* 0 = spindlewards, 1 = rimwards */

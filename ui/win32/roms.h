@@ -1,7 +1,7 @@
 /* roms.h: ROM selector dialog box
    Copyright (c) 2008 Marek Januszewski
 
-   $Id: roms.h 3590 2008-03-27 21:18:00Z specu $
+   $Id: roms.h 3922 2008-12-31 19:01:31Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

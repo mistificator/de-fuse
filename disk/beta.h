@@ -1,7 +1,7 @@
 /* beta.h: Routines for handling the Beta disk interface
    Copyright (c) 2003-2004 Fredrick Meunier, Philip Kendall
 
-   $Id: beta.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: beta.h 4099 2009-10-22 10:59:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,11 +30,19 @@
 
 #include <libspectrum.h>
 
+#include "memory.h"
 #include "periph.h"
+#include "disk/fdd.h"
 
 extern int beta_available;  /* Is the Beta disk interface available for use? */
 extern int beta_active;     /* Is the Beta disk interface enabled? */
 extern int beta_builtin;    /* Is the Beta disk interface built-in? */
+
+/* Two 8Kb memory chunks accessible by the Z80 when /ROMCS is low */
+extern memory_page beta_memory_map_romcs[2];
+
+extern libspectrum_word beta_pc_mask; /* Bits to mask in PC for enable check */
+extern libspectrum_word beta_pc_value; /* Value to compare masked PC against */
 
 extern const periph_t beta_peripherals[];
 extern const size_t beta_peripherals_count;
@@ -72,7 +80,9 @@ typedef enum beta_drive_number {
 int beta_disk_insert( beta_drive_number which, const char *filename,
                        int autoload );
 int beta_disk_eject( beta_drive_number which, int write );
+int beta_disk_flip( beta_drive_number which, int flip );
 int beta_disk_writeprotect( beta_drive_number which, int wrprot );
 int beta_disk_write( beta_drive_number which, const char *filename );
+fdd_t *beta_get_fdd( beta_drive_number which );
 
 #endif                  /* #ifndef FUSE_BETA_H */

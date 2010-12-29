@@ -1,7 +1,7 @@
 /* pokefinder.c: The poke finder widget
    Copyright (c) 2004 Darren Salt
 
-   $Id: pokefinder.c 3666 2008-06-10 20:43:46Z fredm $
+   $Id: pokefinder.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -179,6 +179,7 @@ widget_pokefinder_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
   case INPUT_KEY_s:		/* Search */
     if( value < 256 ) {
       pokefinder_search( value );

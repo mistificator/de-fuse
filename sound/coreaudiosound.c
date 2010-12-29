@@ -21,8 +21,10 @@
 
 #include <errno.h>
 #include <unistd.h>
-#include <CoreAudio/AudioHardware.h>
+
 #include <AudioUnit/AudioUnit.h>
+#include <CoreAudio/AudioHardware.h>
+#include <CoreServices/CoreServices.h>
 
 #include "settings.h"
 #include "sfifo.h"
@@ -52,52 +54,75 @@ static AudioUnit gOutputUnit;
 /* Records sound writer status information */
 static int audio_output_started;
 
+/* get the default output device for the HAL */
+static int
+get_default_output_device(AudioDeviceID* device)
+{
+  OSStatus err = kAudioHardwareNoError;
+  UInt32 count;
+
+  AudioObjectPropertyAddress property_address = { 
+    kAudioHardwarePropertyDefaultOutputDevice, 
+    kAudioObjectPropertyScopeGlobal,
+    kAudioObjectPropertyElementMaster
+  }; 
+
+  /* get the default output device for the HAL */
+  count = sizeof( *device );
+  err = AudioObjectGetPropertyData( kAudioObjectSystemObject, &property_address,
+                                    0, NULL, &count, device); 
+  if ( err != kAudioHardwareNoError && device != kAudioObjectUnknown ) {
+    ui_error( UI_ERROR_ERROR,
+              "get kAudioHardwarePropertyDefaultOutputDevice error %ld",
+              (long)err );
+    return 1;
+  }
+
+  return 0;
+}
+
+/* get the nominal sample rate used by the supplied device */
+static int
+get_default_sample_rate( AudioDeviceID device, Float64 *rate )
+{
+  OSStatus err = kAudioHardwareNoError;
+  UInt32 count;
+
+  AudioObjectPropertyAddress property_address = { 
+    kAudioDevicePropertyNominalSampleRate,
+    kAudioObjectPropertyScopeGlobal,
+    kAudioObjectPropertyElementMaster
+  }; 
+
+  /* get the default output device for the HAL */
+  count = sizeof( *rate );
+  err = AudioObjectGetPropertyData( device, &property_address, 0, NULL, &count,
+                                    rate);
+  if ( err != kAudioHardwareNoError ) {
+    ui_error( UI_ERROR_ERROR,
+              "get kAudioDevicePropertyNominalSampleRate error %ld",
+              (long)err );
+    return 1;
+  }
+
+  return 0;
+}
+
 int
 sound_lowlevel_init( const char *dev, int *freqptr, int *stereoptr )
 {
   OSStatus err = kAudioHardwareNoError;
-  UInt32 count;
-  AudioDeviceID device = kAudioDeviceUnknown; /* the default device */
-  UInt32 deviceBufferSize;  /* bufferSize returned by
-                               kAudioDevicePropertyBufferSize */
+  AudioDeviceID device = kAudioObjectUnknown; /* the default device */
   int error;
   float hz;
   int sound_framesiz;
 
-  /* get the default output device for the HAL */
-  count = sizeof( device );
-  err = AudioHardwareGetProperty( kAudioHardwarePropertyDefaultOutputDevice,
-                                  &count, (void *)&device );
-  if ( err != kAudioHardwareNoError ) {
-    ui_error( UI_ERROR_ERROR,
-              "get kAudioHardwarePropertyDefaultOutputDevice error %ld",
-              err );
-    return 1;
-  }
-
-  /* get the buffersize that the default device uses for IO */
-  count = sizeof( deviceBufferSize );
-  err = AudioDeviceGetProperty( device, 0, false, kAudioDevicePropertyBufferSize,
-                                &count, &deviceBufferSize );
-  if( err != kAudioHardwareNoError ) {
-    ui_error( UI_ERROR_ERROR, "get kAudioDevicePropertyBufferSize error %ld",
-              err );
-    return 1;
-  }
-
-  /* get a description of the data format used by the default device */
-  count = sizeof( deviceFormat );
-  err = AudioDeviceGetProperty( device, 0, false,
-                                kAudioDevicePropertyStreamFormat, &count,
-                                &deviceFormat );
-  if( err != kAudioHardwareNoError ) {
-    ui_error( UI_ERROR_ERROR,
-              "get kAudioDevicePropertyStreamFormat error %ld", err );
-    return 1;
-  }
+  if( get_default_output_device(&device) ) return 1;
+  if( get_default_sample_rate( device, &deviceFormat.mSampleRate ) ) return 1;
 
   *freqptr = deviceFormat.mSampleRate;
 
+  deviceFormat.mFormatID =  kAudioFormatLinearPCM;
   deviceFormat.mFormatFlags =  kLinearPCMFormatFlagIsSignedInteger
 #ifdef WORDS_BIGENDIAN
                     | kLinearPCMFormatFlagIsBigEndian
@@ -125,7 +150,7 @@ sound_lowlevel_init( const char *dev, int *freqptr, int *stereoptr )
 
   err = OpenAComponent( comp, &gOutputUnit );
   if( comp == NULL ) {
-    ui_error( UI_ERROR_ERROR, "OpenAComponent=%ld", err );
+    ui_error( UI_ERROR_ERROR, "OpenAComponent=%ld", (long)err );
     return 1;
   }
 
@@ -141,7 +166,7 @@ sound_lowlevel_init( const char *dev, int *freqptr, int *stereoptr )
                               &input,
                               sizeof( input ) );
   if( err ) {
-    ui_error( UI_ERROR_ERROR, "AudioUnitSetProperty-CB=%ld", err );
+    ui_error( UI_ERROR_ERROR, "AudioUnitSetProperty-CB=%ld", (long)err );
     return 1;
   }
 
@@ -152,18 +177,27 @@ sound_lowlevel_init( const char *dev, int *freqptr, int *stereoptr )
                               &deviceFormat,
                               sizeof( AudioStreamBasicDescription ) );
   if( err ) {
-    ui_error( UI_ERROR_ERROR, "AudioUnitSetProperty-SF=%4.4s, %ld", (char*)&err, err );
+    ui_error( UI_ERROR_ERROR, "AudioUnitSetProperty-SF=%4.4s, %ld", (char*)&err,
+              (long)err );
     return 1;
   }
 
   err = AudioUnitInitialize( gOutputUnit );
   if( err ) {
-    ui_error( UI_ERROR_ERROR, "AudioUnitInitialize=%ld", err );
+    ui_error( UI_ERROR_ERROR, "AudioUnitInitialize=%ld", (long)err );
     return 1;
   }
 
-  hz = (float)machine_current->timings.processor_speed /
+  /* Adjust relative processor speed to deal with adjusting sound generation
+     frequency against emulation speed (more flexible than adjusting generated
+     sample rate) */
+  hz = (float)sound_get_effective_processor_speed() /
               machine_current->timings.tstates_per_frame;
+  /* Amount of audio data we will accumulate before yielding back to the OS.
+     Not much point having more than 100Hz playback, we probably get
+     downgraded by the OS as being a hog too (unlimited Hz limits playback
+     speed to about 2000% on my Mac, 100Hz allows up to 5000% for me) */
+  if( hz > 100.0 ) hz = 100.0;
   sound_framesiz = deviceFormat.mSampleRate / hz;
 
   if( ( error = sfifo_init( &sound_fifo, NUM_FRAMES
@@ -191,7 +225,7 @@ sound_lowlevel_end( void )
 
   err = AudioUnitUninitialize( gOutputUnit );
   if( err ) {
-    printf( "AudioUnitUninitialize=%ld", err );
+    printf( "AudioUnitUninitialize=%ld", (long)err );
   }
 
   CloseComponent( gOutputUnit );
@@ -230,7 +264,7 @@ sound_lowlevel_frame( libspectrum_signed_word *data, int len )
        default device */
     OSStatus err = AudioOutputUnitStart( gOutputUnit );
     if( err ) {
-      ui_error( UI_ERROR_ERROR, "AudioOutputUnitStart=%ld", err );
+      ui_error( UI_ERROR_ERROR, "AudioOutputUnitStart=%ld", (long)err );
       return;
     }
 

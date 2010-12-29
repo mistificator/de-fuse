@@ -3,7 +3,7 @@
 # menu_data.pl: generate the menu structure from menu_data.dat
 # Copyright (c) 2004-2007 Philip Kendall, Stuart Brady, Marek Januszewski
 
-# $Id: menu_data.pl 3769 2008-09-07 02:26:10Z specu $
+# $Id: menu_data.pl 4010 2009-04-15 13:01:27Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ sub dump_widget ($) {
 
     print << "HEADERS";
 #include "input.h"
-#include "options.h"
+#include "options_internals.h"
 #include "widget_internals.h"
 
 HEADERS

@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2004 Philip Kendall
 
-## $Id: Makefile.am 3609 2008-05-01 13:17:56Z fredm $
+## $Id: Makefile.am 3944 2009-01-10 18:17:04Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ DIST_SUBDIRS = fb \
 	       sdl \
 	       svga \
 	       widget \
+	       wii \
 	       win32 \
 	       xlib
 

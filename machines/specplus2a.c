@@ -1,7 +1,7 @@
 /* specplus2a.c: Spectrum +2A specific routines
    Copyright (c) 1999-2004 Philip Kendall
 
-   $Id: specplus2a.c 3823 2008-11-16 17:32:18Z pak21 $
+   $Id: specplus2a.c 4038 2009-06-24 14:25:23Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include "printer.h"
 #include "settings.h"
 #include "spec128.h"
+#include "spec48.h"
 #include "specplus3.h"
 #include "ula.h"
 #include "if1.h"
@@ -73,7 +74,6 @@ specplus2a_init( fuse_machine_info *machine )
   machine->memory_map = specplus3_memory_map;
 
   return 0;
-
 }
 
 static int
@@ -101,6 +101,8 @@ specplus2a_reset( void )
   if( error ) return error;
   periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
   periph_update();
+
+  spec48_common_display_setup();
 
   return 0;
 }

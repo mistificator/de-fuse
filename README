@@ -1,5 +1,5 @@
-The Free Unix Spectrum Emulator (Fuse) 0.10.0.2
-===============================================
+The Free Unix Spectrum Emulator (Fuse) 1.0.0
+============================================
 
 Fuse (the Free Unix Spectrum Emulator) was originally, and somewhat
 unsurprisingly, an emulator of the ZX Spectrum (a popular 1980s home
@@ -25,7 +25,7 @@ What Fuse does have:
 * Support for the RZX input recording file format, including
   rollback and 'competition mode'.
 * Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum +3e,
-  ZXATASP, ZXCF, Beta 128 and +D interfaces.
+  ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
 
 Help! <xyz> doesn't work
 ------------------------
@@ -55,8 +55,6 @@ Optional:
   * libpng: the ability to save screenshots
   * libxml2: the ability to load and save Fuse's current configuration
   * zlib: support for compressed RZX files
-  * samplerate: support for better beeper sound quality; get it from
-    http://www.mega-nerd.com/SRC/
 
 If you've used Fuse prior to version 0.5.0, note that the external
 utilities (tzxlist, etc) are now available separately from Fuse
@@ -113,15 +111,81 @@ do this bit.
 
 Once you've got Fuse configured and built, read the man page :-)
 
-Note that if you're using version of Fuse from CVS rather than one of
-the released tarballs, you'll need to run `autogen.sh' before running
-'configure' for the first time.
+Note that if you're using version of Fuse from Subversion rather than
+one of the released tarballs, you'll need to run `autogen.sh' before
+running 'configure' for the first time.
 
 Building the OS X version of Fuse
 ---------------------------------
 
 The native Cocoa port by Fredrick Meunier <fredm@spamcop.net> comes as
 a set of Xcode projects for libgcrypt, libspectrum and Fuse itself.
+
+Building the Wii version of Fuse
+--------------------------------
+
+You'll need to have the standard Wii homebrew toolchain installed; see
+eg <http://wiibrew.org/wiki/DevkitPro> for some information on setting
+this up.
+
+After that, make sure the dev tools are in your path (export
+PATH=$PATH:$DEVKITPPC/bin) and that a Wii version of libspectrum has been
+built and installed.
+
+Then, use this configure line:
+
+./configure --target=powerpc-gekko --host=powerpc-gekko \
+	    --with-wii \
+	    --without-libxml2 --without-libiconv --without-gpm \
+	    --without-x --without-glib \
+	    CFLAGS="-g -I$DEVKITPPC/include -I$DEVKITPRO/libogc/include -DGEKKO" \
+	    LDFLAGS="-g -mrvl -mcpu=750 -meabi -mhard-float \
+                     -Wl,-Map,fuse.elf.map -L$DEVKITPPC/lib \
+                     -L$DEVKITPRO/libogc/lib/wii" \
+            LIBS="-lfat -lwiiuse -lbte -logc -lm"
+
+Finally, to build, use this line:
+
+EXEEXT=".elf" make -e
+
+This should build fuse.elf, which you can run on your Wii via the usual
+methods.
+
+Building the Win32 version of Fuse on Linux
+--------------------------------
+
+You'll need to have the standard MinGW programming tool set. e.g. on Debian
+`apt-get install mingw32 mingw-binutils mingw32-runtime'
+ <http://www.mingw.org/>
+
+First, have to compile libspectrum:
+
+./configure --host=i586-mingw32msvc --without-libaudiofile --without-zlib \
+	    --without-libgcrypt --without-bzip2 --without-glib --prefix=`pwd`
+make install
+
+This should compile libspectrum without any external lib, and `install' into the
+source directory. All of the external libs needed by libspectrum and fuse
+compile with successfully with MingGW environment - in case of problems
+with compiling any of the libs please refer to the lib's homepage for help.
+
+Then, compile fuse:
+
+./configure --host=i586-mingw32msvc --without-glib --prefix=`pwd` \
+	    --with-libspectrum-prefix=`pwd`/../libspectrum --with-win32 \
+	    --without-libxml2 --without-x
+make
+
+You have to use the real path of libspectrum with `--with-libspectrum-prefix='.
+This should build `fuse.exe' without any external lib, but you can run it on
+Windows or Linux (with Wine).
+
+Note: you need `libspectrum-7.dll' and the `roms' directory and the `lib'
+  directory to `fuse' run perfectly. You may copy this file and directories
+  into that directory where `fuse.exe' exists. On windows you may need to
+  copy all files from `lib/uncompressed' into `lib'.
+  With wine you need `fltmgr.sys' in Windows `system32' directory. (e.g.:
+  ~/.wine/c_drive/windows/system32).
 
 Closing comments
 ----------------
@@ -145,11 +209,11 @@ http://lists.sourceforge.net/lists/listinfo/fuse-emulator-devel
 and the Fuse project page on SourceForge,
 http://sourceforge.net/projects/fuse-emulator/
 
-If you're interested in more general Speccy related discussions, visit
-the Usenet group 'comp.sys.sinclair', but do read the FAQ
-( http://www.worldofspectrum.org/faq/index.html ) first!
+For Spectrum discussions not directly related to Fuse, visit either the
+Usenet newsgroup `comp.sys.sinclair' or the World of Spectrum forums
+<http://www.worldofspectrum.org/forums/>.
 
 Philip Kendall <philip-fuse@shadowmagic.org.uk>
-14 January 2009
+16 December 2010
 
-$Id: README 3957 2009-01-14 19:52:20Z pak21 $
+$Id: README 4214 2010-12-16 21:40:25Z pak21 $

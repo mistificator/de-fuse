@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # options.pl: generate options dialog boxes
-# $Id: options.pl 3115 2007-08-19 02:49:14Z fredm $
+# $Id: options.pl 4019 2009-05-17 15:05:52Z fredm $
 
 # Copyright (c) 2002-2004 Philip Kendall
 
@@ -32,6 +32,9 @@ die "No data file specified" unless @ARGV;
 
 my @dialogs = Fuse::Dialog::read( shift @ARGV );
 
+my %combo_sets;
+my %combo_default;
+
 print Fuse::GPL( 'options.c: options dialog boxes',
 		 '2001-2004 Philip Kendall' ) . << "CODE";
 
@@ -44,6 +47,7 @@ print Fuse::GPL( 'options.c: options dialog boxes',
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -52,15 +56,85 @@ print Fuse::GPL( 'options.c: options dialog boxes',
 #include "display.h"
 #include "fuse.h"
 #include "gtkinternals.h"
-#include "options.h"
+#include "options_internals.h"
 #include "periph.h"
 #include "settings.h"
+
+static int
+option_enumerate_combo( char **options, char *value, guint count, int def ) {
+  int i;
+  if( value != NULL ) {
+    for( i = 0; i < count; i++) {
+      if( !strcmp( value, options[ i ] ) )
+        return i;
+    }
+  }
+  return def;
+}
+
 CODE
 
 foreach( @dialogs ) {
 
-    print << "CODE";
+    foreach my $widget ( @{ $_->{widgets} } ) {
 
+	foreach my $type ( $widget->{type} ) {
+
+	    my $text = $widget->{text}; $text =~ tr/()//d;
+
+	    if( $type eq "Combo" ) {
+		my $n = 0;
+
+		foreach( split( /\|/, $widget->{data1} ) ) {
+		    if( /^\*/ ) {
+			$combo_default{$widget->{value}} = $n;
+		    }
+		    $n++;
+		}
+		$n = 0;
+		$widget->{data1} =~ s/^\*//;
+		$widget->{data1} =~ s/\|\*/|/;
+		if( not exists( $combo_sets{$widget->{data1}} ) ) {
+		    $combo_sets{$widget->{data1}} = "$_->{name}_$widget->{value}_combo";
+
+		    print << "CODE";
+
+static char * $_->{name}_$widget->{value}_combo[] = {
+CODE
+		    foreach( split( /\|/, $widget->{data1} ) ) {
+			print << "CODE";
+  "$_",
+CODE
+			$n++;
+		    }
+		    print << "CODE";
+};
+
+static const guint $_->{name}_$widget->{value}_combo_count = $n;
+
+CODE
+		} else {
+		    print << "CODE";
+\#define $_->{name}_$widget->{value}_combo $combo_sets{$widget->{data1}}
+\#define $_->{name}_$widget->{value}_combo_count $combo_sets{$widget->{data1}}_count
+
+CODE
+		}
+		print << "CODE";
+int
+option_enumerate_$_->{name}_$widget->{value}() {
+  return option_enumerate_combo( $_->{name}_$widget->{value}_combo,
+				 settings_current.$widget->{value},
+				 $_->{name}_$widget->{value}_combo_count,
+				 $combo_default{$widget->{value}} );
+}
+
+CODE
+	    }
+	}
+    }
+
+    print << "CODE";
 static void menu_options_$_->{name}_done( GtkWidget *widget,
 					  gpointer user_data );
 
@@ -69,12 +143,14 @@ menu_options_$_->{name}( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
   menu_options_$_->{name}_t dialog;
-  GtkWidget *frame, *hbox, *text;
+  GtkWidget *frame, *hbox, *text, *combo;
   gchar buffer[80];
+  int i;
 
-  frame = hbox = text = NULL;
+  i = 0;
+  combo = frame = hbox = text = NULL;
   buffer[0] = '\\0';		/* Shut gcc up */
-  
+
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
@@ -125,6 +201,35 @@ CODE
   gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
 
 CODE
+            } elsif( $type eq "Combo" ) {
+
+		print << "CODE";
+  hbox = gtk_hbox_new( FALSE, 0 );
+  text = gtk_label_new( "$text" );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  text = gtk_label_new( " " );
+  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+  combo = gtk_combo_box_new_text();
+  for( i = 0; i < $_->{name}_$widget->{value}_combo_count; i++ ) {
+    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), $_->{name}_$widget->{value}_combo[i] );
+  }
+  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), $combo_default{$widget->{value}} );
+  if( settings_current.$widget->{value} != NULL ) {
+    for( i = 0; i < $_->{name}_$widget->{value}_combo_count; i++ ) {
+      if( !strcmp( settings_current.$widget->{value}, $_->{name}_$widget->{value}_combo[i] ) ) {
+        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      }
+    }
+  }
+
+  dialog.$widget->{value} = combo;
+  gtk_box_pack_start( GTK_BOX( hbox ), dialog.$widget->{value}, FALSE, FALSE, 5 );
+
+  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
+			       hbox );
+
+CODE
 	    } else {
 		die "Unknown type `$type'";
 	    }
@@ -169,6 +274,14 @@ CODE
 	    print << "CODE";
   settings_current.$widget->{value} =
     atoi( gtk_entry_get_text( GTK_ENTRY( ptr->$widget->{value} ) ) );
+
+CODE
+        } elsif( $widget->{type} eq "Combo" ) {
+
+	    print << "CODE";
+  free( settings_current.$widget->{value} );
+  settings_current.$widget->{value} = strdup( $_->{name}_$widget->{value}_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->$widget->{value} ) ) ] );
 
 CODE
     	} else {

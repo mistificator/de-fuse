@@ -1,7 +1,7 @@
 /* memory.c: Routines for accessing memory
    Copyright (c) 1999-2004 Philip Kendall
 
-   $Id: memory.c 3655 2008-06-07 13:46:07Z pak21 $
+   $Id: memory.c 4207 2010-12-05 10:01:23Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 
 #include "debugger/debugger.h"
 #include "display.h"
+#include "disk/opus.h"
 #include "fuse.h"
 #include "machines/spec128.h"
 #include "memory.h"
@@ -43,9 +44,6 @@
 /* Each 8Kb RAM chunk accessible by the Z80 */
 memory_page memory_map_read[8];
 memory_page memory_map_write[8];
-
-/* Two 8Kb memory chunks accessible by the Z80 when /ROMCS is low */
-memory_page memory_map_romcs[2];
 
 /* Mappings for the 'home' (normal ROM/RAM) pages, the Timex DOCK and
    the Timex EXROM */
@@ -130,8 +128,6 @@ memory_init( void )
     memory_map_home[i] = memory_map_dock[i] = memory_map_exrom[i] =
       &memory_map_ram[0];
 
-  for( i = 0; i < 2; i++ ) memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
-
   module_register( &memory_module_info );
 
   return 0;
@@ -197,6 +193,9 @@ readbyte( libspectrum_word address )
   if( mapping->contended ) tstates += ula_contention[ tstates ];
   tstates += 3;
 
+  if( opus_active && address >= 0x2800 && address < 0x3800 )
+    return opus_read( address );
+
   return mapping->page[ address & 0x1fff ];
 }
 
@@ -220,28 +219,70 @@ writebyte( libspectrum_word address, libspectrum_byte b )
 }
 
 void
+memory_display_dirty_pentagon_16_col( libspectrum_word address,
+                                      libspectrum_byte b )
+{
+  libspectrum_word bank = address >> 13;
+  memory_page *mapping = &memory_map_write[ bank ];
+  libspectrum_word offset = address & 0x1fff;
+  libspectrum_byte *memory = mapping->page;
+
+  /* The offset into the 16Kb RAM page (as opposed to the 8Kb chunk) */
+  libspectrum_word offset2 = offset + mapping->offset;
+
+  /* If this is a write to the current screen areas (and it actually changes
+     the destination), redraw that bit.
+     The trick here is that we need to check the home bank screen areas in
+     page 5 and 4 (if screen 1 is in use), and page 7 & 6 (if screen 2 is in
+     use) and both the standard and ALTDFILE areas of those pages
+   */
+  if( mapping->bank == MEMORY_BANK_HOME && 
+      ( ( memory_current_screen  == 5 &&
+          ( mapping->page_num == 5 || mapping->page_num == 4 ) ) ||
+        ( memory_current_screen  == 7 &&
+          ( mapping->page_num == 7 || mapping->page_num == 6 ) ) ) &&
+      ( offset2 & 0xdfff ) < 0x1b00 &&
+      memory[ offset ] != b )
+    display_dirty_pentagon_16_col( offset2 );
+}
+
+void
+memory_display_dirty_sinclair( libspectrum_word address, libspectrum_byte b ) \
+{
+  libspectrum_word bank = address >> 13;
+  memory_page *mapping = &memory_map_write[ bank ];
+  libspectrum_word offset = address & 0x1fff;
+  libspectrum_byte *memory = mapping->page;
+
+  /* The offset into the 16Kb RAM page (as opposed to the 8Kb chunk) */
+  libspectrum_word offset2 = offset + mapping->offset;
+
+  /* If this is a write to the current screen (and it actually changes
+     the destination), redraw that bit */
+  if( mapping->bank == MEMORY_BANK_HOME && 
+      mapping->page_num == memory_current_screen &&
+      ( offset2 & memory_screen_mask ) < 0x1b00 &&
+      memory[ offset ] != b )
+    display_dirty( offset2 );
+}
+
+memory_display_dirty_fn memory_display_dirty;
+
+void
 writebyte_internal( libspectrum_word address, libspectrum_byte b )
 {
-  libspectrum_word bank, offset;
-  memory_page *mapping;
-  libspectrum_byte *memory;
+  libspectrum_word bank = address >> 13;
+  memory_page *mapping = &memory_map_write[ bank ];
 
-  bank = address >> 13; offset = address & 0x1fff;
-  mapping = &memory_map_write[ bank ];
-  memory = mapping->page;
+  if( opus_active && address >= 0x2800 && address < 0x3800 ) {
+    opus_write( address, b );
+  } else if( mapping->writable ||
+             (mapping->bank != MEMORY_BANK_NONE &&
+              settings_current.writable_roms) ) {
+    libspectrum_word offset = address & 0x1fff;
+    libspectrum_byte *memory = mapping->page;
 
-  if( mapping->writable || settings_current.writable_roms ) {
-
-    /* The offset into the 16Kb RAM page (as opposed to the 8Kb chunk) */
-    libspectrum_word offset2 = offset + mapping->offset;
-
-    /* If this is a write to the current screen (and it actually changes
-       the destination), redraw that bit */
-    if( mapping->bank == MEMORY_BANK_HOME && 
-	mapping->page_num == memory_current_screen &&
-	( offset2 & memory_screen_mask ) < 0x1b00 &&
-	memory[ offset ] != b )
-      display_dirty( offset2 );
+    memory_display_dirty( address, b );
 
     memory[ offset ] = b;
   }

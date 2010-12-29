@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2007 Stuart Brady
 
-## $Id: Makefile.am 3584 2008-03-25 10:27:30Z fredm $
+## $Id: Makefile.am 4060 2009-07-30 13:21:38Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ libdisk_a_SOURCES = beta.c \
 		    crc.c \
 		    disk.c \
 		    fdd.c \
+		    opus.c \
 		    plusd.c \
 		    upd_fdc.c \
 		    wd_fdc.c
@@ -41,6 +42,7 @@ noinst_HEADERS = beta.h \
 		 crc.h \
 		 disk.h \
 		 fdd.h \
+		 opus.h \
 		 plusd.h \
 		 upd_fdc.h \
 		 wd_fdc.h

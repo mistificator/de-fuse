@@ -1,7 +1,7 @@
 /* pokefinder.c: GTK+ interface to the poke finder
    Copyright (c) 2003-2004 Philip Kendall
 
-   $Id: pokefinder.c 3338 2007-11-26 02:43:58Z zubzero $
+   $Id: pokefinder.c 3987 2009-03-06 18:45:00Z specu $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ possible_click( GtkCList *clist GCC_UNUSED, gint row, gint column GCC_UNUSED,
   if( event && event->type != GDK_2BUTTON_PRESS ) return;
 
   error = debugger_breakpoint_add_address(
-    DEBUGGER_BREAKPOINT_TYPE_WRITE, possible_page[ row ],
+    DEBUGGER_BREAKPOINT_TYPE_WRITE, possible_page[ row ] + 1,
     possible_offset[ row ], 0, DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
   );
   if( error ) return;

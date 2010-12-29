@@ -1,7 +1,7 @@
 /* tape.c: tape handling routines
    Copyright (c) 1999-2008 Philip Kendall, Darren Salt, Witold Filipczyk
 
-   $Id: tape.c 3714 2008-07-06 18:10:29Z fredm $
+   $Id: tape.c 4155 2010-09-05 11:58:37Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -114,7 +114,6 @@ int tape_init( void )
      so we can't update the statusbar */
   tape_playing = 0;
   tape_microphone = 0;
-  if( settings_current.sound_load ) sound_beeper( 1, tape_microphone );
   return 0;
 }
 
@@ -164,7 +163,7 @@ tape_read_buffer( unsigned char *buffer, size_t length, libspectrum_id_t type,
 static int
 tape_autoload( libspectrum_machine hardware )
 {
-  int error; const char *id; int fd;
+  int error; const char *id; compat_fd fd;
   char filename[80];
   utils_file snap;
   libspectrum_id_t type;
@@ -177,16 +176,16 @@ tape_autoload( libspectrum_machine hardware )
 
   /* Look for an autoload snap. Try .szx first, then .z80 */
   type = LIBSPECTRUM_ID_SNAPSHOT_SZX;
-  snprintf( filename, 80, "tape_%s.szx", id );
+  snprintf( filename, sizeof(filename), "tape_%s.szx", id );
   fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_LIB );
-  if( fd == -1 ) {
-  type = LIBSPECTRUM_ID_SNAPSHOT_Z80;
-    snprintf( filename, 80, "tape_%s.z80", id );
+  if( fd == COMPAT_FILE_OPEN_FAILED ) {
+    type = LIBSPECTRUM_ID_SNAPSHOT_Z80;
+    snprintf( filename, sizeof(filename), "tape_%s.z80", id );
     fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_LIB );
   }
     
   /* If we couldn't find either, give up */
-  if( fd == -1 ) {
+  if( fd == COMPAT_FILE_OPEN_FAILED ) {
     ui_error( UI_ERROR_ERROR,
 	      "Couldn't find autoload snap for machine type '%s'", id );
     return 1;
@@ -199,7 +198,7 @@ tape_autoload( libspectrum_machine hardware )
   if( error ) { utils_close_file( &snap ); return error; }
 
   if( utils_close_file( &snap ) ) {
-    ui_error( UI_ERROR_ERROR, "Couldn't munmap '%s': %s", filename,
+    ui_error( UI_ERROR_ERROR, "Couldn't close '%s': %s", filename,
 	      strerror( errno ) );
     return 1;
   }
@@ -556,12 +555,16 @@ trap_check_rom( void )
   if( plusd_available && plusd_active )
     return 0;		/* +D must not be active */
 
+  if( opus_available && opus_active )
+    return 0;		/* Opus must not be active */
+
   if( memory_custom_rom() )
     return 0;           /* and we can't be using a custom ROM */
 
   switch( machine_current->machine ) {
   case LIBSPECTRUM_MACHINE_16:
   case LIBSPECTRUM_MACHINE_48:
+  case LIBSPECTRUM_MACHINE_48_NTSC:
   case LIBSPECTRUM_MACHINE_TC2048:
     return 1;		/* Always OK here */
 
@@ -606,12 +609,8 @@ trap_check_rom( void )
 static int
 tape_play( int autoplay )
 {
-  libspectrum_tape_block* block;
-
   if( !libspectrum_tape_present( tape ) ) return 1;
   
-  block = libspectrum_tape_current_block( tape );
-
   /* Otherwise, start the tape going */
   tape_playing = 1;
   tape_autoplay = autoplay;
@@ -619,10 +618,6 @@ tape_play( int autoplay )
 
   /* Update the status bar */
   ui_statusbar_update( UI_STATUSBAR_ITEM_TAPE, UI_STATUSBAR_STATE_ACTIVE );
-
-  /* Timex machines have no loading noise */
-  if( ( !( machine_current->timex ) ) && settings_current.sound_load )
-    sound_beeper( 1, tape_microphone );
 
   /* If we're fastloading, turn sound off */
   if( settings_current.fastload ) sound_pause();
@@ -790,7 +785,6 @@ int
 tape_record_stop( void )
 {
   libspectrum_tape_block* block;
-  int error;
 
   /* put last sample into the recording buffer */
   rec_state.tape_buffer_used = write_rec_buffer( rec_state.tape_buffer,
@@ -799,8 +793,7 @@ tape_record_stop( void )
 
   /* stop scheduling events and turn buffer into a block and
      pop into the current tape */
-  error = event_remove_type( record_event );
-  if( error ) return error;
+  event_remove_type( record_event );
 
   block = libspectrum_tape_block_alloc( LIBSPECTRUM_TAPE_BLOCK_RLE_PULSE );
 
@@ -854,10 +847,6 @@ tape_next_edge( libspectrum_dword last_tstates, int type, void *user_data )
     } else {
       tape_microphone = !tape_microphone;
     }
-
-    /* Timex machines have no loading noise */
-    if( !machine_current->timex && settings_current.sound_load )
-      sound_beeper( 1, tape_microphone );
   }
 
   /* If we've been requested to stop the tape, do so and then

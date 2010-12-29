@@ -1,7 +1,7 @@
 # Process this file with automake to produce Makefile.in
-## Copyright (c) 1999-2008 Philip Kendall
+## Copyright (c) 1999-2009 Philip Kendall
 
-## $Id: Makefile.am 3894 2008-12-10 09:45:32Z pak21 $
+## $Id: Makefile.am 4112 2010-01-08 11:03:43Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ SUBDIRS = @COMPAT_SUBDIR@ \
 	  debugger \
 	  disk \
 	  hacking \
+	  ide \
 	  lib \
 	  machines \
 	  man \
@@ -44,6 +45,7 @@ SUBDIRS = @COMPAT_SUBDIR@ \
 DIST_SUBDIRS = debugger \
 	       disk \
 	       hacking \
+	       ide \
 	       lib \
 	       machines \
 	       man \
@@ -59,10 +61,9 @@ DIST_SUBDIRS = debugger \
 fuse_SOURCES = ay.c \
 	dck.c \
 	display.c \
-	divide.c \
 	event.c \
+	fuller.c \
 	fuse.c \
-	ide.c \
 	if1.c \
 	if2.c \
 	input.c \
@@ -71,6 +72,7 @@ fuse_SOURCES = ay.c \
 	keyboard.c \
 	loader.c \
 	machine.c \
+	melodik.c \
 	memory.c \
 	mempool.c \
 	menu.c \
@@ -79,11 +81,11 @@ fuse_SOURCES = ay.c \
 	printer.c \
 	profile.c \
 	psg.c \
+	rectangle.c \
 	rzx.c \
 	scld.c \
 	screenshot.c \
 	settings.c \
-	simpleide.c \
 	slt.c \
 	snapshot.c \
 	sound.c \
@@ -93,9 +95,7 @@ fuse_SOURCES = ay.c \
 	uidisplay.c \
 	ula.c \
 	utils.c \
-	windres.rc \
-	zxatasp.c \
-	zxcf.c
+	windres.rc
 
 if COMPAT_DIRNAME
 fuse_SOURCES += compat/dirname.c
@@ -113,40 +113,45 @@ EXTRA_fuse_SOURCES = windres.rc
 
 fuse_LDADD = debugger/libdebugger.a \
 @UI_LIBS@ \
-machines/libmachines.a \
+debugger/libdebugger.a \
 disk/libdisk.a \
+ide/libide.a \
+machines/libmachines.a \
 pokefinder/libpokefinder.a \
 sound/libsound.a \
+timer/libtimer.a \
 ui/scaler/libscaler.a \
 unittests/libunittests.a \
-debugger/libdebugger.a \
-timer/libtimer.a \
 z80/libz80.a \
 @LIBSPEC_LIBS@ \
 @GLIB_LIBS@ \
 @PNG_LIBS@ \
 @SOUND_LIBS@ \
-@SAMPLERATE_LIBS@ \
 @SDL_LIBS@ \
 @X_LIBS@ \
 @XML_LIBS@ \
 compat/@COMPAT_OSNAME@/libcompatos.a \
 @WINDRES_OBJ@
 
-fuse_DEPENDENCIES = @UI_LIBS@ \
-                    compat/@COMPAT_OSNAME@/libcompatos.a
-		    disk/libdisk.a \
-		    debugger/libdebugger.a \
-		    machines/libmachines.a \
-		    sound/libsound.a \
-		    unittests/libunittests.a\
-		    z80/libz80.a \
-		    @WINDRES_OBJ@
+fuse_DEPENDENCIES = debugger/libdebugger.a \
+@UI_LIBS@ \
+debugger/libdebugger.a \
+disk/libdisk.a \
+ide/libide.a \
+machines/libmachines.a \
+pokefinder/libpokefinder.a \
+sound/libsound.a \
+timer/libtimer.a \
+ui/scaler/libscaler.a \
+unittests/libunittests.a \
+z80/libz80.a \
+compat/@COMPAT_OSNAME@/libcompatos.a \
+@WINDRES_OBJ@
 
-BUILT_SOURCES = settings.c settings.h
+BUILT_SOURCES = options.h settings.c settings.h
 
-windres.o: windres.rc winfuse.ico
-	@WINDRES@ -I$(srcdir) -I. $(srcdir)/windres.rc windres.o
+windres.o: windres.rc winfuse.ico ui/win32/*.rc
+	@WINDRES@ -I$(srcdir) -I. $(srcdir)/windres.rc @LIBSPEC_CFLAGS@ @CPPFLAGS@ windres.o
 
 settings.c: settings.pl settings.dat
 	@PERL@ -I$(srcdir)/perl $(srcdir)/settings.pl $(srcdir)/settings.dat > $@.tmp && mv $@.tmp $@
@@ -154,18 +159,25 @@ settings.c: settings.pl settings.dat
 settings.h: settings-header.pl settings.dat
 	@PERL@ -I$(srcdir)/perl $(srcdir)/settings-header.pl $(srcdir)/settings.dat > $@.tmp && mv $@.tmp $@
 
+if WIDGET
+options.h: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/@WIDGET@/options-header.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
+	@PERL@ $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | @PERL@ -I$(srcdir)/perl $(srcdir)/ui/@WIDGET@/options-header.pl - public > $@.tmp && mv $@.tmp $@
+else
+options.h: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/@UI@/options-header.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
+	@PERL@ $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | @PERL@ -I$(srcdir)/perl $(srcdir)/ui/@UI@/options-header.pl - public > $@.tmp && mv $@.tmp $@
+endif
+
 INCLUDES = @GLIB_CFLAGS@ @GTK_CFLAGS@ @LIBSPEC_CFLAGS@ \
-@XML_CFLAGS@ @SAMPLERATE_CFLAGS@ -DFUSEDATADIR="\"${pkgdatadir}\"" @SDL_CFLAGS@
+@XML_CFLAGS@ -DFUSEDATADIR="\"${pkgdatadir}\"" @SDL_CFLAGS@
 
 noinst_HEADERS = ay.h \
 	bitmap.h \
 	compat.h \
 	dck.h \
 	display.h \
-	divide.h \
 	event.h \
+	fuller.h \
 	fuse.h \
-	ide.h \
 	if1.h \
 	if2.h \
 	input.h \
@@ -173,16 +185,17 @@ noinst_HEADERS = ay.h \
 	kempmouse.h \
 	loader.h \
 	machine.h \
+	melodik.h \
 	memory.h \
 	mempool.h \
 	menu.h \
 	module.h \
 	periph.h \
 	psg.h \
+	rectangle.h \
 	rzx.h \
 	screenshot.h \
 	settings.h \
-	simpleide.h \
 	slt.h \
 	snapshot.h \
 	sound.h \
@@ -190,12 +203,11 @@ noinst_HEADERS = ay.h \
 	tape.h \
 	utils.h \
 	joystick.h \
+	options.h \
 	printer.h \
 	profile.h \
 	scld.h \
-	ula.h \
-	zxatasp.h \
-	zxcf.h
+	ula.h
 
 EXTRA_DIST = AUTHORS \
 	     README \
@@ -209,7 +221,8 @@ EXTRA_DIST = AUTHORS \
 	     settings.dat \
 	     winfuse.ico
 
-CLEANFILES = settings.c \
+CLEANFILES = options.h \
+	     settings.c \
 	     settings.h
 
 AM_CPPFLAGS =

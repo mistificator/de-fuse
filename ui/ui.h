@@ -1,7 +1,7 @@
 /* ui.h: General UI event handling routines
    Copyright (c) 2000-2004 Philip Kendall
 
-   $Id: ui.h 3584 2008-03-25 10:27:30Z fredm $
+   $Id: ui.h 4180 2010-10-09 12:59:37Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 
 #include "compat.h"
 #include "disk/beta.h"
+#include "disk/opus.h"
 #include "disk/plusd.h"
 #include "machines/specplus3.h"
 #include "ui/scaler/scaler.h"
@@ -114,10 +115,11 @@ int ui_mouse_release( int suspend ); /* UI: ungrab, return 0 if done */
 int ui_tape_write( void );
 
 /* Write a +3, Beta or +D disk out */
-int ui_plus3_disk_write( specplus3_drive_number which );
-int ui_beta_disk_write( beta_drive_number which );
-int ui_plusd_disk_write( plusd_drive_number which );
-int ui_mdr_write( int which );
+int ui_plus3_disk_write( specplus3_drive_number which, int saveas );
+int ui_beta_disk_write( beta_drive_number which, int saveas );
+int ui_opus_disk_write( opus_drive_number which, int saveas );
+int ui_plusd_disk_write( plusd_drive_number which, int saveas );
+int ui_mdr_write( int which, int saveas );
 
 /* Get a rollback point from the given list */
 int ui_get_rollback_point( GSList *points );
@@ -156,23 +158,47 @@ typedef enum ui_menu_item {
   UI_MENU_ITEM_MEDIA_DISK,
   UI_MENU_ITEM_MEDIA_DISK_PLUS3,
   UI_MENU_ITEM_MEDIA_DISK_PLUS3_A_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_PLUS3_A_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_PLUS3_A_WP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_PLUS3_B,
   UI_MENU_ITEM_MEDIA_DISK_PLUS3_B_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_PLUS3_B_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_PLUS3_B_WP_SET,
   UI_MENU_ITEM_MEDIA_DISK_BETA,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_A,
   UI_MENU_ITEM_MEDIA_DISK_BETA_A_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_A_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_BETA_A_WP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_B,
   UI_MENU_ITEM_MEDIA_DISK_BETA_B_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_B_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_BETA_B_WP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_C,
   UI_MENU_ITEM_MEDIA_DISK_BETA_C_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_C_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_BETA_C_WP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_D,
   UI_MENU_ITEM_MEDIA_DISK_BETA_D_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_BETA_D_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_BETA_D_WP_SET,
   UI_MENU_ITEM_MEDIA_DISK_PLUSD,
+  UI_MENU_ITEM_MEDIA_DISK_PLUSD_1,
   UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_WP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_PLUSD_2,
   UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_FLIP_SET,
   UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_WP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_1,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_1_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_1_FLIP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_1_WP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_2,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_2_EJECT,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_2_FLIP_SET,
+  UI_MENU_ITEM_MEDIA_DISK_OPUS_2_WP_SET,
   UI_MENU_ITEM_MEDIA_IDE,
   UI_MENU_ITEM_MEDIA_IDE_SIMPLE8BIT,
   UI_MENU_ITEM_MEDIA_IDE_SIMPLE8BIT_MASTER_EJECT,
@@ -237,5 +263,25 @@ int ui_tape_browser_update( ui_tape_browser_update_type change,
 
 char *ui_get_open_filename( const char *title );
 char *ui_get_save_filename( const char *title );
+int ui_query( const char *message );
+
+#ifdef USE_WIDGET
+#include "ui/widget/widget.h"
+#define ui_widget_finish() widget_finish()
+#else				/* #ifdef USE_WIDGET */
+#define ui_widget_finish()
+#endif				/* #ifdef USE_WIDGET */
+
+/* Code called at start and end of emulation if widget system is used */
+int ui_widget_init( void );
+int ui_widget_end( void );
+
+/* How many levels deep have we recursed through widgets; -1 => none */
+extern int ui_widget_level;
+
+/* widget system popup the apropriate menu */
+void ui_popup_menu( int native_key );
+
+void ui_widget_keyhandler( int native_key );
 
 #endif			/* #ifndef FUSE_UI_H */

@@ -29,7 +29,7 @@
 #include "menu.h"
 
 #include "input.h"
-#include "options.h"
+#include "options_internals.h"
 #include "widget_internals.h"
 
 static widget_menu_entry menu_file_recording[] = {
@@ -113,6 +113,7 @@ static widget_menu_entry menu_options[] = {
   { "\012J\011oysticks", INPUT_KEY_j, menu_options_joysticks, NULL, NULL, 0 },
   { "S\012e\011lect ROMs", INPUT_KEY_e, menu_options_selectroms, NULL, NULL, 0 },
   { "\012F\011ilter...", INPUT_KEY_f, NULL, menu_options_filter, menu_filter_detail, 0 },
+  { "\012D\011isk options...", INPUT_KEY_d, NULL, menu_options_diskoptions, NULL, 0 },
   { "S\012a\011ve", INPUT_KEY_a, NULL, menu_options_save, NULL, 0 },
   { NULL }
 };
@@ -163,7 +164,8 @@ static widget_menu_entry menu_media_interfacei_microdrive1[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x31 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x31 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x031 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x131 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x231 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x131 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive1_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -180,7 +182,8 @@ static widget_menu_entry menu_media_interfacei_microdrive2[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x32 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x32 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x032 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x132 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x232 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x132 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive2_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -197,7 +200,8 @@ static widget_menu_entry menu_media_interfacei_microdrive3[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x33 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x33 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x033 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x133 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x233 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x133 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive3_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -214,7 +218,8 @@ static widget_menu_entry menu_media_interfacei_microdrive4[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x34 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x34 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x034 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x134 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x234 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x134 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive4_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -231,7 +236,8 @@ static widget_menu_entry menu_media_interfacei_microdrive5[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x35 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x35 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x035 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x135 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x235 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x135 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive5_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -248,7 +254,8 @@ static widget_menu_entry menu_media_interfacei_microdrive6[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x36 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x36 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x036 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x136 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x236 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x136 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive6_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -265,7 +272,8 @@ static widget_menu_entry menu_media_interfacei_microdrive7[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x37 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x37 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x037 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x137 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x237 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x137 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive7_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -282,7 +290,8 @@ static widget_menu_entry menu_media_interfacei_microdrive8[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x38 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x38 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x038 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x138 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x238 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x138 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_interfacei_microdrive8_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
@@ -310,6 +319,13 @@ static widget_menu_entry menu_media_interfacei[] = {
   { NULL }
 };
 
+static widget_menu_entry menu_media_disk_3_drivea_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x101 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x001 },
+  { NULL }
+};
+
 static widget_menu_entry menu_media_disk_3_drivea_writeprotect[] = {
   { "Write protect" },
   { "\012E\011nable", INPUT_KEY_e, NULL, menu_media_writeprotect, NULL, 0x101 },
@@ -322,8 +338,17 @@ static widget_menu_entry menu_media_disk_3_drivea[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x01 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x01 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x01 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x101 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x201 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x101 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_3_drivea_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_3_drivea_writeprotect, NULL, NULL, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_3_driveb_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x102 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x002 },
   { NULL }
 };
 
@@ -339,15 +364,24 @@ static widget_menu_entry menu_media_disk_3_driveb[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x02 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x02 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x02 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x102 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x202 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x102 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_3_driveb_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_3_driveb_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
 
 static widget_menu_entry menu_media_disk_3[] = {
   { "+3" },
-  { "Drive \012A\011:", INPUT_KEY_a, menu_media_disk_3_drivea, NULL, NULL, 0 },
-  { "Drive \012B\011:", INPUT_KEY_b, menu_media_disk_3_driveb, NULL, NULL, 0 },
+  { "Drive \012A\011:", INPUT_KEY_a, menu_media_disk_3_drivea, NULL, menu_plus3a_detail, 0 },
+  { "Drive \012B\011:", INPUT_KEY_b, menu_media_disk_3_driveb, NULL, menu_plus3b_detail, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_beta_drivea_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x111 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x011 },
   { NULL }
 };
 
@@ -363,8 +397,17 @@ static widget_menu_entry menu_media_disk_beta_drivea[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x11 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x11 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x11 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x111 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x211 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x111 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_beta_drivea_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_beta_drivea_writeprotect, NULL, NULL, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_beta_driveb_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x112 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x012 },
   { NULL }
 };
 
@@ -380,8 +423,17 @@ static widget_menu_entry menu_media_disk_beta_driveb[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x12 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x12 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x012 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x112 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x212 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x112 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_beta_driveb_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_beta_driveb_writeprotect, NULL, NULL, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_beta_drivec_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x113 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x013 },
   { NULL }
 };
 
@@ -397,8 +449,17 @@ static widget_menu_entry menu_media_disk_beta_drivec[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x13 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x13 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x013 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x113 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x213 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x113 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_beta_drivec_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_beta_drivec_writeprotect, NULL, NULL, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_beta_drived_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x114 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x014 },
   { NULL }
 };
 
@@ -414,17 +475,26 @@ static widget_menu_entry menu_media_disk_beta_drived[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x14 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x14 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x014 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x114 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x214 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x114 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_beta_drived_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_beta_drived_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
 
 static widget_menu_entry menu_media_disk_beta[] = {
   { "Beta" },
-  { "Drive \012A\011:", INPUT_KEY_a, menu_media_disk_beta_drivea, NULL, NULL, 0 },
-  { "Drive \012B\011:", INPUT_KEY_b, menu_media_disk_beta_driveb, NULL, NULL, 0 },
-  { "Drive \012C\011:", INPUT_KEY_c, menu_media_disk_beta_drivec, NULL, NULL, 0 },
-  { "Drive \012D\011:", INPUT_KEY_d, menu_media_disk_beta_drived, NULL, NULL, 0 },
+  { "Drive \012A\011:", INPUT_KEY_a, menu_media_disk_beta_drivea, NULL, menu_beta128a_detail, 0 },
+  { "Drive \012B\011:", INPUT_KEY_b, menu_media_disk_beta_driveb, NULL, menu_beta128b_detail, 0 },
+  { "Drive \012C\011:", INPUT_KEY_c, menu_media_disk_beta_drivec, NULL, menu_beta128c_detail, 0 },
+  { "Drive \012D\011:", INPUT_KEY_d, menu_media_disk_beta_drived, NULL, menu_beta128d_detail, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_d_drive1_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x121 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x021 },
   { NULL }
 };
 
@@ -440,8 +510,17 @@ static widget_menu_entry menu_media_disk_d_drive1[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x21 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x21 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x021 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x121 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x221 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x121 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_d_drive1_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_d_drive1_writeprotect, NULL, NULL, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_d_drive2_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x122 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x022 },
   { NULL }
 };
 
@@ -457,15 +536,76 @@ static widget_menu_entry menu_media_disk_d_drive2[] = {
   { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x22 },
   { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x22 },
   { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x022 },
-  { "Eject and \012w\011rite...", INPUT_KEY_w, NULL, menu_media_eject, NULL, 0x122 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x222 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x122 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_d_drive2_flipdisk, NULL, NULL, 0 },
   { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_d_drive2_writeprotect, NULL, NULL, 0 },
   { NULL }
 };
 
 static widget_menu_entry menu_media_disk_d[] = {
   { "+D" },
-  { "Drive \0121\011", INPUT_KEY_1, menu_media_disk_d_drive1, NULL, NULL, 0 },
-  { "Drive \0122\011", INPUT_KEY_2, menu_media_disk_d_drive2, NULL, NULL, 0 },
+  { "Drive \0121\011", INPUT_KEY_1, menu_media_disk_d_drive1, NULL, menu_plusd1_detail, 0 },
+  { "Drive \0122\011", INPUT_KEY_2, menu_media_disk_d_drive2, NULL, menu_plusd2_detail, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_opus_drive1_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x141 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x041 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_opus_drive1_writeprotect[] = {
+  { "Write protect" },
+  { "\012E\011nable", INPUT_KEY_e, NULL, menu_media_writeprotect, NULL, 0x141 },
+  { "\012D\011isable", INPUT_KEY_d, NULL, menu_media_writeprotect, NULL, 0x041 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_opus_drive1[] = {
+  { "Drive 1" },
+  { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x41 },
+  { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x41 },
+  { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x041 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x241 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x141 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_opus_drive1_flipdisk, NULL, NULL, 0 },
+  { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_opus_drive1_writeprotect, NULL, NULL, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_opus_drive2_flipdisk[] = {
+  { "Flip disk" },
+  { "Turn \012u\011pside down", INPUT_KEY_u, NULL, menu_media_flip, NULL, 0x142 },
+  { "Turn \012b\011ack", INPUT_KEY_b, NULL, menu_media_flip, NULL, 0x042 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_opus_drive2_writeprotect[] = {
+  { "Write protect" },
+  { "\012E\011nable", INPUT_KEY_e, NULL, menu_media_writeprotect, NULL, 0x142 },
+  { "\012D\011isable", INPUT_KEY_d, NULL, menu_media_writeprotect, NULL, 0x042 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_opus_drive2[] = {
+  { "Drive 2" },
+  { "Insert \012N\011ew", INPUT_KEY_n, NULL, menu_media_insert_new, NULL, 0x42 },
+  { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_insert, NULL, 0x42 },
+  { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_eject, NULL, 0x042 },
+  { "\012S\011ave", INPUT_KEY_s, NULL, menu_media_eject, NULL, 0x242 },
+  { "Save \012A\011s...", INPUT_KEY_a, NULL, menu_media_eject, NULL, 0x142 },
+  { "\012F\011lip disk", INPUT_KEY_f, menu_media_disk_opus_drive2_flipdisk, NULL, NULL, 0 },
+  { "Write \012p\011rotect", INPUT_KEY_p, menu_media_disk_opus_drive2_writeprotect, NULL, NULL, 0 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_disk_opus[] = {
+  { "Opus" },
+  { "Drive \0121\011", INPUT_KEY_1, menu_media_disk_opus_drive1, NULL, menu_opus1_detail, 0 },
+  { "Drive \0122\011", INPUT_KEY_2, menu_media_disk_opus_drive2, NULL, menu_opus2_detail, 0 },
   { NULL }
 };
 
@@ -474,6 +614,7 @@ static widget_menu_entry menu_media_disk[] = {
   { "+\0123\011", INPUT_KEY_3, menu_media_disk_3, NULL, NULL, 0 },
   { "\012B\011eta", INPUT_KEY_b, menu_media_disk_beta, NULL, NULL, 0 },
   { "+\012D\011", INPUT_KEY_d, menu_media_disk_d, NULL, NULL, 0 },
+  { "\012O\011pus", INPUT_KEY_o, menu_media_disk_opus, NULL, NULL, 0 },
   { NULL }
 };
 
@@ -597,6 +738,7 @@ static widget_menu_entry menu_media[] = {
 static widget_menu_entry menu_help[] = {
   { "Help" },
   { "\012K\011eyboard...", INPUT_KEY_k, NULL, menu_help_keyboard, NULL, 0 },
+  { "\012A\011bout...", INPUT_KEY_a, NULL, menu_help_about, NULL, 0 },
   { NULL }
 };
 

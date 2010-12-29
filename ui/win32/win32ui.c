@@ -1,7 +1,7 @@
 /* win32ui.c: Win32 routines for dealing with the user interface
    Copyright (c) 2003-2007 Marek Januszewski, Philip Kendall, Stuart Brady
 
-   $Id: win32ui.c 3804 2008-11-03 04:21:02Z specu $
+   $Id: win32ui.c 3950 2009-01-12 17:56:30Z specu $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -622,6 +622,14 @@ void
 menu_help_keyboard( int action )
 {
   win32ui_picture( "keyboard.scr", 0 );
+}
+
+void
+menu_help_about( int action )
+{
+  /* TODO: create a help about window that's more similar to GTK,
+           with a clickable link to the website. */
+  ui_error( UI_ERROR_INFO, "Free Unix Spectrum Emulator (Fuse) %s (c) 1999-2008 Philip Kendall and others. See http://fuse-emulator.sf.net/ for details.", VERSION );
 }
 
 /* Functions to activate and deactivate certain menu items */

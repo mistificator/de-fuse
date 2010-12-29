@@ -1,7 +1,7 @@
 /* variable.c: Debugger variables
    Copyright (c) 2008 Philip Kendall
 
-   $Id$
+   $Id: variable.c 3922 2008-12-31 19:01:31Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

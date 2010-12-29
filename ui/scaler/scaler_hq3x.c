@@ -1,7 +1,7 @@
 /* scaler_hq3x.c: included into scalers.c
  * Copyright (C) 2008 Gergely Szasz
  *
- * $Id: scaler_hq3x.c 3612 2008-05-02 12:56:05Z fredm $
+ * $Id: scaler_hq3x.c 3922 2008-12-31 19:01:31Z zubzero $
  * 
  * HQ2x and HQ3x scalers taken from HiEnd3D Demos (http://www.hiend3d.com)
  * Copyright (C) 2003 MaxSt ( maxst@hiend3d.com )

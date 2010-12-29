@@ -1,7 +1,7 @@
 /* utils.h: some useful helper functions
    Copyright (c) 1999-2003 Philip Kendall
 
-   $Id: utils.h 3128 2007-08-29 13:14:43Z pak21 $
+   $Id: utils.h 4159 2010-09-13 11:51:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 
 #include <libspectrum.h>
 
+#include "compat.h"
+
 typedef struct utils_file {
 
   unsigned char *buffer;
@@ -46,9 +48,11 @@ typedef enum utils_aux_type {
 
 int utils_open_file( const char *filename, int autoload,
 		     libspectrum_id_t *type );
-int utils_find_auxiliary_file( const char *filename, utils_aux_type type );
+int utils_open_snap( void );
+compat_fd utils_find_auxiliary_file( const char *filename,
+                                     utils_aux_type type );
 int utils_read_file( const char *filename, utils_file *file );
-int utils_read_fd( int fd, const char *filename, utils_file *file );
+int utils_read_fd( compat_fd fd, const char *filename, utils_file *file );
 int utils_close_file( utils_file *file );
 
 int utils_write_file( const char *filename, const unsigned char *buffer,
@@ -56,6 +60,7 @@ int utils_write_file( const char *filename, const unsigned char *buffer,
 int utils_make_temp_file( int *fd, char *tempfilename, const char *filename,
 			  const char *template );
 
-int utils_find_file_path( const char *filename, char *path, utils_aux_type type );
+int utils_find_file_path( const char *filename, char *path,
+                          utils_aux_type type );
 
 #endif			/* #ifndef FUSE_UTILS_H */

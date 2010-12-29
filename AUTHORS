@@ -9,8 +9,8 @@ Fuse has been brought to you by:
 
 * Ian Collier: the original ZX Printer emulation (for xz80).
 
-* John Elliott: for lib765, which provides Fuse's emulation of the +3's
-  FDC, and libdsk which provides support for more disk image formats:
+* John Elliott: for lib765, which provided Fuse's original emulation of the
+  +3's FDC, and libdsk which provided support for more disk image formats:
   see http://www.seasip.demon.co.uk/Unix/LibDsk/
 
 * Darren Salt: the original versions of the code for +3 emulation,
@@ -34,13 +34,20 @@ Fuse has been brought to you by:
 * Marek Januszewski: Some patches making Fuse much closer to compiling under
   Win32, and fixing up the GTK+ 2.0 interface.
 
-* Stuart Brady: for the Scorpion emulation and HP-UX sound support.
+* Stuart Brady: for the Scorpion, +D interface emulation and HP-UX sound
+  support.
 
 * Garry Lancaster: the simple 8-bit IDE, ZXATASP and ZXCF support.
 
-* Gergely Szasz: Interface I/microdrive emulation, the 'movie' code and the
-  ao sound driver.
+* Gergely Szasz: +3, +D, Opus and Interface I/microdrive emulation, the 'movie'
+  code and the ao sound driver.
+
+* Bjoern Giesler: the original Wii port.
+
+* Shay Green: the Blip_Buffer band pass filter for beeper and AY output.
+
+* Michael D Wynne: the Opus Discovery emulation (for EightyOne).
 
 * Philip Kendall: everything else.
 
-$Id: AUTHORS 2433 2004-11-28 21:58:44Z pak21 $
+$Id: AUTHORS 4060 2009-07-30 13:21:38Z fredm $

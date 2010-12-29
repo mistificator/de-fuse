@@ -1,7 +1,7 @@
 /* file.c: File-related compatibility routines
    Copyright (c) 2008 Philip Kendall
 
-   $Id: file.c 3894 2008-12-10 09:45:32Z pak21 $
+   $Id: file.c 4072 2009-08-31 15:42:26Z specu $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,23 +33,15 @@
 #include <unistd.h>
 
 #include "compat.h"
+#include "utils.h"
 #include "ui/ui.h"
 
-/* Certain brain damaged operating systems (DOS/Windows) treat text
-   and binary files different in open(2) and need to be given the
-   O_BINARY flag to tell them it's a binary file */
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif				/* #ifndef O_BINARY */
-
-const compat_fd COMPAT_FILE_OPEN_FAILED = -1;
+const compat_fd COMPAT_FILE_OPEN_FAILED = NULL;
 
 compat_fd
 compat_file_open( const char *path, int write )
 {
-  int flags = O_BINARY;
-  flags |= write ? O_WRONLY | O_CREAT | O_TRUNC : O_RDONLY;
-  return open( path, flags, 0666 );
+  return fopen( path, write ? "wb" : "rb" );
 }
 
 off_t
@@ -57,7 +49,7 @@ compat_file_get_length( compat_fd fd )
 {
   struct stat file_info;
 
-  if( fstat( fd, &file_info ) ) {
+  if( fstat( fileno( fd ), &file_info ) ) {
     ui_error( UI_ERROR_ERROR, "couldn't stat file: %s", strerror( errno ) );
     return -1;
   }
@@ -68,15 +60,11 @@ compat_file_get_length( compat_fd fd )
 int
 compat_file_read( compat_fd fd, utils_file *file )
 {
-  ssize_t bytes = read( fd, file->buffer, file->length );
+  size_t bytes = fread( file->buffer, 1, file->length, fd );
   if( bytes != file->length ) {
-    if( bytes == -1 ) {
-      ui_error( UI_ERROR_ERROR, "error reading file: %s", strerror( errno ) );
-    } else {
-      ui_error( UI_ERROR_ERROR,
-                "error reading file: expected %ld bytes, but read only %ld",
-                (unsigned long)file->length, (unsigned long)bytes );
-    }
+    ui_error( UI_ERROR_ERROR,
+              "error reading file: expected %lu bytes, but read only %lu",
+              file->length, bytes );
     return 1;
   }
 
@@ -86,15 +74,11 @@ compat_file_read( compat_fd fd, utils_file *file )
 int
 compat_file_write( compat_fd fd, const unsigned char *buffer, size_t length )
 {
-  ssize_t bytes = write( fd, buffer, length );
+  size_t bytes = fwrite( buffer, 1, length, fd );
   if( bytes != length ) {
-    if( bytes == -1 ) {
-      ui_error( UI_ERROR_ERROR, "error writing file: %s", strerror( errno ) );
-    } else {
-      ui_error( UI_ERROR_ERROR,
-                "error writing file: expected %ld bytes, but wrote only %ld",
-                (unsigned long)length, (unsigned long)bytes );
-    }
+    ui_error( UI_ERROR_ERROR,
+              "error writing file: expected %lu bytes, but wrote only %lu",
+              length, bytes );
     return 1;
   }
 
@@ -104,5 +88,5 @@ compat_file_write( compat_fd fd, const unsigned char *buffer, size_t length )
 int
 compat_file_close( compat_fd fd )
 {
-  return close( fd );
+  return fclose( fd );
 }

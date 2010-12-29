@@ -1,7 +1,7 @@
 /* xkeyboard.c: X routines for dealing with the keyboard
    Copyright (c) 2000-2003 Philip Kendall
 
-   $Id: xkeyboard.c 3609 2008-05-01 13:17:56Z fredm $
+   $Id: xkeyboard.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,9 +38,7 @@
 #include "snapshot.h"
 #include "spectrum.h"
 #include "tape.h"
-#ifdef USE_WIDGET
-#include "ui/widget/widget.h"
-#endif				/* #ifdef USE_WIDGET */
+#include "ui/ui.h"
 #include "xkeyboard.h"
 
 static void

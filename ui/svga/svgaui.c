@@ -1,7 +1,7 @@
 /* svgaui.c: Routines for dealing with the svgalib user interface
    Copyright (c) 2000-2003 Philip Kendall, Matan Ziv-Av, Russell Marks
 
-   $Id: svgaui.c 3096 2007-08-06 09:20:34Z pak21 $
+   $Id: svgaui.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,11 @@
 #include <stdio.h>
 
 #include <vga.h>
+
+#if defined USE_JOYSTICK && !defined HAVE_JSW_H
+#include <vgajoystick.h>
+#endif
+
 #include <vgakeyboard.h>
 #include <vgamouse.h>
 
@@ -43,6 +48,8 @@ static int oldbutton = 0, oldx = 0, oldy = 0;
 int ui_init(int *argc, char ***argv)
 {
   int error;
+
+  if( ui_widget_init() ) return 1;
 
   error = svgadisplay_init();
   if(error) return error;
@@ -69,6 +76,9 @@ ui_event( void )
 
   keyboard_update();
   mouse_update();
+#if defined USE_JOYSTICK && !defined HAVE_JSW_H
+  joystick_update();
+#endif
 
   x = mouse_getx();
   y = mouse_gety();
@@ -97,6 +107,8 @@ int ui_end(void)
 
   error = svgadisplay_end();
   if(error) return error;
+
+  ui_widget_end();
 
   return 0;
 }

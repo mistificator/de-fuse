@@ -1,7 +1,7 @@
 /* debugger.c: The debugger widget
    Copyright (c) 2002-2004 Philip Kendall, Darren Salt
 
-   $Id: debugger.c 3666 2008-06-10 20:43:46Z fredm $
+   $Id: debugger.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,18 +30,18 @@
 
 #include <libspectrum.h>
   
+#include "debugger/debugger.h"
 #include "display.h"
+#include "ide/zxcf.h"
 #include "keyboard.h"
 #include "machine.h"
 #include "scld.h"
 #include "ui/uidisplay.h"
 #include "ula.h"
 #include "widget.h"
-#include "debugger/debugger.h"
 #include "widget_internals.h"
 #include "z80/z80.h"
 #include "z80/z80_macros.h"
-#include "zxcf.h"
 
 static enum {
   DB_REGISTERS, DB_BYTES, DB_TEXT, DB_DISASM, DB_BREAKPT
@@ -164,6 +164,7 @@ void widget_debugger_keyhandler( input_key key )
 
   case INPUT_KEY_c:
   case INPUT_KEY_Return:	/* Close widget */
+  case INPUT_KEY_KP_Enter:
     widget_end_all( WIDGET_FINISHED_OK );
     debugger_run();
     break;

@@ -1,7 +1,7 @@
 /* kempmouse.c: Kempston mouse emulation
    Copyright (c) 2004-2008 Darren Salt, Fredrick Meunier
 
-   $Id: kempmouse.c 3604 2008-04-16 14:32:19Z fredm $
+   $Id: kempmouse.c 4030 2009-06-07 14:38:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,7 +81,6 @@ kempmouse_init( void )
 
   return 0;
 }
-
 
 void
 kempmouse_update( int dx, int dy, int btn, int down )

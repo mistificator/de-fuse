@@ -1,7 +1,7 @@
 /* widget.c: Simple dialog boxes for all user interfaces.
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall, Russell Marks
 
-   $Id: widget.c 3697 2008-06-29 20:51:29Z fredm $
+   $Id: widget.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,8 +41,10 @@
 #include "display.h"
 #include "machine.h"
 #include "ui/uidisplay.h"
+#include "joystick.h"
 #include "keyboard.h"
-#include "options.h"
+#include "menu.h"
+#include "options_internals.h"
 #include "periph.h"
 #include "pokefinder/pokefinder.h"
 #include "screenshot.h"
@@ -93,13 +95,13 @@ settings_info widget_options_settings;
 
 static int widget_read_font( const char *filename )
 {
-  int fd;
+  compat_fd fd;
   utils_file file;
   int error;
   int i;
 
   fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_WIDGET );
-  if( fd == -1 ) {
+  if( fd == COMPAT_FILE_OPEN_FAILED ) {
     ui_error( UI_ERROR_ERROR, "couldn't find font file '%s'", filename );
     return 1;
   }
@@ -494,9 +496,6 @@ int widget_end( void )
 
 /* General widget routine */
 
-/* We don't start in a widget */
-int widget_level = -1;
-
 int widget_do( widget_type which, void *data )
 {
   int error;
@@ -504,14 +503,14 @@ int widget_do( widget_type which, void *data )
   /* If we don't have a UI yet, we can't output widgets */
   if( !display_ui_initialised ) return 1;
 
-  if( widget_level == -1 ) uidisplay_frame_save();
+  if( ui_widget_level == -1 ) uidisplay_frame_save();
 
   /* We're now one widget level deeper */
-  widget_level++;
+  ui_widget_level++;
 
   /* Store what type of widget we are and what data we were given */
-  widget_return[widget_level].type = which;
-  widget_return[widget_level].data = data;
+  widget_return[ui_widget_level].type = which;
+  widget_return[ui_widget_level].data = data;
 
   uidisplay_frame_restore();
 
@@ -522,11 +521,11 @@ int widget_do( widget_type which, void *data )
   widget_keyhandler = widget_data[which].keyhandler;
 
   /* Process this widget until it returns */
-  widget_return[widget_level].finished = 0;
-  while( ! widget_return[widget_level].finished ) {
+  widget_return[ui_widget_level].finished = 0;
+  while( ! widget_return[ui_widget_level].finished ) {
     
     /* Go to sleep for a bit */
-    timer_sleep_ms( 10 );
+    timer_sleep( 10 );
 
     /* Process any events */
     ui_event();
@@ -534,23 +533,23 @@ int widget_do( widget_type which, void *data )
 
   /* Do any post-widget processing if it exists */
   if( widget_data[which].finish ) {
-    widget_data[which].finish( widget_return[widget_level].finished );
+    widget_data[which].finish( widget_return[ui_widget_level].finished );
   }
 
   uidisplay_frame_restore();
 
   /* Now return to the previous widget level */
-  widget_level--;
+  ui_widget_level--;
     
-  if( widget_level >= 0 ) {
+  if( ui_widget_level >= 0 ) {
 
     /* If we're going back to another widget, set up its keyhandler and
        draw it again, unless it's already finished */
-    if( ! widget_return[widget_level].finished ) {
+    if( ! widget_return[ui_widget_level].finished ) {
       widget_keyhandler =
-	widget_data[ widget_return[widget_level].type ].keyhandler;
-      widget_data[ widget_return[widget_level].type ].draw(
-        widget_return[widget_level].data
+	widget_data[ widget_return[ui_widget_level].type ].keyhandler;
+      widget_data[ widget_return[ui_widget_level].type ].draw(
+        widget_return[ui_widget_level].data
       );
     }
 
@@ -568,7 +567,7 @@ int widget_do( widget_type which, void *data )
 int
 widget_end_widget( widget_finish_state state )
 {
-  widget_return[ widget_level ].finished = state;
+  widget_return[ ui_widget_level ].finished = state;
   return 0;
 }
 
@@ -577,7 +576,7 @@ int widget_end_all( widget_finish_state state )
 {
   int i;
 
-  for( i=0; i<=widget_level; i++ )
+  for( i=0; i<=ui_widget_level; i++ )
     widget_return[i].finished = state;
 
   return 0;
@@ -691,6 +690,7 @@ widget_t widget_data[] = {
 			                      widget_peripherals_keyhandler },
   { widget_query_draw,    NULL,			 widget_query_keyhandler    },
   { widget_query_save_draw,NULL,		 widget_query_save_keyhandler },
+  { widget_diskoptions_draw, widget_options_finish, widget_diskoptions_keyhandler  },
 };
 
 #ifndef UI_SDL
@@ -725,6 +725,13 @@ ui_confirm_save_specific( const char *message )
 {
   if( widget_do( WIDGET_TYPE_QUERY_SAVE, (void *) message ) )
     return UI_CONFIRM_SAVE_CANCEL;
+  return widget_query.confirm;
+}
+
+int
+ui_query( const char *message )
+{
+  widget_do( WIDGET_TYPE_QUERY, (void *) message );
   return widget_query.save;
 }
 
@@ -734,13 +741,6 @@ ui_get_rollback_point( GSList *points )
 {
   return -1;
 }
-
-static const char *joystick_connection[] = {
-  "None",
-  "Keyboard",
-  "Joystick 1",
-  "Joystick 2",
-};
 
 ui_confirm_joystick_t
 ui_confirm_joystick( libspectrum_joystick libspectrum_type, int inputs )
@@ -756,9 +756,9 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type, int inputs )
 
   info.title = title;
   info.options = joystick_connection;
-  info.count = sizeof( joystick_connection    ) /
-	       sizeof( joystick_connection[0] );
+  info.count = JOYSTICK_CONN_COUNT;
   info.current = UI_CONFIRM_JOYSTICK_NONE;
+  info.finish_all = 1;
 
   error = widget_do( WIDGET_TYPE_SELECT, &info );
   if( error ) return UI_CONFIRM_JOYSTICK_NONE;
@@ -771,4 +771,68 @@ ui_widgets_reset( void )
 {
   pokefinder_clear();
   return 0;
+}
+
+void
+ui_popup_menu( int native_key )
+{
+  switch( native_key ) {
+  case INPUT_KEY_F1:
+    fuse_emulation_pause();
+    widget_do( WIDGET_TYPE_MENU, &widget_menu );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F2:
+    fuse_emulation_pause();
+    menu_file_savesnapshot( 0 );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F3:
+    fuse_emulation_pause();
+    menu_file_open( 0 );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F4:
+    fuse_emulation_pause();
+    menu_options_general( 0 );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F5:
+    fuse_emulation_pause();
+    menu_machine_reset( 0 );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F6:
+    fuse_emulation_pause();
+    menu_media_tape_write( 0 );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F7:
+    fuse_emulation_pause();
+    menu_media_tape_open( 0 );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F8:
+    menu_media_tape_play( 0 );
+    break;
+  case INPUT_KEY_F9:
+    fuse_emulation_pause();
+    menu_machine_select( 0 );
+    fuse_emulation_unpause();
+    break;
+  case INPUT_KEY_F10:
+    fuse_emulation_pause();
+    menu_file_exit( 0 );
+    fuse_emulation_unpause();
+    break;
+
+  default: break;		/* Remove gcc warning */
+
+  }
+}
+
+void
+ui_widget_keyhandler( int native_key )
+{
+  widget_keyhandler( native_key );
 }

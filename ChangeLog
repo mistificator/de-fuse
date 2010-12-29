@@ -1,3 +1,77 @@
+2010-12-16  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+
+        * Fuse 1.0.0 released.
+
+        * Add Opus Discovery disk interface support (Gergely Szasz and Fredrick
+          Meunier).
+        * Wii support (Bjoern Giesler, Philip Kendall, Marek Januszewski).
+        * Many improvements to Win32 UI, including an installer (Marek
+          Januszewski).
+        * Support weak data in +3 disk images (Gergely Szasz).
+        * NTSC Spectrum support (Philip Kendall, with thanks to Claudio
+          Bernet).
+        * Add support for flipping disk images in single sided drives (Gergely
+          Szasz).
+        * Add support for automatically merging both both disk images where
+          they are in separate files named with the text [Ss]ide[ _][abAB12]
+          (Gergely Szasz).
+        * Switch to using Blip_Buffer (by Shay Green) for improved beeper and
+          AY output (Fredrick Meunier).
+        * Allow beeper and AY volumes to be set (Fredrick Meunier).
+        * Enable Beta 128 interface in 48K and TC2048 machines (thanks,
+          Omikron) (Fredrick Meunier).
+        * Add emulation of the Fuller Audio Box (Stuart Brady and Fredrick
+          Meunier).
+        * Allow sound to run from 2% speed up (Fredrick Meunier).
+        * Add emulation of the Melodik and similar 48K-compatible AY interfaces
+          that use the 128K sound ports (Fredrick Meunier).
+        * Add support for Pentagon 1024SL v2.2 16 colour mode (Fredrick
+          Meunier).
+        * Implement GTK+ drag and drop support (Dmitry Semyonov).
+        * Better support for international keyboards (Michal Jurica).
+        * Allow svgalib UI to use full range of bit depths and scalers (Gergely
+          Szasz).
+        * Allow GTK+ scalers to set window size in GTK+ UI (rkd77, Fredrick
+          Meunier).
+        * Allow selection of "TV speaker" or "beeper"-style sound output
+          (Fredrick Meunier)
+        * Allow hot-key switching between full-screen and windowed mode in
+          SDL UI (György Szombathelyi).
+
+        * Miscellaneous improvements:
+          * Preformat new disks on +3 to allow the format command on +3 to work
+            (Gergely Szasz).
+          * Support non-standard TRD images with 41-83 tracks per side (Gergely
+            Szasz).
+          * Allow user to swap Kempston mouse buttons as some combinations of
+            physical hardware and Spectrum software make it hard to use the
+            standard mapping e.g. right clicking and moving the cursor on Mac
+            notebooks (thanks, Andrew Owen) (Fredrick Meunier).
+          * Fixes for speed estimation (Gergely Szasz).
+          * Fix border colour in Timex HiRes screenshots (Fredrick Meunier).
+          * Allow "combo" boxes in widget UI (Gergely Szasz).
+          * Allow Home and End keys to work in widget UI (Gergely Szasz).
+          * Fix poke finder passing the wrong page to the debugger (Marek
+            Januszewski).
+          * Ensure joystick code always activates fire buttons correctly
+            (thanks, anonymous user)
+          * Don't fire joystick fire button events unless they've actually
+            changed (Fredrick Meunier; thanks, Phil Reynolds).
+          * Make svgalib UI use event interface rather than polling (thanks,
+            anonymous user).
+          * Ensure empty XML elements can't cause a segfault (thanks,
+            anonymous user).
+          * Tweak sector padding to fix Opus ATC+Technician Ted.dsk (Gergely
+            Szasz; thanks, Simon Owen).
+          * Z80 NMI should take some time (Fredrick Meunier).
+          * Ensure netbooks always recognise the enter key (Fredrick Meunier;
+            thanks, Marce).
+          * Add a --without-png option to configure for Gentoo (José Manuel
+            Ferrer Ortiz)
+
+        * Many other things I forgot. If you contributed something and would
+          like to be mentioned here, please mail me.
+
 2009-01-14  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
 
 	* Fuse 0.10.0.2 released
@@ -961,4 +1035,4 @@
 
 	* Version 0.1.0 released.
 
-$Id: ChangeLog 3957 2009-01-14 19:52:20Z pak21 $
+$Id: ChangeLog 4214 2010-12-16 21:40:25Z pak21 $

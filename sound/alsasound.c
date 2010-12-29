@@ -1,7 +1,7 @@
 /* alsasound.c: ALSA (Linux) sound I/O
    Copyright (c) 2006 Gergely Szasz
 
-   $Id: alsasound.c 3713 2008-07-06 12:06:33Z pak21 $
+   $Id: alsasound.c 4031 2009-06-08 00:33:53Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -242,8 +242,16 @@ sound_lowlevel_init( const char *device, int *freqptr, int *stereoptr )
   }
 
   if( bsize == 0 ) {
-    hz = (float)machine_current->timings.processor_speed /
+    /* Adjust relative processor speed to deal with adjusting sound generation
+       frequency against emulation speed (more flexible than adjusting generated
+       sample rate) */
+    hz = (float)sound_get_effective_processor_speed() /
               machine_current->timings.tstates_per_frame;
+    /* Amount of audio data we will accumulate before yielding back to the OS.
+       Not much point having more than 100Hz playback, we probably get
+       downgraded by the OS as being a hog too (unlimited Hz limits playback
+       speed to about 2000% on my Mac, 100Hz allows up to 5000% for me) */
+    if( hz > 100.0 ) hz = 100.0;
     exact_periodsize = sound_periodsize = *freqptr / hz;
   }
 

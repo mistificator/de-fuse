@@ -1,7 +1,7 @@
 /* paths.c: Path-related compatibility routines
    Copyright (c) 1999-2007 Philip Kendall
 
-   $Id: paths.c 3253 2007-10-26 02:02:17Z zubzero $
+   $Id: paths.c 3922 2008-12-31 19:01:31Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

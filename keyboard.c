@@ -1,7 +1,7 @@
 /* keyboard.c: Routines for dealing with the Spectrum's keyboard
    Copyright (c) 1999-2000 Philip Kendall
 
-   $Id: keyboard.c 3265 2007-10-28 12:35:45Z pak21 $
+   $Id: keyboard.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -124,6 +124,8 @@ static struct spectrum_keys_wrapper spectrum_keys_table[] = {
   { INPUT_KEY_Down,        { KEYBOARD_6,     KEYBOARD_Caps   } },
   { INPUT_KEY_Up,          { KEYBOARD_7,     KEYBOARD_Caps   } },
   { INPUT_KEY_Right,       { KEYBOARD_8,     KEYBOARD_Caps   } },
+
+  { INPUT_KEY_KP_Enter,    { KEYBOARD_Enter, KEYBOARD_NONE   } },
 
   { INPUT_KEY_NONE, { KEYBOARD_NONE, KEYBOARD_NONE } } /* End marker */
 

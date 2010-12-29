@@ -1,7 +1,7 @@
 /* picture.c: Keyboard picture
    Copyright (c) 2001-2004 Philip Kendall
 
-   $Id: picture.c 3749 2008-08-15 12:47:44Z fredm $
+   $Id: picture.c 4103 2009-11-21 10:16:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ widget_picture_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
   case INPUT_JOYSTICK_FIRE_1:
     widget_end_all( WIDGET_FINISHED_OK );
     break;

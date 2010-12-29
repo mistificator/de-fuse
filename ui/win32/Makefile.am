@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2008 Philip Kendall
 
-## $Id: Makefile.am 3960 2009-01-15 09:09:50Z pak21 $
+## $Id: Makefile.am 4010 2009-04-15 13:01:27Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ BUILT_SOURCES = keysyms.c \
 		menu_data.rc \
 		menu_data.h \
 		options.c \
-		options.h \
+		options_internals.h \
 		options.rc
 
 keysyms.c: $(srcdir)/../../keysyms.pl $(srcdir)/../../keysyms.dat
@@ -85,7 +85,7 @@ menu_data.rc: $(srcdir)/../../perl/cpp-perl.pl $(srcdir)/../../menu_data.pl $(sr
 options.c: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options.pl $(srcdir)/../../ui/options.dat $(srcdir)/../../perl/Fuse.pm $(srcdir)/../../perl/Fuse/Dialog.pm
 	@PERL@ $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/../../ui/options.dat | @PERL@ -I$(srcdir)/../../perl $(srcdir)/options.pl - > $@.tmp && mv $@.tmp $@
 
-options.h: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options-header.pl $(srcdir)/../../ui/options.dat $(srcdir)/../../perl/Fuse.pm $(srcdir)/../../perl/Fuse/Dialog.pm
+options_internals.h: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options-header.pl $(srcdir)/../../ui/options.dat $(srcdir)/../../perl/Fuse.pm $(srcdir)/../../perl/Fuse/Dialog.pm
 	@PERL@ $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/../../ui/options.dat | @PERL@ -I$(srcdir)/../../perl $(srcdir)/options-header.pl - > $@.tmp && mv $@.tmp $@
 
 options.rc: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options-resource.pl $(srcdir)/../../ui/options.dat $(srcdir)/../../perl/Fuse.pm $(srcdir)/../../perl/Fuse/Dialog.pm
@@ -95,7 +95,8 @@ options.rc: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options-re
 
 menu_data: menu_data.c menu_data.h menu_data.rc
 
-DIST_SUBDIRS = icons
+DIST_SUBDIRS = icons \
+	       installer
 
 noinst_HEADERS = binary.h \
 		 browse.h \
@@ -107,7 +108,7 @@ noinst_HEADERS = binary.h \
 		 select_template.h \
 		 memorybrowser.h \
 		 menu_data.h \
-		 options.h \
+		 options_internals.h \
 		 options.pl \
 		 options-header.pl \
 		 options-resource.pl \
@@ -119,5 +120,5 @@ CLEANFILES = keysyms.c \
 	     menu_data.h \
 	     menu_data.rc \
 	     options.c \
-	     options.h \
+	     options_internals.h \
 	     options.rc

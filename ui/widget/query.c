@@ -1,7 +1,7 @@
 /* query.c: The query widgets
    Copyright (c) 2004-2008 Darren Salt, Fredrick Meunier
 
-   $Id: query.c 3942 2009-01-10 14:18:46Z pak21 $
+   $Id: query.c 4179 2010-10-08 10:05:55Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ static void widget_query_line_draw( int left_edge, int width,
 static widget_query_entry query_save[] = {
   { "\012S\001ave", 0, INPUT_KEY_s, widget_save_click },
   { "\012D\001on't save", 1, INPUT_KEY_d, widget_dont_save_click },
-  { "\010C\001ancel", 2, INPUT_KEY_c, widget_cancel_click },
+  { "\012C\001ancel", 2, INPUT_KEY_c, widget_cancel_click },
   { NULL }
 };
 
@@ -87,7 +87,7 @@ widget_dont_save_click( void )
 static void
 widget_cancel_click( void )
 {
-  widget_query.save = UI_CONFIRM_SAVE_DONTSAVE;
+  widget_query.save = UI_CONFIRM_SAVE_CANCEL;
 }
 
 static void
@@ -227,6 +227,7 @@ widget_query_generic_keyhandler( widget_query_entry *query, int num_entries,
     break;
 
   case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
   case INPUT_JOYSTICK_FIRE_1:
     query[highlight_line].click();
     widget_end_all( WIDGET_FINISHED_OK );

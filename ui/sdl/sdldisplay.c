@@ -1,7 +1,7 @@
 /* sdldisplay.c: Routines for dealing with the SDL display
    Copyright (c) 2000-2006 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
 
-   $Id: sdldisplay.c 3666 2008-06-10 20:43:46Z fredm $
+   $Id: sdldisplay.c 4109 2009-12-27 06:15:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,9 +42,6 @@
 #include "ui/scaler/scaler.h"
 #include "ui/uidisplay.h"
 #include "utils.h"
-#ifdef USE_WIDGET
-#include "ui/widget/widget.h"
-#endif				/* #ifdef USE_WIDGET */
 
 SDL_Surface *sdldisplay_gc = NULL;   /* Hardware screen */
 static SDL_Surface *tmp_screen=NULL; /* Temporary screen for scalers */
@@ -712,11 +709,8 @@ uidisplay_frame_end( void )
     updated_rects[0].h = image_height;
   }
 
-#ifdef USE_WIDGET
-  if ( !(widget_level >= 0) && num_rects == 0 && !sdl_status_updated ) return;
-#else                   /* #ifdef USE_WIDGET */
-  if ( num_rects == 0 && !sdl_status_updated ) return;
-#endif                  /* #ifdef USE_WIDGET */
+  if ( !(ui_widget_level >= 0) && num_rects == 0 && !sdl_status_updated )
+    return;
 
   if( SDL_MUSTLOCK( sdldisplay_gc ) ) SDL_LockSurface( sdldisplay_gc );
 

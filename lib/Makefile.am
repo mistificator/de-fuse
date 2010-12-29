@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2004 Philip Kendall
 
-## $Id: Makefile.am 3150 2007-09-05 14:05:00Z pak21 $
+## $Id: Makefile.am 4154 2010-08-31 14:14:34Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ FILES = cassette.bmp \
 	@AUTOLOAD_SNAPS@/tape_2048.szx \
 	@AUTOLOAD_SNAPS@/tape_2068.szx \
 	@AUTOLOAD_SNAPS@/tape_48.szx \
+	@AUTOLOAD_SNAPS@/tape_48_ntsc.szx \
 	@AUTOLOAD_SNAPS@/tape_plus2.szx \
 	@AUTOLOAD_SNAPS@/tape_plus2a.szx \
 	@AUTOLOAD_SNAPS@/tape_plus3.szx \
@@ -51,6 +52,7 @@ EXTRA_DIST = $(FILES) \
 	compressed/tape_2048.szx \
 	compressed/tape_2068.szx \
 	compressed/tape_48.szx \
+	compressed/tape_48_ntsc.szx \
 	compressed/tape_plus2.szx \
 	compressed/tape_plus2a.szx \
 	compressed/tape_plus3.szx \
@@ -65,6 +67,7 @@ EXTRA_DIST = $(FILES) \
 	uncompressed/tape_2048.szx \
 	uncompressed/tape_2068.szx \
 	uncompressed/tape_48.szx \
+	uncompressed/tape_48_ntsc.szx \
 	uncompressed/tape_plus2.szx \
 	uncompressed/tape_plus2a.szx \
 	uncompressed/tape_plus3.szx \

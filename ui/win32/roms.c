@@ -1,7 +1,7 @@
 /* roms.c: ROM selector dialog box
    Copyright (c) 2003-2008 Philip Kendall, Marek Januszewski
 
-   $Id: roms.c 3720 2008-07-21 20:09:50Z specu $
+   $Id: roms.c 3922 2008-12-31 19:01:31Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

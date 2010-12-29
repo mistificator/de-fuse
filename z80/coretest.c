@@ -1,7 +1,7 @@
 /* coretest.c: Test program for Fuse's Z80 core
    Copyright (c) 2003 Philip Kendall
 
-   $Id: coretest.c 3750 2008-08-18 15:43:28Z pak21 $
+   $Id: coretest.c 4060 2009-07-30 13:21:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -447,6 +447,21 @@ event_register( event_fn_t fn GCC_UNUSED, const char *string GCC_UNUSED )
   return 0;
 }
 
+int opus_available = 0;
+int opus_active = 0;
+
+void
+opus_page( void )
+{
+  abort();
+}
+
+void
+opus_unpage( void )
+{
+  abort();
+}
+
 int plusd_available = 0;
 int plusd_active = 0;
 
@@ -505,6 +520,9 @@ static fuse_machine_info dummy_machine;
 
 settings_info settings_current;
 
+libspectrum_word beta_pc_mask;
+libspectrum_word beta_pc_value;
+
 /* Initialise the dummy variables such that we're running on a clean a
    machine as possible */
 static int
@@ -524,6 +542,8 @@ init_dummies( void )
   scld_last_dec.name.intdisable = 0;
   settings_current.slt_traps = 0;
   settings_current.divide_enabled = 0;
+  beta_pc_mask = 0xfe00;
+  beta_pc_value = 0x3c00;
 
   return 0;
 }

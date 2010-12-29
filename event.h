@@ -1,7 +1,7 @@
 /* event.h: Routines needed for dealing with the event list
    Copyright (c) 2000-2004 Philip Kendall
 
-   $Id: event.h 3942 2009-01-10 14:18:46Z pak21 $
+   $Id: event.h 3912 2008-12-15 05:10:21Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -68,27 +68,27 @@ event_add( libspectrum_dword event_time, int type )
 int event_do_events(void);
 
 /* Called at end of frame to reduce T-state count of all entries */
-int event_frame( libspectrum_dword tstates_per_frame );
+void event_frame( libspectrum_dword tstates_per_frame );
 
 /* Force all events between now and the next interrupt to happen */
-int event_force_events( void );
+void event_force_events( void );
 
 /* Remove all events of a specific type from the stack */
-int event_remove_type( int type );
+void event_remove_type( int type );
 
 /* Remove all events of a specific type and user data from the stack */
-int event_remove_type_user_data( int type, gpointer user_data );
+void event_remove_type_user_data( int type, gpointer user_data );
 
 /* Clear the event stack */
-int event_reset(void);
+void event_reset( void );
 
 /* Call a user-supplied function for every event in the current list */
-int event_foreach( GFunc function, gpointer user_data );
+void event_foreach( GFunc function, gpointer user_data );
 
 /* A textual representation of each event type */
 const char *event_name( int type );
 
 /* Called on exit to clean up */
-int event_end(void);
+void event_end( void );
 
 #endif				/* #ifndef FUSE_EVENT_H */

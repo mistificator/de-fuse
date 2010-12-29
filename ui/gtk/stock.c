@@ -1,7 +1,7 @@
 /* stock.c: 'standard' GTK+ widgets etc
    Copyright (c) 2004 Darren Salt, Philip Kendall
 
-   $Id: stock.c 3081 2007-07-29 15:30:30Z pak21 $
+   $Id: stock.c 4176 2010-10-06 10:56:05Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -180,5 +180,8 @@ gtkstock_dialog_new( const gchar *title, GtkSignalFunc destroy )
   gtk_signal_connect( GTK_OBJECT( dialog ), "delete-event",
 		      destroy ? destroy : DEFAULT_DESTROY, NULL );
   if( destroy == NULL ) gtk_window_set_modal( GTK_WINDOW( dialog ), TRUE );
+  gtk_window_set_transient_for( GTK_WINDOW( dialog ),
+                                GTK_WINDOW( gtkui_window ) );
+
   return dialog;
 }
