@@ -13,9 +13,26 @@ Suggests: fuse-emulator-utils
 Description: The Free Unix Spectrum Emulator (common files)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models
  (including 16K/48K/128K/+2/+2A/+3 and some clones), with quite
- faithful emulation of the display and sound. It can load Z80, SZX and
- SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive images
- and DSK floppy disk images, among many others.
+ faithful emulation of the display and sound.
+ .
+ Its features include:
+  * Accurate Spectrum 16K/48K/128K/+2/+2A/+3 emulation.
+  * Working Spectrum +3e and SE, Timex TC2048, TC2068 and TS2068,
+    Pentagon 128, "512" (Pentagon 128 with extra memory) and 1024 and
+    Scorpion ZS 256 emulation.
+  * Runs at true Speccy speed on any computer you're likely to try it
+    on.
+  * It can load Z80, SZX and SNA snapshots, TAP and TZX virtual-tape
+    files (including accelerated loading), MDR microdrive images and
+    DSK floppy disk images, among many others.
+  * Sound.
+  * Emulation of most of the common joysticks used on the Spectrum
+    (including Kempston, Sinclair and Cursor joysticks).
+  * Emulation of some of the printers you could attach to a Spectrum.
+  * Support for the RZX input recording file format, including
+    rollback and 'competition mode'.
+  * Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum
+    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
  .
  This package provides files common to all versions of the emulator.
  To get the actual emulator, install fuse-emulator-gtk or
@@ -28,9 +45,26 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, fuse-emulator-common (= ${source:Ve
 Description: The Free Unix Spectrum Emulator (GTK+ version)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models
  (including 16K/48K/128K/+2/+2A/+3 and some clones), with quite
- faithful emulation of the display and sound. It can load Z80, SZX and
- SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive images
- and DSK floppy disk images, among many others.
+ faithful emulation of the display and sound.
+ .
+ Its features include:
+  * Accurate Spectrum 16K/48K/128K/+2/+2A/+3 emulation.
+  * Working Spectrum +3e and SE, Timex TC2048, TC2068 and TS2068,
+    Pentagon 128, "512" (Pentagon 128 with extra memory) and 1024 and
+    Scorpion ZS 256 emulation.
+  * Runs at true Speccy speed on any computer you're likely to try it
+    on.
+  * It can load Z80, SZX and SNA snapshots, TAP and TZX virtual-tape
+    files (including accelerated loading), MDR microdrive images and
+    DSK floppy disk images, among many others.
+  * Sound.
+  * Emulation of most of the common joysticks used on the Spectrum
+    (including Kempston, Sinclair and Cursor joysticks).
+  * Emulation of some of the printers you could attach to a Spectrum.
+  * Support for the RZX input recording file format, including
+    rollback and 'competition mode'.
+  * Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum
+    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
  .
  This package provides binaries for the GTK+ version of Fuse.
 
@@ -41,8 +75,25 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, fuse-emulator-common (= ${source:Ve
 Description: The Free Unix Spectrum Emulator (SDL version)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models
  (including 16K/48K/128K/+2/+2A/+3 and some clones), with quite
- faithful emulation of the display and sound. It can load Z80, SZX and
- SNA snapshots, TAP and TZX virtual-tape files, MDR microdrive images
- and DSK floppy disk images, among many others.
+ faithful emulation of the display and sound.
+ .
+ Its features include:
+  * Accurate Spectrum 16K/48K/128K/+2/+2A/+3 emulation.
+  * Working Spectrum +3e and SE, Timex TC2048, TC2068 and TS2068,
+    Pentagon 128, "512" (Pentagon 128 with extra memory) and 1024 and
+    Scorpion ZS 256 emulation.
+  * Runs at true Speccy speed on any computer you're likely to try it
+    on.
+  * It can load Z80, SZX and SNA snapshots, TAP and TZX virtual-tape
+    files (including accelerated loading), MDR microdrive images and
+    DSK floppy disk images, among many others.
+  * Sound.
+  * Emulation of most of the common joysticks used on the Spectrum
+    (including Kempston, Sinclair and Cursor joysticks).
+  * Emulation of some of the printers you could attach to a Spectrum.
+  * Support for the RZX input recording file format, including
+    rollback and 'competition mode'.
+  * Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum
+    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
  .
  This package provides binaries for the SDL version of Fuse.
