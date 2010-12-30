@@ -18,7 +18,7 @@ use them you can get them from the original Fuse package:
 
   http://sourceforge.net/projects/fuse-emulator/files/fuse/
 
-Put ROMs in ~/.fuse-emulator/roms or /var/lib/fuse-emulator/roms
+Put ROM files in ~/.spectrum-roms or /usr/local/share/spectrum-roms
 and Fuse will automatically find them. Or you can use the --rom-*
 command-line options (see the fuse manual page for more details).
 
@@ -36,4 +36,4 @@ a number of Spectrum programs so it might suit your needs.
   http://open82.sourceforge.net/
   http://scratchpad.wikia.com/wiki/Open82
 
- -- Alberto Garcia <agarcia@igalia.com>, Tue, 28 Dec 2010 17:54:39 +0100
+ -- Alberto Garcia <agarcia@igalia.com>, Thu, 30 Dec 2010 15:40:09 +0100

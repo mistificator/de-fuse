@@ -1,4 +1,4 @@
-Look for ROM files under ~/.fuse-emulator/roms and /var/lib/fuse-emulator/roms
+Look for ROM files under ~/.spectrum-roms and /usr/local/share/spectrum-roms
 See README.Debian for details
 Index: fuse-emulator/utils.c
 ===================================================================
@@ -10,11 +10,11 @@ Index: fuse-emulator/utils.c
  
 -    /* Then where we may have installed the data files */
    case 2:
-+    snprintf( ctx->path, PATH_MAX, "%s/.fuse-emulator/roms", compat_get_home_path() );
++    snprintf( ctx->path, PATH_MAX, "%s/.spectrum-roms", compat_get_home_path() );
 +    return 1;
 +
 +  case 3:
-+    strncpy( ctx->path, "/var/lib/fuse-emulator/roms", PATH_MAX );
++    strncpy( ctx->path, "/usr/local/share/spectrum-roms", PATH_MAX );
 +    return 1;
 +
 +    /* Then where we may have installed the data files */
