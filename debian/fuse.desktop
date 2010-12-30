@@ -1,7 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Categories=Game;Emulator;GNOME;GTK;Application;
-Name=Fuse Spectrum Emulator
-Exec=/usr/bin/fuse
-Icon=fuse
