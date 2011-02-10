@@ -110,7 +110,7 @@ keysyms_map_t keysyms_map[] = {
   { SCANCODE_Y,                INPUT_KEY_y           },
   { SCANCODE_Z,                INPUT_KEY_z           },
   { SCANCODE_BACKSPACE,        INPUT_KEY_BackSpace   },
-  { SCANCODE_KP_ENTER,         INPUT_KEY_KP_Enter    },
+  { SCANCODE_KEYPADENTER,      INPUT_KEY_KP_Enter    },
   { SCANCODE_CURSORBLOCKUP,    INPUT_KEY_Up          },
   { SCANCODE_CURSORBLOCKDOWN,  INPUT_KEY_Down        },
   { SCANCODE_CURSORBLOCKLEFT,  INPUT_KEY_Left        },

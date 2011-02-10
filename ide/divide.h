@@ -1,7 +1,7 @@
 /* divide.h: DivIDE interface routines
    Copyright (c) 2005 Matthew Westcott
 
-   $Id: divide.h 4207 2010-12-05 10:01:23Z fredm $
+   $Id: divide.h 4225 2010-12-17 20:14:40Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

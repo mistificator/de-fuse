@@ -4,7 +4,7 @@
 # Copyright (c) 2000-2007 Philip Kendall, Matan Ziv-Av, Russell Marks,
 #			  Fredrick Meunier, Catalin Mihaila, Stuart Brady
 
-# $Id: keysyms.pl 4103 2009-11-21 10:16:36Z fredm $
+# $Id: keysyms.pl 4225 2010-12-17 20:14:40Z pak21 $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -203,6 +203,7 @@ my %ui_data = (
 		  Down       => 'CURSORBLOCKDOWN',
 		  Up         => 'CURSORBLOCKUP',
 		  Right      => 'CURSORBLOCKRIGHT',
+		  KP_Enter   => 'KEYPADENTER',
 	      },
 	      function => \&svga_keysym,
 	    },
