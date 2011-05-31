@@ -1,3 +1,30 @@
+fuse-emulator (1.0.0.1a+dfsg1-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control: add dependency on opense-basic as an alternative to
+    spectrum-roms, but suggest spectrum-roms anyway.
+  * debian/control: move the package from contrib to main. Now that
+    there's opense-basic, the non-free package spectrum-roms is no longer
+    a requisite. See README.Debian for details.
+  * debian/control: add DM-Upload-Allowed flag.
+  * debian/control: update Standards-Version to 3.9.2.
+  * Refresh 04_unfiltered-audio.patch.
+  * New patches:
+    - 06_load-opense-rom.patch: load the OpenSE BASIC ROM if the original
+      Spectrum ROMs are not found.
+    - 07_disable-autoload.patch: don't use the auto load feature with
+      OpenSE BASIC.
+  * debian/watch: update regular expression to include letters in the
+    version number.
+  * debian/README.Debian: update notes to mention OpenSE BASIC.
+  * debian/copyright: the legal status of the ROMs distributed in the
+    upstream tarball is not unclear anymore.
+  * debian/copyright: list files released under the GNU LGPL.
+  * debian/fuse-emulator-{common,gtk,sdl}.lintian-overrides: the package
+    description is really meant to start with 'The'.
+
+ -- Alberto Garcia <agarcia@igalia.com>  Wed, 15 Jun 2011 00:44:46 +0300
+
 fuse-emulator (1.0.0+dfsg1-1) unstable; urgency=low
 
   * Initial release (Closes: #608203).

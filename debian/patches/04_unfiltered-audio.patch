@@ -3,7 +3,7 @@ Index: fuse-emulator/man/fuse.1
 ===================================================================
 --- fuse-emulator.orig/man/fuse.1
 +++ fuse-emulator/man/fuse.1
-@@ -771,8 +771,8 @@ option.
+@@ -773,8 +773,8 @@ option.
  .PP
  .I "\-\-speaker\-type type"
  .RS
@@ -14,7 +14,7 @@ Index: fuse-emulator/man/fuse.1
  .I "Speaker type"
  option.
  .RE
-@@ -1669,7 +1669,8 @@ This option allows the emulation of the
+@@ -1671,7 +1671,8 @@ This option allows the emulation of the
  modified. Different choices of speaker limit the bass and treble
  response that can be produced from the machine. Choose between a
  "TV" type speaker and a small beeper type speaker that significantly
