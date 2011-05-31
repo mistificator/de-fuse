@@ -1,3 +1,10 @@
+2011-04-01  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+
+        * Fuse 1.0.0.1a released.
+
+        * Remove all ROMs for which there isn't explicit permission to
+          distribute (Philip Kendall).
+
 2011-01-12  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
 
         * Fuse 1.0.0.1 released.
@@ -1044,4 +1051,4 @@
 
 	* Version 0.1.0 released.
 
-$Id: ChangeLog 4250 2011-01-12 21:59:57Z pak21 $
+$Id: ChangeLog 4331 2011-04-01 07:47:06Z pak21 $
