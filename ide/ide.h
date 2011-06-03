@@ -1,7 +1,7 @@
 /* ide.h: Generic routines shared between the various IDE devices
    Copyright (c) 2005 Philip Kendall
 
-   $Id: ide.h 4207 2010-12-05 10:01:23Z fredm $
+   $Id: ide.h 4225 2010-12-17 20:14:40Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

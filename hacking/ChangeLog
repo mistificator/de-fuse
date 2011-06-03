@@ -3372,3 +3372,22 @@
 20101203 ui/fb/fbdisplay.c: improve fb colour handling and initialise scaler
          system (fixes bugs #3124787 and #3124788) (rkd77).
 20101216 ChangeLog,README,configure.in,man/fuse.1: update for 1.0.0 release.
+20101217 keysyms.pl: fix SVGAlib compilation (rkd77).
+20101229 debugger/breakpoint.c: don't free temporary breakpoint until after we have run
+         it (fixes bug #3084862) (thanks, Chris Cowley) (Fred).
+20101230 debugger/breakpoint.c: stop evaluating breakpoints when we have hit a
+         temporary breakpoint (really fixes bug #3084862) (patch #3142840)
+         (Sergio Baldovi).
+20110101 debugger/breakpoint.c: evaluate all breakpoints again, but store the
+         next breakpoint before deleteing the current one from the list 
+         (really really fixes bug #3084862) (thanks, Phil) (Fred).
+20110109 ui/widget/filesel.c: make Amiga work again (Chris Young).
+20110112 ChangeLog,README,configure.in,man/fuse.1: updates for 1.0.0.1 release.
+20110327 man/fuse.1,roms/{128p-[01].rom,256s-[0123].rom,Makefile.am,
+         README.copyright,gluck.rom,if1-[12].rom,opus.rom,trdos.rom,
+         Makefile.am}: remove ROMs that there is no formal permission to
+         distribute.
+20110327 roms/Makefile.am: distribute README.copyright.
+20110327 ChangeLog,README,configure.in,fuse.c,man/fuse.1: updates for 1.0.0.1a
+         release.
+20110401 ChangeLog,man/fuse.1: didn't manage to release this earlier.

@@ -3002,7 +3002,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=fuse
- VERSION=1.0.0
+ VERSION=1.0.0.1a
 
 
 cat >>confdefs.h <<_ACEOF
@@ -11007,7 +11007,7 @@ fi
 if test "$WINDRES" != no; then
   WINDRES_OBJ="windres.o"
 
-$as_echo "#define VERSION_WIN32 1,0,0,0" >>confdefs.h
+$as_echo "#define VERSION_WIN32 1,0,0,1a" >>confdefs.h
 
 fi
 
