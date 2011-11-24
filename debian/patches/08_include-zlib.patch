@@ -1,0 +1,14 @@
+The libpng 1.5 headers no longer include zlib.h, so we have to do it
+ourselves. This patch is based on the upstream SVN commit 4359.
+Index: fuse-emulator/screenshot.c
+===================================================================
+--- fuse-emulator.orig/screenshot.c
++++ fuse-emulator/screenshot.c
+@@ -49,6 +49,7 @@
+ #ifdef USE_LIBPNG
+ 
+ #include <png.h>
++#include <zlib.h>
+ 
+ static int get_rgb32_data( libspectrum_byte *rgb32_data, size_t stride,
+ 			   size_t height, size_t width );

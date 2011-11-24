@@ -1,3 +1,16 @@
+fuse-emulator (1.0.0.1a+dfsg1-2) unstable; urgency=low
+
+  * 08_include-zlib.patch: fix FTBFS with libpng 1.5 (Closes: #649803).
+  * debian/control: change build dependency on libpng12-dev to libpng-dev
+    for the transition to libpng 1.5.
+  * debian/control: lintian complains if we only depend on the
+    fuse-emulator virtual package, so now we're listing fuse-emulator-gtk
+    as the first alternative.
+  * debian/copyright: convert file to the machine-readable format, and
+    change license of the Debian packaging to GPL-2+.
+
+ -- Alberto Garcia <agarcia@igalia.com>  Thu, 24 Nov 2011 11:48:33 +0100
+
 fuse-emulator (1.0.0.1a+dfsg1-1) unstable; urgency=low
 
   * New upstream release.
