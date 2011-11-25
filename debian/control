@@ -9,9 +9,10 @@ Homepage: http://fuse-emulator.sourceforge.net/
 
 Package: fuse-emulator-common
 Architecture: all
-Depends: fuse-emulator-gtk | fuse-emulator, opense-basic | spectrum-roms, ${misc:Depends}
+Depends: opense-basic | spectrum-roms, ${misc:Depends}
 Breaks: fuse-emulator (<< 1.0.0+dfsg1-1)
 Replaces: fuse-emulator (<< 1.0.0+dfsg1-1)
+Recommends: fuse-emulator-gtk | fuse-emulator-sdl
 Suggests: spectrum-roms, fuse-emulator-utils
 Description: The Free Unix Spectrum Emulator (common files)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models
@@ -43,7 +44,6 @@ Description: The Free Unix Spectrum Emulator (common files)
 
 Package: fuse-emulator-gtk
 Architecture: any
-Provides: fuse-emulator
 Depends: ${shlibs:Depends}, ${misc:Depends}, fuse-emulator-common (= ${source:Version})
 Description: The Free Unix Spectrum Emulator (GTK+ version)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models
@@ -73,7 +73,6 @@ Description: The Free Unix Spectrum Emulator (GTK+ version)
 
 Package: fuse-emulator-sdl
 Architecture: any
-Provides: fuse-emulator
 Depends: ${shlibs:Depends}, ${misc:Depends}, fuse-emulator-common (= ${source:Version})
 Description: The Free Unix Spectrum Emulator (SDL version)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models

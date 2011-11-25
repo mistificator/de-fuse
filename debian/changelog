@@ -1,3 +1,12 @@
+fuse-emulator (1.0.0.1a+dfsg1-3) unstable; urgency=low
+
+  * debian/control: rather than depend on them, make fuse-emulator-common
+    recommend one of the actual emulator packages. This breaks a circular
+    dependency (Closes: #649986).
+  * debian/control: get rid of the fuse-emulator virtual package.
+
+ -- Alberto Garcia <agarcia@igalia.com>  Fri, 25 Nov 2011 10:30:41 +0100
+
 fuse-emulator (1.0.0.1a+dfsg1-2) unstable; urgency=low
 
   * 08_include-zlib.patch: fix FTBFS with libpng 1.5 (Closes: #649803).
