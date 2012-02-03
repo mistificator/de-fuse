@@ -6,9 +6,9 @@ override_dh_auto_configure:
 
 override_dh_auto_build:
 	rm -f ui/gtk/options.c
-	convert winfuse.ico winfuse.png 2> /dev/null || true
-	convert winfuse-0.png -scale 64x64 fuse.png
-	rm -f winfuse-?.png
+	icotool -x winfuse.ico
+	mv winfuse_3_48x48x32.png fuse.png
+	rm -f winfuse_*.png
 	touch aclocal.m4 Makefile.in configure config.h.in
 	dh_auto_configure -- --with-roms-dir=/usr/share/spectrum-roms \
 		--with-x
