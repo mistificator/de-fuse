@@ -10,8 +10,8 @@ override_dh_auto_build:
 	mv winfuse_3_48x48x32.png fuse.png
 	rm -f winfuse_*.png
 	touch aclocal.m4 Makefile.in configure config.h.in
-	dh_auto_configure -- --with-roms-dir=/usr/share/spectrum-roms \
-		--with-x
+	CFLAGS="-g -O2 -Wall -DG_DISABLE_CAST_CHECKS" dh_auto_configure -- \
+		--with-roms-dir=/usr/share/spectrum-roms --with-x
 	dh_auto_build
 	mv fuse fuse-gtk
 	dh_auto_clean
