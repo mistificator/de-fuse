@@ -6,3 +6,4 @@
 06_load-opense-rom.patch
 07_disable-autoload.patch
 08_include-zlib.patch
+09_dont-use-sdl-audio.patch
