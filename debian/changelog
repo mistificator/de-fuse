@@ -1,3 +1,25 @@
+fuse-emulator (1.0.0.1a+dfsg1-4) unstable; urgency=low
+
+  * Add headers to all patches.
+  * 01_compile-without-roms.patch: apply against Makefile.am and
+    configure.in.
+    - debian/control: Add build dependency on dh-autoreconf.
+    - debian/rules: Run dh --with autoreconf.
+  * 09_dont-use-sdl-audio.patch: Don't use the SDL audio driver, it has
+    issues with PulseAudio. Use Alsa instead.
+  * 10_fix-joystick-crash.patch: Don't crash with joysticks with more than
+    10 buttons (Closes: #665640).
+  * Use the 48x48 version of the Fuse icon:
+    - debian/control: build-depend on icoutils instead of imagemagick.
+    - debian/fuse-emulator-common.install: change icon path.
+    - debian/rules: use icotool to extract the icon.
+  * Disable GObject cast checks in the GTK+ version:
+    - debian/rules: add -DG_DISABLE_CAST_CHECKS to the CFLAGS variable.
+  * debian/control: update Standards-Version to 3.9.3.
+  * debian/copyright: update debian copyright format URL.
+
+ -- Alberto Garcia <agarcia@igalia.com>  Sun, 25 Mar 2012 23:43:31 +0300
+
 fuse-emulator (1.0.0.1a+dfsg1-3) unstable; urgency=low
 
   * debian/control: rather than depend on them, make fuse-emulator-common
