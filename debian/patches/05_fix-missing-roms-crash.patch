@@ -1,5 +1,6 @@
-Fuse crashes when some ROMs are not available.
-This patch fixes the problem.
+From: Alberto Garcia <agarcia@igalia.com>
+Subject: Don't crash if ROM files are unavailable
+Applied-Upstream: http://fuse-emulator.svn.sourceforge.net/viewvc/fuse-emulator?view=revision&revision=4234
 Index: fuse-emulator/disk/beta.c
 ===================================================================
 --- fuse-emulator.orig/disk/beta.c

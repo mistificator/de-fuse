@@ -1,4 +1,6 @@
-The auto load feature doesn't work with OpenSE BASIC, so don't use it.
+From: Alberto Garcia <agarcia@igalia.com>
+Subject: The auto load feature doesn't work with OpenSE BASIC, so don't use it
+Forwarded: http://sourceforge.net/mailarchive/message.php?msg_id=27674912
 Index: fuse-emulator/tape.c
 ===================================================================
 --- fuse-emulator.orig/tape.c

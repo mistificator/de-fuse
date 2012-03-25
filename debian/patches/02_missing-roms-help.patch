@@ -1,6 +1,9 @@
-Some of the ROMs used by Fuse are not available due to their license.
-This patch tells the user to see the README.Debian file for an
-explanation.
+From: Alberto Garcia <agarcia@igalia.com>
+Description: Tell the user to see README.Debian if a ROM file is not found
+ Some of the ROMs used by Fuse are not available due to their license.
+ This patch tells the user to see the README.Debian file for an
+ explanation.
+Forwarded: not-needed
 Index: fuse-emulator/machine.c
 ===================================================================
 --- fuse-emulator.orig/machine.c

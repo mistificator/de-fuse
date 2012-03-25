@@ -1,4 +1,6 @@
-New speaker type for unfiltered audio output (upstream SVN commit 4231)
+From: Alberto Garcia <agarcia@igalia.com>
+Subject: New speaker type for unfiltered audio output
+Applied-Upstream: http://fuse-emulator.svn.sourceforge.net/viewvc/fuse-emulator?view=revision&revision=4231
 Index: fuse-emulator/man/fuse.1
 ===================================================================
 --- fuse-emulator.orig/man/fuse.1

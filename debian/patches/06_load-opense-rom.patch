@@ -1,4 +1,6 @@
-Try to load the OpenSE BASIC ROM if the original ROMs are not found.
+From: Alberto Garcia <agarcia@igalia.com>
+Subject: Load the OpenSE BASIC ROM if the original ROMs are not found
+Forwarded: http://sourceforge.net/mailarchive/message.php?msg_id=27674912
 Index: fuse-emulator/machine.c
 ===================================================================
 --- fuse-emulator.orig/machine.c

@@ -1,5 +1,10 @@
-Look for ROM files under ~/.spectrum-roms and /usr/local/share/spectrum-roms
-See README.Debian for details
+From: Alberto Garcia <agarcia@igalia.com>
+Description: New search paths for ROM files
+ Add ~/.spectrum-roms and /usr/local/share/spectrum-roms to the ROM
+ search path so users can install those not available in Debian.
+ .
+ See the README.Debian file for more details.
+Forwarded: http://sourceforge.net/mailarchive/message.php?msg_id=27293756
 Index: fuse-emulator/utils.c
 ===================================================================
 --- fuse-emulator.orig/utils.c

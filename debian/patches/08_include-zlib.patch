@@ -1,5 +1,7 @@
-The libpng 1.5 headers no longer include zlib.h, so we have to do it
-ourselves. This patch is based on the upstream SVN commit 4359.
+From: Fredrick Meunier <fredm@spamcop.net>
+Subject: Fix FTBFS with libpng 1.5
+Origin: upstream, http://fuse-emulator.svn.sourceforge.net/viewvc/fuse-emulator?view=revision&revision=4359
+Bug-Debian: http://bugs.debian.org/649803
 Index: fuse-emulator/screenshot.c
 ===================================================================
 --- fuse-emulator.orig/screenshot.c

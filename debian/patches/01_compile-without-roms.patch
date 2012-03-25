@@ -1,5 +1,7 @@
-Patch to compile Fuse without the roms dir
-(stripped from the source tarball since it is non-free)
+From: Alberto Garcia <agarcia@igalia.com>
+Description: Make Fuse compile without the 'roms' dir
+ This dir was stripped from the source tarball since it is non-free.
+Forwarded: not-needed
 Index: fuse-emulator/Makefile.in
 ===================================================================
 --- fuse-emulator.orig/Makefile.in
