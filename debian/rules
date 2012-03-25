@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 %:
-	dh $@
+	dh $@ --with autoreconf
 
 override_dh_auto_configure:
 
@@ -9,7 +9,6 @@ override_dh_auto_build:
 	icotool -x winfuse.ico
 	mv winfuse_3_48x48x32.png fuse.png
 	rm -f winfuse_*.png
-	touch aclocal.m4 Makefile.in configure config.h.in
 	CFLAGS="-g -O2 -Wall -DG_DISABLE_CAST_CHECKS" dh_auto_configure -- \
 		--with-roms-dir=/usr/share/spectrum-roms --with-x
 	dh_auto_build

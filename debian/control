@@ -3,7 +3,17 @@ Priority: optional
 Section: otherosfs
 Maintainer: Alberto Garcia <agarcia@igalia.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.0.50), icoutils, flex, bison, libpng-dev, libasound2-dev, libxml2-dev, libspectrum-dev (>= 1.0.0), libsdl1.2-dev, libgtk2.0-dev
+Build-Depends: debhelper (>= 7.0.50),
+               dh-autoreconf,
+               icoutils,
+               flex,
+               bison,
+               libpng-dev,
+               libasound2-dev,
+               libxml2-dev,
+               libspectrum-dev (>= 1.0.0),
+               libsdl1.2-dev,
+               libgtk2.0-dev
 Standards-Version: 3.9.3
 Homepage: http://fuse-emulator.sourceforge.net/
 
