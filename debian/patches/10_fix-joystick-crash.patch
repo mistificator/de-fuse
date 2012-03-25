@@ -1,0 +1,17 @@
+From: Fredrick Meunier <fredm@spamcop.net>
+Subject: Fix crash with joysticks with more than 10 buttons
+Bug-Debian: http://bugs.debian.org/665640
+Origin: upstream, http://fuse-emulator.svn.sourceforge.net/viewvc/fuse-emulator?view=revision&revision=4259
+Index: fuse-emulator/ui/sdl/sdljoystick.c
+===================================================================
+--- fuse-emulator.orig/ui/sdl/sdljoystick.c
++++ fuse-emulator/ui/sdl/sdljoystick.c
+@@ -111,7 +111,7 @@ button_action( SDL_JoyButtonEvent *butto
+   input_event_t event;
+   
+   button = buttonevent->button;
+-  if( button > 10 ) return;	/* We support 'only' 10 fire buttons */
++  if( button > 9 ) return;	/* We support 'only' 10 fire buttons */
+ 
+   event.type = type;
+   event.types.joystick.which = buttonevent->which;
