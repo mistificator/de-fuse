@@ -1,20 +1,19 @@
 Source: fuse-emulator
 Priority: optional
 Section: otherosfs
-Maintainer: Alberto Garcia <agarcia@igalia.com>
-DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.0.50),
+Maintainer: Alberto Garcia <berto@igalia.com>
+Build-Depends: debhelper (>= 9),
                dh-autoreconf,
-               icoutils,
                flex,
                bison,
                libpng-dev,
                libasound2-dev,
                libxml2-dev,
-               libspectrum-dev (>= 1.0.0),
                libsdl1.2-dev,
-               libgtk2.0-dev
-Standards-Version: 3.9.3
+               libgtk-3-dev,
+               zlib1g-dev,
+               libspectrum-dev (>= 1.1.0)
+Standards-Version: 3.9.4
 Homepage: http://fuse-emulator.sourceforge.net/
 
 Package: fuse-emulator-common
@@ -40,13 +39,16 @@ Description: The Free Unix Spectrum Emulator (common files)
     files (including accelerated loading), MDR microdrive images and
     DSK floppy disk images, among many others.
   * Sound.
+  * Built-in debugger.
   * Emulation of most of the common joysticks used on the Spectrum
     (including Kempston, Sinclair and Cursor joysticks).
   * Emulation of some of the printers you could attach to a Spectrum.
   * Support for the RZX input recording file format, including
     rollback and 'competition mode'.
+  * Recording of movies to FMF files.
   * Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum
-    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
+    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery, +D, Spectranet,
+    SpeccyBoot, SpecDrum and DISCiPLE interfaces.
  .
  This package provides files common to all versions of the emulator.
  To get the actual emulator, install fuse-emulator-gtk or
@@ -71,13 +73,16 @@ Description: The Free Unix Spectrum Emulator (GTK+ version)
     files (including accelerated loading), MDR microdrive images and
     DSK floppy disk images, among many others.
   * Sound.
+  * Built-in debugger.
   * Emulation of most of the common joysticks used on the Spectrum
     (including Kempston, Sinclair and Cursor joysticks).
   * Emulation of some of the printers you could attach to a Spectrum.
   * Support for the RZX input recording file format, including
     rollback and 'competition mode'.
+  * Recording of movies to FMF files.
   * Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum
-    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
+    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery, +D, Spectranet,
+    SpeccyBoot, SpecDrum and DISCiPLE interfaces.
  .
  This package provides binaries for the GTK+ version of Fuse.
 
@@ -100,12 +105,15 @@ Description: The Free Unix Spectrum Emulator (SDL version)
     files (including accelerated loading), MDR microdrive images and
     DSK floppy disk images, among many others.
   * Sound.
+  * Built-in debugger.
   * Emulation of most of the common joysticks used on the Spectrum
     (including Kempston, Sinclair and Cursor joysticks).
   * Emulation of some of the printers you could attach to a Spectrum.
   * Support for the RZX input recording file format, including
     rollback and 'competition mode'.
+  * Recording of movies to FMF files.
   * Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum
-    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
+    +3e, ZXATASP, ZXCF, Beta 128, Opus Discovery, +D, Spectranet,
+    SpeccyBoot, SpecDrum and DISCiPLE interfaces.
  .
  This package provides binaries for the SDL version of Fuse.

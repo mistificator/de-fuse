@@ -1,0 +1,69 @@
+From: Alberto Garcia <berto@igalia.com>
+Description: New search paths for ROM files
+ Add ~/.spectrum-roms and /usr/local/share/spectrum-roms to the ROM
+ search path so users can install those not available in Debian.
+ .
+ See the README.Debian file for more details.
+Forwarded: http://sourceforge.net/mailarchive/message.php?msg_id=27293756
+Index: fuse-emulator/compat/linux/paths.c
+===================================================================
+--- fuse-emulator.orig/compat/linux/paths.c
++++ fuse-emulator/compat/linux/paths.c
+@@ -107,8 +107,16 @@ compat_get_next_path( path_context *ctx
+               path_segment );
+     return 1;
+ 
+-    /* Then where we may have installed the data files */
+   case 2:
++    snprintf( ctx->path, PATH_MAX, "%s/.spectrum-roms", compat_get_home_path() );
++    return 1;
++
++  case 3:
++    strncpy( ctx->path, "/usr/local/share/spectrum-roms", PATH_MAX );
++    return 1;
++
++    /* Then where we may have installed the data files */
++  case 4:
+ 
+ #ifndef ROMSDIR
+     path2 = FUSEDATADIR;
+@@ -118,7 +126,7 @@ compat_get_next_path( path_context *ctx
+     strncpy( ctx->path, path2, PATH_MAX ); buffer[ PATH_MAX - 1 ] = '\0';
+     return 1;
+ 
+-  case 3: return 0;
++  case 5: return 0;
+   }
+   ui_error( UI_ERROR_ERROR, "unknown path_context state %d", ctx->state );
+   fuse_abort();
+Index: fuse-emulator/compat/unix/paths.c
+===================================================================
+--- fuse-emulator.orig/compat/unix/paths.c
++++ fuse-emulator/compat/unix/paths.c
+@@ -107,8 +107,16 @@ compat_get_next_path( path_context *ctx
+               path_segment );
+     return 1;
+ 
+-    /* Then where we may have installed the data files */
+   case 2:
++    snprintf( ctx->path, PATH_MAX, "%s/.spectrum-roms", compat_get_home_path() );
++    return 1;
++
++  case 3:
++    strncpy( ctx->path, "/usr/local/share/spectrum-roms", PATH_MAX );
++    return 1;
++
++    /* Then where we may have installed the data files */
++  case 4:
+ 
+ #ifndef ROMSDIR
+     path2 = FUSEDATADIR;
+@@ -118,7 +126,7 @@ compat_get_next_path( path_context *ctx
+     strncpy( ctx->path, path2, PATH_MAX ); buffer[ PATH_MAX - 1 ] = '\0';
+     return 1;
+ 
+-  case 3: return 0;
++  case 5: return 0;
+   }
+   ui_error( UI_ERROR_ERROR, "unknown path_context state %d", ctx->state );
+   fuse_abort();

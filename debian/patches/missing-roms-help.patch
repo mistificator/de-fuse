@@ -1,4 +1,4 @@
-From: Alberto Garcia <agarcia@igalia.com>
+From: Alberto Garcia <berto@igalia.com>
 Description: Tell the user to see README.Debian if a ROM file is not found
  Some of the ROMs used by Fuse are not available due to their license.
  This patch tells the user to see the README.Debian file for an
@@ -8,12 +8,12 @@ Index: fuse-emulator/machine.c
 ===================================================================
 --- fuse-emulator.orig/machine.c
 +++ fuse-emulator/machine.c
-@@ -298,7 +298,7 @@ machine_load_rom_bank_from_file( memory_
+@@ -282,7 +282,7 @@ machine_load_rom_bank_from_file( memory_
  
-   fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_ROM );
-   if( fd == COMPAT_FILE_OPEN_FAILED ) {
+   error = utils_read_auxiliary_file( filename, &rom, UTILS_AUXILIARY_ROM );
+   if( error == -1 ) {
 -    ui_error( UI_ERROR_ERROR, "couldn't find ROM '%s'", filename );
 +    ui_error( UI_ERROR_ERROR, "couldn't find ROM '%s' - See README.Debian for details", filename );
      return 1;
    }
-   
+   if( error ) return error;

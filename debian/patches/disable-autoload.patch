@@ -1,11 +1,11 @@
-From: Alberto Garcia <agarcia@igalia.com>
+From: Alberto Garcia <berto@igalia.com>
 Subject: The auto load feature doesn't work with OpenSE BASIC, so don't use it
 Forwarded: http://sourceforge.net/mailarchive/message.php?msg_id=27674912
 Index: fuse-emulator/tape.c
 ===================================================================
 --- fuse-emulator.orig/tape.c
 +++ fuse-emulator/tape.c
-@@ -140,6 +140,7 @@ tape_read_buffer( unsigned char *buffer,
+@@ -141,6 +141,7 @@ tape_read_buffer( unsigned char *buffer,
  		  const char *filename, int autoload )
  {
    int error;
@@ -13,7 +13,7 @@ Index: fuse-emulator/tape.c
  
    if( libspectrum_tape_present( tape ) ) {
      error = tape_close(); if( error ) return error;
-@@ -151,7 +152,7 @@ tape_read_buffer( unsigned char *buffer,
+@@ -152,7 +153,7 @@ tape_read_buffer( unsigned char *buffer,
    tape_modified = 0;
    ui_tape_browser_update( UI_TAPE_BROWSER_NEW_TAPE, NULL );
  

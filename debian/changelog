@@ -1,3 +1,44 @@
+fuse-emulator (1.1.1+dfsg1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Update my e-mail address in debian/*.
+  * Remove the following patches, which have already been merged in this
+    release:
+    - 04_unfiltered-audio.patch
+    - 05_fix-missing-roms-crash.patch
+    - 08_include-zlib.patch
+    - 10_fix-joystick-crash.patch
+  * Refresh all remaining patches and remove their numbering.
+  * Build with hardening options.
+    - debian/compat: bump debhelper compatibility level to 9.
+    - debian/control: update build dependency on debhelper as well.
+  * debian/rules: compile Fuse with --enable-gtk3.
+    - debian/control: replace build dependency on GTK+ 2 with GTK+ 3.
+  * debian/rules: compile Fuse with --enable-desktop-integration.
+    - debian/fuse-emulator-common.install: remove fuse.png.
+    - debian/rules: don't create fuse.png from winfuse.ico.
+    - debian/control: remove build dependency on icoutils.
+  * Remove debian/fuse-{sdl,gtk}.desktop and use data/fuse.desktop
+    to generate them.
+    - debian/rules: generate fuse-{sdl,gtk}.desktop.
+    - desktop-file.patch: don't install data/fuse.desktop.
+  * manpage-errors.patch: fix formatting errors in the manual page.
+  * debian/fuse-emulator-common.install: install menu_data.ui, necessary
+    for the GTK+ version.
+    - debian/rules: keep the file after the GTK+ build, otherwise it will
+      be removed by dh_auto_clean.
+  * debian/control:
+    - Update build dependency on libspectrum to >= 1.1.0.
+    - Add build dependency on zlib1g-dev.
+    - Remove obsolete DM-Upload-Allowed flag.
+    - Update Standards-Version to 3.9.4 (no changes).
+    - Update description with new features.
+  * debian/copyright: update copyright years.
+  * debian/rules: add get-orig-source rule to create the Debian source
+    tarball.
+
+ -- Alberto Garcia <berto@igalia.com>  Tue, 04 Jun 2013 19:28:27 +0200
+
 fuse-emulator (1.0.0.1a+dfsg1-4) unstable; urgency=low
 
   * Add headers to all patches.

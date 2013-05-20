@@ -1,11 +1,11 @@
-From: Alberto Garcia <agarcia@igalia.com>
+From: Alberto Garcia <berto@igalia.com>
 Subject: Load the OpenSE BASIC ROM if the original ROMs are not found
 Forwarded: http://sourceforge.net/mailarchive/message.php?msg_id=27674912
 Index: fuse-emulator/machine.c
 ===================================================================
 --- fuse-emulator.orig/machine.c
 +++ fuse-emulator/machine.c
-@@ -51,6 +51,7 @@
+@@ -53,6 +53,7 @@
  
  fuse_machine_info **machine_types = NULL; /* Array of available machines */
  int machine_count = 0;
@@ -13,12 +13,12 @@ Index: fuse-emulator/machine.c
  
  fuse_machine_info *machine_current = NULL; /* The currently selected machine */
  static int machine_location;	/* Where is the current machine in
-@@ -297,6 +298,41 @@ machine_load_rom_bank_from_file( memory_
+@@ -281,6 +282,41 @@ machine_load_rom_bank_from_file( memory_
    utils_file rom;
  
-   fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_ROM );
+   error = utils_read_auxiliary_file( filename, &rom, UTILS_AUXILIARY_ROM );
 +
-+  if( fd == COMPAT_FILE_OPEN_FAILED ) {
++  if( error == -1 ) {
 +
 +    if(! strcmp( filename, "48.rom"      ) ||
 +       ! strcmp( filename, "tc2048.rom"  ) ||
@@ -27,9 +27,9 @@ Index: fuse-emulator/machine.c
 +       ! strcmp( filename, "plus3-1.rom" ) ||
 +       ! strcmp( filename, "plus3-3.rom" ) ) {
 +
-+      fd = utils_find_auxiliary_file( "opense.rom", UTILS_AUXILIARY_ROM );
++      error = utils_read_auxiliary_file( "opense.rom", &rom, UTILS_AUXILIARY_ROM );
 +
-+      if( fd != COMPAT_FILE_OPEN_FAILED && ! using_opense_rom ) {
++      if( error != -1 && ! using_opense_rom ) {
 +
 +        extern int config_file_present;
 +        using_opense_rom = 1;
@@ -46,13 +46,13 @@ Index: fuse-emulator/machine.c
 +              ! strcmp( filename, "plus3-0.rom" ) ||
 +              ! strcmp( filename, "plus3-2.rom" ) ) {
 +
-+      fd = utils_find_auxiliary_file( "opense-stub.rom", UTILS_AUXILIARY_ROM );
++      error = utils_read_auxiliary_file( "opense-stub.rom", &rom, UTILS_AUXILIARY_ROM );
 +
 +    }
 +
 +  }
 +
-   if( fd == COMPAT_FILE_OPEN_FAILED ) {
+   if( error == -1 ) {
      ui_error( UI_ERROR_ERROR, "couldn't find ROM '%s' - See README.Debian for details", filename );
      return 1;
 Index: fuse-emulator/settings.pl
@@ -67,7 +67,7 @@ Index: fuse-emulator/settings.pl
  
  /* The default settings of options, etc */
  settings_info settings_default = {
-@@ -196,6 +197,8 @@ read_config_file( settings_info *setting
+@@ -195,6 +196,8 @@ read_config_file( settings_info *setting
  
    xmlFreeDoc( doc );
  
@@ -88,7 +88,7 @@ Index: fuse-emulator/settings.c
  
  /* The default settings of options, etc */
  settings_info settings_default = {
-@@ -333,6 +334,8 @@ read_config_file( settings_info *setting
+@@ -359,6 +360,8 @@ read_config_file( settings_info *setting
  
    xmlFreeDoc( doc );
  

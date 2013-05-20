@@ -1,0 +1,36 @@
+From: Alberto Garcia <berto@igalia.com>
+Description: Make Fuse compile without the 'roms' dir
+ This dir was stripped from the source tarball since it is non-free.
+Forwarded: not-needed
+Index: fuse-emulator/Makefile.am
+===================================================================
+--- fuse-emulator.orig/Makefile.am
++++ fuse-emulator/Makefile.am
+@@ -37,7 +37,6 @@ SUBDIRS = @COMPAT_SUBDIR@ \
+           peripherals \
+ 	  perl \
+ 	  pokefinder \
+-	  roms \
+ 	  sound \
+ 	  timer \
+ 	  ui \
+@@ -53,7 +52,6 @@ DIST_SUBDIRS = data \
+                peripherals \
+ 	       perl \
+ 	       pokefinder \
+-	       roms \
+ 	       sound \
+ 	       timer \
+ 	       ui \
+Index: fuse-emulator/configure.ac
+===================================================================
+--- fuse-emulator.orig/configure.ac
++++ fuse-emulator/configure.ac
+@@ -909,7 +909,6 @@ peripherals/flash/Makefile
+ perl/Makefile
+ perl/Fuse/Makefile
+ pokefinder/Makefile
+-roms/Makefile
+ sound/Makefile
+ timer/Makefile
+ ui/Makefile

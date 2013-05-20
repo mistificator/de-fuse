@@ -2,23 +2,47 @@
 %:
 	dh $@ --with autoreconf
 
+CONFIGURE_OPTIONS := --with-roms-dir=/usr/share/spectrum-roms \
+	--enable-desktop-integration
+
 override_dh_auto_configure:
 
 override_dh_auto_build:
 	rm -f ui/gtk/options.c
-	icotool -x winfuse.ico
-	mv winfuse_3_48x48x32.png fuse.png
-	rm -f winfuse_*.png
 	CFLAGS="-g -O2 -Wall -DG_DISABLE_CAST_CHECKS" dh_auto_configure -- \
-		--with-roms-dir=/usr/share/spectrum-roms --with-x
+		$(CONFIGURE_OPTIONS) --with-x --enable-gtk3
 	dh_auto_build
 	mv fuse fuse-gtk
+	mv ui/gtk/menu_data.ui .
+	cat data/fuse.desktop | \
+		sed -e 's,Exec=.*,Exec=/usr/bin/fuse-gtk %f,' \
+		    -e 's,Name=\(.*\),Name=\1 (GTK+ version),' > \
+		debian/fuse-gtk.desktop
 	dh_auto_clean
-	dh_auto_configure -- --with-roms-dir=/usr/share/spectrum-roms \
-		--with-sdl
+	dh_auto_configure -- $(CONFIGURE_OPTIONS) --with-sdl
 	dh_auto_build
 	cp fuse fuse-sdl
+	cat data/fuse.desktop | \
+		sed -e 's,Exec=.*,Exec=/usr/bin/fuse-sdl %f,' \
+		    -e 's,Name=\(.*\),Name=\1 (SDL version),' \
+		    -e 's,GNOME;GTK;,,' > \
+		debian/fuse-sdl.desktop
 
 override_dh_clean:
-	rm -f fuse.png
+	rm -f fuse.png menu_data.ui fuse-gtk fuse-sdl
+	rm -f debian/fuse-gtk.desktop debian/fuse-sdl.desktop
 	dh_clean
+
+VERSION := $(shell dpkg-parsechangelog | sed -ne 's/^Version: \(.*\)-.*/\1/p')
+UPSTREAM_VERSION := $(shell echo $(VERSION) | sed 's/+dfsg1//')
+
+get-orig-source:
+	dh_testdir
+	uscan --rename --download-current-version
+	mkdir "fuse-emulator-$(VERSION)"
+	tar -C "fuse-emulator-$(VERSION)" \
+		--strip-components=1 --exclude=roms \
+		-xaf "../fuse-emulator_$(UPSTREAM_VERSION).orig.tar.gz"
+	fakeroot tar -caf "../fuse-emulator_$(VERSION).orig.tar.xz" \
+		"fuse-emulator-$(VERSION)"
+	rm -rf "fuse-emulator-$(VERSION)"
