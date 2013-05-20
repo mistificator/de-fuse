@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2008 Philip Kendall
 
-## $Id: Makefile.am 4010 2009-04-15 13:01:27Z fredm $
+## $Id: Makefile.am 4743 2012-10-10 13:20:50Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -27,9 +27,11 @@ AM_CPPFLAGS = -I$(srcdir)/../..
 
 noinst_LIBRARIES = libuiwin32.a
 
-INCLUDES = @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@
+AM_CPPFLAGS += @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@
 
-libuiwin32_a_SOURCES = binary.c \
+libuiwin32_a_SOURCES = about.c \
+		       about.rc \
+		       binary.c \
 		       binary.rc \
 		       browse.c \
 		       browse.rc \
@@ -37,6 +39,7 @@ libuiwin32_a_SOURCES = binary.c \
 		       debugger.c \
 		       debugger.rc \
 		       fileselector.c \
+		       hyperlinks.c \
 		       keysyms.c \
 		       memorybrowser.c \
 		       memorybrowser.rc \
@@ -48,6 +51,8 @@ libuiwin32_a_SOURCES = binary.c \
 		       picture.rc \
 		       pokefinder.c \
 		       pokefinder.rc \
+		       pokemem.c \
+		       pokemem.rc \
 		       rollback.c \
 		       rollback.rc \
 		       roms.c \
@@ -95,14 +100,16 @@ options.rc: $(srcdir)/../../perl/cpp-perl.pl ../../config.h $(srcdir)/options-re
 
 menu_data: menu_data.c menu_data.h menu_data.rc
 
-DIST_SUBDIRS = icons \
-	       installer
+DIST_SUBDIRS = icons
 
-noinst_HEADERS = binary.h \
+noinst_HEADERS = about.h \
+		 binary.h \
 		 browse.h \
 		 debugger.h \
+		 hyperlinks.h \
 		 picture.h \
 		 pokefinder.h \
+		 pokemem.h \
 		 rollback.h \
 		 roms.h \
 		 select_template.h \

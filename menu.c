@@ -1,7 +1,7 @@
 /* menu.c: general menu callbacks
    Copyright (c) 2004-2005 Philip Kendall
 
-   $Id: menu.c 4180 2010-10-09 12:59:37Z fredm $
+   $Id: menu.c 4841 2013-01-02 01:55:24Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,21 +27,23 @@
 
 #include <libspectrum.h>
 
-#include "dck.h"
-#include "disk/beta.h"
-#include "disk/opus.h"
-#include "disk/plusd.h"
 #include "event.h"
 #include "fuse.h"
-#include "ide/divide.h"
-#include "ide/simpleide.h"
-#include "ide/zxatasp.h"
-#include "ide/zxcf.h"
-#include "if1.h"
-#include "if2.h"
-#include "joystick.h"
 #include "menu.h"
+#include "movie.h"
 #include "machines/specplus3.h"
+#include "peripherals/dck.h"
+#include "peripherals/disk/beta.h"
+#include "peripherals/disk/disciple.h"
+#include "peripherals/disk/opus.h"
+#include "peripherals/disk/plusd.h"
+#include "peripherals/ide/divide.h"
+#include "peripherals/ide/simpleide.h"
+#include "peripherals/ide/zxatasp.h"
+#include "peripherals/ide/zxcf.h"
+#include "peripherals/if1.h"
+#include "peripherals/if2.h"
+#include "peripherals/joystick.h"
 #include "profile.h"
 #include "psg.h"
 #include "rzx.h"
@@ -65,7 +67,7 @@ MENU_CALLBACK( menu_file_open )
 
   utils_open_file( filename, tape_can_autoload(), NULL );
 
-  free( filename );
+  libspectrum_free( filename );
 
   display_refresh_all();
 
@@ -138,7 +140,7 @@ MENU_CALLBACK( menu_file_recording_play )
 
   rzx_start_playback( recording, 1 );
 
-  free( recording );
+  libspectrum_free( recording );
 
   display_refresh_all();
 
@@ -178,17 +180,23 @@ MENU_CALLBACK( menu_file_openscrscreenshot )
 
   screenshot_scr_read( filename );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
 
-MENU_CALLBACK( menu_file_movies_stopmovierecording )
+MENU_CALLBACK( menu_file_movie_stop )
 {
   ui_widget_finish();
 
-  screenshot_movie_record = 0;
-  ui_menu_activate( UI_MENU_ITEM_FILE_MOVIES_RECORDING, 0 );
+  movie_stop();
+}
+
+MENU_CALLBACK( menu_file_movie_pause )
+{
+  ui_widget_finish();
+
+  movie_pause();
 }
 
 MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_select )
@@ -211,9 +219,12 @@ MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_select )
   case 14: menu_select_roms( LIBSPECTRUM_MACHINE_SCORP,    34, 4 ); return;
   case 15: menu_select_roms( LIBSPECTRUM_MACHINE_SE,       38, 2 ); return;
 
-  case 16: menu_select_roms_with_title( "Interface I",     40, 1 ); return;
+  case 16: menu_select_roms_with_title( "Interface 1",     40, 1 ); return;
   case 17: menu_select_roms_with_title( "Beta 128",        41, 1 ); return;
   case 18: menu_select_roms_with_title( "+D",              42, 1 ); return;
+  case 19: menu_select_roms_with_title( "DISCiPLE",        43, 1 ); return;
+  case 20: menu_select_roms_with_title( "Opus Discovery",  44, 1 ); return;
+  case 21: menu_select_roms_with_title( "SpeccyBoot",      45, 1 ); return;
 
   }
 
@@ -266,7 +277,7 @@ MENU_CALLBACK( menu_machine_profiler_stop )
 
   profile_finish( filename );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
@@ -288,7 +299,7 @@ MENU_CALLBACK( menu_media_tape_open )
 
   tape_open( filename, 0 );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
@@ -343,7 +354,7 @@ MENU_CALLBACK_WITH_ACTION( menu_media_if1_rs232 )
 
     if1_plug( filename, action );
 
-    free( filename );
+    libspectrum_free( filename );
   }
   fuse_emulation_unpause();
 
@@ -374,6 +385,9 @@ MENU_CALLBACK_WITH_ACTION( menu_media_insert_new )
     break;
   case 4:
     opus_disk_insert( which, NULL, 0 );
+    break;
+  case 5:
+    disciple_disk_insert( which, NULL, 0 );
     break;
   }
 }
@@ -406,6 +420,9 @@ MENU_CALLBACK_WITH_ACTION( menu_media_insert )
   case 4:
     snprintf( title, 80, "Fuse - Insert Opus Disk %i", which + 1 );
     break;
+  case 5:
+    snprintf( title, 80, "Fuse - Insert DISCiPLE Disk %i", which + 1 );
+    break;
   default:
     return;
   }
@@ -428,21 +445,49 @@ MENU_CALLBACK_WITH_ACTION( menu_media_insert )
   case 4:
     opus_disk_insert( which, filename, 0 );
     break;
+  case 5:
+    disciple_disk_insert( which, filename, 0 );
+    break;
   }
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
 
-/*
-1. menu_media_eject
-2. xxx_disk_eject
-2.a. ui_xxx_disk_write( save )
-2.b. ui_xxx_disk_write( saveas )
-[2.c. ui_xxx_disk_eject( save )]
-*/
 MENU_CALLBACK_WITH_ACTION( menu_media_eject )
+{
+  int which, type;
+
+  ui_widget_finish();
+
+  action--;
+  which = action & 0x00f;
+  type = ( action & 0x0f0 ) >> 4;
+
+  switch( type ) {
+  case 0:
+    specplus3_disk_eject( which );
+    break;
+  case 1:
+    beta_disk_eject( which );
+    break;
+  case 2:
+    plusd_disk_eject( which );
+    break;
+  case 3:
+    if1_mdr_eject( which );
+    break;
+  case 4:
+    opus_disk_eject( which );
+    break;
+  case 5:
+    disciple_disk_eject( which );
+    break;
+  }
+}
+
+MENU_CALLBACK_WITH_ACTION( menu_media_save )
 {
   int which, saveas, type;
 
@@ -451,23 +496,26 @@ MENU_CALLBACK_WITH_ACTION( menu_media_eject )
   action--;
   which = action & 0x00f;
   type = ( action & 0x0f0 ) >> 4;
-  saveas = ( action & 0xf00 ) >> 8;    /* 0 -> eject, 1 -> save as, 2 -> save */
+  saveas = ( action & 0xf00 ) >> 8;
 
   switch( type ) {
   case 0:
-    specplus3_disk_eject( which, saveas );
+    specplus3_disk_save( which, saveas );
     break;
   case 1:
-    beta_disk_eject( which, saveas );
+    beta_disk_save( which, saveas );
     break;
   case 2:
-    plusd_disk_eject( which, saveas );
+    plusd_disk_save( which, saveas );
     break;
   case 3:
-    if1_mdr_eject( which, saveas );
+    if1_mdr_save( which, saveas );
     break;
   case 4:
-    opus_disk_eject( which, saveas );
+    opus_disk_save( which, saveas );
+    break;
+  case 5:
+    disciple_disk_save( which, saveas );
     break;
   }
 }
@@ -493,8 +541,12 @@ MENU_CALLBACK_WITH_ACTION( menu_media_flip )
   case 2:
     plusd_disk_flip( which, flip );
     break;
+  /* No flip option for IF1 */
   case 4:
     opus_disk_flip( which, flip );
+    break;
+  case 5:
+    disciple_disk_flip( which, flip );
     break;
   }
 }
@@ -526,6 +578,9 @@ MENU_CALLBACK_WITH_ACTION( menu_media_writeprotect )
   case 4:
     opus_disk_writeprotect( which, wrprot );
     break;
+  case 5:
+    disciple_disk_writeprotect( which, wrprot );
+    break;
   }
 
 }
@@ -541,7 +596,7 @@ MENU_CALLBACK( menu_media_cartridge_timexdock_insert )
 
   dck_insert( filename );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
@@ -552,23 +607,23 @@ MENU_CALLBACK( menu_media_cartridge_timexdock_eject )
   dck_eject();
 }
 
-MENU_CALLBACK( menu_media_cartridge_interfaceii_insert )
+MENU_CALLBACK( menu_media_cartridge_interface2_insert )
 {
   char *filename;
 
   fuse_emulation_pause();
 
-  filename = ui_get_open_filename( "Fuse - Insert Interface II Cartridge" );
+  filename = ui_get_open_filename( "Fuse - Insert Interface 2 Cartridge" );
   if( !filename ) { fuse_emulation_unpause(); return; }
 
   if2_insert( filename );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
 
-MENU_CALLBACK( menu_media_cartridge_interfaceii_eject )
+MENU_CALLBACK( menu_media_cartridge_interface2_eject )
 {
   ui_widget_finish();
   if2_eject();
@@ -593,7 +648,7 @@ MENU_CALLBACK_WITH_ACTION( menu_media_ide_insert )
   case 7: divide_insert( filename, LIBSPECTRUM_IDE_SLAVE  ); break;
   }
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
@@ -674,7 +729,7 @@ MENU_CALLBACK( menu_file_savesnapshot )
 
   snapshot_write( filename );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
@@ -692,7 +747,7 @@ MENU_CALLBACK( menu_file_savescreenasscr )
 
   screenshot_scr_write( filename );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
@@ -720,63 +775,61 @@ MENU_CALLBACK( menu_file_savescreenaspng )
 
   screenshot_write( filename, scaler );
 
-  free( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
 #endif
 
-MENU_CALLBACK( menu_file_movies_recordmovieasscr )
+MENU_CALLBACK( menu_file_movie_record )
 {
   char *filename;
 
   ui_widget_finish();
-  
+
   fuse_emulation_pause();
 
-  filename = ui_get_save_filename( "Fuse - Record Movie as SCR" );
+  filename = ui_get_save_filename( "Fuse - Record Movie File" );
   if( !filename ) { fuse_emulation_unpause(); return; }
 
-  snprintf( screenshot_movie_file, PATH_MAX-SCREENSHOT_MOVIE_FILE_MAX, "%s",
-            filename );
-
-  screenshot_movie_record = 1;
-  ui_menu_activate( UI_MENU_ITEM_FILE_MOVIES_RECORDING, 1 );
-
-  free( filename );
+  movie_start( filename );
+  libspectrum_free( filename );
 
   fuse_emulation_unpause();
 }
 
-#ifdef USE_LIBPNG
-MENU_CALLBACK( menu_file_movies_recordmovieaspng )
+MENU_CALLBACK( menu_file_movie_record_recordfromrzx )
 {
-  char *filename;
+  char *rzx_file, *fmf_file;
 
   ui_widget_finish();
 
+  if( rzx_playback || rzx_recording || movie_recording ) return;
+
   fuse_emulation_pause();
 
-  screenshot_movie_scaler = menu_get_scaler( screenshot_available_scalers );
-  if( screenshot_movie_scaler == SCALER_NUM ) {
-    fuse_emulation_unpause();
-    return;
+  rzx_file = ui_get_open_filename( "Fuse - Load RZX" );
+  if( !rzx_file ) { fuse_emulation_unpause(); return; }
+
+  rzx_start_playback( rzx_file, 1 );
+  libspectrum_free( rzx_file );
+  display_refresh_all();
+
+  if( rzx_playback ) {
+    fmf_file = ui_get_save_filename( "Fuse - Record Movie File" );
+    if( !fmf_file ) { 
+      rzx_stop_playback( 1 );
+      fuse_emulation_unpause();
+      return;
+    }
+
+    movie_start( fmf_file );
+    libspectrum_free( fmf_file );
+    ui_menu_activate( UI_MENU_ITEM_RECORDING, 1 );
   }
 
-  filename = ui_get_save_filename( "Fuse - Record Movie as PNG" );
-  if( !filename ) { fuse_emulation_unpause(); return; }
-
-  snprintf( screenshot_movie_file, PATH_MAX-SCREENSHOT_MOVIE_FILE_MAX, "%s",
-            filename );
-
-  screenshot_movie_record = 2;
-  ui_menu_activate( UI_MENU_ITEM_FILE_MOVIES_RECORDING, 1 );
-
-  free( filename );
-
   fuse_emulation_unpause();
 }
-#endif
 
 MENU_CALLBACK( menu_file_recording_record )
 {
@@ -791,7 +844,7 @@ MENU_CALLBACK( menu_file_recording_record )
 
   rzx_start_recording( recording, 1 );
 
-  free( recording );
+  libspectrum_free( recording );
 
   fuse_emulation_unpause();
 }
@@ -808,15 +861,22 @@ MENU_CALLBACK( menu_file_recording_recordfromsnapshot )
   if( !snap ) { fuse_emulation_unpause(); return; }
 
   recording = ui_get_save_filename( "Fuse - Start Recording" );
-  if( !recording ) { free( snap ); fuse_emulation_unpause(); return; }
+  if( !recording ) {
+    libspectrum_free( snap );
+    fuse_emulation_unpause();
+    return;
+  }
 
   if( snapshot_read( snap ) ) {
-    free( snap ); free( recording ); fuse_emulation_unpause(); return;
+    libspectrum_free( snap );
+    libspectrum_free( recording );
+    fuse_emulation_unpause();
+    return;
   }
 
   rzx_start_recording( recording, settings_current.embed_snapshot );
 
-  free( recording );
+  libspectrum_free( recording );
 
   display_refresh_all();
 
@@ -836,7 +896,7 @@ MENU_CALLBACK( menu_file_aylogging_record )
 
   psg_start_recording( psgfile );
 
-  free( psgfile );
+  libspectrum_free( psgfile );
 
   display_refresh_all();
 
@@ -852,38 +912,44 @@ menu_check_media_changed( void )
 
   confirm = tape_close(); if( confirm ) return 1;
 
-  confirm = specplus3_disk_eject( SPECPLUS3_DRIVE_A, 0 );
+  confirm = specplus3_disk_eject( SPECPLUS3_DRIVE_A );
   if( confirm ) return 1;
 
-  confirm = specplus3_disk_eject( SPECPLUS3_DRIVE_B, 0 );
+  confirm = specplus3_disk_eject( SPECPLUS3_DRIVE_B );
   if( confirm ) return 1;
 
-  confirm = beta_disk_eject( BETA_DRIVE_A, 0 );
+  confirm = beta_disk_eject( BETA_DRIVE_A );
   if( confirm ) return 1;
 
-  confirm = beta_disk_eject( BETA_DRIVE_B, 0 );
+  confirm = beta_disk_eject( BETA_DRIVE_B );
   if( confirm ) return 1;
 
-  confirm = beta_disk_eject( BETA_DRIVE_C, 0 );
+  confirm = beta_disk_eject( BETA_DRIVE_C );
   if( confirm ) return 1;
 
-  confirm = beta_disk_eject( BETA_DRIVE_D, 0 );
+  confirm = beta_disk_eject( BETA_DRIVE_D );
   if( confirm ) return 1;
 
-  confirm = opus_disk_eject( OPUS_DRIVE_1, 0 );
+  confirm = opus_disk_eject( OPUS_DRIVE_1 );
   if( confirm ) return 1;
 
-  confirm = opus_disk_eject( OPUS_DRIVE_2, 0 );
+  confirm = opus_disk_eject( OPUS_DRIVE_2 );
   if( confirm ) return 1;
 
-  confirm = plusd_disk_eject( PLUSD_DRIVE_1, 0 );
+  confirm = plusd_disk_eject( PLUSD_DRIVE_1 );
   if( confirm ) return 1;
 
-  confirm = plusd_disk_eject( PLUSD_DRIVE_2, 0 );
+  confirm = plusd_disk_eject( PLUSD_DRIVE_2 );
+  if( confirm ) return 1;
+
+  confirm = disciple_disk_eject( DISCIPLE_DRIVE_1 );
+  if( confirm ) return 1;
+
+  confirm = disciple_disk_eject( DISCIPLE_DRIVE_2 );
   if( confirm ) return 1;
 
   for( i = 0; i < 8; i++ ) {
-    confirm = if1_mdr_eject( i, 0 );
+    confirm = if1_mdr_eject( i );
     if( confirm ) return 1;
   }
 
@@ -1065,6 +1131,22 @@ const char*
 menu_plusd2_detail( void )
 {
   fdd_t *f = plusd_get_fdd( PLUSD_DRIVE_2 );
+
+  return menu_disk_detail( f );
+}
+
+const char*
+menu_disciple1_detail( void )
+{
+  fdd_t *f = disciple_get_fdd( DISCIPLE_DRIVE_1 );
+
+  return menu_disk_detail( f );
+}
+
+const char*
+menu_disciple2_detail( void )
+{
+  fdd_t *f = disciple_get_fdd( DISCIPLE_DRIVE_2 );
 
   return menu_disk_detail( f );
 }

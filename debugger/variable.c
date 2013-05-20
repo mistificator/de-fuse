@@ -1,7 +1,7 @@
 /* variable.c: Debugger variables
    Copyright (c) 2008 Philip Kendall
 
-   $Id: variable.c 3922 2008-12-31 19:01:31Z zubzero $
+   $Id: variable.c 4696 2012-05-07 02:05:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,32 +35,30 @@
 
 #include "debugger_internals.h"
 #include "ui/ui.h"
+#include "utils.h"
 
 static GHashTable *debugger_variables;
 
-int
+void
 debugger_variable_init( void )
 {
-  debugger_variables = g_hash_table_new( g_str_hash, g_str_equal );
-  if( !debugger_variables ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-    return 1;
-  }
+  debugger_variables = g_hash_table_new_full( g_str_hash, g_str_equal,
+                                              free, NULL );
+}
 
-  return 0;
+void
+debugger_variable_end( void )
+{
+  g_hash_table_destroy( debugger_variables );
+  debugger_variables = NULL;
 }
 
 void
 debugger_variable_set( const char *name, libspectrum_dword value )
 {
   /* Check if we need to allocate memory for this key */
-  if( !g_hash_table_lookup( debugger_variables, name ) ) {
-    name = strdup( name );
-    if( !name ) {
-      ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-      return;
-    }
-  }
+  if( !g_hash_table_lookup( debugger_variables, name ) )
+    name = utils_safe_strdup( name );
 
   /* Cast is safe as we have either taken a copy of the key, or know that
      it already exists so we're not going to use it */

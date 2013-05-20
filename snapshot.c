@@ -1,7 +1,7 @@
 /* snapshot.c: snapshot handling routines
-   Copyright (c) 1999-2004 Philip Kendall
+   Copyright (c) 1999-2012 Philip Kendall
 
-   $Id: snapshot.c 3920 2008-12-25 23:03:10Z fredm $
+   $Id: snapshot.c 4794 2012-12-25 12:50:49Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "machine.h"
 #include "memory.h"
 #include "module.h"
+#include "settings.h"
 #include "snapshot.h"
 #include "ui/ui.h"
 #include "utils.h"
@@ -51,10 +52,7 @@ int snapshot_read( const char *filename )
     return error;
   }
 
-  if( utils_close_file( &file ) ) {
-    libspectrum_snap_free( snap );
-    return 1;
-  }
+  utils_close_file( &file );
 
   error = snapshot_copy_from( snap );
   if( error ) { libspectrum_snap_free( snap ); return error; }
@@ -85,12 +83,14 @@ snapshot_read_buffer( const unsigned char *buffer, size_t length,
 int
 snapshot_copy_from( libspectrum_snap *snap )
 {
-  int capabilities, error;
+  int error;
   libspectrum_machine machine;
 
   module_snapshot_enabled( snap );
 
   machine = libspectrum_snap_machine( snap );
+
+  settings_current.late_timings = libspectrum_snap_late_timings( snap );
 
   if( machine != machine_current->machine ) {
     error = machine_select( machine );
@@ -103,9 +103,11 @@ snapshot_copy_from( libspectrum_snap *snap )
     machine_reset( 0 );
   }
 
-  capabilities = machine_current->capabilities;
-
   module_snapshot_from( snap );
+
+  /* Need to reset memory_map_[read|write] after all modules have had a turn
+     initialising from the snapshot */
+  machine_current->memory_map();
 
   return 0;
 }
@@ -136,6 +138,7 @@ int snapshot_write( const char *filename )
 
   flags = 0;
   length = 0;
+  buffer = NULL;
   error = libspectrum_snap_write( &buffer, &length, &flags, snap, type,
 				  fuse_creator, 0 );
   if( error ) { libspectrum_snap_free( snap ); return error; }
@@ -153,12 +156,12 @@ int snapshot_write( const char *filename )
   }
 
   error = libspectrum_snap_free( snap );
-  if( error ) { free( buffer ); return 1; }
+  if( error ) { libspectrum_free( buffer ); return 1; }
 
   error = utils_write_file( filename, buffer, length );
-  if( error ) { free( buffer ); return error; }
+  if( error ) { libspectrum_free( buffer ); return error; }
 
-  free( buffer );
+  libspectrum_free( buffer );
 
   return 0;
 
@@ -168,6 +171,7 @@ int
 snapshot_copy_to( libspectrum_snap *snap )
 {
   libspectrum_snap_set_machine( snap, machine_current->machine );
+  libspectrum_snap_set_late_timings( snap, settings_current.late_timings );
 
   module_snapshot_to( snap );
 

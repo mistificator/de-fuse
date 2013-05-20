@@ -1,7 +1,7 @@
 /* file.c: File-related compatibility routines
    Copyright (c) 2008 Philip Kendall
 
-   $Id: file.c 4072 2009-08-31 15:42:26Z specu $
+   $Id: file.c 4624 2012-01-09 20:59:35Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ compat_file_read( compat_fd fd, utils_file *file )
   if( bytes != file->length ) {
     ui_error( UI_ERROR_ERROR,
               "error reading file: expected %lu bytes, but read only %lu",
-              file->length, bytes );
+              (unsigned long)file->length, (unsigned long)bytes );
     return 1;
   }
 
@@ -78,7 +78,7 @@ compat_file_write( compat_fd fd, const unsigned char *buffer, size_t length )
   if( bytes != length ) {
     ui_error( UI_ERROR_ERROR,
               "error writing file: expected %lu bytes, but wrote only %lu",
-              length, bytes );
+              (unsigned long)length, (unsigned long)bytes );
     return 1;
   }
 
@@ -89,4 +89,10 @@ int
 compat_file_close( compat_fd fd )
 {
   return fclose( fd );
+}
+
+int
+compat_file_exists( const char *path )
+{
+  return ( access( path, R_OK ) != -1 );
 }

@@ -1,7 +1,7 @@
 /* debugger.h: the Win32 debugger
    Copyright (c) 2004 Marek Januszewski
 
-   $Id: debugger.h 3737 2008-07-31 22:33:30Z specu $
+   $Id: debugger.h 4882 2013-02-15 23:47:37Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 */
 
-/* FIXME: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_MFCNOTES_TN020.asp */
+/* FIXME: http://msdn.microsoft.com/en-us/library/t2zechd4%28v=VS.80%29.aspx */
 
 #define IDD_DBG				2000
 #define IDC_DBG_LV_PC			( IDD_DBG + 1 )

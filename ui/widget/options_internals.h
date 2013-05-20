@@ -40,8 +40,11 @@ extern settings_info widget_options_settings;
 int widget_general_draw( void *data );
 void widget_general_keyhandler( input_key key );
 
-int widget_peripherals_draw( void *data );
-void widget_peripherals_keyhandler( input_key key );
+int widget_peripherals_general_draw( void *data );
+void widget_peripherals_general_keyhandler( input_key key );
+
+int widget_peripherals_disk_draw( void *data );
+void widget_peripherals_disk_keyhandler( input_key key );
 
 int widget_rzx_draw( void *data );
 void widget_rzx_keyhandler( input_key key );
@@ -51,5 +54,8 @@ void widget_sound_keyhandler( input_key key );
 
 int widget_diskoptions_draw( void *data );
 void widget_diskoptions_keyhandler( input_key key );
+
+int widget_movie_draw( void *data );
+void widget_movie_keyhandler( input_key key );
 
 #endif				/* #ifndef FUSE_WIDGETOPTIONS_INTERNALS_H */

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # options.pl: generate options dialog boxes
-# $Id: options.pl 4019 2009-05-17 15:05:52Z fredm $
+# $Id: options.pl 4723 2012-07-08 13:26:15Z fredm $
 
 # Copyright (c) 2002-2004 Philip Kendall
 
@@ -55,13 +55,17 @@ print Fuse::GPL( 'options.c: options dialog boxes',
 #include "compat.h"
 #include "display.h"
 #include "fuse.h"
+#include "gtkcompat.h"
 #include "gtkinternals.h"
+#include "options.h"
 #include "options_internals.h"
 #include "periph.h"
 #include "settings.h"
+#include "utils.h"
 
 static int
-option_enumerate_combo( char **options, char *value, guint count, int def ) {
+option_enumerate_combo( const char **options, char *value, guint count,
+			int def ) {
   int i;
   if( value != NULL ) {
     for( i = 0; i < count; i++) {
@@ -99,7 +103,7 @@ foreach( @dialogs ) {
 
 		    print << "CODE";
 
-static char * $_->{name}_$widget->{value}_combo[] = {
+static const char *$_->{name}_$widget->{value}_combo[] = {
 CODE
 		    foreach( split( /\|/, $widget->{data1} ) ) {
 			print << "CODE";
@@ -122,7 +126,7 @@ CODE
 		}
 		print << "CODE";
 int
-option_enumerate_$_->{name}_$widget->{value}() {
+option_enumerate_$_->{name}_$widget->{value}( void ) {
   return option_enumerate_combo( $_->{name}_$widget->{value}_combo,
 				 settings_current.$widget->{value},
 				 $_->{name}_$widget->{value}_combo_count,
@@ -142,20 +146,15 @@ void
 menu_options_$_->{name}( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
+  GtkWidget *content_area;
   menu_options_$_->{name}_t dialog;
-  GtkWidget *frame, *hbox, *text, *combo;
-  gchar buffer[80];
-  int i;
-
-  i = 0;
-  combo = frame = hbox = text = NULL;
-  buffer[0] = '\\0';		/* Shut gcc up */
 
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
   dialog.dialog = gtkstock_dialog_new( "Fuse - $_->{title}", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
 CODE
@@ -173,8 +172,7 @@ CODE
     gtk_check_button_new_with_label( "$text" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.$widget->{value} ),
 				settings_current.$widget->{value} );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.$widget->{value} );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.$widget->{value} );
 
 CODE
             } elsif( $type eq "Entry" ) {
@@ -182,52 +180,59 @@ CODE
                 # FIXME: Make the entry widget resize sensibly
 
 		print << "CODE";
-  frame = gtk_frame_new( "$text" );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       frame );
+  {
+    GtkWidget *frame = gtk_frame_new( "$text" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "$widget->{data2}" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
 				    
-  hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
-  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
-  dialog.$widget->{value} = gtk_entry_new();
-  gtk_entry_set_max_length( GTK_ENTRY( dialog.$widget->{value} ),
-	   		    $widget->{data1} );
-  snprintf( buffer, 80, "%d", settings_current.$widget->{value} );
-  gtk_entry_set_text( GTK_ENTRY( dialog.$widget->{value} ), buffer );
-  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.$widget->{value} );
+    dialog.$widget->{value} = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.$widget->{value} ),
+                              $widget->{data1} );
+    snprintf( buffer, 80, "%d", settings_current.$widget->{value} );
+    gtk_entry_set_text( GTK_ENTRY( dialog.$widget->{value} ), buffer );
 
-  text = gtk_label_new( "$widget->{data2}" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.$widget->{value}, TRUE, TRUE, 0 );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
 
 CODE
             } elsif( $type eq "Combo" ) {
 
 		print << "CODE";
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "$text" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "$text" );
+    int i;
 
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < $_->{name}_$widget->{value}_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), $_->{name}_$widget->{value}_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), $combo_default{$widget->{value}} );
-  if( settings_current.$widget->{value} != NULL ) {
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
     for( i = 0; i < $_->{name}_$widget->{value}_combo_count; i++ ) {
-      if( !strcmp( settings_current.$widget->{value}, $_->{name}_$widget->{value}_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), $_->{name}_$widget->{value}_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), $combo_default{$widget->{value}} );
+    if( settings_current.$widget->{value} != NULL ) {
+      for( i = 0; i < $_->{name}_$widget->{value}_combo_count; i++ ) {
+        if( !strcmp( settings_current.$widget->{value}, $_->{name}_$widget->{value}_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.$widget->{value} = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.$widget->{value}, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
-
-  dialog.$widget->{value} = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.$widget->{value}, FALSE, FALSE, 5 );
-
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
 
 CODE
 	    } else {
@@ -239,7 +244,7 @@ CODE
     print << "CODE";
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     GTK_SIGNAL_FUNC( menu_options_$_->{name}_done ),
+			     G_CALLBACK( menu_options_$_->{name}_done ),
 			     (gpointer) &dialog, NULL );
 
   /* Display the window */
@@ -280,7 +285,7 @@ CODE
 
 	    print << "CODE";
   free( settings_current.$widget->{value} );
-  settings_current.$widget->{value} = strdup( $_->{name}_$widget->{value}_combo[
+  settings_current.$widget->{value} = utils_safe_strdup( $_->{name}_$widget->{value}_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->$widget->{value} ) ) ] );
 
 CODE

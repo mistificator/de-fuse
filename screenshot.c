@@ -1,7 +1,7 @@
 /* screenshot.c: Routines for handling .png and .scr screenshots
    Copyright (c) 2002-2003 Philip Kendall, Fredrick Meunier
 
-   $Id: screenshot.c 3621 2008-05-17 14:33:46Z fredm $
+   $Id: screenshot.c 4664 2012-02-12 11:51:01Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,14 +33,13 @@
 
 #include "display.h"
 #include "machine.h"
+#include "peripherals/scld.h"
 #include "screenshot.h"
-#include "scld.h"
 #include "settings.h"
 #include "ui/scaler/scaler.h"
 #include "ui/ui.h"
 #include "utils.h"
 
-#define STANDARD_SCR_SIZE 6912
 #define MONO_BITMAP_SIZE 6144
 #define HICOLOUR_SCR_SIZE (2 * MONO_BITMAP_SIZE)
 #define HIRES_ATTR HICOLOUR_SCR_SIZE
@@ -49,6 +48,9 @@
 #ifdef USE_LIBPNG
 
 #include <png.h>
+#ifdef HAVE_ZLIB_H
+#include <zlib.h>
+#endif				/* #ifdef HAVE_ZLIB_H */
 
 static int get_rgb32_data( libspectrum_byte *rgb32_data, size_t stride,
 			   size_t height, size_t width );
@@ -68,10 +70,8 @@ static libspectrum_byte
   rgb_data2[ MAX_SIZE * DISPLAY_SCREEN_HEIGHT * 3 * DISPLAY_ASPECT_WIDTH * 4 ],
    png_data[ MAX_SIZE * DISPLAY_SCREEN_HEIGHT * 3 * DISPLAY_ASPECT_WIDTH * 3 ];
 
-scaler_type screenshot_movie_scaler = SCALER_NUM;
-
-static int
-screenshot_write2( const char *filename, scaler_type scaler, int compression )
+int
+screenshot_write( const char *filename, scaler_type scaler )
 {
   FILE *f;
 
@@ -146,7 +146,7 @@ screenshot_write2( const char *filename, scaler_type scaler, int compression )
   png_init_io( png_ptr, f );
 
   /* Make files as small as possible */
-  png_set_compression_level( png_ptr, compression );
+  png_set_compression_level( png_ptr, Z_BEST_COMPRESSION );
 
   png_set_IHDR( png_ptr, info_ptr,
 		width, height, 8, 
@@ -168,18 +168,6 @@ screenshot_write2( const char *filename, scaler_type scaler, int compression )
   }
 
   return 0;
-}
-
-int
-screenshot_write( const char *filename, scaler_type scaler )
-{
-  return screenshot_write2( filename, scaler, Z_BEST_COMPRESSION );
-}
-
-int
-screenshot_write_fast( const char *filename, scaler_type scaler )
-{
-  return screenshot_write2( filename, scaler, Z_BEST_SPEED );
 }
 
 static int
@@ -296,11 +284,6 @@ screenshot_available_scalers( scaler_type scaler )
 }
 
 #endif				/* #ifdef USE_LIBPNG */
-
-char screenshot_movie_name[PATH_MAX+1];
-char screenshot_movie_file[SCREENSHOT_MOVIE_FILE_MAX+1];
-long int screenshot_movie_frame = 0;
-int screenshot_movie_record = 0;
 
 int
 screenshot_scr_write( const char *filename )

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # options-header.pl: generate options dialog boxes
-# $Id: options-header.pl 4088 2009-09-02 19:56:57Z specu $
+# $Id: options-header.pl 4694 2012-05-06 06:42:44Z fredm $
 
 # Copyright (c) 2001-2007 Philip Kendall, Stuart Brady, Marek Januszewski
 
@@ -33,7 +33,7 @@ die "No data file specified" unless @ARGV;
 my @dialogs = Fuse::Dialog::read( shift @ARGV );
 my $internal = 1;
 
-$internal = 0 if( shift( @ARGV ) eq 'public' );
+$internal = 0 if( @ARGV && shift( @ARGV ) eq 'public' );
 
 if( $internal ) {
     print Fuse::GPL( 'options_internals.h: options dialog boxes',
@@ -97,7 +97,7 @@ if( $internal ) {
 	foreach my $widget ( @{ $_->{widgets} } ) {
 	    if( $widget->{type} eq "Combo" ) {
 		print <<"CODE";
-int option_enumerate_$_->{name}_$widget->{value}();
+int option_enumerate_$_->{name}_$widget->{value}( void );
 
 CODE
 	    }

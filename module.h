@@ -1,7 +1,7 @@
 /* module.h: API for Fuse modules
    Copyright (c) 2007 Philip Kendall
 
-   $Id: module.h 3389 2007-12-03 12:54:17Z fredm $
+   $Id: module.h 4696 2012-05-07 02:05:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ typedef struct module_info_t
 } module_info_t;
 
 int module_register( module_info_t *module );
+void module_end( void );
 
 void module_reset( int hard_reset );
 void module_romcs( void );

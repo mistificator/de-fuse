@@ -1,7 +1,7 @@
 /* text.c: simple text entry widget
    Copyright (c) 2002-2005 Philip Kendall
 
-   $Id: text.c 4103 2009-11-21 10:16:36Z fredm $
+   $Id: text.c 4713 2012-06-07 03:19:57Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -163,11 +163,8 @@ widget_text_finish( widget_finish_state finished )
 {
   if( finished == WIDGET_FINISHED_OK ) {
 
-    widget_text_text = realloc( widget_text_text, strlen( text ) + 1 );
-    if( !widget_text_text ) {
-      ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-      return 1;
-    }
+    widget_text_text =
+      libspectrum_realloc( widget_text_text, strlen( text ) + 1 );
 
     strcpy( widget_text_text, text );
   } else {

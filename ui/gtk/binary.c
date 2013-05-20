@@ -1,7 +1,7 @@
 /* binary.c: GTK+ routines to load/save chunks of binary data
    Copyright (c) 2003-2005 Philip Kendall
 
-   $Id: binary.c 3344 2007-11-27 20:57:10Z zubzero $
+   $Id: binary.c 4908 2013-03-10 22:13:57Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,6 +43,10 @@ struct binary_info {
   char *filename;
   utils_file file;
 
+  int load;
+  GCallback activate_data;
+  GCallback change_filename;
+
   GtkWidget *dialog;
   GtkWidget *filename_widget, *start_widget, *length_widget;
 };
@@ -54,14 +58,103 @@ static void change_save_filename( GtkButton *button, gpointer user_data );
 static void save_data( GtkButton *button, gpointer user_data );
 
 void
-menu_file_loadbinarydata( GtkWidget *widget GCC_UNUSED, gpointer data
-			  GCC_UNUSED )
+create_binary_dialog( struct binary_info *info, const char *title )
+{
+  GtkWidget *table, *button, *content_area;
+  GtkWidget *label_filename, *label_start, *label_length;
+
+  char buffer[80];
+
+  info->dialog = gtkstock_dialog_new( title, NULL );
+
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( info->dialog ) );
+
+  label_filename = gtk_label_new( "Filename" );
+
+  info->filename_widget = gtk_label_new( info->filename );
+
+  button = gtk_button_new_with_label( "Browse..." );
+  g_signal_connect( G_OBJECT( button ), "clicked", info->change_filename,
+                    info );
+
+  label_start = gtk_label_new( "Start" );
+
+  info->start_widget = gtk_entry_new();
+  g_signal_connect( G_OBJECT( info->start_widget ), "activate",
+                    info->activate_data, info );
+
+  label_length = gtk_label_new( "Length" );
+
+  info->length_widget = gtk_entry_new();
+  if( info->load ) {
+    snprintf( buffer, 80, "%lu", (unsigned long)info->file.length );
+    gtk_entry_set_text( GTK_ENTRY( info->length_widget ), buffer );
+  }
+
+  g_signal_connect( G_OBJECT( info->length_widget ), "activate",
+                    info->activate_data, info );
+
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+
+  table = gtk_grid_new();
+  gtk_grid_set_column_homogeneous( GTK_GRID( table ), FALSE );
+  gtk_grid_set_column_spacing( GTK_GRID( table ), 6 );
+  gtk_grid_set_row_spacing( GTK_GRID( table ), 6 );
+  gtk_container_set_border_width( GTK_CONTAINER( table ), 6 );
+  gtk_container_add( GTK_CONTAINER( content_area ), table );
+
+  gtk_grid_attach( GTK_GRID( table ), label_filename, 0, 0, 1, 1 );
+  gtk_widget_set_hexpand( info->filename_widget, TRUE );
+  gtk_grid_attach( GTK_GRID( table ), info->filename_widget,
+                   1, 0, 1, 1 );
+  gtk_grid_attach( GTK_GRID( table ), button, 2, 0, 1, 1 );
+  gtk_grid_attach( GTK_GRID( table ), label_start, 0, 1, 1, 1 );
+  gtk_grid_attach( GTK_GRID( table ), info->start_widget, 1, 1, 2, 1 );
+  gtk_grid_attach( GTK_GRID( table ), label_length, 0, 2, 1, 1 );
+  gtk_grid_attach( GTK_GRID( table ), info->length_widget, 1, 2, 2, 1 );
+
+#else                /* #if GTK_CHECK_VERSION( 3, 0, 0 ) */
+
+  table = gtk_table_new( 3, 3, FALSE );
+  gtk_box_pack_start( GTK_BOX( content_area ), table, TRUE, TRUE, 0 );
+
+  gtk_table_attach( GTK_TABLE( table ), label_filename, 0, 1, 0, 1,
+                    GTK_FILL, GTK_FILL, 3, 3 );
+
+  gtk_table_attach( GTK_TABLE( table ), info->filename_widget, 1, 2, 0, 1,
+                    GTK_FILL, GTK_FILL, 3, 3 );
+
+  gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
+                    GTK_FILL, GTK_FILL, 3, 3 );
+
+  gtk_table_attach( GTK_TABLE( table ), label_start, 0, 1, 1, 2, 0, 0, 3, 3 );
+
+  gtk_table_attach( GTK_TABLE( table ), info->start_widget, 1, 3, 1, 2,
+                    GTK_FILL, GTK_FILL, 3, 3 );
+
+  gtk_table_attach( GTK_TABLE( table ), label_length, 0, 1, 2, 3,
+                    GTK_FILL, GTK_FILL, 3, 3 );
+
+  gtk_table_attach( GTK_TABLE( table ), info->length_widget, 1, 3, 2, 3,
+                    GTK_FILL, GTK_FILL, 3, 3 );
+
+#endif
+
+  GtkAccelGroup *accel_group;
+  accel_group = gtk_accel_group_new();
+  gtk_window_add_accel_group( GTK_WINDOW( info->dialog ), accel_group );
+
+  /* Command buttons */
+  gtkstock_create_ok_cancel( info->dialog, NULL, info->activate_data, info,
+                             NULL );
+}
+
+void
+menu_file_loadbinarydata( GtkAction *gtk_action GCC_UNUSED,
+                          gpointer data GCC_UNUSED )
 {
   struct binary_info info;
 
-  GtkWidget *table, *label, *button;
-
-  char buffer[80];
   int error;
 
   fuse_emulation_pause();
@@ -72,52 +165,12 @@ menu_file_loadbinarydata( GtkWidget *widget GCC_UNUSED, gpointer data
   error = utils_read_file( info.filename, &info.file );
   if( error ) { free( info.filename ); fuse_emulation_unpause(); return; }
 
-  info.dialog = gtkstock_dialog_new( "Fuse - Load Binary Data", NULL );
-
   /* Information display */
+  info.load = 1;
+  info.activate_data = G_CALLBACK( load_data );
+  info.change_filename = G_CALLBACK( change_load_filename );
 
-  table = gtk_table_new( 3, 3, FALSE );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( info.dialog )->vbox ),
-			       table );
-
-  label = gtk_label_new( "Filename" );
-  gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-
-  info.filename_widget = gtk_label_new( info.filename );
-  gtk_table_attach( GTK_TABLE( table ), info.filename_widget, 1, 2, 0, 1,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-
-  button = gtk_button_new_with_label( "Browse..." );
-  gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-  gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-		      GTK_SIGNAL_FUNC( change_load_filename ), &info );
-
-  label = gtk_label_new( "Start" );
-  gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2, 0, 0, 3, 3 );
-
-  info.start_widget = gtk_entry_new();
-  gtk_table_attach( GTK_TABLE( table ), info.start_widget, 1, 3, 1, 2,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-  gtk_signal_connect( GTK_OBJECT( info.start_widget ), "activate",
-		      GTK_SIGNAL_FUNC( load_data ), &info );
-
-  label = gtk_label_new( "Length" );
-  gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-
-  snprintf( buffer, 80, "%lu", (unsigned long)info.file.length );
-  info.length_widget = gtk_entry_new();
-  gtk_entry_set_text( GTK_ENTRY( info.length_widget ), buffer );
-  gtk_table_attach( GTK_TABLE( table ), info.length_widget, 1, 3, 2, 3,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-  gtk_signal_connect( GTK_OBJECT( info.length_widget ), "activate",
-		      GTK_SIGNAL_FUNC( load_data ), &info );
-
-  /* Command buttons */
-  gtkstock_create_ok_cancel( info.dialog, NULL, GTK_SIGNAL_FUNC( load_data ),
-			     &info, NULL );
+  create_binary_dialog( &info, "Fuse - Load Binary Data" );
 
   /* Process the dialog */
   gtk_widget_show_all( info.dialog );
@@ -147,8 +200,7 @@ change_load_filename( GtkButton *button GCC_UNUSED, gpointer user_data )
   if( error ) { free( new_filename ); return; }
 
   /* Remove the data for the old file */
-  error = utils_close_file( &info->file );
-  if( error ) { free( new_filename ); return; }
+  utils_close_file( &info->file );
 
   free( info->filename );
 
@@ -204,63 +256,21 @@ load_data( GtkButton *button GCC_UNUSED, gpointer user_data )
 }
   
 void
-menu_file_savebinarydata( GtkWidget *widget GCC_UNUSED, gpointer data
-			  GCC_UNUSED )
+menu_file_savebinarydata( GtkAction *gtk_action GCC_UNUSED,
+                          gpointer data GCC_UNUSED )
 {
   struct binary_info info;
-
-  GtkWidget *table, *label, *button;
 
   fuse_emulation_pause();
 
   info.filename = ui_get_save_filename( "Fuse - Save Binary Data" );
   if( !info.filename ) { fuse_emulation_unpause(); return; }
 
-  info.dialog = gtkstock_dialog_new( "Fuse - Save Binary Data", NULL );
+  info.activate_data = G_CALLBACK( save_data );
+  info.change_filename = G_CALLBACK( change_save_filename );
+  info.load = 0;
 
-  /* Information display */
-
-  table = gtk_table_new( 3, 3, FALSE );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( info.dialog )->vbox ),
-			       table );
-
-  label = gtk_label_new( "Filename" );
-  gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-
-  info.filename_widget = gtk_label_new( info.filename );
-  gtk_table_attach( GTK_TABLE( table ), info.filename_widget, 1, 2, 0, 1,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-
-  button = gtk_button_new_with_label( "Browse..." );
-  gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-  gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-		      GTK_SIGNAL_FUNC( change_save_filename ), &info );
-
-  label = gtk_label_new( "Start" );
-  gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-
-  info.start_widget = gtk_entry_new();
-  gtk_table_attach( GTK_TABLE( table ), info.start_widget, 1, 3, 1, 2,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-  gtk_signal_connect( GTK_OBJECT( info.start_widget ), "activate",
-		      GTK_SIGNAL_FUNC( save_data ), &info );
-
-  label = gtk_label_new( "Length" );
-  gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-
-  info.length_widget = gtk_entry_new();
-  gtk_table_attach( GTK_TABLE( table ), info.length_widget, 1, 3, 2, 3,
-		    GTK_FILL, GTK_FILL, 3, 3 );
-  gtk_signal_connect( GTK_OBJECT( info.length_widget ), "activate",
-		      GTK_SIGNAL_FUNC( save_data ), &info );
-
-  /* Command buttons */
-  gtkstock_create_ok_cancel( info.dialog, NULL, GTK_SIGNAL_FUNC( save_data ),
-			     &info, NULL );
+  create_binary_dialog( &info, "Fuse - Save Binary Data" );
 
   /* Process the dialog */
   gtk_widget_show_all( info.dialog );
@@ -316,11 +326,13 @@ save_data( GtkButton *button GCC_UNUSED, gpointer user_data )
 		  NULL, 10 );
   if( errno || start < 0 || start > 0xffff ) {
     ui_error( UI_ERROR_ERROR, "Start must be between 0 and 65535" );
+    free( buffer );
     return;
   }
 
   if( start + length > 0x10000 ) {
     ui_error( UI_ERROR_ERROR, "Block ends after address 65535" );
+    free( buffer );
     return;
   }
 

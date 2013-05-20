@@ -1,7 +1,7 @@
 /* aosound.c: libao sound I/O
    Copyright (c) 2004 Gergely Szasz, Philip Kendall
 
-   $Id: aosound.c 3514 2008-02-09 14:49:36Z zubzero $
+   $Id: aosound.c 4633 2012-01-19 23:26:10Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,20 +78,16 @@ driver_error( void )
   }
 }
 
-static int
+static void
 parse_driver_options( const char *device, int *driver_id, ao_option **options )
 {
   char *mutable, *option, *key, *value;
 
   /* Get a copy of the device string we can modify */
   if( !device || *device == '\0' )
-    return 0;
+    return;
 
-  mutable = strdup( device );
-  if( !mutable ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-    return 1;
-  }
+  mutable = utils_safe_strdup( device );
 
   /* First, find the device name */
   option = strchr( mutable, ':' );
@@ -112,13 +108,7 @@ parse_driver_options( const char *device, int *driver_id, ao_option **options )
     if( value ) *value++ = '\0';
 
     if( strcmp( key, "file" ) == 0 ) {
-      filename = strdup( value );
-      if( !filename ) {
-	ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__,
-		  __LINE__ );
-	free( mutable );
-	return 1;
-      }
+      filename = utils_safe_strdup( value );
     } else if( key && value) {
       ao_append_option( options, key, value );
     } else if ( first_init ) {
@@ -129,8 +119,6 @@ parse_driver_options( const char *device, int *driver_id, ao_option **options )
   }
 
   free( mutable );
-
-  return 0;
 }
 
 int

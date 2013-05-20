@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2007-2008 Philip Kendall
 
-## $Id: Makefile.am 3935 2009-01-07 12:55:13Z pak21 $
+## $Id: Makefile.am 4898 2013-02-25 22:20:54Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,4 +33,8 @@ libcompatos_a_SOURCES = ../unix/dir.c \
 			paths.c \
 			timer.c
 
-INCLUDES = @GLIB_CFLAGS@ @GTK_CFLAGS@ @LIBSPEC_CFLAGS@
+if HAVE_SOCKETS
+libcompatos_a_SOURCES += socket.c
+endif
+
+AM_CPPFLAGS += @GLIB_CFLAGS@ @GTK_CFLAGS@ @LIBSPEC_CFLAGS@

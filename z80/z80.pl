@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 # z80.pl: generate C code for Z80 opcodes
-# $Id: z80.pl 3681 2008-06-16 09:40:29Z pak21 $
+# $Id: z80.pl 4905 2013-03-08 20:21:40Z pak21 $
 
-# Copyright (c) 1999-2006 Philip Kendall
+# Copyright (c) 1999-2013 Philip Kendall
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -948,6 +948,7 @@ sub opcode_RETN (@) {
     print << "RETN";
       IFF1=IFF2;
       RET();
+      z80_retn();
 RETN
 }
 

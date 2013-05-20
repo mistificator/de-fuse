@@ -1,7 +1,7 @@
 /* win32display.c: Routines for dealing with the Win32 GDI display
    Copyright (c) 2003 Philip Kendall, Marek Januszewski, Stuart Brady
 
-   $Id: win32display.c 3732 2008-07-25 19:55:22Z specu $
+   $Id: win32display.c 4729 2012-07-16 13:29:47Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,14 +55,15 @@ static unsigned char rgb_image[ 4 * 2 * ( DISPLAY_SCREEN_HEIGHT + 4 ) *
 static const int rgb_pitch = ( DISPLAY_SCREEN_WIDTH + 3 ) * 4;
 
 /* The scaled image */
-static unsigned char scaled_image[ 4 * 3 * DISPLAY_SCREEN_HEIGHT *
-                                  (size_t)(1.5 * DISPLAY_SCREEN_WIDTH) ];
-static const ptrdiff_t scaled_pitch = 4 * 1.5 * DISPLAY_SCREEN_WIDTH;
+static unsigned char scaled_image[ 3 * DISPLAY_SCREEN_HEIGHT *
+                                   6 * DISPLAY_SCREEN_WIDTH ];
+static const ptrdiff_t scaled_pitch = 6 * DISPLAY_SCREEN_WIDTH;
 
 /* Win32 specific variables */
 static void *win32_pixdata;
 static BITMAPINFO fuse_BMI;
 static HBITMAP fuse_BMP;
+static RECT invalidated_area;
 
 static const unsigned char rgb_colours[16][3] = {
 
@@ -92,27 +93,33 @@ static libspectrum_dword bw_colours[16];
 static int win32display_current_size=1;
 
 static int init_colours( void );
-static int register_scalers( void );
+static void register_scalers( int force_scaler );
+static void win32display_load_gfx_mode( void );
 
 void
 blit( void )
 {
   PAINTSTRUCT ps;
   HDC dest_dc, src_dc;
-  RECT dest_rec;
   HBITMAP src_bmp;
+  int x, y, width, height;
 
   dest_dc = BeginPaint( fuse_hWnd, &ps );
-  
-  GetClientRect( fuse_hWnd, &dest_rec );
 
-  src_dc = CreateCompatibleDC(0);
-  src_bmp = SelectObject( src_dc, fuse_BMP );
-  BitBlt( dest_dc, 0, 0, image_width * win32display_current_size,
-          image_height * win32display_current_size, src_dc, 0, 0, SRCCOPY );
-  SelectObject( src_dc, src_bmp );
-  DeleteObject( src_bmp );
-  DeleteDC( src_dc );
+  x = ps.rcPaint.left;
+  y = ps.rcPaint.top;
+  width = ps.rcPaint.right - ps.rcPaint.left;
+  height = ps.rcPaint.bottom - ps.rcPaint.top;
+
+  if( width && height ) {
+    src_dc = CreateCompatibleDC( dest_dc );
+    src_bmp = SelectObject( src_dc, fuse_BMP );
+
+    BitBlt( dest_dc, x, y, width, height, src_dc, x, y, SRCCOPY );
+
+    SelectObject( src_dc, src_bmp );
+    DeleteDC( src_dc );
+  }
 
   EndPaint( fuse_hWnd, &ps );
 }
@@ -197,9 +204,9 @@ init_colours( void )
 }
 
 int
-win32display_drawing_area_resize( int width, int height )
+win32display_drawing_area_resize( int width, int height, int force_scaler )
 {
-  int size, error;
+  int size;
 
   size = width / DISPLAY_ASPECT_WIDTH;
   if( size > height / DISPLAY_SCREEN_HEIGHT )
@@ -210,7 +217,7 @@ win32display_drawing_area_resize( int width, int height )
 
   win32display_current_size = size;
 
-  error = register_scalers(); if( error ) return error;
+  register_scalers( force_scaler );
 
   memset( scaled_image, 0, sizeof( scaled_image ) );
   display_refresh_all();
@@ -221,96 +228,87 @@ win32display_drawing_area_resize( int width, int height )
 int
 uidisplay_init( int width, int height )
 {
-  int error;
+  const char *machine_name;
 
   image_width = width; image_height = height;
   image_scale = width / DISPLAY_ASPECT_WIDTH;
+  SetRectEmpty( &invalidated_area );
 
-  error = register_scalers(); if( error ) return error;
+  register_scalers( 0 );
 
   display_refresh_all();
+
+  if ( scaler_select_scaler( current_scaler ) )
+        scaler_select_scaler( SCALER_NORMAL );
+
+  win32display_load_gfx_mode();
+
+  machine_name = libspectrum_machine_name( machine_current->machine );
+  win32statusbar_update_machine( machine_name );
+
   return 0;
 }
 
-static int
-register_scalers( void )
+static void
+register_scalers( int force_scaler )
 {
+  scaler_type scaler;
+
   scaler_register_clear();
 
-  switch( win32display_current_size ) {
+  if( machine_current->timex ) {
+    scaler_register( SCALER_HALF );
+    scaler_register( SCALER_HALFSKIP );
+    scaler_register( SCALER_TIMEXTV );
+    scaler_register( SCALER_TIMEX1_5X );
+  } else {
+    scaler_register( SCALER_DOUBLESIZE );
+    scaler_register( SCALER_TRIPLESIZE );
+    scaler_register( SCALER_TV2X );
+    scaler_register( SCALER_TV3X );
+    scaler_register( SCALER_PALTV2X );
+    scaler_register( SCALER_PALTV3X );
+    scaler_register( SCALER_HQ2X );
+    scaler_register( SCALER_HQ3X );
+    scaler_register( SCALER_ADVMAME2X );
+    scaler_register( SCALER_ADVMAME3X );
+    scaler_register( SCALER_2XSAI );
+    scaler_register( SCALER_SUPER2XSAI );
+    scaler_register( SCALER_SUPEREAGLE );
+    scaler_register( SCALER_DOTMATRIX );
+  }
+  scaler_register( SCALER_NORMAL );
+  scaler_register( SCALER_PALTV );
 
-  case 1:
+  scaler =
+    scaler_is_supported( current_scaler ) ? current_scaler : SCALER_NORMAL;
 
-    switch( image_scale ) {
-    case 1:
-      scaler_register( SCALER_NORMAL );
-      scaler_register( SCALER_PALTV );
-      if( !scaler_is_supported( current_scaler ) )
-	scaler_select_scaler( SCALER_NORMAL );
-      return 0;
-    case 2:
-      scaler_register( SCALER_HALF );
-      scaler_register( SCALER_HALFSKIP );
-      if( !scaler_is_supported( current_scaler ) )
-	scaler_select_scaler( SCALER_HALF );
-      return 0;
+  if( force_scaler ) {
+    switch( win32display_current_size ) {
+    case 1: scaler = machine_current->timex ? SCALER_HALF : SCALER_NORMAL;
+      break;
+    case 2: scaler = machine_current->timex ? SCALER_NORMAL : SCALER_DOUBLESIZE;
+      break;
+    case 3: scaler = machine_current->timex ? SCALER_TIMEX1_5X :
+                                              SCALER_TRIPLESIZE;
+      break;
     }
-
-  case 2:
-
-    switch( image_scale ) {
-    case 1:
-      scaler_register( SCALER_DOUBLESIZE );
-      scaler_register( SCALER_TV2X );
-      scaler_register( SCALER_ADVMAME2X );
-      scaler_register( SCALER_2XSAI );
-      scaler_register( SCALER_SUPER2XSAI );
-      scaler_register( SCALER_SUPEREAGLE );
-      scaler_register( SCALER_DOTMATRIX );
-      scaler_register( SCALER_PALTV2X );
-      scaler_register( SCALER_HQ2X );
-      if( !scaler_is_supported( current_scaler ) )
-	scaler_select_scaler( SCALER_DOUBLESIZE );
-      return 0;
-    case 2:
-      scaler_register( SCALER_NORMAL );
-      scaler_register( SCALER_TIMEXTV );
-      scaler_register( SCALER_PALTV );
-      if( !scaler_is_supported( current_scaler ) )
-	scaler_select_scaler( SCALER_NORMAL );
-      return 0;
-    }
-
-  case 3:
-
-    switch( image_scale ) {
-    case 1:
-      scaler_register( SCALER_TRIPLESIZE );
-      scaler_register( SCALER_TV3X );
-      scaler_register( SCALER_ADVMAME3X );
-      scaler_register( SCALER_PALTV3X );
-      scaler_register( SCALER_HQ3X );
-      if( !scaler_is_supported( current_scaler ) )
-	scaler_select_scaler( SCALER_TRIPLESIZE );
-      return 0;
-    case 2:
-      scaler_register( SCALER_TIMEX1_5X );
-      if( !scaler_is_supported( current_scaler ) )
-	scaler_select_scaler( SCALER_TIMEX1_5X );
-      return 0;
-    }
-
   }
 
-  ui_error( UI_ERROR_ERROR, "Unknown display size/image size %d/%d",
-	    win32display_current_size, image_scale );
-  return 1;
+  scaler_select_scaler( scaler );
 }
 
 void
 uidisplay_frame_end( void )
 {
-  InvalidateRect( fuse_hWnd, NULL, FALSE );
+  if( !IsRectEmpty( &invalidated_area ) ) {
+
+    InvalidateRect( fuse_hWnd, &invalidated_area, FALSE );
+
+    SetRectEmpty( &invalidated_area );
+
+    UpdateWindow( fuse_hWnd );
+  }
 }
 
 void
@@ -358,12 +356,17 @@ void
 win32display_area(int x, int y, int width, int height)
 {
   int disp_x,disp_y;
+  int bottom, right;
   long ofs;
+  RECT r;
   char *pixdata = win32_pixdata;
 
-  for( disp_y = y; disp_y < y + height; disp_y++ ) {
-    for( disp_x = x; disp_x < x + width; disp_x++ ) {
-      ofs = ( 4 * disp_x ) + ( disp_y * scaled_pitch );
+  bottom = y + height;
+  right = x + width;
+
+  for( disp_y = y; disp_y < bottom; disp_y++ ) {
+    for( disp_x = x; disp_x < right; disp_x++ ) {
+      ofs = ( disp_x << 2 ) + ( disp_y * scaled_pitch );
 
       pixdata[ ofs + 0 ] = scaled_image[ ofs + 2 ]; /* blue */
       pixdata[ ofs + 1 ] = scaled_image[ ofs + 1 ]; /* green */
@@ -371,7 +374,10 @@ win32display_area(int x, int y, int width, int height)
       pixdata[ ofs + 3 ] = 0; /* unused */
     }
   }
-  RedrawWindow( fuse_hWnd, NULL, NULL, RDW_INTERNALPAINT );
+
+  /* Mark area for updating */
+  SetRect( &r, x, y, right, bottom );
+  UnionRect( &invalidated_area, &invalidated_area, &r );
 }
 
 int
@@ -379,8 +385,8 @@ uidisplay_hotswap_gfx_mode( void )
 {
   fuse_emulation_pause();
 
-  /* Redraw the entire screen... */
-  display_refresh_all();
+  /* Setup the new GFX mode */
+  win32display_load_gfx_mode();
 
   fuse_emulation_unpause();
 
@@ -485,4 +491,29 @@ uidisplay_plot16( int x, int y, libspectrum_word data,
     win32display_image[y][x+14] = ( data & 0x0002 ) ? ink : paper;
     win32display_image[y][x+15] = ( data & 0x0001 ) ? ink : paper;
   }
+}
+
+static void
+win32display_load_gfx_mode( void )
+{
+  float scale;
+
+  scale = scaler_get_scaling_factor( current_scaler );
+  win32display_drawing_area_resize( scale * image_width, scale * image_height, 0 );
+  win32ui_fuse_resize( scale * image_width, scale * image_height );
+
+  /* Redraw the entire screen... */
+  display_refresh_all();
+}
+
+int
+win32display_scaled_width( void )
+{
+  return image_width * win32display_current_size;
+}
+
+int
+win32display_scaled_height( void )
+{
+  return image_height * win32display_current_size;
 }

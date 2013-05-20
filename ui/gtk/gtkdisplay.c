@@ -1,7 +1,7 @@
 /* gtkdisplay.c: GTK+ routines for dealing with the Speccy screen
    Copyright (c) 2000-2005 Philip Kendall
 
-   $Id: gtkdisplay.c 4182 2010-10-11 12:24:13Z fredm $
+   $Id: gtkdisplay.c 4723 2012-07-08 13:26:15Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 #include "ui/ui.h"
 #include "ui/uidisplay.h"
 #include "ui/scaler/scaler.h"
-#include "scld.h"
 #include "settings.h"
 
 /* The size of a 1x1 image in units of
@@ -61,9 +60,9 @@ static guchar rgb_image[ 4 * 2 * ( DISPLAY_SCREEN_HEIGHT + 4 ) *
 static const gint rgb_pitch = ( DISPLAY_SCREEN_WIDTH + 3 ) * 4;
 
 /* The scaled image */
-static guchar scaled_image[ 4 * 3 * DISPLAY_SCREEN_HEIGHT *
-                            (size_t)(1.5 * DISPLAY_SCREEN_WIDTH) ];
-static const ptrdiff_t scaled_pitch = 4 * 1.5 * DISPLAY_SCREEN_WIDTH;
+static guchar scaled_image[ 3 * DISPLAY_SCREEN_HEIGHT *
+                            6 * DISPLAY_SCREEN_WIDTH ];
+static const ptrdiff_t scaled_pitch = 6 * DISPLAY_SCREEN_WIDTH;
 
 /* The colour palette */
 static const guchar rgb_colours[16][3] = {
@@ -91,23 +90,44 @@ static const guchar rgb_colours[16][3] = {
 libspectrum_dword gtkdisplay_colours[16];
 static libspectrum_dword bw_colours[16];
 
+/* Colour format for the back buffer in endianess-order */
+typedef enum {
+  FORMAT_x8r8g8b8,    /* Cairo  (GTK3) */
+  FORMAT_x8b8g8r8     /* GdkRGB (GTK2) */
+} colour_format_t;
+
+
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+
+static int display_updated = 0;
+
+static cairo_surface_t *surface = NULL;
+
+#endif                /* #if GTK_CHECK_VERSION( 3, 0, 0 ) */
+
 /* The current size of the window (in units of DISPLAY_SCREEN_*) */
 static int gtkdisplay_current_size=1;
 
-static int init_colours( void );
+static int init_colours( colour_format_t format );
 static void gtkdisplay_area(int x, int y, int width, int height);
 static void register_scalers( int force_scaler );
 static void gtkdisplay_load_gfx_mode( void );
 
 /* Callbacks */
 
+#if !GTK_CHECK_VERSION( 3, 0, 0 )
 static gint gtkdisplay_expose(GtkWidget *widget, GdkEvent *event,
                               gpointer data);
+#else
+static gboolean gtkdisplay_draw( GtkWidget *widget, cairo_t *cr,
+                                 gpointer user_data );
+#endif                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
+
 static gint drawing_area_resize_callback( GtkWidget *widget, GdkEvent *event,
                                           gpointer data );
 
 static int
-init_colours( void )
+init_colours( colour_format_t format )
 {
   size_t i;
 
@@ -125,13 +145,29 @@ init_colours( void )
 
 #ifdef WORDS_BIGENDIAN
 
-    gtkdisplay_colours[i] =  red << 24 | green << 16 | blue << 8;
-            bw_colours[i] = grey << 24 |  grey << 16 | grey << 8;
+    switch( format ) {
+    case FORMAT_x8b8g8r8:
+      gtkdisplay_colours[i] =  red << 24 | green << 16 | blue << 8;
+      break;
+    case FORMAT_x8r8g8b8:
+      gtkdisplay_colours[i] = blue << 24 | green << 16 |  red << 8;
+      break;
+    }
+
+              bw_colours[i] = grey << 24 |  grey << 16 | grey << 8;
 
 #else                           /* #ifdef WORDS_BIGENDIAN */
 
-    gtkdisplay_colours[i] =  red | green << 8 | blue << 16;
-            bw_colours[i] = grey |  grey << 8 | grey << 16;
+    switch( format ) {
+    case FORMAT_x8b8g8r8:
+      gtkdisplay_colours[i] =  red | green << 8 | blue << 16;
+      break;
+    case FORMAT_x8r8g8b8:
+      gtkdisplay_colours[i] = blue | green << 8 |  red << 16;
+      break;
+    }
+
+              bw_colours[i] = grey |  grey << 8 | grey << 16;
 
 #endif                          /* #ifdef WORDS_BIGENDIAN */
 
@@ -145,13 +181,29 @@ uidisplay_init( int width, int height )
 {
   int x, y, error;
   libspectrum_dword black;
+  const char *machine_name;
+  colour_format_t colour_format;
 
-  gtk_signal_connect( GTK_OBJECT( gtkui_drawing_area ), "expose_event",
-                      GTK_SIGNAL_FUNC(gtkdisplay_expose ), NULL );
-  gtk_signal_connect( GTK_OBJECT( gtkui_drawing_area ), "configure_event",
-                      GTK_SIGNAL_FUNC( drawing_area_resize_callback ), NULL );
+#if !GTK_CHECK_VERSION( 3, 0, 0 )
 
-  error = init_colours(); if( error ) return error;
+  g_signal_connect( G_OBJECT( gtkui_drawing_area ), "expose_event",
+                    G_CALLBACK( gtkdisplay_expose ), NULL );
+
+  colour_format = FORMAT_x8b8g8r8;
+
+#else
+
+  g_signal_connect( G_OBJECT( gtkui_drawing_area ), "draw",
+                    G_CALLBACK( gtkdisplay_draw ), NULL );
+
+  colour_format = FORMAT_x8r8g8b8;
+
+#endif                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
+
+  g_signal_connect( G_OBJECT( gtkui_drawing_area ), "configure_event",
+                    G_CALLBACK( drawing_area_resize_callback ), NULL );
+
+  error = init_colours( colour_format ); if( error ) return error;
 
   black = settings_current.bw_tv ? bw_colours[0] : gtkdisplay_colours[0];
 
@@ -170,6 +222,9 @@ uidisplay_init( int width, int height )
         scaler_select_scaler( SCALER_NORMAL );
 
   gtkdisplay_load_gfx_mode();
+
+  machine_name = libspectrum_machine_name( machine_current->machine );
+  gtkstatusbar_update_machine( machine_name );
 
   display_ui_initialised = 1;
 
@@ -193,6 +248,22 @@ drawing_area_resize( int width, int height, int force_scaler )
   register_scalers( force_scaler );
 
   memset( scaled_image, 0, sizeof( scaled_image ) );
+
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+
+  /* Create a bigger surface for the new display size */
+  float scale = (float)gtkdisplay_current_size / image_scale;
+  if( surface ) cairo_surface_destroy( surface );
+
+  surface =
+      cairo_image_surface_create_for_data( scaled_image,
+                                           CAIRO_FORMAT_RGB24,
+                                           scale * image_width,
+                                           scale * image_height,
+                                           scaled_pitch );
+
+#endif                /* #if GTK_CHECK_VERSION( 3, 0, 0 ) */
+
   display_refresh_all();
 
   return 0;
@@ -250,6 +321,14 @@ register_scalers( int force_scaler )
 void
 uidisplay_frame_end( void )
 {
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+  if( display_updated ) {
+    gdk_window_process_updates( gtk_widget_get_window( gtkui_drawing_area ),
+                                FALSE );
+    display_updated = 0;
+  }
+#endif                /* #if GTK_CHECK_VERSION( 3, 0, 0 ) */
+
   return;
 }
 
@@ -296,11 +375,20 @@ uidisplay_area( int x, int y, int w, int h )
 
 static void gtkdisplay_area(int x, int y, int width, int height)
 {
+#if !GTK_CHECK_VERSION( 3, 0, 0 )
+
   gdk_draw_rgb_32_image( gtkui_drawing_area->window,
                          gtkui_drawing_area->style->fg_gc[GTK_STATE_NORMAL],
                          x, y, width, height, GDK_RGB_DITHER_NONE,
                          &scaled_image[ y * scaled_pitch + 4 * x ],
                          scaled_pitch );
+
+#else
+  display_updated = 1;
+
+  gtk_widget_queue_draw_area( gtkui_drawing_area, x, y, width, height );
+
+#endif                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
 }
 
 int
@@ -410,6 +498,8 @@ uidisplay_plot16( int x, int y, libspectrum_word data,
 
 /* Callbacks */
 
+#if !GTK_CHECK_VERSION( 3, 0, 0 )
+
 /* Called by gtkui_drawing_area on "expose_event" */
 static gint
 gtkdisplay_expose( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
@@ -419,6 +509,34 @@ gtkdisplay_expose( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
                   event->expose.area.width, event->expose.area.height);
   return TRUE;
 }
+
+#else                 /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
+
+/* Called by gtkui_drawing_area on "draw" event */
+static gboolean
+gtkdisplay_draw( GtkWidget *widget, cairo_t *cr, gpointer user_data )
+{
+  /* Create a new surface for this gfx mode */
+  if( !surface ) {
+    float scale = (float)gtkdisplay_current_size / image_scale;
+
+    surface =
+      cairo_image_surface_create_for_data( scaled_image,
+                                           CAIRO_FORMAT_RGB24,
+                                           scale * image_width,
+                                           scale * image_height,
+                                           scaled_pitch );
+  }
+
+  /* Repaint the drawing area */
+  cairo_set_source_surface( cr, surface, 0, 0 );
+  cairo_set_operator( cr, CAIRO_OPERATOR_SOURCE );
+  cairo_paint( cr );
+
+  return FALSE;
+}
+
+#endif                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
 
 /* Called by gtkui_drawing_area on "configure_event" */
 static gint
@@ -467,9 +585,6 @@ gtkdisplay_load_gfx_mode( void )
 
   gtk_window_set_default_size( GTK_WINDOW( gtkui_window ),
                                scale * image_width, scale * image_height );
-
-  gtk_drawing_area_size( GTK_DRAWING_AREA( gtkui_drawing_area ),
-                         scale * image_width, scale * image_height );
 
   drawing_area_resize( scale * image_width, scale * image_height, 0 );
  

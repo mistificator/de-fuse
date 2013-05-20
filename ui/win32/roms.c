@@ -1,7 +1,7 @@
 /* roms.c: ROM selector dialog box
    Copyright (c) 2003-2008 Philip Kendall, Marek Januszewski
 
-   $Id: roms.c 3922 2008-12-31 19:01:31Z zubzero $
+   $Id: roms.c 4785 2012-12-07 23:56:40Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,15 +29,14 @@
 #include <windows.h>
 
 #include "fuse.h"
+#include "roms.h"
 #include "settings.h"
 #include "ui/ui.h"
 #include "win32internals.h"
 
-#include "roms.h"
-
 static void add_rom( HWND hwndDlg, size_t start, size_t row );
 static void select_new_rom( HWND hedit );
-static void roms_done( HWND hwndDlg, LONG lParam );
+static void roms_done( HWND hwndDlg, LONG_PTR lParam );
 static INT_PTR CALLBACK roms_proc( HWND hwndDlg, UINT uMsg,
                                    WPARAM wParam, LPARAM lParam );
 static void roms_init( HWND hwndDlg, LPARAM lParam );
@@ -87,14 +86,14 @@ roms_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
     case WM_INITDIALOG:
       roms_init( hwndDlg, lParam );
       /* save callback_info in userdata of this dialog */
-      SetWindowLong( hwndDlg, GWL_USERDATA, ( LONG ) lParam );
+      SetWindowLongPtr( hwndDlg, GWLP_USERDATA, ( LONG_PTR ) lParam );
       return FALSE;
 
     case WM_COMMAND:
       switch( LOWORD( wParam ) ) {
 
         case IDOK:
-          roms_done( hwndDlg, GetWindowLong( ( HWND ) hwndDlg, GWL_USERDATA ) );
+          roms_done( hwndDlg, GetWindowLongPtr( ( HWND ) hwndDlg, GWLP_USERDATA ) );
           EndDialog( hwndDlg, 0 );
           return 0;
 
@@ -104,7 +103,7 @@ roms_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
           
         default:
           if( HIWORD( wParam ) == BN_CLICKED ) {
-            hedit = ( HWND ) GetWindowLong( ( HWND ) lParam, GWL_USERDATA );
+            hedit = ( HWND ) GetWindowLongPtr( ( HWND ) lParam, GWLP_USERDATA );
             if( hedit > 0 ) {
               select_new_rom( hedit );
               return 0;
@@ -226,7 +225,7 @@ add_rom( HWND hwndDlg, size_t start, size_t row )
   SendMessage( hbutton, WM_SETFONT, ( WPARAM ) font, FALSE );
   
   /* associate handle to the edit box with each Select button as user data */
-  SetWindowLong( hbutton, GWL_USERDATA, ( LONG ) hedit );
+  SetWindowLongPtr( hbutton, GWLP_USERDATA, ( LONG_PTR ) hedit );
 }
 
 static void
@@ -241,12 +240,11 @@ select_new_rom( HWND hedit )
 }
 
 static void
-roms_done( HWND hwndDlg, LONG lParam )
+roms_done( HWND hwndDlg, LONG_PTR lParam )
 {
   size_t i;
-  int error;
   
-  TCHAR **setting; const TCHAR *string;
+  TCHAR **setting; TCHAR *string;
   size_t string_len;
   
   struct callback_info *info = ( struct callback_info * ) lParam;
@@ -258,11 +256,8 @@ roms_done( HWND hwndDlg, LONG lParam )
     string_len = SendMessage( rom[i], WM_GETTEXTLENGTH, 0, 0 );
     string = malloc( sizeof( TCHAR ) * ( string_len + 1 ) );
     SendMessage( rom[i], WM_GETTEXT, string_len + 1, ( LPARAM ) string );
-    
-    error = settings_set_string( setting, string ); if( error ) return;
 
-/* FIXME: do I need to free string?
+    settings_set_string( setting, string );
     free( string );
-*/
   }
 }

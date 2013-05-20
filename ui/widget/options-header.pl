@@ -3,7 +3,7 @@
 # options-header.pl: generate options dialog boxes
 # Copyright (c) 2001-2002,2004 Philip Kendall
 
-# $Id: options-header.pl 4010 2009-04-15 13:01:27Z fredm $
+# $Id: options-header.pl 4694 2012-05-06 06:42:44Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ die "No data file specified" unless @ARGV;
 my @dialogs = Fuse::Dialog::read( shift @ARGV );
 my $internal = 1;
 
-$internal = 0 if( shift( @ARGV ) eq 'public' );
+$internal = 0 if( @ARGV && shift( @ARGV ) eq 'public' );
 
 if( $internal ) {
     print Fuse::GPL( 'options_internals.h: options dialog boxes',
@@ -87,7 +87,7 @@ CODE
 	foreach my $widget ( @{ $_->{widgets} } ) {
 	    if( $widget->{type} eq "Combo" ) {
 		print <<"CODE";
-int option_enumerate_$_->{name}_$widget->{value}();
+int option_enumerate_$_->{name}_$widget->{value}( void );
 
 CODE
 	    }

@@ -38,13 +38,17 @@
 #include "compat.h"
 #include "display.h"
 #include "fuse.h"
+#include "gtkcompat.h"
 #include "gtkinternals.h"
+#include "options.h"
 #include "options_internals.h"
 #include "periph.h"
 #include "settings.h"
+#include "utils.h"
 
 static int
-option_enumerate_combo( char **options, char *value, guint count, int def ) {
+option_enumerate_combo( const char **options, char *value, guint count,
+			int def ) {
   int i;
   if( value != NULL ) {
     for( i = 0; i < count; i++) {
@@ -62,198 +66,188 @@ void
 menu_options_general( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
+  GtkWidget *content_area;
   menu_options_general_t dialog;
-  GtkWidget *frame, *hbox, *text, *combo;
-  gchar buffer[80];
-  int i;
-
-  i = 0;
-  combo = frame = hbox = text = NULL;
-  buffer[0] = '\0';		/* Shut gcc up */
 
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
   dialog.dialog = gtkstock_dialog_new( "Fuse - General Options", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
-  frame = gtk_frame_new( "Emulation speed" );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       frame );
+  {
+    GtkWidget *frame = gtk_frame_new( "Emulation speed" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "%" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
 				    
-  hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
-  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
-  dialog.emulation_speed = gtk_entry_new();
-  gtk_entry_set_max_length( GTK_ENTRY( dialog.emulation_speed ),
-	   		    5 );
-  snprintf( buffer, 80, "%d", settings_current.emulation_speed );
-  gtk_entry_set_text( GTK_ENTRY( dialog.emulation_speed ), buffer );
-  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.emulation_speed );
+    dialog.emulation_speed = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.emulation_speed ),
+                              5 );
+    snprintf( buffer, 80, "%d", settings_current.emulation_speed );
+    gtk_entry_set_text( GTK_ENTRY( dialog.emulation_speed ), buffer );
 
-  text = gtk_label_new( "%" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.emulation_speed, TRUE, TRUE, 0 );
 
-  frame = gtk_frame_new( "Frame rate 1:n" );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       frame );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
+
+  {
+    GtkWidget *frame = gtk_frame_new( "Frame rate 1:n" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "frames" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
 				    
-  hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
-  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
-  dialog.frame_rate = gtk_entry_new();
-  gtk_entry_set_max_length( GTK_ENTRY( dialog.frame_rate ),
-	   		    1 );
-  snprintf( buffer, 80, "%d", settings_current.frame_rate );
-  gtk_entry_set_text( GTK_ENTRY( dialog.frame_rate ), buffer );
-  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.frame_rate );
+    dialog.frame_rate = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.frame_rate ),
+                              1 );
+    snprintf( buffer, 80, "%d", settings_current.frame_rate );
+    gtk_entry_set_text( GTK_ENTRY( dialog.frame_rate ), buffer );
 
-  text = gtk_label_new( "frames" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.frame_rate, TRUE, TRUE, 0 );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
 
   dialog.issue2 =
     gtk_check_button_new_with_label( "Issue 2 keyboard" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.issue2 ),
 				settings_current.issue2 );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.issue2 );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.issue2 );
 
   dialog.tape_traps =
     gtk_check_button_new_with_label( "Use tape traps" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.tape_traps ),
 				settings_current.tape_traps );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.tape_traps );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.tape_traps );
 
   dialog.fastload =
     gtk_check_button_new_with_label( "Fastloading" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.fastload ),
 				settings_current.fastload );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.fastload );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.fastload );
 
   dialog.detect_loader =
     gtk_check_button_new_with_label( "Detect loaders" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.detect_loader ),
 				settings_current.detect_loader );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.detect_loader );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.detect_loader );
 
   dialog.accelerate_loader =
     gtk_check_button_new_with_label( "Accelerate loaders" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.accelerate_loader ),
 				settings_current.accelerate_loader );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.accelerate_loader );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.accelerate_loader );
 
   dialog.auto_load =
     gtk_check_button_new_with_label( "Auto-load media" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.auto_load ),
 				settings_current.auto_load );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.auto_load );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.auto_load );
 
   dialog.slt_traps =
     gtk_check_button_new_with_label( "Use .slt traps" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.slt_traps ),
 				settings_current.slt_traps );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.slt_traps );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.slt_traps );
 
   dialog.writable_roms =
     gtk_check_button_new_with_label( "Allow writes to ROM" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.writable_roms ),
 				settings_current.writable_roms );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.writable_roms );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.writable_roms );
 
   dialog.autosave_settings =
     gtk_check_button_new_with_label( "Auto-save settings" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.autosave_settings ),
 				settings_current.autosave_settings );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.autosave_settings );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.autosave_settings );
 
-  frame = gtk_frame_new( "MDR cartridge len" );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       frame );
+  {
+    GtkWidget *frame = gtk_frame_new( "MDR cartridge len" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "blocks" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
 				    
-  hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
-  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
-  dialog.mdr_len = gtk_entry_new();
-  gtk_entry_set_max_length( GTK_ENTRY( dialog.mdr_len ),
-	   		    3 );
-  snprintf( buffer, 80, "%d", settings_current.mdr_len );
-  gtk_entry_set_text( GTK_ENTRY( dialog.mdr_len ), buffer );
-  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.mdr_len );
+    dialog.mdr_len = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.mdr_len ),
+                              3 );
+    snprintf( buffer, 80, "%d", settings_current.mdr_len );
+    gtk_entry_set_text( GTK_ENTRY( dialog.mdr_len ), buffer );
 
-  text = gtk_label_new( "blocks" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.mdr_len, TRUE, TRUE, 0 );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
 
   dialog.mdr_random_len =
     gtk_check_button_new_with_label( "Random length MDR cartridge" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.mdr_random_len ),
 				settings_current.mdr_random_len );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.mdr_random_len );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.mdr_random_len );
 
   dialog.rs232_handshake =
     gtk_check_button_new_with_label( "RS-232 handshake" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.rs232_handshake ),
 				settings_current.rs232_handshake );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.rs232_handshake );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.rs232_handshake );
 
   dialog.bw_tv =
     gtk_check_button_new_with_label( "Black and white TV" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.bw_tv ),
 				settings_current.bw_tv );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.bw_tv );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.bw_tv );
 
   dialog.pal_tv2x =
     gtk_check_button_new_with_label( "PAL-TV use TV2x effect" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.pal_tv2x ),
 				settings_current.pal_tv2x );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.pal_tv2x );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.pal_tv2x );
 
   dialog.confirm_actions =
     gtk_check_button_new_with_label( "Confirm actions" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.confirm_actions ),
 				settings_current.confirm_actions );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.confirm_actions );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.confirm_actions );
 
   dialog.statusbar =
     gtk_check_button_new_with_label( "Show statusbar" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.statusbar ),
 				settings_current.statusbar );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.statusbar );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.statusbar );
 
   dialog.joy_prompt =
     gtk_check_button_new_with_label( "Snap joystick prompt" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.joy_prompt ),
 				settings_current.joy_prompt );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.joy_prompt );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.joy_prompt );
 
   dialog.late_timings =
     gtk_check_button_new_with_label( "Late timings" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.late_timings ),
 				settings_current.late_timings );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.late_timings );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.late_timings );
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     GTK_SIGNAL_FUNC( menu_options_general_done ),
+			     G_CALLBACK( menu_options_general_done ),
 			     (gpointer) &dialog, NULL );
 
   /* Display the window */
@@ -339,165 +333,105 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
 
   gtk_main_quit();
 }
-static void menu_options_peripherals_done( GtkWidget *widget,
+static void menu_options_peripherals_general_done( GtkWidget *widget,
 					  gpointer user_data );
 
 void
-menu_options_peripherals( GtkWidget *widget GCC_UNUSED,
+menu_options_peripherals_general( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
-  menu_options_peripherals_t dialog;
-  GtkWidget *frame, *hbox, *text, *combo;
-  gchar buffer[80];
-  int i;
-
-  i = 0;
-  combo = frame = hbox = text = NULL;
-  buffer[0] = '\0';		/* Shut gcc up */
+  GtkWidget *content_area;
+  menu_options_peripherals_general_t dialog;
 
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Peripheral Options", NULL );
+  dialog.dialog = gtkstock_dialog_new( "Fuse - General Peripheral Options", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
   dialog.joy_kempston =
     gtk_check_button_new_with_label( "Kempston joystick" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.joy_kempston ),
 				settings_current.joy_kempston );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.joy_kempston );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.joy_kempston );
 
   dialog.kempston_mouse =
     gtk_check_button_new_with_label( "Kempston mouse" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.kempston_mouse ),
 				settings_current.kempston_mouse );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.kempston_mouse );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.kempston_mouse );
 
   dialog.mouse_swap_buttons =
     gtk_check_button_new_with_label( "Swap mouse buttons" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.mouse_swap_buttons ),
 				settings_current.mouse_swap_buttons );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.mouse_swap_buttons );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.mouse_swap_buttons );
 
   dialog.fuller =
     gtk_check_button_new_with_label( "Fuller Box" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.fuller ),
 				settings_current.fuller );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.fuller );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.fuller );
 
   dialog.melodik =
     gtk_check_button_new_with_label( "Melodik" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.melodik ),
 				settings_current.melodik );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.melodik );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.melodik );
 
   dialog.interface1 =
-    gtk_check_button_new_with_label( "Interface I" );
+    gtk_check_button_new_with_label( "Interface 1" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.interface1 ),
 				settings_current.interface1 );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.interface1 );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.interface1 );
 
   dialog.interface2 =
-    gtk_check_button_new_with_label( "Interface II" );
+    gtk_check_button_new_with_label( "Interface 2" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.interface2 ),
 				settings_current.interface2 );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.interface2 );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.interface2 );
 
   dialog.printer =
     gtk_check_button_new_with_label( "Emulate printers" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.printer ),
 				settings_current.printer );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.printer );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.printer );
 
-  dialog.simpleide_active =
-    gtk_check_button_new_with_label( "Simple 8-bit IDE" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.simpleide_active ),
-				settings_current.simpleide_active );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.simpleide_active );
+  dialog.zxprinter =
+    gtk_check_button_new_with_label( "ZX Printer" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxprinter ),
+				settings_current.zxprinter );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.zxprinter );
 
-  dialog.zxatasp_active =
-    gtk_check_button_new_with_label( "ZXATASP interface" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxatasp_active ),
-				settings_current.zxatasp_active );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.zxatasp_active );
+  dialog.speccyboot =
+    gtk_check_button_new_with_label( "SpeccyBoot interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.speccyboot ),
+				settings_current.speccyboot );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.speccyboot );
 
-  dialog.zxatasp_upload =
-    gtk_check_button_new_with_label( "ZXATASP upload" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxatasp_upload ),
-				settings_current.zxatasp_upload );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.zxatasp_upload );
+  dialog.specdrum =
+    gtk_check_button_new_with_label( "SpecDrum interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.specdrum ),
+				settings_current.specdrum );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.specdrum );
 
-  dialog.zxatasp_wp =
-    gtk_check_button_new_with_label( "ZXATASP write protect" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxatasp_wp ),
-				settings_current.zxatasp_wp );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.zxatasp_wp );
+  dialog.spectranet =
+    gtk_check_button_new_with_label( "Spectranet" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.spectranet ),
+				settings_current.spectranet );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.spectranet );
 
-  dialog.zxcf_active =
-    gtk_check_button_new_with_label( "ZXCF interface" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxcf_active ),
-				settings_current.zxcf_active );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.zxcf_active );
-
-  dialog.zxcf_upload =
-    gtk_check_button_new_with_label( "ZXCF upload" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxcf_upload ),
-				settings_current.zxcf_upload );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.zxcf_upload );
-
-  dialog.divide_enabled =
-    gtk_check_button_new_with_label( "DivIDE interface" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.divide_enabled ),
-				settings_current.divide_enabled );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.divide_enabled );
-
-  dialog.divide_wp =
-    gtk_check_button_new_with_label( "DivIDE write protect" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.divide_wp ),
-				settings_current.divide_wp );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.divide_wp );
-
-  dialog.plusd =
-    gtk_check_button_new_with_label( "+D interface" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.plusd ),
-				settings_current.plusd );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.plusd );
-
-  dialog.beta128 =
-    gtk_check_button_new_with_label( "Beta 128 interface" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.beta128 ),
-				settings_current.beta128 );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.beta128 );
-
-  dialog.opus =
-    gtk_check_button_new_with_label( "Opus Discovery interface" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.opus ),
-				settings_current.opus );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.opus );
+  dialog.spectranet_disable =
+    gtk_check_button_new_with_label( "Spectranet disable" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.spectranet_disable ),
+				settings_current.spectranet_disable );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.spectranet_disable );
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     GTK_SIGNAL_FUNC( menu_options_peripherals_done ),
+			     G_CALLBACK( menu_options_peripherals_general_done ),
 			     (gpointer) &dialog, NULL );
 
   /* Display the window */
@@ -511,10 +445,10 @@ menu_options_peripherals( GtkWidget *widget GCC_UNUSED,
 }
 
 static void
-menu_options_peripherals_done( GtkWidget *widget GCC_UNUSED,
+menu_options_peripherals_general_done( GtkWidget *widget GCC_UNUSED,
 			      gpointer user_data )
 {
-  menu_options_peripherals_t *ptr = user_data;
+  menu_options_peripherals_general_t *ptr = user_data;
 
   settings_current.joy_kempston =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->joy_kempston ) );
@@ -539,6 +473,147 @@ menu_options_peripherals_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.printer =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->printer ) );
+
+  settings_current.zxprinter =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->zxprinter ) );
+
+  settings_current.speccyboot =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->speccyboot ) );
+
+  settings_current.specdrum =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->specdrum ) );
+
+  settings_current.spectranet =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->spectranet ) );
+
+  settings_current.spectranet_disable =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->spectranet_disable ) );
+
+  gtk_widget_destroy( ptr->dialog );
+
+  periph_posthook();
+
+  gtkstatusbar_set_visibility( settings_current.statusbar );
+  display_refresh_all();
+
+  gtk_main_quit();
+}
+static void menu_options_peripherals_disk_done( GtkWidget *widget,
+					  gpointer user_data );
+
+void
+menu_options_peripherals_disk( GtkWidget *widget GCC_UNUSED,
+			 gpointer data GCC_UNUSED )
+{
+  GtkWidget *content_area;
+  menu_options_peripherals_disk_t dialog;
+
+  /* Firstly, stop emulation */
+  fuse_emulation_pause();
+
+  /* Create the necessary widgets */
+  dialog.dialog = gtkstock_dialog_new( "Fuse - Disk Peripheral Options", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
+
+  /* Create the various widgets */
+  dialog.simpleide_active =
+    gtk_check_button_new_with_label( "Simple 8-bit IDE" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.simpleide_active ),
+				settings_current.simpleide_active );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.simpleide_active );
+
+  dialog.zxatasp_active =
+    gtk_check_button_new_with_label( "ZXATASP interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxatasp_active ),
+				settings_current.zxatasp_active );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.zxatasp_active );
+
+  dialog.zxatasp_upload =
+    gtk_check_button_new_with_label( "ZXATASP upload" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxatasp_upload ),
+				settings_current.zxatasp_upload );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.zxatasp_upload );
+
+  dialog.zxatasp_wp =
+    gtk_check_button_new_with_label( "ZXATASP write protect" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxatasp_wp ),
+				settings_current.zxatasp_wp );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.zxatasp_wp );
+
+  dialog.zxcf_active =
+    gtk_check_button_new_with_label( "ZXCF interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxcf_active ),
+				settings_current.zxcf_active );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.zxcf_active );
+
+  dialog.zxcf_upload =
+    gtk_check_button_new_with_label( "ZXCF upload" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxcf_upload ),
+				settings_current.zxcf_upload );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.zxcf_upload );
+
+  dialog.divide_enabled =
+    gtk_check_button_new_with_label( "DivIDE interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.divide_enabled ),
+				settings_current.divide_enabled );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.divide_enabled );
+
+  dialog.divide_wp =
+    gtk_check_button_new_with_label( "DivIDE write protect" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.divide_wp ),
+				settings_current.divide_wp );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.divide_wp );
+
+  dialog.plusd =
+    gtk_check_button_new_with_label( "+D interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.plusd ),
+				settings_current.plusd );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.plusd );
+
+  dialog.disciple =
+    gtk_check_button_new_with_label( "DISCiPLE interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.disciple ),
+				settings_current.disciple );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.disciple );
+
+  dialog.beta128 =
+    gtk_check_button_new_with_label( "Beta 128 interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.beta128 ),
+				settings_current.beta128 );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.beta128 );
+
+  dialog.beta128_48boot =
+    gtk_check_button_new_with_label( "Beta 128 auto-boot in 48K machines" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.beta128_48boot ),
+				settings_current.beta128_48boot );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.beta128_48boot );
+
+  dialog.opus =
+    gtk_check_button_new_with_label( "Opus Discovery interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.opus ),
+				settings_current.opus );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.opus );
+
+  /* Create the OK and Cancel buttons */
+  gtkstock_create_ok_cancel( dialog.dialog, NULL,
+			     G_CALLBACK( menu_options_peripherals_disk_done ),
+			     (gpointer) &dialog, NULL );
+
+  /* Display the window */
+  gtk_widget_show_all( dialog.dialog );
+
+  /* Process events until the window is done with */
+  gtk_main();
+
+  /* And then carry on with emulation again */
+  fuse_emulation_unpause();
+}
+
+static void
+menu_options_peripherals_disk_done( GtkWidget *widget GCC_UNUSED,
+			      gpointer user_data )
+{
+  menu_options_peripherals_disk_t *ptr = user_data;
 
   settings_current.simpleide_active =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->simpleide_active ) );
@@ -567,15 +642,21 @@ menu_options_peripherals_done( GtkWidget *widget GCC_UNUSED,
   settings_current.plusd =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->plusd ) );
 
+  settings_current.disciple =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->disciple ) );
+
   settings_current.beta128 =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->beta128 ) );
+
+  settings_current.beta128_48boot =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->beta128_48boot ) );
 
   settings_current.opus =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->opus ) );
 
   gtk_widget_destroy( ptr->dialog );
 
-  periph_update();
+  periph_posthook();
 
   gtkstatusbar_set_visibility( settings_current.statusbar );
   display_refresh_all();
@@ -589,71 +670,66 @@ void
 menu_options_rzx( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
+  GtkWidget *content_area;
   menu_options_rzx_t dialog;
-  GtkWidget *frame, *hbox, *text, *combo;
-  gchar buffer[80];
-  int i;
-
-  i = 0;
-  combo = frame = hbox = text = NULL;
-  buffer[0] = '\0';		/* Shut gcc up */
 
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
   dialog.dialog = gtkstock_dialog_new( "Fuse - RZX Options", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
   dialog.rzx_autosaves =
     gtk_check_button_new_with_label( "Create autosaves" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.rzx_autosaves ),
 				settings_current.rzx_autosaves );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.rzx_autosaves );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.rzx_autosaves );
 
   dialog.rzx_compression =
     gtk_check_button_new_with_label( "Compress RZX data" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.rzx_compression ),
 				settings_current.rzx_compression );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.rzx_compression );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.rzx_compression );
 
   dialog.competition_mode =
     gtk_check_button_new_with_label( "Competition mode" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.competition_mode ),
 				settings_current.competition_mode );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.competition_mode );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.competition_mode );
 
-  frame = gtk_frame_new( "Competition code" );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       frame );
+  {
+    GtkWidget *frame = gtk_frame_new( "Competition code" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
 				    
-  hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
-  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
-  dialog.competition_code = gtk_entry_new();
-  gtk_entry_set_max_length( GTK_ENTRY( dialog.competition_code ),
-	   		    8 );
-  snprintf( buffer, 80, "%d", settings_current.competition_code );
-  gtk_entry_set_text( GTK_ENTRY( dialog.competition_code ), buffer );
-  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.competition_code );
+    dialog.competition_code = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.competition_code ),
+                              8 );
+    snprintf( buffer, 80, "%d", settings_current.competition_code );
+    gtk_entry_set_text( GTK_ENTRY( dialog.competition_code ), buffer );
 
-  text = gtk_label_new( "" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.competition_code, TRUE, TRUE, 0 );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
 
   dialog.embed_snapshot =
     gtk_check_button_new_with_label( "Always embed snapshot" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.embed_snapshot ),
 				settings_current.embed_snapshot );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.embed_snapshot );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.embed_snapshot );
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     GTK_SIGNAL_FUNC( menu_options_rzx_done ),
+			     G_CALLBACK( menu_options_rzx_done ),
 			     (gpointer) &dialog, NULL );
 
   /* Display the window */
@@ -695,15 +771,33 @@ menu_options_rzx_done( GtkWidget *widget GCC_UNUSED,
   gtk_main_quit();
 }
 
-static char * sound_speaker_type_combo[] = {
-  "TV speaker",
-  "Beeper",
+static const char *sound_stereo_ay_combo[] = {
+  "None",
+  "ACB",
+  "ABC",
 };
 
-static const guint sound_speaker_type_combo_count = 2;
+static const guint sound_stereo_ay_combo_count = 3;
 
 int
-option_enumerate_sound_speaker_type() {
+option_enumerate_sound_stereo_ay( void ) {
+  return option_enumerate_combo( sound_stereo_ay_combo,
+				 settings_current.stereo_ay,
+				 sound_stereo_ay_combo_count,
+				 0 );
+}
+
+
+static const char *sound_speaker_type_combo[] = {
+  "TV speaker",
+  "Beeper",
+  "Unfiltered",
+};
+
+static const guint sound_speaker_type_combo_count = 3;
+
+int
+option_enumerate_sound_speaker_type( void ) {
   return option_enumerate_combo( sound_speaker_type_combo,
 				 settings_current.speaker_type,
 				 sound_speaker_type_combo_count,
@@ -717,114 +811,160 @@ void
 menu_options_sound( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
+  GtkWidget *content_area;
   menu_options_sound_t dialog;
-  GtkWidget *frame, *hbox, *text, *combo;
-  gchar buffer[80];
-  int i;
-
-  i = 0;
-  combo = frame = hbox = text = NULL;
-  buffer[0] = '\0';		/* Shut gcc up */
 
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
   dialog.dialog = gtkstock_dialog_new( "Fuse - Sound Options", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
   dialog.sound =
     gtk_check_button_new_with_label( "Sound enabled" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.sound ),
 				settings_current.sound );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.sound );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.sound );
 
   dialog.sound_load =
     gtk_check_button_new_with_label( "Loading sound" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.sound_load ),
 				settings_current.sound_load );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.sound_load );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.sound_load );
 
-  dialog.stereo_ay =
-    gtk_check_button_new_with_label( "AY stereo separation" );
-  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.stereo_ay ),
-				settings_current.stereo_ay );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.stereo_ay );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "AY stereo separation" );
+    int i;
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+    for( i = 0; i < sound_stereo_ay_combo_count; i++ ) {
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), sound_stereo_ay_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+    if( settings_current.stereo_ay != NULL ) {
+      for( i = 0; i < sound_stereo_ay_combo_count; i++ ) {
+        if( !strcmp( settings_current.stereo_ay, sound_stereo_ay_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
+      }
+    }
+
+    dialog.stereo_ay = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.stereo_ay, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
+  }
 
   dialog.sound_force_8bit =
     gtk_check_button_new_with_label( "Force 8-bit" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.sound_force_8bit ),
 				settings_current.sound_force_8bit );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.sound_force_8bit );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.sound_force_8bit );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Speaker type" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Speaker type" );
+    int i;
 
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), sound_speaker_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
-  if( settings_current.speaker_type != NULL ) {
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
     for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.speaker_type, sound_speaker_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), sound_speaker_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+    if( settings_current.speaker_type != NULL ) {
+      for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.speaker_type, sound_speaker_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.speaker_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.speaker_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.speaker_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.speaker_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *frame = gtk_frame_new( "AY volume" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "%" );
+    gchar buffer[80];
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
-
-  frame = gtk_frame_new( "AY volume" );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       frame );
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
 				    
-  hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
-  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
-  dialog.volume_ay = gtk_entry_new();
-  gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_ay ),
-	   		    3 );
-  snprintf( buffer, 80, "%d", settings_current.volume_ay );
-  gtk_entry_set_text( GTK_ENTRY( dialog.volume_ay ), buffer );
-  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.volume_ay );
+    dialog.volume_ay = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_ay ),
+                              3 );
+    snprintf( buffer, 80, "%d", settings_current.volume_ay );
+    gtk_entry_set_text( GTK_ENTRY( dialog.volume_ay ), buffer );
 
-  text = gtk_label_new( "%" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_ay, TRUE, TRUE, 0 );
 
-  frame = gtk_frame_new( "Beeper volume" );
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       frame );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
+
+  {
+    GtkWidget *frame = gtk_frame_new( "Beeper volume" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "%" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
 				    
-  hbox = gtk_hbox_new( FALSE, 0 );
-  gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
-  gtk_container_add( GTK_CONTAINER( frame ), hbox );
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
-  dialog.volume_beeper = gtk_entry_new();
-  gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_beeper ),
-	   		    3 );
-  snprintf( buffer, 80, "%d", settings_current.volume_beeper );
-  gtk_entry_set_text( GTK_ENTRY( dialog.volume_beeper ), buffer );
-  gtk_box_pack_start_defaults( GTK_BOX( hbox ), dialog.volume_beeper );
+    dialog.volume_beeper = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_beeper ),
+                              3 );
+    snprintf( buffer, 80, "%d", settings_current.volume_beeper );
+    gtk_entry_set_text( GTK_ENTRY( dialog.volume_beeper ), buffer );
 
-  text = gtk_label_new( "%" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_beeper, TRUE, TRUE, 0 );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
+
+  {
+    GtkWidget *frame = gtk_frame_new( "SpecDrum volume" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "%" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
+				    
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
+
+    dialog.volume_specdrum = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_specdrum ),
+                              3 );
+    snprintf( buffer, 80, "%d", settings_current.volume_specdrum );
+    gtk_entry_set_text( GTK_ENTRY( dialog.volume_specdrum ), buffer );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_specdrum, TRUE, TRUE, 0 );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     GTK_SIGNAL_FUNC( menu_options_sound_done ),
+			     G_CALLBACK( menu_options_sound_done ),
 			     (gpointer) &dialog, NULL );
 
   /* Display the window */
@@ -849,14 +989,15 @@ menu_options_sound_done( GtkWidget *widget GCC_UNUSED,
   settings_current.sound_load =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->sound_load ) );
 
-  settings_current.stereo_ay =
-    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->stereo_ay ) );
+  free( settings_current.stereo_ay );
+  settings_current.stereo_ay = utils_safe_strdup( sound_stereo_ay_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->stereo_ay ) ) ] );
 
   settings_current.sound_force_8bit =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->sound_force_8bit ) );
 
   free( settings_current.speaker_type );
-  settings_current.speaker_type = strdup( sound_speaker_type_combo[
+  settings_current.speaker_type = utils_safe_strdup( sound_speaker_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->speaker_type ) ) ] );
 
   settings_current.volume_ay =
@@ -864,6 +1005,9 @@ menu_options_sound_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.volume_beeper =
     atoi( gtk_entry_get_text( GTK_ENTRY( ptr->volume_beeper ) ) );
+
+  settings_current.volume_specdrum =
+    atoi( gtk_entry_get_text( GTK_ENTRY( ptr->volume_specdrum ) ) );
 
   gtk_widget_destroy( ptr->dialog );
 
@@ -873,7 +1017,7 @@ menu_options_sound_done( GtkWidget *widget GCC_UNUSED,
   gtk_main_quit();
 }
 
-static char * diskoptions_drive_plus3a_type_combo[] = {
+static const char *diskoptions_drive_plus3a_type_combo[] = {
   "Single-sided 40 track",
   "Double-sided 40 track",
   "Single-sided 80 track",
@@ -883,7 +1027,7 @@ static char * diskoptions_drive_plus3a_type_combo[] = {
 static const guint diskoptions_drive_plus3a_type_combo_count = 4;
 
 int
-option_enumerate_diskoptions_drive_plus3a_type() {
+option_enumerate_diskoptions_drive_plus3a_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plus3a_type_combo,
 				 settings_current.drive_plus3a_type,
 				 diskoptions_drive_plus3a_type_combo_count,
@@ -891,7 +1035,7 @@ option_enumerate_diskoptions_drive_plus3a_type() {
 }
 
 
-static char * diskoptions_drive_plus3b_type_combo[] = {
+static const char *diskoptions_drive_plus3b_type_combo[] = {
   "Disabled",
   "Single-sided 40 track",
   "Double-sided 40 track",
@@ -902,7 +1046,7 @@ static char * diskoptions_drive_plus3b_type_combo[] = {
 static const guint diskoptions_drive_plus3b_type_combo_count = 5;
 
 int
-option_enumerate_diskoptions_drive_plus3b_type() {
+option_enumerate_diskoptions_drive_plus3b_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plus3b_type_combo,
 				 settings_current.drive_plus3b_type,
 				 diskoptions_drive_plus3b_type_combo_count,
@@ -913,7 +1057,7 @@ option_enumerate_diskoptions_drive_plus3b_type() {
 #define diskoptions_drive_beta128a_type_combo_count diskoptions_drive_plus3a_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128a_type() {
+option_enumerate_diskoptions_drive_beta128a_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128a_type_combo,
 				 settings_current.drive_beta128a_type,
 				 diskoptions_drive_beta128a_type_combo_count,
@@ -924,7 +1068,7 @@ option_enumerate_diskoptions_drive_beta128a_type() {
 #define diskoptions_drive_beta128b_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128b_type() {
+option_enumerate_diskoptions_drive_beta128b_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128b_type_combo,
 				 settings_current.drive_beta128b_type,
 				 diskoptions_drive_beta128b_type_combo_count,
@@ -935,7 +1079,7 @@ option_enumerate_diskoptions_drive_beta128b_type() {
 #define diskoptions_drive_beta128c_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128c_type() {
+option_enumerate_diskoptions_drive_beta128c_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128c_type_combo,
 				 settings_current.drive_beta128c_type,
 				 diskoptions_drive_beta128c_type_combo_count,
@@ -946,7 +1090,7 @@ option_enumerate_diskoptions_drive_beta128c_type() {
 #define diskoptions_drive_beta128d_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128d_type() {
+option_enumerate_diskoptions_drive_beta128d_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128d_type_combo,
 				 settings_current.drive_beta128d_type,
 				 diskoptions_drive_beta128d_type_combo_count,
@@ -957,7 +1101,7 @@ option_enumerate_diskoptions_drive_beta128d_type() {
 #define diskoptions_drive_plusd1_type_combo_count diskoptions_drive_plus3a_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_plusd1_type() {
+option_enumerate_diskoptions_drive_plusd1_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plusd1_type_combo,
 				 settings_current.drive_plusd1_type,
 				 diskoptions_drive_plusd1_type_combo_count,
@@ -968,10 +1112,32 @@ option_enumerate_diskoptions_drive_plusd1_type() {
 #define diskoptions_drive_plusd2_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_plusd2_type() {
+option_enumerate_diskoptions_drive_plusd2_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plusd2_type_combo,
 				 settings_current.drive_plusd2_type,
 				 diskoptions_drive_plusd2_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_disciple1_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_disciple1_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_disciple1_type( void ) {
+  return option_enumerate_combo( diskoptions_drive_disciple1_type_combo,
+				 settings_current.drive_disciple1_type,
+				 diskoptions_drive_disciple1_type_combo_count,
+				 3 );
+}
+
+#define diskoptions_drive_disciple2_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_disciple2_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_disciple2_type( void ) {
+  return option_enumerate_combo( diskoptions_drive_disciple2_type_combo,
+				 settings_current.drive_disciple2_type,
+				 diskoptions_drive_disciple2_type_combo_count,
 				 4 );
 }
 
@@ -979,7 +1145,7 @@ option_enumerate_diskoptions_drive_plusd2_type() {
 #define diskoptions_drive_opus1_type_combo_count diskoptions_drive_plus3a_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_opus1_type() {
+option_enumerate_diskoptions_drive_opus1_type( void ) {
   return option_enumerate_combo( diskoptions_drive_opus1_type_combo,
 				 settings_current.drive_opus1_type,
 				 diskoptions_drive_opus1_type_combo_count,
@@ -990,7 +1156,7 @@ option_enumerate_diskoptions_drive_opus1_type() {
 #define diskoptions_drive_opus2_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_opus2_type() {
+option_enumerate_diskoptions_drive_opus2_type( void ) {
   return option_enumerate_combo( diskoptions_drive_opus2_type_combo,
 				 settings_current.drive_opus2_type,
 				 diskoptions_drive_opus2_type_combo_count,
@@ -998,7 +1164,7 @@ option_enumerate_diskoptions_drive_opus2_type() {
 }
 
 
-static char * diskoptions_disk_try_merge_combo[] = {
+static const char *diskoptions_disk_try_merge_combo[] = {
   "Never",
   "With single-sided drives",
   "Always",
@@ -1007,7 +1173,7 @@ static char * diskoptions_disk_try_merge_combo[] = {
 static const guint diskoptions_disk_try_merge_combo_count = 3;
 
 int
-option_enumerate_diskoptions_disk_try_merge() {
+option_enumerate_diskoptions_disk_try_merge( void ) {
   return option_enumerate_combo( diskoptions_disk_try_merge_combo,
 				 settings_current.disk_try_merge,
 				 diskoptions_disk_try_merge_combo_count,
@@ -1021,314 +1187,396 @@ void
 menu_options_diskoptions( GtkWidget *widget GCC_UNUSED,
 			 gpointer data GCC_UNUSED )
 {
+  GtkWidget *content_area;
   menu_options_diskoptions_t dialog;
-  GtkWidget *frame, *hbox, *text, *combo;
-  gchar buffer[80];
-  int i;
-
-  i = 0;
-  combo = frame = hbox = text = NULL;
-  buffer[0] = '\0';		/* Shut gcc up */
 
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
   dialog.dialog = gtkstock_dialog_new( "Fuse - Drives Setup", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "+3 Drive A" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "+3 Drive A" );
+    int i;
 
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_plus3a_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plus3a_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
-  if( settings_current.drive_plus3a_type != NULL ) {
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
     for( i = 0; i < diskoptions_drive_plus3a_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_plus3a_type, diskoptions_drive_plus3a_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_plus3a_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+    if( settings_current.drive_plus3a_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_plus3a_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_plus3a_type, diskoptions_drive_plus3a_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_plus3a_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plus3a_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_plus3a_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plus3a_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "+3 Drive B" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "+3 Drive B" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plus3b_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
-  if( settings_current.drive_plus3b_type != NULL ) {
     for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_plus3b_type, diskoptions_drive_plus3b_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_plus3b_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+    if( settings_current.drive_plus3b_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_plus3b_type, diskoptions_drive_plus3b_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_plus3b_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plus3b_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
-
-  dialog.drive_plus3b_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plus3b_type, FALSE, FALSE, 5 );
-
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
 
   dialog.plus3_detect_speedlock =
     gtk_check_button_new_with_label( "+3 Detect Speedlock" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.plus3_detect_speedlock ),
 				settings_current.plus3_detect_speedlock );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.plus3_detect_speedlock );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.plus3_detect_speedlock );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Beta 128 Drive A" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Beta 128 Drive A" );
+    int i;
 
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128a_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 3 );
-  if( settings_current.drive_beta128a_type != NULL ) {
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
     for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_beta128a_type, diskoptions_drive_beta128a_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_beta128a_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 3 );
+    if( settings_current.drive_beta128a_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_beta128a_type, diskoptions_drive_beta128a_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_beta128a_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128a_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_beta128a_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128a_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Beta 128 Drive B" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Beta 128 Drive B" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128b_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
-  if( settings_current.drive_beta128b_type != NULL ) {
     for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_beta128b_type, diskoptions_drive_beta128b_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_beta128b_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+    if( settings_current.drive_beta128b_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_beta128b_type, diskoptions_drive_beta128b_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_beta128b_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128b_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_beta128b_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128b_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Beta 128 Drive C" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Beta 128 Drive C" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128c_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
-  if( settings_current.drive_beta128c_type != NULL ) {
     for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_beta128c_type, diskoptions_drive_beta128c_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_beta128c_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+    if( settings_current.drive_beta128c_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_beta128c_type, diskoptions_drive_beta128c_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_beta128c_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128c_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_beta128c_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128c_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Beta 128 Drive D" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Beta 128 Drive D" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_beta128d_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
-  if( settings_current.drive_beta128d_type != NULL ) {
     for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_beta128d_type, diskoptions_drive_beta128d_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_beta128d_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+    if( settings_current.drive_beta128d_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_beta128d_type, diskoptions_drive_beta128d_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_beta128d_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128d_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_beta128d_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_beta128d_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "+D Drive 1" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "+D Drive 1" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plusd1_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 3 );
-  if( settings_current.drive_plusd1_type != NULL ) {
     for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_plusd1_type, diskoptions_drive_plusd1_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_plusd1_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 3 );
+    if( settings_current.drive_plusd1_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_plusd1_type, diskoptions_drive_plusd1_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_plusd1_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plusd1_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_plusd1_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plusd1_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "+D Drive 2" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "+D Drive 2" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_plusd2_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
-  if( settings_current.drive_plusd2_type != NULL ) {
     for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_plusd2_type, diskoptions_drive_plusd2_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_plusd2_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+    if( settings_current.drive_plusd2_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_plusd2_type, diskoptions_drive_plusd2_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_plusd2_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plusd2_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_plusd2_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_plusd2_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "DISCiPLE Drive 1" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Opus Drive 1" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+    for( i = 0; i < diskoptions_drive_disciple1_type_combo_count; i++ ) {
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_disciple1_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 3 );
+    if( settings_current.drive_disciple1_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_disciple1_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_disciple1_type, diskoptions_drive_disciple1_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
+      }
+    }
 
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_opus1_type_combo[i] );
+    dialog.drive_disciple1_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_disciple1_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
-  if( settings_current.drive_opus1_type != NULL ) {
+
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "DISCiPLE Drive 2" );
+    int i;
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+    for( i = 0; i < diskoptions_drive_disciple2_type_combo_count; i++ ) {
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_disciple2_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 4 );
+    if( settings_current.drive_disciple2_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_disciple2_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_disciple2_type, diskoptions_drive_disciple2_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
+      }
+    }
+
+    dialog.drive_disciple2_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_disciple2_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
+  }
+
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Opus Drive 1" );
+    int i;
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
     for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_opus1_type, diskoptions_drive_opus1_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_opus1_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+    if( settings_current.drive_opus1_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_opus1_type, diskoptions_drive_opus1_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_opus1_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_opus1_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_opus1_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_opus1_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Opus Drive 2" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Opus Drive 2" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_drive_opus2_type_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 1 );
-  if( settings_current.drive_opus2_type != NULL ) {
     for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
-      if( !strcmp( settings_current.drive_opus2_type, diskoptions_drive_opus2_type_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_drive_opus2_type_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 1 );
+    if( settings_current.drive_opus2_type != NULL ) {
+      for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
+        if( !strcmp( settings_current.drive_opus2_type, diskoptions_drive_opus2_type_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.drive_opus2_type = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_opus2_type, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
 
-  dialog.drive_opus2_type = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.drive_opus2_type, FALSE, FALSE, 5 );
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Try merge 'B' side of disks" );
+    int i;
 
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
 
-  hbox = gtk_hbox_new( FALSE, 0 );
-  text = gtk_label_new( "Try merge 'B' side of disks" );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
-  text = gtk_label_new( " " );
-  gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
-
-  combo = gtk_combo_box_new_text();
-  for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
-    gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), diskoptions_disk_try_merge_combo[i] );
-  }
-  gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 1 );
-  if( settings_current.disk_try_merge != NULL ) {
     for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
-      if( !strcmp( settings_current.disk_try_merge, diskoptions_disk_try_merge_combo[i] ) ) {
-        gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), diskoptions_disk_try_merge_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 1 );
+    if( settings_current.disk_try_merge != NULL ) {
+      for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
+        if( !strcmp( settings_current.disk_try_merge, diskoptions_disk_try_merge_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
       }
     }
+
+    dialog.disk_try_merge = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.disk_try_merge, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
   }
-
-  dialog.disk_try_merge = combo;
-  gtk_box_pack_start( GTK_BOX( hbox ), dialog.disk_try_merge, FALSE, FALSE, 5 );
-
-  gtk_box_pack_start_defaults( GTK_BOX( GTK_DIALOG( dialog.dialog )->vbox ),
-			       hbox );
 
   dialog.disk_ask_merge =
     gtk_check_button_new_with_label( "Confirm merge disk sides" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.disk_ask_merge ),
 				settings_current.disk_ask_merge );
-  gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog.dialog )->vbox ),
-		     dialog.disk_ask_merge );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.disk_ask_merge );
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     GTK_SIGNAL_FUNC( menu_options_diskoptions_done ),
+			     G_CALLBACK( menu_options_diskoptions_done ),
 			     (gpointer) &dialog, NULL );
 
   /* Display the window */
@@ -1348,54 +1596,166 @@ menu_options_diskoptions_done( GtkWidget *widget GCC_UNUSED,
   menu_options_diskoptions_t *ptr = user_data;
 
   free( settings_current.drive_plus3a_type );
-  settings_current.drive_plus3a_type = strdup( diskoptions_drive_plus3a_type_combo[
+  settings_current.drive_plus3a_type = utils_safe_strdup( diskoptions_drive_plus3a_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plus3a_type ) ) ] );
 
   free( settings_current.drive_plus3b_type );
-  settings_current.drive_plus3b_type = strdup( diskoptions_drive_plus3b_type_combo[
+  settings_current.drive_plus3b_type = utils_safe_strdup( diskoptions_drive_plus3b_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plus3b_type ) ) ] );
 
   settings_current.plus3_detect_speedlock =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->plus3_detect_speedlock ) );
 
   free( settings_current.drive_beta128a_type );
-  settings_current.drive_beta128a_type = strdup( diskoptions_drive_beta128a_type_combo[
+  settings_current.drive_beta128a_type = utils_safe_strdup( diskoptions_drive_beta128a_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128a_type ) ) ] );
 
   free( settings_current.drive_beta128b_type );
-  settings_current.drive_beta128b_type = strdup( diskoptions_drive_beta128b_type_combo[
+  settings_current.drive_beta128b_type = utils_safe_strdup( diskoptions_drive_beta128b_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128b_type ) ) ] );
 
   free( settings_current.drive_beta128c_type );
-  settings_current.drive_beta128c_type = strdup( diskoptions_drive_beta128c_type_combo[
+  settings_current.drive_beta128c_type = utils_safe_strdup( diskoptions_drive_beta128c_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128c_type ) ) ] );
 
   free( settings_current.drive_beta128d_type );
-  settings_current.drive_beta128d_type = strdup( diskoptions_drive_beta128d_type_combo[
+  settings_current.drive_beta128d_type = utils_safe_strdup( diskoptions_drive_beta128d_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_beta128d_type ) ) ] );
 
   free( settings_current.drive_plusd1_type );
-  settings_current.drive_plusd1_type = strdup( diskoptions_drive_plusd1_type_combo[
+  settings_current.drive_plusd1_type = utils_safe_strdup( diskoptions_drive_plusd1_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plusd1_type ) ) ] );
 
   free( settings_current.drive_plusd2_type );
-  settings_current.drive_plusd2_type = strdup( diskoptions_drive_plusd2_type_combo[
+  settings_current.drive_plusd2_type = utils_safe_strdup( diskoptions_drive_plusd2_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_plusd2_type ) ) ] );
 
+  free( settings_current.drive_disciple1_type );
+  settings_current.drive_disciple1_type = utils_safe_strdup( diskoptions_drive_disciple1_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_disciple1_type ) ) ] );
+
+  free( settings_current.drive_disciple2_type );
+  settings_current.drive_disciple2_type = utils_safe_strdup( diskoptions_drive_disciple2_type_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_disciple2_type ) ) ] );
+
   free( settings_current.drive_opus1_type );
-  settings_current.drive_opus1_type = strdup( diskoptions_drive_opus1_type_combo[
+  settings_current.drive_opus1_type = utils_safe_strdup( diskoptions_drive_opus1_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_opus1_type ) ) ] );
 
   free( settings_current.drive_opus2_type );
-  settings_current.drive_opus2_type = strdup( diskoptions_drive_opus2_type_combo[
+  settings_current.drive_opus2_type = utils_safe_strdup( diskoptions_drive_opus2_type_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->drive_opus2_type ) ) ] );
 
   free( settings_current.disk_try_merge );
-  settings_current.disk_try_merge = strdup( diskoptions_disk_try_merge_combo[
+  settings_current.disk_try_merge = utils_safe_strdup( diskoptions_disk_try_merge_combo[
 	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->disk_try_merge ) ) ] );
 
   settings_current.disk_ask_merge =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->disk_ask_merge ) );
+
+  gtk_widget_destroy( ptr->dialog );
+
+  gtkstatusbar_set_visibility( settings_current.statusbar );
+  display_refresh_all();
+
+  gtk_main_quit();
+}
+
+static const char *movie_movie_compr_combo[] = {
+  "None",
+  "Lossless",
+  "High",
+};
+
+static const guint movie_movie_compr_combo_count = 3;
+
+int
+option_enumerate_movie_movie_compr( void ) {
+  return option_enumerate_combo( movie_movie_compr_combo,
+				 settings_current.movie_compr,
+				 movie_movie_compr_combo_count,
+				 1 );
+}
+
+static void menu_options_movie_done( GtkWidget *widget,
+					  gpointer user_data );
+
+void
+menu_options_movie( GtkWidget *widget GCC_UNUSED,
+			 gpointer data GCC_UNUSED )
+{
+  GtkWidget *content_area;
+  menu_options_movie_t dialog;
+
+  /* Firstly, stop emulation */
+  fuse_emulation_pause();
+
+  /* Create the necessary widgets */
+  dialog.dialog = gtkstock_dialog_new( "Fuse - Movie Options", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
+
+  /* Create the various widgets */
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Movie compression" );
+    int i;
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+    for( i = 0; i < movie_movie_compr_combo_count; i++ ) {
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), movie_movie_compr_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 1 );
+    if( settings_current.movie_compr != NULL ) {
+      for( i = 0; i < movie_movie_compr_combo_count; i++ ) {
+        if( !strcmp( settings_current.movie_compr, movie_movie_compr_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
+      }
+    }
+
+    dialog.movie_compr = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.movie_compr, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
+  }
+
+  dialog.movie_stop_after_rzx =
+    gtk_check_button_new_with_label( "Stop recording after RZX ends" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.movie_stop_after_rzx ),
+				settings_current.movie_stop_after_rzx );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.movie_stop_after_rzx );
+
+  /* Create the OK and Cancel buttons */
+  gtkstock_create_ok_cancel( dialog.dialog, NULL,
+			     G_CALLBACK( menu_options_movie_done ),
+			     (gpointer) &dialog, NULL );
+
+  /* Display the window */
+  gtk_widget_show_all( dialog.dialog );
+
+  /* Process events until the window is done with */
+  gtk_main();
+
+  /* And then carry on with emulation again */
+  fuse_emulation_unpause();
+}
+
+static void
+menu_options_movie_done( GtkWidget *widget GCC_UNUSED,
+			      gpointer user_data )
+{
+  menu_options_movie_t *ptr = user_data;
+
+  free( settings_current.movie_compr );
+  settings_current.movie_compr = utils_safe_strdup( movie_movie_compr_combo[
+	gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->movie_compr ) ) ] );
+
+  settings_current.movie_stop_after_rzx =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->movie_stop_after_rzx ) );
 
   gtk_widget_destroy( ptr->dialog );
 

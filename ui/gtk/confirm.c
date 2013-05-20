@@ -1,7 +1,7 @@
 /* confirm.c: Confirmation dialog box
    Copyright (c) 2000-2003 Philip Kendall, Russell Marks
 
-   $Id: confirm.c 4012 2009-04-16 12:42:14Z fredm $
+   $Id: confirm.c 4723 2012-07-08 13:26:15Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 
 #include "compat.h"
 #include "fuse.h"
+#include "gtkcompat.h"
 #include "gtkinternals.h"
 #include "settings.h"
 #include "ui/ui.h"
@@ -41,7 +42,7 @@ static void set_dont_save( GtkButton *button, gpointer user_data );
 int
 gtkui_confirm( const char *string )
 {
-  GtkWidget *dialog, *label;
+  GtkWidget *dialog, *label, *content_area;
   int confirm;
 
   /* Return value isn't an error code, but signifies whether to undertake
@@ -55,10 +56,10 @@ gtkui_confirm( const char *string )
   dialog = gtkstock_dialog_new( "Fuse - Confirm", NULL );
 
   label = gtk_label_new( string );
-  gtk_box_pack_start( GTK_BOX( GTK_DIALOG( dialog )->vbox ), label,
-		      TRUE, TRUE, 5 );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+  gtk_box_pack_start( GTK_BOX( content_area ), label, TRUE, TRUE, 5 );
 
-  gtkstock_create_ok_cancel( dialog, NULL, GTK_SIGNAL_FUNC( set_confirmed ),
+  gtkstock_create_ok_cancel( dialog, NULL, G_CALLBACK( set_confirmed ),
 			     &confirm, NULL );
 
   gtk_widget_show_all( dialog );
@@ -80,7 +81,7 @@ set_confirmed( GtkButton *button GCC_UNUSED, gpointer user_data )
 ui_confirm_save_t
 ui_confirm_save_specific( const char *message )
 {
-  GtkWidget *dialog, *label;
+  GtkWidget *dialog, *label, *content_area;
   ui_confirm_save_t confirm;
 
   if( !settings_current.confirm_actions ) return UI_CONFIRM_SAVE_DONTSAVE;
@@ -90,16 +91,16 @@ ui_confirm_save_specific( const char *message )
   confirm = UI_CONFIRM_SAVE_CANCEL;
 
   dialog = gtkstock_dialog_new( "Fuse - Confirm", NULL );
+  content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
   label = gtk_label_new( message );
-  gtk_box_pack_start( GTK_BOX( GTK_DIALOG( dialog )->vbox ), label,
-		      TRUE, TRUE, 5 );
+  gtk_box_pack_start( GTK_BOX( content_area ), label, TRUE, TRUE, 5 );
 
   {
     static gtkstock_button btn[] = {
-      { GTK_STOCK_NO, GTK_SIGNAL_FUNC( set_dont_save ), NULL, DEFAULT_DESTROY, 0, 0, GDK_VoidSymbol, 0 }, /* override Escape */
+      { GTK_STOCK_NO, G_CALLBACK( set_dont_save ), NULL, DEFAULT_DESTROY, 0, 0, GDK_KEY_VoidSymbol, 0 }, /* override Escape */
       { GTK_STOCK_CANCEL, NULL, NULL, DEFAULT_DESTROY, 0, 0, 0, 0 },
-      { GTK_STOCK_SAVE, GTK_SIGNAL_FUNC( set_save ), NULL, DEFAULT_DESTROY, 0, 0, 0, 0 }
+      { GTK_STOCK_SAVE, G_CALLBACK( set_save ), NULL, DEFAULT_DESTROY, 0, 0, 0, 0 }
     };
     btn[0].actiondata = btn[2].actiondata = &confirm;
     gtkstock_create_buttons( dialog, NULL, btn,

@@ -1,5 +1,5 @@
-The Free Unix Spectrum Emulator (Fuse) 1.0.0.1a
-===============================================
+The Free Unix Spectrum Emulator (Fuse) 1.1.0
+============================================
 
 Fuse (the Free Unix Spectrum Emulator) was originally, and somewhat
 unsurprisingly, an emulator of the ZX Spectrum (a popular 1980s home
@@ -24,7 +24,7 @@ What Fuse does have:
 * Emulation of some of the printers you could attach to a Spectrum.
 * Support for the RZX input recording file format, including
   rollback and 'competition mode'.
-* Emulation of the DivIDE, Interface I, Kempston mouse, Spectrum +3e,
+* Emulation of the DivIDE, Interface 1, Kempston mouse, Spectrum +3e,
   ZXATASP, ZXCF, Beta 128, Opus Discovery and +D interfaces.
 
 Help! <xyz> doesn't work
@@ -33,7 +33,7 @@ Help! <xyz> doesn't work
 If you're having a problem using/running/building Fuse, the two places
 you're most likely to get help are the development mailing list
 <fuse-emulator-devel@lists.sf.net> or the official forums at
-<http://sourceforge.net/forum/?group_id=91293>.
+<http://sourceforge.net/p/fuse-emulator/discussion/>.
 
 What you'll need to run Fuse
 ----------------------------
@@ -64,128 +64,19 @@ Mac OS X
 
 * Either the native port by Fredrick Meunier, or the original version
   will compile on OS X 10.3 (Panther) or later.
+* On Mac OS X Lion you will need to use clang as gcc-llvm-4.2.1 fails to
+  correctly compile z80_ops.c.
 
 Windows
 
-* The Win32 and SDL UIs can be used under Windows, but the Win32 UI is
-  incomplete.
+* The Win32 and SDL UIs can be used under Windows.
+* pthreads-win32 library will give the ability to use posix threads, needed by
+  some peripherals.
 
 Building Fuse
 -------------
 
-To compile Fuse (see below for instructions for the OS X native port):
-
-$ ./configure
-
-There are now some options you can give to configure; `configure
---help' will list them all, but the most important are:
-
---with-fb		Use the framebuffer interface, rather than GTK+.
---with-sdl		Use the SDL interface, rather than GTK+.
---with-svgalib		Use the SVGAlib interface.
---without-gtk		Use the plain Xlib interface.
-
-If glib is installed on your system, Fuse will use this for a couple
-of things; however, it isn't necessary as libspectrum provides
-replacements for all the routines used by Fuse.
-
-Another useful option is `--with-local-prefix=DIRECTORY' which allows
-you to specify that you have some the the libraries needed by Fuse in
-`<DIRECTORY>/lib' and the necessary header files in
-`<DIRECTORY>/include'. If you specify the `--prefix' option to tell
-Fuse to install itself somewhere other than in /usr/local, that
-directory will automatically be searched as well.
-
-Then just:
-
-$ make
-
-and then
-
-$ make install
-
-if you want to place Fuse into the main directories on your system
-(under /usr/local by default, although you can change this with the
---prefix argument to 'configure'). You'll probably need to be root to
-do this bit.
-
-Once you've got Fuse configured and built, read the man page :-)
-
-Note that if you're using version of Fuse from Subversion rather than
-one of the released tarballs, you'll need to run `autogen.sh' before
-running 'configure' for the first time.
-
-Building the OS X version of Fuse
----------------------------------
-
-The native Cocoa port by Fredrick Meunier <fredm@spamcop.net> comes as
-a set of Xcode projects for libgcrypt, libspectrum and Fuse itself.
-
-Building the Wii version of Fuse
---------------------------------
-
-You'll need to have the standard Wii homebrew toolchain installed; see
-eg <http://wiibrew.org/wiki/DevkitPro> for some information on setting
-this up.
-
-After that, make sure the dev tools are in your path (export
-PATH=$PATH:$DEVKITPPC/bin) and that a Wii version of libspectrum has been
-built and installed.
-
-Then, use this configure line:
-
-./configure --target=powerpc-gekko --host=powerpc-gekko \
-	    --with-wii \
-	    --without-libxml2 --without-libiconv --without-gpm \
-	    --without-x --without-glib \
-	    CFLAGS="-g -I$DEVKITPPC/include -I$DEVKITPRO/libogc/include -DGEKKO" \
-	    LDFLAGS="-g -mrvl -mcpu=750 -meabi -mhard-float \
-                     -Wl,-Map,fuse.elf.map -L$DEVKITPPC/lib \
-                     -L$DEVKITPRO/libogc/lib/wii" \
-            LIBS="-lfat -lwiiuse -lbte -logc -lm"
-
-Finally, to build, use this line:
-
-EXEEXT=".elf" make -e
-
-This should build fuse.elf, which you can run on your Wii via the usual
-methods.
-
-Building the Win32 version of Fuse on Linux
---------------------------------
-
-You'll need to have the standard MinGW programming tool set. e.g. on Debian
-`apt-get install mingw32 mingw-binutils mingw32-runtime'
- <http://www.mingw.org/>
-
-First, have to compile libspectrum:
-
-./configure --host=i586-mingw32msvc --without-libaudiofile --without-zlib \
-	    --without-libgcrypt --without-bzip2 --without-glib --prefix=`pwd`
-make install
-
-This should compile libspectrum without any external lib, and `install' into the
-source directory. All of the external libs needed by libspectrum and fuse
-compile with successfully with MingGW environment - in case of problems
-with compiling any of the libs please refer to the lib's homepage for help.
-
-Then, compile fuse:
-
-./configure --host=i586-mingw32msvc --without-glib --prefix=`pwd` \
-	    --with-libspectrum-prefix=`pwd`/../libspectrum --with-win32 \
-	    --without-libxml2 --without-x
-make
-
-You have to use the real path of libspectrum with `--with-libspectrum-prefix='.
-This should build `fuse.exe' without any external lib, but you can run it on
-Windows or Linux (with Wine).
-
-Note: you need `libspectrum-7.dll' and the `roms' directory and the `lib'
-  directory to `fuse' run perfectly. You may copy this file and directories
-  into that directory where `fuse.exe' exists. On windows you may need to
-  copy all files from `lib/uncompressed' into `lib'.
-  With wine you need `fltmgr.sys' in Windows `system32' directory. (e.g.:
-  ~/.wine/c_drive/windows/system32).
+See the file `INSTALL' for more detailed information.
 
 Closing comments
 ----------------
@@ -214,6 +105,6 @@ Usenet newsgroup `comp.sys.sinclair' or the World of Spectrum forums
 <http://www.worldofspectrum.org/forums/>.
 
 Philip Kendall <philip-fuse@shadowmagic.org.uk>
-28 March 2011
+18th May, 2013
 
-$Id: README 4329 2011-03-27 22:26:07Z pak21 $
+$Id: README 4955 2013-05-17 18:53:43Z pak21 $

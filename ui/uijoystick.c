@@ -1,7 +1,7 @@
 /* uijoystick.c: Joystick emulation (using libjsw)
    Copyright (c) 2003-2004 Darren Salt, Philip Kendall
 
-   $Id: uijoystick.c 4095 2009-10-05 13:07:10Z fredm $
+   $Id: uijoystick.c 4915 2013-04-07 05:32:09Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 #include <config.h>
 
 #include "input.h"
-#include "joystick.h"
 #include "uijoystick.h"
 
 #if defined USE_JOYSTICK && defined HAVE_JSW_H
@@ -214,7 +213,7 @@ poll_joystick( int which )
   event.types.joystick.which = which;
 
   buttons = joystick->total_buttons;
-  if( buttons > 10 ) buttons = 10;	/* We support 'only' 10 fire buttons */
+  if( buttons > 15 ) buttons = 15;	/* We support 'only' 15 fire buttons */
 
   for( i = 0; i < buttons; i++ ) {
 

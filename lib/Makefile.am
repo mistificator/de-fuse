@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2004 Philip Kendall
 
-## $Id: Makefile.am 4154 2010-08-31 14:14:34Z fredm $
+## $Id: Makefile.am 4624 2012-01-09 20:59:35Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -61,6 +61,10 @@ EXTRA_DIST = $(FILES) \
 	compressed/tape_scorpion.szx \
 	compressed/tape_se.szx \
 	compressed/tape_ts2068.szx \
+ 	tests/fatware-success.hdf.bz2 \
+ 	tests/idedos-success.hdf.bz2 \
+        tests/success.mdr \
+	tests/success.udi \
 	uncompressed/disk_plus3.szx \
 	uncompressed/tape_128.szx \
 	uncompressed/tape_16.szx \

@@ -1,7 +1,7 @@
 /* input.c: generalised input events layer for Fuse
    Copyright (c) 2004 Philip Kendall
 
-   $Id: input.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: input.c 4915 2013-04-07 05:32:09Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
 
 #include "fuse.h"
 #include "input.h"
-#include "joystick.h"
 #include "keyboard.h"
+#include "peripherals/joystick.h"
 #include "settings.h"
 #include "snapshot.h"
 #include "tape.h"
@@ -159,6 +159,11 @@ get_fire_button_key( int which, input_key button )
     case INPUT_JOYSTICK_FIRE_8 : return settings_current.joystick_1_fire_8;
     case INPUT_JOYSTICK_FIRE_9 : return settings_current.joystick_1_fire_9;
     case INPUT_JOYSTICK_FIRE_10: return settings_current.joystick_1_fire_10;
+    case INPUT_JOYSTICK_FIRE_11: return settings_current.joystick_1_fire_11;
+    case INPUT_JOYSTICK_FIRE_12: return settings_current.joystick_1_fire_12;
+    case INPUT_JOYSTICK_FIRE_13: return settings_current.joystick_1_fire_13;
+    case INPUT_JOYSTICK_FIRE_14: return settings_current.joystick_1_fire_14;
+    case INPUT_JOYSTICK_FIRE_15: return settings_current.joystick_1_fire_15;
     default: break;
     }
     break;
@@ -175,6 +180,11 @@ get_fire_button_key( int which, input_key button )
     case INPUT_JOYSTICK_FIRE_8 : return settings_current.joystick_2_fire_8;
     case INPUT_JOYSTICK_FIRE_9 : return settings_current.joystick_2_fire_9;
     case INPUT_JOYSTICK_FIRE_10: return settings_current.joystick_2_fire_10;
+    case INPUT_JOYSTICK_FIRE_11: return settings_current.joystick_2_fire_11;
+    case INPUT_JOYSTICK_FIRE_12: return settings_current.joystick_2_fire_12;
+    case INPUT_JOYSTICK_FIRE_13: return settings_current.joystick_2_fire_13;
+    case INPUT_JOYSTICK_FIRE_14: return settings_current.joystick_2_fire_14;
+    case INPUT_JOYSTICK_FIRE_15: return settings_current.joystick_2_fire_15;
     default: break;
     }
     break;
@@ -200,7 +210,7 @@ do_joystick( const input_event_joystick_t *joystick_event, int press )
 #ifndef GEKKO /* Home button opens the menu on Wii */
   switch( joystick_event->button ) {
   case INPUT_JOYSTICK_FIRE_2:
-    if( press ) ui_widget_keyhandler( INPUT_KEY_F1 );
+    if( press ) ui_popup_menu( INPUT_KEY_F1 );
     break;
 
   default: break;		/* Remove gcc warning */

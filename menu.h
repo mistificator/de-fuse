@@ -1,7 +1,7 @@
 /* menu.h: general menu callbacks
    Copyright (c) 2004 Philip Kendall
 
-   $Id: menu.h 4159 2010-09-13 11:51:13Z fredm $
+   $Id: menu.h 4835 2012-12-31 15:35:45Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,11 +34,13 @@
 
 #ifdef UI_GTK
 
+#include "compat.h"
 #include <gtk/gtk.h>
 
-#define MENU_CALLBACK( name ) void name( GtkWidget *widget, gpointer data )
+#define MENU_CALLBACK( name ) \
+  void name( GtkAction *gtk_action GCC_UNUSED, gpointer data GCC_UNUSED )
 #define MENU_CALLBACK_WITH_ACTION( name ) \
-  void name( gpointer data, guint action, GtkWidget *widget )
+  void name( GtkAction *gtk_action GCC_UNUSED, guint action )
 
 #else			/* #ifdef UI_GTK */
 
@@ -61,7 +63,8 @@ MENU_CALLBACK( menu_file_recording_play );
 MENU_CALLBACK( menu_file_recording_stop );
 MENU_CALLBACK( menu_file_aylogging_stop );
 MENU_CALLBACK( menu_file_openscrscreenshot );
-MENU_CALLBACK( menu_file_movies_stopmovierecording );
+MENU_CALLBACK( menu_file_movie_stop );
+MENU_CALLBACK( menu_file_movie_pause );
 
 MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_select );
 MENU_CALLBACK( menu_options_filter );
@@ -86,6 +89,7 @@ MENU_DETAIL( menu_tape_detail );
 MENU_CALLBACK_WITH_ACTION( menu_media_insert_new );
 MENU_CALLBACK_WITH_ACTION( menu_media_insert );
 MENU_CALLBACK_WITH_ACTION( menu_media_eject );
+MENU_CALLBACK_WITH_ACTION( menu_media_save );
 MENU_CALLBACK_WITH_ACTION( menu_media_flip );
 MENU_CALLBACK_WITH_ACTION( menu_media_writeprotect );
 
@@ -93,8 +97,8 @@ MENU_CALLBACK_WITH_ACTION( menu_media_if1_rs232 );
 
 MENU_CALLBACK( menu_media_cartridge_timexdock_insert );
 MENU_CALLBACK( menu_media_cartridge_timexdock_eject );
-MENU_CALLBACK( menu_media_cartridge_interfaceii_insert );
-MENU_CALLBACK( menu_media_cartridge_interfaceii_eject );
+MENU_CALLBACK( menu_media_cartridge_interface2_insert );
+MENU_CALLBACK( menu_media_cartridge_interface2_eject );
 
 MENU_CALLBACK_WITH_ACTION( menu_media_ide_insert );
 MENU_CALLBACK_WITH_ACTION( menu_media_ide_commit );
@@ -123,13 +127,15 @@ MENU_CALLBACK( menu_file_aylogging_record );
 MENU_CALLBACK( menu_file_savescreenasscr );
 MENU_CALLBACK( menu_file_savescreenaspng );
 
-MENU_CALLBACK( menu_file_movies_recordmovieasscr );
-MENU_CALLBACK( menu_file_movies_recordmovieaspng );
+MENU_CALLBACK( menu_file_movie_record );
+MENU_CALLBACK( menu_file_movie_record_recordfromrzx );
 
 MENU_CALLBACK( menu_options_general );
 MENU_CALLBACK( menu_options_sound );
-MENU_CALLBACK( menu_options_peripherals );
+MENU_CALLBACK( menu_options_peripherals_general );
+MENU_CALLBACK( menu_options_peripherals_disk );
 MENU_CALLBACK( menu_options_rzx );
+MENU_CALLBACK( menu_options_movie );
 MENU_CALLBACK( menu_options_diskoptions );
 MENU_DETAIL( menu_plus3a_detail );
 MENU_DETAIL( menu_plus3b_detail );
@@ -141,17 +147,20 @@ MENU_DETAIL( menu_opus1_detail );
 MENU_DETAIL( menu_opus2_detail );
 MENU_DETAIL( menu_plusd1_detail );
 MENU_DETAIL( menu_plusd2_detail );
+MENU_DETAIL( menu_disciple1_detail );
+MENU_DETAIL( menu_disciple2_detail );
 MENU_CALLBACK_WITH_ACTION( menu_options_joysticks_select );
 MENU_DETAIL( menu_keyboard_joystick_detail );
 MENU_DETAIL( menu_joystick_1_detail );
 MENU_DETAIL( menu_joystick_2_detail );
 
 MENU_CALLBACK( menu_machine_pause );
-MENU_CALLBACK( menu_machine_reset );
+MENU_CALLBACK_WITH_ACTION( menu_machine_reset );
 MENU_CALLBACK( menu_machine_select );
 MENU_DETAIL( menu_machine_detail );
 MENU_CALLBACK( menu_machine_debugger );
 MENU_CALLBACK( menu_machine_pokefinder );
+MENU_CALLBACK( menu_machine_pokememory );
 MENU_CALLBACK( menu_machine_memorybrowser );
 
 MENU_CALLBACK( menu_help_keyboard );

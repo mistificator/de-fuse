@@ -1,7 +1,7 @@
 /* xdisplay.c: Routines for dealing with drawing the Speccy's screen via Xlib
    Copyright (c) 2000-2005 Philip Kendall, Darren Salt, Gergely Szász
 
-   $Id: xdisplay.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: xdisplay.c 4707 2012-05-25 11:35:23Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@
 #include "fuse.h"
 #include "keyboard.h"
 #include "machine.h"
+#include "peripherals/scld.h"
 #include "screenshot.h"
 #include "settings.h"
 #include "xdisplay.h"
@@ -61,7 +62,8 @@
 #include "ui/scaler/scaler.h"
 #include "ui/ui.h"
 #include "ui/uidisplay.h"
-#include "scld.h"
+
+void xstatusbar_init( int size );
 
 typedef enum {
   MSB_RED = 0,			/* 0RGB */
@@ -157,6 +159,9 @@ static xdisplay_putpixel_t xdisplay_putpixel_15;
 static xdisplay_putpixel_t xdisplay_putpixel_16;
 static xdisplay_putpixel_t xdisplay_putpixel_24;
 
+#include "xpixmaps.c"
+void xstatusbar_overlay();
+
 static libspectrum_word pal_colour[16] = {
   0x0000, 0x0017, 0xb800, 0xb817, 0x05e0, 0x05f7, 0xbde0, 0xbdf7,
   0x0000, 0x001f, 0xf800, 0xf81f, 0x07e0, 0x07ff, 0xffe0, 0xffff,
@@ -194,6 +199,7 @@ xdisplay_init( void )
   if( xdisplay_depth == 8 && xdisplay_allocate_colours8() ) return 1;
   if( xdisplay_allocate_gc( xui_mainWindow,&gc ) ) return 1;
   if( xdisplay_allocate_image() ) return 1;
+  ui_statusbar_update( UI_STATUSBAR_ITEM_TAPE, UI_STATUSBAR_STATE_INACTIVE );
 
   return 0;
 }
@@ -207,7 +213,7 @@ xdisplay_find_visual( void )
   int sel_v = -1;
   int sel_v_depth = -1;
   int sel_v_class = -1;
-    
+
   visual_tmpl.screen = xui_screenNum;
   vis = XGetVisualInfo( display,
                              VisualScreenMask,
@@ -410,7 +416,11 @@ xdisplay_allocate_image( void )
     image = XCreateImage( display, xdisplay_visual,
 		       xdisplay_depth, ZPixmap, 0, NULL,
 		       3 * DISPLAY_ASPECT_WIDTH,
-		       3 * DISPLAY_SCREEN_HEIGHT, 8, 0 );
+		       3 * DISPLAY_SCREEN_HEIGHT + 3 * PIXMAPS_H, 8, 0 );
+/*
+   we allocate extra space after the screen for status bar icons
+   status bar icons total width always smaller than 3xDISPLAY_ASPECT_WIDTH
+*/
     if(!image) {
       fprintf(stderr,"%s: couldn't create image\n",fuse_progname);
       return 1;
@@ -463,7 +473,11 @@ try_shm( void )
 			   xdisplay_depth, ZPixmap,
 			   NULL, &shm_info,
 			   3 * DISPLAY_ASPECT_WIDTH,
-			   3 * DISPLAY_SCREEN_HEIGHT );
+			   3 * DISPLAY_SCREEN_HEIGHT + 3 * PIXMAPS_H);
+/*
+   we allocate extra space after the screen for status bar icons
+   status bar icons total width always smaller than 3xDISPLAY_ASPECT_WIDTH
+*/
   if( !image ) return 0;
 
   /* Get an SHM to work with */
@@ -581,7 +595,7 @@ static void
 register_scalers( void )
 {
   int f = -1;
-  
+
   scaler_register_clear();
   scaler_select_bitformat( 565 );		/* 16bit always */
 
@@ -666,7 +680,7 @@ xdisplay_configure_notify( int width, int height )
 
   /* Else set ourselves to the new height */
   xdisplay_current_size = size;
-  
+
   /* Get a new scaler */
   register_scalers();
 
@@ -727,12 +741,14 @@ uidisplay_frame_end( void )
     updated_rects[0].h = image_height;
   }
 
-  if ( !( ui_widget_level >= 0 ) && num_rects == 0 ) return;
+  if ( !( ui_widget_level >= 0 ) && num_rects == 0 && !status_updated ) return;
 
   last_rect = updated_rects + num_rects;
 
   for( r = updated_rects; r != last_rect; r++ )
     xdisplay_update_rect( r->x, r->y, r->w, r->h );
+  if ( settings_current.statusbar )
+    xstatusbar_overlay();
   num_rects = 0;
   xdisplay_force_full_refresh = 0;
 }
@@ -839,7 +855,6 @@ uidisplay_hotswap_gfx_mode( void )
   image_scale = 4.0 * scaler_get_scaling_factor( current_scaler );
   scaled_image_w = image_width  * image_scale >> 2;
   scaled_image_h = image_height * image_scale >> 2;
-
   if( current_scaler == SCALER_NORMAL )
     xdisplay_update_rect = xdisplay_update_rect_noscale;
   else
@@ -855,6 +870,7 @@ uidisplay_hotswap_gfx_mode( void )
       xdisplay_allocate_colours8();
   }
   xdisplay_setup_rgb_putpixel();
+  xstatusbar_init( xdisplay_current_size );
   display_refresh_all();
   return 0;
 }
@@ -985,6 +1001,41 @@ uidisplay_plot16( int x, int y, libspectrum_word data,
 }
 
 int
+ui_statusbar_update( ui_statusbar_item item, ui_statusbar_state state )
+{
+  switch( item ) {
+
+  case UI_STATUSBAR_ITEM_DISK:
+    pixmap_disk_state = state;
+    status_updated = 1;
+    return 0;
+
+  case UI_STATUSBAR_ITEM_PAUSED:
+    /* We don't support pausing this version of Fuse */
+    return 0;
+
+  case UI_STATUSBAR_ITEM_TAPE:
+    pixmap_tape_state = state;
+    status_updated = 1;
+    return 0;
+
+  case UI_STATUSBAR_ITEM_MICRODRIVE:
+    pixmap_mdr_state = state;
+    status_updated = 1;
+    return 0;
+
+  case UI_STATUSBAR_ITEM_MOUSE:
+    /* We don't support showing a grab icon */
+    return 0;
+
+  }
+
+  ui_error( UI_ERROR_ERROR, "Attempt to update unknown statusbar item %d",
+            item );
+  return 1;
+}
+
+int
 ui_statusbar_update_speed( float speed )
 {
   char *list[2];
@@ -997,6 +1048,7 @@ ui_statusbar_update_speed( float speed )
 
   XStringListToTextProperty( list, 1, &text);
   XSetWMName( display, xui_mainWindow, &text );
+  XFree( text.value );
 
   return 0;
 }

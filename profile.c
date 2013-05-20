@@ -1,7 +1,7 @@
 /* profile.c: Z80 profiler
    Copyright (c) 2005 Philip Kendall
 
-   $Id: profile.c 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: profile.c 4640 2012-01-21 13:26:35Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,12 +55,10 @@ static module_info_t profile_module_info = {
 
 };
 
-int
+void
 profile_init( void )
 {
   module_register( &profile_module_info );
-
-  return 0;
 }
 
 static void

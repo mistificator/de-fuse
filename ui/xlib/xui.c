@@ -1,7 +1,7 @@
 /* xui.c: Routines for dealing with the Xlib user interface
    Copyright (c) 2000-2003 Philip Kendall
 
-   $Id: xui.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: xui.c 4667 2012-02-14 11:44:42Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 #include "display.h"
 #include "fuse.h"
 #include "keyboard.h"
+#include "menu.h"
 #include "settings.h"
 #include "ui/ui.h"
 #include "ui/uidisplay.h"
@@ -146,6 +147,12 @@ ui_init( int *argc, char ***argv )
   XSetWMProperties(display, xui_mainWindow, &windowName, &iconName,
 		   *argv, *argc, sizeHints, wmHints, classHint);
 
+  XFree( windowName.value );
+  XFree( iconName.value );
+  XFree( sizeHints );
+  XFree( wmHints );
+  XFree( classHint );
+
   /* Ask the server to use its backing store for this window */
 
   windowFlags=CWBackingStore;
@@ -195,7 +202,10 @@ int ui_event(void)
 {
   XEvent event;
 
-  while(XCheckMaskEvent(display,~NoEventMask,&event)) {
+  XFlush( display );
+  while( XEventsQueued( display, QueuedAlready ) ) {
+    XNextEvent( display, &event );
+
     switch(event.type) {
     case ConfigureNotify:
       xdisplay_configure_notify(event.xconfigure.width,
@@ -232,7 +242,12 @@ int ui_event(void)
       xkeyboard_keyrelease(&(event.xkey));
       break;
     case ClientMessage:
-      if( event.xclient.data.l[0] == delete_window_atom ) fuse_exiting = 1;
+      if( event.xclient.format == 32 &&
+          event.xclient.data.l[0] == delete_window_atom ) {
+        fuse_emulation_pause();
+        menu_file_exit(0);
+        fuse_emulation_unpause();
+      }
       break;
     }
   }

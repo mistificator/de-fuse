@@ -3,7 +3,7 @@
 # options.pl: generate options dialog boxes
 # Copyright (c) 2001-2008 Philip Kendall, Fredrick Meunier
 
-# $Id: options.pl 4103 2009-11-21 10:16:36Z fredm $
+# $Id: options.pl 4913 2013-03-25 11:00:51Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ print Fuse::GPL( 'options.c: options dialog boxes',
 
 #include "display.h"
 #include "fuse.h"
+#include "options.h"
 #include "options_internals.h"
 #include "periph.h"
 #include "ui/widget/widget_internals.h"
@@ -149,7 +150,7 @@ CODE
 	    }
 		print << "CODE";
 int
-option_enumerate_$_->{name}_$widget->{value}() {
+option_enumerate_$_->{name}_$widget->{value}( void ) {
   return option_enumerate_combo( widget_$widget->{value}_combo,
 				 settings_current.$widget->{value},
 				 $combo_default{$widget->{value}} );
@@ -368,7 +369,7 @@ widget_options_finish( widget_finish_state finished )
   if( finished == WIDGET_FINISHED_OK ) {
     error = settings_copy( &settings_current, &widget_options_settings );
     /* Bring the peripherals list into sync with the new options */
-    periph_update();
+    periph_posthook();
     /* make the needed UI changes */
     uidisplay_hotswap_gfx_mode();
   }
@@ -468,14 +469,13 @@ CODE
 static void
 widget_$widget->{value}_click( void )
 \{
-  int error;
   widget_text_t text_data;
 
   text_data.title = "$title";
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.$widget->{value} );
-  error = widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
 
   if( widget_text_text ) \{
     widget_options_settings.$widget->{value} = atoi( widget_text_text );
@@ -616,9 +616,6 @@ widget_$_->{name}_keyhandler( input_key key )
   case INPUT_JOYSTICK_FIRE_1:
     widget_end_all( WIDGET_FINISHED_OK );
     widget_$_->{name}_running = 0;
-CODE
-    print "    $_->{posthook}();\n" if $_->{posthook};
-    print << "CODE";
     display_refresh_all();
     return;
     break;

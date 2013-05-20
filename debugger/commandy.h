@@ -1,10 +1,8 @@
+/* A Bison parser, made by GNU Bison 2.5.  */
 
-/* A Bison parser, made by GNU Bison 2.4.1.  */
-
-/* Skeleton interface for Bison's Yacc-like parsers in C
+/* Bison interface for Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,12 +67,11 @@
      STEP = 285,
      TIME = 286,
      WRITE = 287,
-     PAGE = 288,
-     DEBUGGER_REGISTER = 289,
-     NUMBER = 290,
-     STRING = 291,
-     VARIABLE = 292,
-     DEBUGGER_ERROR = 293
+     DEBUGGER_REGISTER = 288,
+     NUMBER = 289,
+     STRING = 290,
+     VARIABLE = 291,
+     DEBUGGER_ERROR = 292
    };
 #endif
 /* Tokens.  */
@@ -108,12 +105,11 @@
 #define STEP 285
 #define TIME 286
 #define WRITE 287
-#define PAGE 288
-#define DEBUGGER_REGISTER 289
-#define NUMBER 290
-#define STRING 291
-#define VARIABLE 292
-#define DEBUGGER_ERROR 293
+#define DEBUGGER_REGISTER 288
+#define NUMBER 289
+#define STRING 290
+#define VARIABLE 291
+#define DEBUGGER_ERROR 292
 
 
 
@@ -122,7 +118,7 @@
 typedef union YYSTYPE
 {
 
-/* Line 1676 of yacc.c  */
+/* Line 2068 of yacc.c  */
 #line 46 "commandy.y"
 
 
@@ -134,15 +130,16 @@ typedef union YYSTYPE
 
   debugger_breakpoint_type bptype;
   debugger_breakpoint_life bplife;
-  struct { int value1; libspectrum_word value2; } pair;
+  struct { libspectrum_word mask, value; } port;
+  struct { int source; int page; int offset; } location;
 
   debugger_expression* exp;
 
 
 
 
-/* Line 1676 of yacc.c  */
-#line 146 "commandy.h"
+/* Line 2068 of yacc.c  */
+#line 143 "commandy.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

@@ -1,7 +1,7 @@
 /* command.c: Parse a debugger command
    Copyright (c) 2002-2008 Philip Kendall
 
-   $Id: command.c 4125 2010-05-06 22:18:50Z pak21 $
+   $Id: command.c 4730 2012-09-03 12:50:19Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 #include "debugger_internals.h"
 #include "mempool.h"
 #include "ui/ui.h"
+#include "utils.h"
 #include "z80/z80.h"
 #include "z80/z80_macros.h"
 
@@ -46,18 +47,14 @@ int yyparse( void );
 int yywrap( void );
 
 /* Evaluate the debugger command given in 'command' */
-int
+void
 debugger_command_evaluate( const char *command )
 {
-  if( !command ) return 0;
+  if( !command ) return;
 
   if( command_buffer ) free( command_buffer );
 
-  command_buffer = strdup( command );
-  if( !command_buffer ) {
-    ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-    return 1;
-  }
+  command_buffer = utils_safe_strdup( command );
 
   /* Start parsing at the start of the given command */
   command_ptr = command_buffer;
@@ -69,8 +66,6 @@ debugger_command_evaluate( const char *command )
   mempool_free( debugger_memory_pool );
 
   ui_debugger_update();
-
-  return 0;
 }
 
 /* Utility functions called from the flex scanner */
@@ -135,6 +130,9 @@ debugger_register_hash( const char *name )
     case 0x7063:		/* PC */
     case 0x6978:		/* IX */
     case 0x6979:		/* IY */
+    case 0x696d:		/* IM */
+    case 0x69666631:		/* IFF1 */
+    case 0x69666632:		/* IFF2 */
       return hash;
 
     default: return -1;
@@ -189,6 +187,11 @@ debugger_register_get( int which )
   case 0x6978: return IX;
   case 0x6979: return IY;
 
+   /* interrupt flags */
+  case 0x696d: return IM;
+  case 0x69666631: return IFF1;
+  case 0x69666632: return IFF2;
+
   default:
     ui_error( UI_ERROR_ERROR, "attempt to get unknown register '%d'", which );
     return 0;
@@ -234,6 +237,11 @@ debugger_register_set( int which, libspectrum_word value )
     case 0x6978: IX = value; break;
     case 0x6979: IY = value; break;
 
+     /* interrupt flags */
+    case 0x696d: if( value >= 0 && value <=2 ) IM = value; break;
+    case 0x69666631: IFF1 = !!value; break;
+    case 0x69666632: IFF2 = !!value; break;
+
   default:
     ui_error( UI_ERROR_ERROR, "attempt to set unknown register '%d'", which );
     break;
@@ -278,6 +286,11 @@ debugger_register_text( int which )
   case 0x7063: return "PC";
   case 0x6978: return "IX";
   case 0x6979: return "IY";
+
+   /* interrupt flags */
+  case 0x696d: return "IM";
+  case 0x69666631: return "IFF1";
+  case 0x69666632: return "IFF2";
 
   default:
     ui_error( UI_ERROR_ERROR, "attempt to get unknown register '%d'", which );

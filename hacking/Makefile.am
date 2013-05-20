@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
-## Copyright (c) 2002-2008 Philip Kendall
+## Copyright (c) 2002-2011 Philip Kendall
 
-## $Id: Makefile.am 3873 2008-12-03 22:45:12Z pak21 $
+## $Id: Makefile.am 4663 2012-02-11 12:48:36Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -23,5 +23,14 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-EXTRA_DIST = coding_style.txt cvs-tags implementation_notes.txt \
-	tc2048_tech_notes.txt ui.txt
+EXTRA_DIST = \
+	coding_style.txt \
+	cvs-tags \
+	implementation_notes.txt \
+	input.txt \
+	peripheral_tests.txt \
+	sound.txt \
+	spectranet.txt \
+	tc2048_tech_notes.txt \
+	timer.txt \
+	ui.txt

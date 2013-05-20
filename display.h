@@ -1,7 +1,7 @@
 /* display.h: Routines for printing the Spectrum's screen
    Copyright (c) 1999-2006 Philip Kendall
 
-   $Id: display.h 4038 2009-06-24 14:25:23Z fredm $
+   $Id: display.h 4664 2012-02-12 11:51:01Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -66,6 +66,9 @@ extern int display_ui_initialised;
 
 extern libspectrum_byte display_lores_border;
 extern libspectrum_byte display_hires_border;
+
+extern libspectrum_dword
+display_last_screen[ DISPLAY_SCREEN_WIDTH_COLS * DISPLAY_SCREEN_HEIGHT ];
 
 /* Offsets as to where the data and the attributes for each pixel
    line start */

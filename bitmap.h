@@ -1,7 +1,7 @@
 /* bitmap.h: Bitmap routines
    Copyright (c) 2007 Stuart Brady
 
-   $Id: bitmap.h 3218 2007-10-21 23:25:23Z zubzero $
+   $Id: bitmap.h 4343 2011-04-04 19:32:23Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
    Philip: philip-fuse@shadowmagic.org.uk
 
-   Stuart: sdbrady@ntlworld.com
+   Stuart: stuart.brady@gmail.com
 
 */
 

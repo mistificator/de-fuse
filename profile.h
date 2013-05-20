@@ -1,7 +1,7 @@
 /* profile.h: Z80 profiler
    Copyright (c) 2005 Philip Kendall
 
-   $Id: profile.h 3136 2007-09-01 18:33:44Z pak21 $
+   $Id: profile.h 4640 2012-01-21 13:26:35Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 extern int profile_active;
 
-int profile_init( void );
+void profile_init( void );
 void profile_start( void );
 void profile_map( libspectrum_word pc );
 void profile_frame( libspectrum_dword frame_length );

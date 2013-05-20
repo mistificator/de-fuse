@@ -1,7 +1,7 @@
 /* psg.c: recording AY chip output to .psg files
    Copyright (c) 2003 Matthew Westcott, Philip Kendall
 
-   $Id: psg.c 2889 2007-05-26 17:45:08Z zubzero $
+   $Id: psg.c 4635 2012-01-19 23:39:04Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,11 +45,10 @@ static FILE *psg_file;
 
 static int write_frame_separator( void );
 
-int
+void
 psg_init( void )
 {
   psg_recording = 0;
-  return 0;
 }
 
 int

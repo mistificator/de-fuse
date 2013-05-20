@@ -1,7 +1,7 @@
 /* mempool.c: pooled system memory
    Copyright (c) 2008 Philip Kendall
 
-   $Id: mempool.c 3922 2008-12-31 19:01:31Z zubzero $
+   $Id: mempool.c 4717 2012-06-07 03:54:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,23 +40,16 @@ static GArray *memory_pools;
 
 const int MEMPOOL_UNTRACKED = -1;
 
-int
+void
 mempool_init( void )
 {
   memory_pools = g_array_new( FALSE, FALSE, sizeof( GArray* ) );
-  if( !memory_pools ) {
-    fprintf( stderr, "%s: error initialising memory pools\n", fuse_progname );
-    return 1;
-  }
-
-  return 0;
 }
 
 int
 mempool_register_pool( void )
 {
   GArray *pool = g_array_new( FALSE, FALSE, sizeof( void* ) );
-  if( !pool ) return -1;
 
   g_array_append_val( memory_pools, pool );
 
@@ -68,11 +61,11 @@ mempool_alloc( int pool, size_t size )
 {
   void *ptr;
 
-  if( pool == MEMPOOL_UNTRACKED ) return malloc( size );
+  if( pool == MEMPOOL_UNTRACKED ) return libspectrum_malloc( size );
 
   if( pool < 0 || pool >= memory_pools->len ) return NULL;
 
-  ptr = malloc( size );
+  ptr = libspectrum_malloc( size );
   if( !ptr ) return NULL;
 
   g_array_append_val( g_array_index( memory_pools, GArray*, pool ), ptr );
@@ -100,9 +93,29 @@ mempool_free( int pool )
 
   GArray *p = g_array_index( memory_pools, GArray*, pool );
 
-  for( i = 0; i < p->len; i++ ) free( g_array_index( p, void*, i ) );
+  for( i = 0; i < p->len; i++ )
+    libspectrum_free( g_array_index( p, void*, i ) );
 
   g_array_set_size( p, 0 );
+}
+
+/* Tidy-up function called at end of emulation */
+void
+mempool_end( void )
+{
+  int i;
+  GArray *pool;
+
+  if( !memory_pools ) return;
+
+  for( i = 0; i < memory_pools->len; i++ ) {
+    pool = g_array_index( memory_pools, GArray *, i );
+
+    g_array_free( pool, TRUE );
+  }
+
+  g_array_free( memory_pools, TRUE );
+  memory_pools = NULL;
 }
 
 /* Unit test helper routines */

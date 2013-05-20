@@ -1,7 +1,7 @@
 /* gtkinternals.h: stuff internal to the GTK+ UI
    Copyright (c) 2003-2005 Philip Kendall
 
-   $Id: gtkinternals.h 4020 2009-05-18 11:33:30Z fredm $
+   $Id: gtkinternals.h 4723 2012-07-08 13:26:15Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -73,13 +73,13 @@ GtkAccelGroup* gtkstock_add_accel_group( GtkWidget *widget );
 
 /* Set modifier=0 to use the first default accel key.
  * Set modifier_alt=0 to use the second default accel key.
- * For either, GDK_VoidSymbol means "no accel key".
+ * For either, GDK_KEY_VoidSymbol means "no accel key".
  */
 typedef struct gtkstock_button {
   gchar *label;
-  GtkSignalFunc action;		/* "clicked" func; data is actiondata. */
+  GCallback action;		/* "clicked" func; data is actiondata. */
   gpointer actiondata;
-  GtkSignalFunc destroy;	/* "clicked" func; data is parent widget */
+  GCallback destroy;	/* "clicked" func; data is parent widget */
   guint shortcut;
   GdkModifierType modifier;     /* primary shortcut */
   guint shortcut_alt;
@@ -96,8 +96,8 @@ typedef struct gtkstock_button {
  * If the target widget is a GtkDialog, then created buttons are put in its
  * action area.
  *
- * If the label begins with "!", then gtk_signal_connect_object, rather than
- * gtk_signal_connect, is used to connect the action function.
+ * If the label begins with "!", then g_signal_connect_swapped, rather than
+ * g_signal_connect, is used to connect the action function.
  */
 GtkWidget* gtkstock_create_button( GtkWidget *widget, GtkAccelGroup *accel,
 				   const gtkstock_button *btn );
@@ -106,17 +106,17 @@ gtkstock_create_buttons( GtkWidget *widget, GtkAccelGroup *accel,
 			 const gtkstock_button *buttons, size_t count );
 GtkAccelGroup* gtkstock_create_ok_cancel( GtkWidget *widget,
 					  GtkAccelGroup *accel,
-	/* for OK button -> */	          GtkSignalFunc action,
+	/* for OK button -> */	          GCallback action,
 				          gpointer actiondata,
-	/* for both buttons -> */         GtkSignalFunc destroy );
+	/* for both buttons -> */         GCallback destroy );
 GtkAccelGroup* gtkstock_create_close( GtkWidget *widget, GtkAccelGroup *accel,
-				      GtkSignalFunc destroy,
+				      GCallback destroy,
 				      gboolean esconly );
 	/* destroy==NULL => use DEFAULT_DESTROY */
 
-#define DEFAULT_DESTROY ( GTK_SIGNAL_FUNC( gtkui_destroy_widget_and_quit ) )
+#define DEFAULT_DESTROY ( G_CALLBACK( gtkui_destroy_widget_and_quit ) )
 
-GtkWidget *gtkstock_dialog_new( const gchar *title, GtkSignalFunc destroy );
+GtkWidget *gtkstock_dialog_new( const gchar *title, GCallback destroy );
 
 typedef PangoFontDescription *gtkui_font;
 
@@ -128,23 +128,23 @@ void gtkui_set_font( GtkWidget *widget, gtkui_font font );
  * The menu data (menu_data.c)
  */
 
-extern GtkItemFactoryEntry gtkui_menu_data[];
+extern GtkActionEntry gtkui_menu_data[];
 extern guint gtkui_menu_data_size;
 
 /*
  * The icon pixmaps (pixmaps.c)
  */
-extern char *gtkpixmap_tape_inactive[];
-extern char *gtkpixmap_tape_active[];
-extern char *gtkpixmap_mdr_inactive[];
-extern char *gtkpixmap_mdr_active[];
-extern char *gtkpixmap_disk_inactive[];
-extern char *gtkpixmap_disk_active[];
-extern char *gtkpixmap_pause_inactive[];
-extern char *gtkpixmap_pause_active[];
-extern char *gtkpixmap_tape_marker[];
-extern char *gtkpixmap_mouse_inactive[];
-extern char *gtkpixmap_mouse_active[];
+extern const char *gtkpixmap_tape_inactive[];
+extern const char *gtkpixmap_tape_active[];
+extern const char *gtkpixmap_mdr_inactive[];
+extern const char *gtkpixmap_mdr_active[];
+extern const char *gtkpixmap_disk_inactive[];
+extern const char *gtkpixmap_disk_active[];
+extern const char *gtkpixmap_pause_inactive[];
+extern const char *gtkpixmap_pause_active[];
+extern const char *gtkpixmap_tape_marker[];
+extern const char *gtkpixmap_mouse_inactive[];
+extern const char *gtkpixmap_mouse_active[];
 
 /*
  * Statusbar routines (statusbar.c)
@@ -152,12 +152,13 @@ extern char *gtkpixmap_mouse_active[];
 
 int gtkstatusbar_create( GtkBox *parent );
 int gtkstatusbar_set_visibility( int visible );
+void gtkstatusbar_update_machine( const char *name );
 
 /*
  * Scrolling for GtkCList widgets
  */
 
-void gtkui_scroll_connect( GtkCList *clist, GtkAdjustment *adj );
+void gtkui_scroll_connect( GtkTreeView *list, GtkAdjustment *adj );
 
 /*
  * Dialog box reset

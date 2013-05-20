@@ -1,7 +1,7 @@
 /* disassemble.c: Fuse's disassembler
    Copyright (c) 2002-2003 Darren Salt, Philip Kendall
 
-   $Id: disassemble.c 4087 2009-09-02 13:42:00Z fredm $
+   $Id: disassemble.c 4547 2011-09-27 11:50:15Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -531,7 +531,11 @@ disassemble_ed( libspectrum_word address, char *buffer, size_t buflen,
       break;
 
     case 0x05: case 0x0d:
-      snprintf( buffer, buflen, "RETN" ); *length = 1;
+      if( b == 0x4d ) {
+	snprintf( buffer, buflen, "RETI" ); *length = 1;
+      } else {
+	snprintf( buffer, buflen, "RETN" ); *length = 1;
+      }
       break;
 
     case 0x06: case 0x0e:

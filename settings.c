@@ -73,6 +73,7 @@ settings_info settings_default = {
   /* auto_load */ 1,
   /* autosave_settings */ 0,
   /* beta128 */ 0,
+  /* beta128_48boot */ 1,
   /* betadisk_file */ NULL,
   /* bw_tv */ 0,
   /* competition_code */ 0,
@@ -81,6 +82,8 @@ settings_info settings_default = {
   /* dck_file */ NULL,
   /* debugger_command */ NULL,
   /* detect_loader */ 1,
+  /* disciple */ 0,
+  /* discipledisk_file */ NULL,
   /* disk_ask_merge */ 1,
   /* disk_try_merge */ NULL,
   /* divide_enabled */ 0,
@@ -94,6 +97,8 @@ settings_info settings_default = {
   /* drive_beta128b_type */ NULL,
   /* drive_beta128c_type */ NULL,
   /* drive_beta128d_type */ NULL,
+  /* drive_disciple1_type */ NULL,
+  /* drive_disciple2_type */ NULL,
   /* drive_opus1_type */ NULL,
   /* drive_opus2_type */ NULL,
   /* drive_plus3a_type */ NULL,
@@ -116,6 +121,11 @@ settings_info settings_default = {
   /* joystick_1 */ NULL,
   /* joystick_1_fire_1 */ 4096,
   /* joystick_1_fire_10 */ 4096,
+  /* joystick_1_fire_11 */ 4096,
+  /* joystick_1_fire_12 */ 4096,
+  /* joystick_1_fire_13 */ 4096,
+  /* joystick_1_fire_14 */ 4096,
+  /* joystick_1_fire_15 */ 4096,
   /* joystick_1_fire_2 */ 4096,
   /* joystick_1_fire_3 */ 4096,
   /* joystick_1_fire_4 */ 4096,
@@ -128,6 +138,11 @@ settings_info settings_default = {
   /* joystick_2 */ NULL,
   /* joystick_2_fire_1 */ 4096,
   /* joystick_2_fire_10 */ 4096,
+  /* joystick_2_fire_11 */ 4096,
+  /* joystick_2_fire_12 */ 4096,
+  /* joystick_2_fire_13 */ 4096,
+  /* joystick_2_fire_14 */ 4096,
+  /* joystick_2_fire_15 */ 4096,
   /* joystick_2_fire_2 */ 4096,
   /* joystick_2_fire_3 */ 4096,
   /* joystick_2_fire_4 */ 4096,
@@ -157,6 +172,9 @@ settings_info settings_default = {
   /* mdr_random_len */ 1,
   /* melodik */ 0,
   /* mouse_swap_buttons */ 0,
+  /* movie_compr */ NULL,
+  /* movie_start */ NULL,
+  /* movie_stop_after_rzx */ 1,
   /* opus */ 0,
   /* opusdisk_file */ NULL,
   /* pal_tv2x */ 0,
@@ -175,6 +193,7 @@ settings_info settings_default = {
   /* rom_16 */ "48.rom",
   /* rom_48 */ "48.rom",
   /* rom_beta128 */ "trdos.rom",
+  /* rom_disciple */ "disciple.rom",
   /* rom_interface_i */ "if1-2.rom",
   /* rom_opus */ "opus.rom",
   /* rom_pentagon1024_0 */ "128p-0.rom",
@@ -209,6 +228,7 @@ settings_info settings_default = {
   /* rom_scorpion_3 */ "256s-3.rom",
   /* rom_spec_se_0 */ "se-0.rom",
   /* rom_spec_se_1 */ "se-1.rom",
+  /* rom_speccyboot */ "speccyboot-1.4.rom",
   /* rom_tc2048 */ "tc2048.rom",
   /* rom_tc2068_0 */ "tc2068-0.rom",
   /* rom_tc2068_1 */ "tc2068-1.rom",
@@ -231,10 +251,15 @@ settings_info settings_default = {
   /* sound_freq */ 32000,
   /* sound_load */ 1,
   /* speaker_type */ NULL,
+  /* speccyboot */ 0,
+  /* speccyboot_tap */ "tap0",
+  /* specdrum */ 0,
+  /* spectranet */ 0,
+  /* spectranet_disable */ 0,
   /* start_machine */ "48",
   /* start_scaler_mode */ "normal",
   /* statusbar */ 1,
-  /* stereo_ay */ 0,
+  /* stereo_ay */ NULL,
   /* strict_aspect_hint */ 0,
   /* svga_modes */ NULL,
   /* tape_file */ NULL,
@@ -242,6 +267,7 @@ settings_info settings_default = {
   /* unittests */ 0,
   /* volume_ay */ 100,
   /* volume_beeper */ 100,
+  /* volume_specdrum */ 100,
   /* writable_roms */ 0,
   /* zxatasp_active */ 0,
   /* zxatasp_master_file */ NULL,
@@ -251,6 +277,7 @@ settings_info settings_default = {
   /* zxcf_active */ 0,
   /* zxcf_pri_file */ NULL,
   /* zxcf_upload */ 0,
+  /* zxprinter */ 1,
 #line 118"../settings.pl"
   /* show_help */ 0,
   /* show_version */ 0,
@@ -329,7 +356,10 @@ read_config_file( settings_info *settings )
     return 1;
   }
 
-  if( parse_xml( doc, settings ) ) { xmlFreeDoc( doc ); return 1; }
+  if( parse_xml( doc, settings ) ) {
+    xmlFreeDoc( doc );
+    return 1;
+  }
 
   xmlFreeDoc( doc );
 
@@ -386,11 +416,18 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "beta12848boot" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->beta128_48boot = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "betadisk" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->betadisk_file );
-        settings->betadisk_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->betadisk_file );
+        settings->betadisk_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -425,16 +462,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "dock" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->dck_file );
-        settings->dck_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->dck_file );
+        settings->dck_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "debuggercommand" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->debugger_command );
-        settings->debugger_command = strdup( (char*)xmlstring );
+        libspectrum_free( settings->debugger_command );
+        settings->debugger_command = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -442,6 +479,21 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
         settings->detect_loader = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "disciple" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->disciple = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "discipledisk" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->discipledisk_file );
+        settings->discipledisk_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -455,8 +507,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "disktrymerge" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->disk_try_merge );
-        settings->disk_try_merge = strdup( (char*)xmlstring );
+        libspectrum_free( settings->disk_try_merge );
+        settings->disk_try_merge = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -470,16 +522,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "dividemasterfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->divide_master_file );
-        settings->divide_master_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->divide_master_file );
+        settings->divide_master_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "divideslavefile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->divide_slave_file );
-        settings->divide_slave_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->divide_slave_file );
+        settings->divide_slave_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -517,80 +569,96 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "drivebeta128atype" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_beta128a_type );
-        settings->drive_beta128a_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_beta128a_type );
+        settings->drive_beta128a_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "drivebeta128btype" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_beta128b_type );
-        settings->drive_beta128b_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_beta128b_type );
+        settings->drive_beta128b_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "drivebeta128ctype" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_beta128c_type );
-        settings->drive_beta128c_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_beta128c_type );
+        settings->drive_beta128c_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "drivebeta128dtype" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_beta128d_type );
-        settings->drive_beta128d_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_beta128d_type );
+        settings->drive_beta128d_type = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "drivedisciple1type" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->drive_disciple1_type );
+        settings->drive_disciple1_type = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "drivedisciple2type" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->drive_disciple2_type );
+        settings->drive_disciple2_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "driveopus1type" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_opus1_type );
-        settings->drive_opus1_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_opus1_type );
+        settings->drive_opus1_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "driveopus2type" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_opus2_type );
-        settings->drive_opus2_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_opus2_type );
+        settings->drive_opus2_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "driveplus3atype" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_plus3a_type );
-        settings->drive_plus3a_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_plus3a_type );
+        settings->drive_plus3a_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "driveplus3btype" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_plus3b_type );
-        settings->drive_plus3b_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_plus3b_type );
+        settings->drive_plus3b_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "driveplusd1type" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_plusd1_type );
-        settings->drive_plusd1_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_plusd1_type );
+        settings->drive_plusd1_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "driveplusd2type" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->drive_plusd2_type );
-        settings->drive_plusd2_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->drive_plusd2_type );
+        settings->drive_plusd2_type = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -646,8 +714,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "if2cart" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->if2_file );
-        settings->if2_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->if2_file );
+        settings->if2_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -689,8 +757,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "joystick1" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->joystick_1 );
-        settings->joystick_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->joystick_1 );
+        settings->joystick_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -705,6 +773,41 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
         settings->joystick_1_fire_10 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick1fire11" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_1_fire_11 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick1fire12" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_1_fire_12 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick1fire13" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_1_fire_13 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick1fire14" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_1_fire_14 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick1fire15" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_1_fire_15 = atoi( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -774,8 +877,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "joystick2" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->joystick_2 );
-        settings->joystick_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->joystick_2 );
+        settings->joystick_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -790,6 +893,41 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
         settings->joystick_2_fire_10 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick2fire11" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_2_fire_11 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick2fire12" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_2_fire_12 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick2fire13" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_2_fire_13 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick2fire14" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_2_fire_14 = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "joystick2fire15" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->joystick_2_fire_15 = atoi( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -915,64 +1053,64 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "microdrivefile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file );
-        settings->mdr_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file );
+        settings->mdr_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "microdrive2file" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file2 );
-        settings->mdr_file2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file2 );
+        settings->mdr_file2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "microdrive3file" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file3 );
-        settings->mdr_file3 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file3 );
+        settings->mdr_file3 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "microdrive4file" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file4 );
-        settings->mdr_file4 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file4 );
+        settings->mdr_file4 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "microdrive5file" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file5 );
-        settings->mdr_file5 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file5 );
+        settings->mdr_file5 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "microdrive6file" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file6 );
-        settings->mdr_file6 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file6 );
+        settings->mdr_file6 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "microdrive7file" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file7 );
-        settings->mdr_file7 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file7 );
+        settings->mdr_file7 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "microdrive8file" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->mdr_file8 );
-        settings->mdr_file8 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->mdr_file8 );
+        settings->mdr_file8 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1004,6 +1142,29 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "moviecompr" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->movie_compr );
+        settings->movie_compr = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "moviestart" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->movie_start );
+        settings->movie_start = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "moviestopafterrzx" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->movie_stop_after_rzx = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "opus" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
@@ -1014,8 +1175,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "opusdisk" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->opusdisk_file );
-        settings->opusdisk_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->opusdisk_file );
+        settings->opusdisk_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1029,8 +1190,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "playbackfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->playback_file );
-        settings->playback_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->playback_file );
+        settings->playback_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1044,8 +1205,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "plus3disk" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->plus3disk_file );
-        settings->plus3disk_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->plus3disk_file );
+        settings->plus3disk_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1059,8 +1220,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "plusddisk" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->plusddisk_file );
-        settings->plusddisk_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->plusddisk_file );
+        settings->plusddisk_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1074,16 +1235,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "graphicsfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->printer_graphics_filename );
-        settings->printer_graphics_filename = strdup( (char*)xmlstring );
+        libspectrum_free( settings->printer_graphics_filename );
+        settings->printer_graphics_filename = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "textfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->printer_text_filename );
-        settings->printer_text_filename = strdup( (char*)xmlstring );
+        libspectrum_free( settings->printer_text_filename );
+        settings->printer_text_filename = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1100,360 +1261,376 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "recordfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->record_file );
-        settings->record_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->record_file );
+        settings->record_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rom1280" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_128_0 );
-        settings->rom_128_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_128_0 );
+        settings->rom_128_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rom1281" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_128_1 );
-        settings->rom_128_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_128_1 );
+        settings->rom_128_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rom16" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_16 );
-        settings->rom_16 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_16 );
+        settings->rom_16 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rom48" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_48 );
-        settings->rom_48 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_48 );
+        settings->rom_48 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rombeta128" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_beta128 );
-        settings->rom_beta128 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_beta128 );
+        settings->rom_beta128 = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "romdisciple" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->rom_disciple );
+        settings->rom_disciple = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rominterfacei" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_interface_i );
-        settings->rom_interface_i = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_interface_i );
+        settings->rom_interface_i = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romopus" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_opus );
-        settings->rom_opus = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_opus );
+        settings->rom_opus = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon10240" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon1024_0 );
-        settings->rom_pentagon1024_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon1024_0 );
+        settings->rom_pentagon1024_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon10241" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon1024_1 );
-        settings->rom_pentagon1024_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon1024_1 );
+        settings->rom_pentagon1024_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon10242" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon1024_2 );
-        settings->rom_pentagon1024_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon1024_2 );
+        settings->rom_pentagon1024_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon10243" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon1024_3 );
-        settings->rom_pentagon1024_3 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon1024_3 );
+        settings->rom_pentagon1024_3 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon5120" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon512_0 );
-        settings->rom_pentagon512_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon512_0 );
+        settings->rom_pentagon512_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon5121" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon512_1 );
-        settings->rom_pentagon512_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon512_1 );
+        settings->rom_pentagon512_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon5122" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon512_2 );
-        settings->rom_pentagon512_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon512_2 );
+        settings->rom_pentagon512_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon5123" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon512_3 );
-        settings->rom_pentagon512_3 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon512_3 );
+        settings->rom_pentagon512_3 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon0" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon_0 );
-        settings->rom_pentagon_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon_0 );
+        settings->rom_pentagon_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon1" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon_1 );
-        settings->rom_pentagon_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon_1 );
+        settings->rom_pentagon_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rompentagon2" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_pentagon_2 );
-        settings->rom_pentagon_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_pentagon_2 );
+        settings->rom_pentagon_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus20" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus2_0 );
-        settings->rom_plus2_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus2_0 );
+        settings->rom_plus2_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus21" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus2_1 );
-        settings->rom_plus2_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus2_1 );
+        settings->rom_plus2_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus2a0" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus2a_0 );
-        settings->rom_plus2a_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus2a_0 );
+        settings->rom_plus2a_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus2a1" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus2a_1 );
-        settings->rom_plus2a_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus2a_1 );
+        settings->rom_plus2a_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus2a2" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus2a_2 );
-        settings->rom_plus2a_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus2a_2 );
+        settings->rom_plus2a_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus2a3" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus2a_3 );
-        settings->rom_plus2a_3 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus2a_3 );
+        settings->rom_plus2a_3 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus30" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3_0 );
-        settings->rom_plus3_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3_0 );
+        settings->rom_plus3_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus31" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3_1 );
-        settings->rom_plus3_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3_1 );
+        settings->rom_plus3_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus32" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3_2 );
-        settings->rom_plus3_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3_2 );
+        settings->rom_plus3_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus33" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3_3 );
-        settings->rom_plus3_3 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3_3 );
+        settings->rom_plus3_3 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus3e0" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3e_0 );
-        settings->rom_plus3e_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3e_0 );
+        settings->rom_plus3e_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus3e1" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3e_1 );
-        settings->rom_plus3e_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3e_1 );
+        settings->rom_plus3e_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus3e2" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3e_2 );
-        settings->rom_plus3e_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3e_2 );
+        settings->rom_plus3e_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplus3e3" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plus3e_3 );
-        settings->rom_plus3e_3 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plus3e_3 );
+        settings->rom_plus3e_3 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romplusd" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_plusd );
-        settings->rom_plusd = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_plusd );
+        settings->rom_plusd = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romscorpion0" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_scorpion_0 );
-        settings->rom_scorpion_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_scorpion_0 );
+        settings->rom_scorpion_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romscorpion1" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_scorpion_1 );
-        settings->rom_scorpion_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_scorpion_1 );
+        settings->rom_scorpion_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romscorpion2" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_scorpion_2 );
-        settings->rom_scorpion_2 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_scorpion_2 );
+        settings->rom_scorpion_2 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romscorpion3" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_scorpion_3 );
-        settings->rom_scorpion_3 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_scorpion_3 );
+        settings->rom_scorpion_3 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romspecse0" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_spec_se_0 );
-        settings->rom_spec_se_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_spec_se_0 );
+        settings->rom_spec_se_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romspecse1" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_spec_se_1 );
-        settings->rom_spec_se_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_spec_se_1 );
+        settings->rom_spec_se_1 = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "romspeccyboot" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->rom_speccyboot );
+        settings->rom_speccyboot = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romtc2048" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_tc2048 );
-        settings->rom_tc2048 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_tc2048 );
+        settings->rom_tc2048 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romtc20680" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_tc2068_0 );
-        settings->rom_tc2068_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_tc2068_0 );
+        settings->rom_tc2068_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romtc20681" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_tc2068_1 );
-        settings->rom_tc2068_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_tc2068_1 );
+        settings->rom_tc2068_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romts20680" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_ts2068_0 );
-        settings->rom_ts2068_0 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_ts2068_0 );
+        settings->rom_ts2068_0 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "romts20681" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rom_ts2068_1 );
-        settings->rom_ts2068_1 = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rom_ts2068_1 );
+        settings->rom_ts2068_1 = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1467,16 +1644,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "rs232rx" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rs232_rx );
-        settings->rs232_rx = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rs232_rx );
+        settings->rs232_rx = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "rs232tx" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->rs232_tx );
-        settings->rs232_tx = strdup( (char*)xmlstring );
+        libspectrum_free( settings->rs232_tx );
+        settings->rs232_tx = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1504,16 +1681,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "simpleidemasterfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->simpleide_master_file );
-        settings->simpleide_master_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->simpleide_master_file );
+        settings->simpleide_master_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "simpleideslavefile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->simpleide_slave_file );
-        settings->simpleide_slave_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->simpleide_slave_file );
+        settings->simpleide_slave_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1530,16 +1707,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "snapshot" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->snapshot );
-        settings->snapshot = strdup( (char*)xmlstring );
+        libspectrum_free( settings->snapshot );
+        settings->snapshot = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "snet" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->snet );
-        settings->snet = strdup( (char*)xmlstring );
+        libspectrum_free( settings->snet );
+        settings->snet = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1553,8 +1730,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "sounddevice" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->sound_device );
-        settings->sound_device = strdup( (char*)xmlstring );
+        libspectrum_free( settings->sound_device );
+        settings->sound_device = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1582,24 +1759,60 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "speakertype" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->speaker_type );
-        settings->speaker_type = strdup( (char*)xmlstring );
+        libspectrum_free( settings->speaker_type );
+        settings->speaker_type = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "speccyboot" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->speccyboot = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "speccyboottap" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->speccyboot_tap );
+        settings->speccyboot_tap = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "specdrum" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->specdrum = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "spectranet" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->spectranet = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "spectranetdisable" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->spectranet_disable = atoi( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "machine" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->start_machine );
-        settings->start_machine = strdup( (char*)xmlstring );
+        libspectrum_free( settings->start_machine );
+        settings->start_machine = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "graphicsfilter" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->start_scaler_mode );
-        settings->start_scaler_mode = strdup( (char*)xmlstring );
+        libspectrum_free( settings->start_scaler_mode );
+        settings->start_scaler_mode = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1613,7 +1826,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "separation" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        settings->stereo_ay = atoi( (char*)xmlstring );
+        libspectrum_free( settings->stereo_ay );
+        settings->stereo_ay = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1627,16 +1841,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "svgamodes" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->svga_modes );
-        settings->svga_modes = strdup( (char*)xmlstring );
+        libspectrum_free( settings->svga_modes );
+        settings->svga_modes = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "tapefile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->tape_file );
-        settings->tape_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->tape_file );
+        settings->tape_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1668,6 +1882,13 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "volumespecdrum" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->volume_specdrum = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "writableroms" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
@@ -1685,16 +1906,16 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "zxataspmasterfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->zxatasp_master_file );
-        settings->zxatasp_master_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->zxatasp_master_file );
+        settings->zxatasp_master_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
     if( !strcmp( (const char*)node->name, "zxataspslavefile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->zxatasp_slave_file );
-        settings->zxatasp_slave_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->zxatasp_slave_file );
+        settings->zxatasp_slave_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1722,8 +1943,8 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
     if( !strcmp( (const char*)node->name, "zxcfcffile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->zxcf_pri_file );
-        settings->zxcf_pri_file = strdup( (char*)xmlstring );
+        libspectrum_free( settings->zxcf_pri_file );
+        settings->zxcf_pri_file = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1734,7 +1955,14 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
-#line 262"../settings.pl"
+    if( !strcmp( (const char*)node->name, "zxprinter" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->zxprinter = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+#line 265"../settings.pl"
     if( !strcmp( (const char*)node->name, "text" ) ) {
       /* Do nothing */
     } else {
@@ -1769,6 +1997,7 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"autoload", (const xmlChar*)(settings->auto_load ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"autosavesettings", (const xmlChar*)(settings->autosave_settings ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"beta128", (const xmlChar*)(settings->beta128 ? "1" : "0") );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"beta12848boot", (const xmlChar*)(settings->beta128_48boot ? "1" : "0") );
   if( settings->betadisk_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"betadisk", (const xmlChar*)settings->betadisk_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"bwtv", (const xmlChar*)(settings->bw_tv ? "1" : "0") );
@@ -1781,6 +2010,9 @@ settings_write_config( settings_info *settings )
   if( settings->debugger_command )
     xmlNewTextChild( root, NULL, (const xmlChar*)"debuggercommand", (const xmlChar*)settings->debugger_command );
   xmlNewTextChild( root, NULL, (const xmlChar*)"detectloader", (const xmlChar*)(settings->detect_loader ? "1" : "0") );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"disciple", (const xmlChar*)(settings->disciple ? "1" : "0") );
+  if( settings->discipledisk_file )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"discipledisk", (const xmlChar*)settings->discipledisk_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"diskaskmerge", (const xmlChar*)(settings->disk_ask_merge ? "1" : "0") );
   if( settings->disk_try_merge )
     xmlNewTextChild( root, NULL, (const xmlChar*)"disktrymerge", (const xmlChar*)settings->disk_try_merge );
@@ -1804,6 +2036,10 @@ settings_write_config( settings_info *settings )
     xmlNewTextChild( root, NULL, (const xmlChar*)"drivebeta128ctype", (const xmlChar*)settings->drive_beta128c_type );
   if( settings->drive_beta128d_type )
     xmlNewTextChild( root, NULL, (const xmlChar*)"drivebeta128dtype", (const xmlChar*)settings->drive_beta128d_type );
+  if( settings->drive_disciple1_type )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"drivedisciple1type", (const xmlChar*)settings->drive_disciple1_type );
+  if( settings->drive_disciple2_type )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"drivedisciple2type", (const xmlChar*)settings->drive_disciple2_type );
   if( settings->drive_opus1_type )
     xmlNewTextChild( root, NULL, (const xmlChar*)"driveopus1type", (const xmlChar*)settings->drive_opus1_type );
   if( settings->drive_opus2_type )
@@ -1839,6 +2075,16 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire1", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->joystick_1_fire_10 );
   xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire10", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_1_fire_11 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire11", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_1_fire_12 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire12", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_1_fire_13 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire13", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_1_fire_14 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire14", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_1_fire_15 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire15", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->joystick_1_fire_2 );
   xmlNewTextChild( root, NULL, (const xmlChar*)"joystick1fire2", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->joystick_1_fire_3 );
@@ -1863,6 +2109,16 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire1", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->joystick_2_fire_10 );
   xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire10", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_2_fire_11 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire11", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_2_fire_12 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire12", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_2_fire_13 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire13", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_2_fire_14 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire14", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->joystick_2_fire_15 );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire15", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->joystick_2_fire_2 );
   xmlNewTextChild( root, NULL, (const xmlChar*)"joystick2fire2", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->joystick_2_fire_3 );
@@ -1916,6 +2172,11 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"mdrrandomlen", (const xmlChar*)(settings->mdr_random_len ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"melodik", (const xmlChar*)(settings->melodik ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"mouseswapbuttons", (const xmlChar*)(settings->mouse_swap_buttons ? "1" : "0") );
+  if( settings->movie_compr )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"moviecompr", (const xmlChar*)settings->movie_compr );
+  if( settings->movie_start )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"moviestart", (const xmlChar*)settings->movie_start );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"moviestopafterrzx", (const xmlChar*)(settings->movie_stop_after_rzx ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"opus", (const xmlChar*)(settings->opus ? "1" : "0") );
   if( settings->opusdisk_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"opusdisk", (const xmlChar*)settings->opusdisk_file );
@@ -1946,6 +2207,8 @@ settings_write_config( settings_info *settings )
     xmlNewTextChild( root, NULL, (const xmlChar*)"rom48", (const xmlChar*)settings->rom_48 );
   if( settings->rom_beta128 )
     xmlNewTextChild( root, NULL, (const xmlChar*)"rombeta128", (const xmlChar*)settings->rom_beta128 );
+  if( settings->rom_disciple )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"romdisciple", (const xmlChar*)settings->rom_disciple );
   if( settings->rom_interface_i )
     xmlNewTextChild( root, NULL, (const xmlChar*)"rominterfacei", (const xmlChar*)settings->rom_interface_i );
   if( settings->rom_opus )
@@ -2014,6 +2277,8 @@ settings_write_config( settings_info *settings )
     xmlNewTextChild( root, NULL, (const xmlChar*)"romspecse0", (const xmlChar*)settings->rom_spec_se_0 );
   if( settings->rom_spec_se_1 )
     xmlNewTextChild( root, NULL, (const xmlChar*)"romspecse1", (const xmlChar*)settings->rom_spec_se_1 );
+  if( settings->rom_speccyboot )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"romspeccyboot", (const xmlChar*)settings->rom_speccyboot );
   if( settings->rom_tc2048 )
     xmlNewTextChild( root, NULL, (const xmlChar*)"romtc2048", (const xmlChar*)settings->rom_tc2048 );
   if( settings->rom_tc2068_0 )
@@ -2050,12 +2315,19 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"loadingsound", (const xmlChar*)(settings->sound_load ? "1" : "0") );
   if( settings->speaker_type )
     xmlNewTextChild( root, NULL, (const xmlChar*)"speakertype", (const xmlChar*)settings->speaker_type );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"speccyboot", (const xmlChar*)(settings->speccyboot ? "1" : "0") );
+  if( settings->speccyboot_tap )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"speccyboottap", (const xmlChar*)settings->speccyboot_tap );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"specdrum", (const xmlChar*)(settings->specdrum ? "1" : "0") );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"spectranet", (const xmlChar*)(settings->spectranet ? "1" : "0") );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"spectranetdisable", (const xmlChar*)(settings->spectranet_disable ? "1" : "0") );
   if( settings->start_machine )
     xmlNewTextChild( root, NULL, (const xmlChar*)"machine", (const xmlChar*)settings->start_machine );
   if( settings->start_scaler_mode )
     xmlNewTextChild( root, NULL, (const xmlChar*)"graphicsfilter", (const xmlChar*)settings->start_scaler_mode );
   xmlNewTextChild( root, NULL, (const xmlChar*)"statusbar", (const xmlChar*)(settings->statusbar ? "1" : "0") );
-  xmlNewTextChild( root, NULL, (const xmlChar*)"separation", (const xmlChar*)(settings->stereo_ay ? "1" : "0") );
+  if( settings->stereo_ay )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"separation", (const xmlChar*)settings->stereo_ay );
   xmlNewTextChild( root, NULL, (const xmlChar*)"strictaspecthint", (const xmlChar*)(settings->strict_aspect_hint ? "1" : "0") );
   if( settings->svga_modes )
     xmlNewTextChild( root, NULL, (const xmlChar*)"svgamodes", (const xmlChar*)settings->svga_modes );
@@ -2067,6 +2339,8 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"volumeay", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->volume_beeper );
   xmlNewTextChild( root, NULL, (const xmlChar*)"volumebeeper", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->volume_specdrum );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"volumespecdrum", (const xmlChar*)buffer );
   xmlNewTextChild( root, NULL, (const xmlChar*)"writableroms", (const xmlChar*)(settings->writable_roms ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"zxatasp", (const xmlChar*)(settings->zxatasp_active ? "1" : "0") );
   if( settings->zxatasp_master_file )
@@ -2079,9 +2353,12 @@ settings_write_config( settings_info *settings )
   if( settings->zxcf_pri_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"zxcfcffile", (const xmlChar*)settings->zxcf_pri_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"zxcfupload", (const xmlChar*)(settings->zxcf_upload ? "1" : "0") );
-#line 319"../settings.pl"
+  xmlNewTextChild( root, NULL, (const xmlChar*)"zxprinter", (const xmlChar*)(settings->zxprinter ? "1" : "0") );
+#line 322"../settings.pl"
 
   xmlSaveFormatFile( path, doc, 1 );
+
+  xmlFreeDoc( doc );
 
   return 0;
 }
@@ -2177,6 +2454,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_int = &settings->beta128;
     return 0;
   }
+  if( n == 13 && !strncmp( (const char *)name, "beta12848boot", n ) ) {
+    *val_int = &settings->beta128_48boot;
+    return 0;
+  }
   if( n == 8 && !strncmp( (const char *)name, "betadisk", n ) ) {
     *val_char = &settings->betadisk_file;
     return 0;
@@ -2207,6 +2488,14 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 12 && !strncmp( (const char *)name, "detectloader", n ) ) {
     *val_int = &settings->detect_loader;
+    return 0;
+  }
+  if( n == 8 && !strncmp( (const char *)name, "disciple", n ) ) {
+    *val_int = &settings->disciple;
+    return 0;
+  }
+  if( n == 12 && !strncmp( (const char *)name, "discipledisk", n ) ) {
+    *val_char = &settings->discipledisk_file;
     return 0;
   }
   if( n == 12 && !strncmp( (const char *)name, "diskaskmerge", n ) ) {
@@ -2263,6 +2552,14 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 17 && !strncmp( (const char *)name, "drivebeta128dtype", n ) ) {
     *val_char = &settings->drive_beta128d_type;
+    return 0;
+  }
+  if( n == 18 && !strncmp( (const char *)name, "drivedisciple1type", n ) ) {
+    *val_char = &settings->drive_disciple1_type;
+    return 0;
+  }
+  if( n == 18 && !strncmp( (const char *)name, "drivedisciple2type", n ) ) {
+    *val_char = &settings->drive_disciple2_type;
     return 0;
   }
   if( n == 14 && !strncmp( (const char *)name, "driveopus1type", n ) ) {
@@ -2353,6 +2650,26 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_int = &settings->joystick_1_fire_10;
     return 0;
   }
+  if( n == 15 && !strncmp( (const char *)name, "joystick1fire11", n ) ) {
+    *val_int = &settings->joystick_1_fire_11;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick1fire12", n ) ) {
+    *val_int = &settings->joystick_1_fire_12;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick1fire13", n ) ) {
+    *val_int = &settings->joystick_1_fire_13;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick1fire14", n ) ) {
+    *val_int = &settings->joystick_1_fire_14;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick1fire15", n ) ) {
+    *val_int = &settings->joystick_1_fire_15;
+    return 0;
+  }
   if( n == 14 && !strncmp( (const char *)name, "joystick1fire2", n ) ) {
     *val_int = &settings->joystick_1_fire_2;
     return 0;
@@ -2399,6 +2716,26 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 15 && !strncmp( (const char *)name, "joystick2fire10", n ) ) {
     *val_int = &settings->joystick_2_fire_10;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick2fire11", n ) ) {
+    *val_int = &settings->joystick_2_fire_11;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick2fire12", n ) ) {
+    *val_int = &settings->joystick_2_fire_12;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick2fire13", n ) ) {
+    *val_int = &settings->joystick_2_fire_13;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick2fire14", n ) ) {
+    *val_int = &settings->joystick_2_fire_14;
+    return 0;
+  }
+  if( n == 15 && !strncmp( (const char *)name, "joystick2fire15", n ) ) {
+    *val_int = &settings->joystick_2_fire_15;
     return 0;
   }
   if( n == 14 && !strncmp( (const char *)name, "joystick2fire2", n ) ) {
@@ -2517,6 +2854,18 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_int = &settings->mouse_swap_buttons;
     return 0;
   }
+  if( n == 10 && !strncmp( (const char *)name, "moviecompr", n ) ) {
+    *val_char = &settings->movie_compr;
+    return 0;
+  }
+  if( n == 10 && !strncmp( (const char *)name, "moviestart", n ) ) {
+    *val_char = &settings->movie_start;
+    return 0;
+  }
+  if( n == 17 && !strncmp( (const char *)name, "moviestopafterrzx", n ) ) {
+    *val_int = &settings->movie_stop_after_rzx;
+    return 0;
+  }
   if( n == 4 && !strncmp( (const char *)name, "opus", n ) ) {
     *val_int = &settings->opus;
     return 0;
@@ -2591,6 +2940,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 10 && !strncmp( (const char *)name, "rombeta128", n ) ) {
     *val_char = &settings->rom_beta128;
+    return 0;
+  }
+  if( n == 11 && !strncmp( (const char *)name, "romdisciple", n ) ) {
+    *val_char = &settings->rom_disciple;
     return 0;
   }
   if( n == 13 && !strncmp( (const char *)name, "rominterfacei", n ) ) {
@@ -2729,6 +3082,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_char = &settings->rom_spec_se_1;
     return 0;
   }
+  if( n == 13 && !strncmp( (const char *)name, "romspeccyboot", n ) ) {
+    *val_char = &settings->rom_speccyboot;
+    return 0;
+  }
   if( n == 9 && !strncmp( (const char *)name, "romtc2048", n ) ) {
     *val_char = &settings->rom_tc2048;
     return 0;
@@ -2821,6 +3178,26 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_char = &settings->speaker_type;
     return 0;
   }
+  if( n == 10 && !strncmp( (const char *)name, "speccyboot", n ) ) {
+    *val_int = &settings->speccyboot;
+    return 0;
+  }
+  if( n == 13 && !strncmp( (const char *)name, "speccyboottap", n ) ) {
+    *val_char = &settings->speccyboot_tap;
+    return 0;
+  }
+  if( n == 8 && !strncmp( (const char *)name, "specdrum", n ) ) {
+    *val_int = &settings->specdrum;
+    return 0;
+  }
+  if( n == 10 && !strncmp( (const char *)name, "spectranet", n ) ) {
+    *val_int = &settings->spectranet;
+    return 0;
+  }
+  if( n == 17 && !strncmp( (const char *)name, "spectranetdisable", n ) ) {
+    *val_int = &settings->spectranet_disable;
+    return 0;
+  }
   if( n == 7 && !strncmp( (const char *)name, "machine", n ) ) {
     *val_char = &settings->start_machine;
     return 0;
@@ -2834,7 +3211,7 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     return 0;
   }
   if( n == 10 && !strncmp( (const char *)name, "separation", n ) ) {
-    *val_int = &settings->stereo_ay;
+    *val_char = &settings->stereo_ay;
     return 0;
   }
   if( n == 16 && !strncmp( (const char *)name, "strictaspecthint", n ) ) {
@@ -2863,6 +3240,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 12 && !strncmp( (const char *)name, "volumebeeper", n ) ) {
     *val_int = &settings->volume_beeper;
+    return 0;
+  }
+  if( n == 14 && !strncmp( (const char *)name, "volumespecdrum", n ) ) {
+    *val_int = &settings->volume_specdrum;
     return 0;
   }
   if( n == 12 && !strncmp( (const char *)name, "writableroms", n ) ) {
@@ -2901,6 +3282,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_int = &settings->zxcf_upload;
     return 0;
   }
+  if( n == 9 && !strncmp( (const char *)name, "zxprinter", n ) ) {
+    *val_int = &settings->zxprinter;
+    return 0;
+  }
   return 1;
 }
 
@@ -2936,14 +3321,10 @@ parse_ini( utils_file *file, settings_info *settings )
 	n = (char *)cpos - value;
 	if( n > 0 ) {
 	  if( *val_char != NULL ) {
-	    free( *val_char );
+	    libspectrum_free( *val_char );
 	    *val_char = NULL;
 	  }
-	  *val_char = malloc( n + 1 );
-	  if( ! *val_char ) {
-	    ui_error( UI_ERROR_WARNING, "Out of memory!" );
-	    return 1;
-	  }
+	  *val_char = libspectrum_malloc( n + 1 );
 	  (*val_char)[n] = '\0';
 	  memcpy( *val_char, value, n );
 	}
@@ -2952,7 +3333,7 @@ parse_ini( utils_file *file, settings_info *settings )
     while( ( cpos < ( file->buffer + file->length ) ) &&
            ( *cpos == '\r' || *cpos == '\n' ) ) cpos++;
 
-#line 466"../settings.pl"
+#line 467"../settings.pl"
   }
 
   return 0;
@@ -3023,6 +3404,9 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "beta128",
                               settings->beta128 ) )
     goto error;
+  if( settings_boolean_write( doc, "beta12848boot",
+                              settings->beta128_48boot ) )
+    goto error;
   if( settings_string_write( doc, "betadisk",
                              settings->betadisk_file ) )
     goto error;
@@ -3046,6 +3430,12 @@ settings_write_config( settings_info *settings )
     goto error;
   if( settings_boolean_write( doc, "detectloader",
                               settings->detect_loader ) )
+    goto error;
+  if( settings_boolean_write( doc, "disciple",
+                              settings->disciple ) )
+    goto error;
+  if( settings_string_write( doc, "discipledisk",
+                             settings->discipledisk_file ) )
     goto error;
   if( settings_boolean_write( doc, "diskaskmerge",
                               settings->disk_ask_merge ) )
@@ -3085,6 +3475,12 @@ settings_write_config( settings_info *settings )
     goto error;
   if( settings_string_write( doc, "drivebeta128dtype",
                              settings->drive_beta128d_type ) )
+    goto error;
+  if( settings_string_write( doc, "drivedisciple1type",
+                             settings->drive_disciple1_type ) )
+    goto error;
+  if( settings_string_write( doc, "drivedisciple2type",
+                             settings->drive_disciple2_type ) )
     goto error;
   if( settings_string_write( doc, "driveopus1type",
                              settings->drive_opus1_type ) )
@@ -3152,6 +3548,21 @@ settings_write_config( settings_info *settings )
   if( settings_numeric_write( doc, "joystick1fire10",
                               settings->joystick_1_fire_10 ) )
     goto error;
+  if( settings_numeric_write( doc, "joystick1fire11",
+                              settings->joystick_1_fire_11 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick1fire12",
+                              settings->joystick_1_fire_12 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick1fire13",
+                              settings->joystick_1_fire_13 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick1fire14",
+                              settings->joystick_1_fire_14 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick1fire15",
+                              settings->joystick_1_fire_15 ) )
+    goto error;
   if( settings_numeric_write( doc, "joystick1fire2",
                               settings->joystick_1_fire_2 ) )
     goto error;
@@ -3187,6 +3598,21 @@ settings_write_config( settings_info *settings )
     goto error;
   if( settings_numeric_write( doc, "joystick2fire10",
                               settings->joystick_2_fire_10 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick2fire11",
+                              settings->joystick_2_fire_11 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick2fire12",
+                              settings->joystick_2_fire_12 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick2fire13",
+                              settings->joystick_2_fire_13 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick2fire14",
+                              settings->joystick_2_fire_14 ) )
+    goto error;
+  if( settings_numeric_write( doc, "joystick2fire15",
+                              settings->joystick_2_fire_15 ) )
     goto error;
   if( settings_numeric_write( doc, "joystick2fire2",
                               settings->joystick_2_fire_2 ) )
@@ -3275,6 +3701,15 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "mouseswapbuttons",
                               settings->mouse_swap_buttons ) )
     goto error;
+  if( settings_string_write( doc, "moviecompr",
+                             settings->movie_compr ) )
+    goto error;
+  if( settings_string_write( doc, "moviestart",
+                             settings->movie_start ) )
+    goto error;
+  if( settings_boolean_write( doc, "moviestopafterrzx",
+                              settings->movie_stop_after_rzx ) )
+    goto error;
   if( settings_boolean_write( doc, "opus",
                               settings->opus ) )
     goto error;
@@ -3328,6 +3763,9 @@ settings_write_config( settings_info *settings )
     goto error;
   if( settings_string_write( doc, "rombeta128",
                              settings->rom_beta128 ) )
+    goto error;
+  if( settings_string_write( doc, "romdisciple",
+                             settings->rom_disciple ) )
     goto error;
   if( settings_string_write( doc, "rominterfacei",
                              settings->rom_interface_i ) )
@@ -3431,6 +3869,9 @@ settings_write_config( settings_info *settings )
   if( settings_string_write( doc, "romspecse1",
                              settings->rom_spec_se_1 ) )
     goto error;
+  if( settings_string_write( doc, "romspeccyboot",
+                             settings->rom_speccyboot ) )
+    goto error;
   if( settings_string_write( doc, "romtc2048",
                              settings->rom_tc2048 ) )
     goto error;
@@ -3497,6 +3938,21 @@ settings_write_config( settings_info *settings )
   if( settings_string_write( doc, "speakertype",
                              settings->speaker_type ) )
     goto error;
+  if( settings_boolean_write( doc, "speccyboot",
+                              settings->speccyboot ) )
+    goto error;
+  if( settings_string_write( doc, "speccyboottap",
+                             settings->speccyboot_tap ) )
+    goto error;
+  if( settings_boolean_write( doc, "specdrum",
+                              settings->specdrum ) )
+    goto error;
+  if( settings_boolean_write( doc, "spectranet",
+                              settings->spectranet ) )
+    goto error;
+  if( settings_boolean_write( doc, "spectranetdisable",
+                              settings->spectranet_disable ) )
+    goto error;
   if( settings_string_write( doc, "machine",
                              settings->start_machine ) )
     goto error;
@@ -3506,8 +3962,8 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "statusbar",
                               settings->statusbar ) )
     goto error;
-  if( settings_boolean_write( doc, "separation",
-                              settings->stereo_ay ) )
+  if( settings_string_write( doc, "separation",
+                             settings->stereo_ay ) )
     goto error;
   if( settings_boolean_write( doc, "strictaspecthint",
                               settings->strict_aspect_hint ) )
@@ -3529,6 +3985,9 @@ settings_write_config( settings_info *settings )
     goto error;
   if( settings_numeric_write( doc, "volumebeeper",
                               settings->volume_beeper ) )
+    goto error;
+  if( settings_numeric_write( doc, "volumespecdrum",
+                              settings->volume_specdrum ) )
     goto error;
   if( settings_boolean_write( doc, "writableroms",
                               settings->writable_roms ) )
@@ -3557,7 +4016,10 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "zxcfupload",
                               settings->zxcf_upload ) )
     goto error;
-#line 558"../settings.pl"
+  if( settings_boolean_write( doc, "zxprinter",
+                              settings->zxprinter ) )
+    goto error;
+#line 559"../settings.pl"
 
   compat_file_close( doc );
 
@@ -3594,6 +4056,8 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-autosave-settings", 0, &(settings->autosave_settings), 0 },
     {    "beta128", 0, &(settings->beta128), 1 },
     { "no-beta128", 0, &(settings->beta128), 0 },
+    {    "beta128-48boot", 0, &(settings->beta128_48boot), 1 },
+    { "no-beta128-48boot", 0, &(settings->beta128_48boot), 0 },
     { "betadisk", 1, NULL, 256 },
     {    "bw-tv", 0, &(settings->bw_tv), 1 },
     { "no-bw-tv", 0, &(settings->bw_tv), 0 },
@@ -3606,40 +4070,45 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "debugger-command", 1, NULL, 259 },
     {    "detect-loader", 0, &(settings->detect_loader), 1 },
     { "no-detect-loader", 0, &(settings->detect_loader), 0 },
+    {    "disciple", 0, &(settings->disciple), 1 },
+    { "no-disciple", 0, &(settings->disciple), 0 },
+    { "discipledisk", 1, NULL, 260 },
     {    "disk-ask-merge", 0, &(settings->disk_ask_merge), 1 },
     { "no-disk-ask-merge", 0, &(settings->disk_ask_merge), 0 },
-    { "disk-try-merge", 1, NULL, 260 },
+    { "disk-try-merge", 1, NULL, 261 },
     {    "divide", 0, &(settings->divide_enabled), 1 },
     { "no-divide", 0, &(settings->divide_enabled), 0 },
-    { "divide-masterfile", 1, NULL, 261 },
-    { "divide-slavefile", 1, NULL, 262 },
+    { "divide-masterfile", 1, NULL, 262 },
+    { "divide-slavefile", 1, NULL, 263 },
     {    "divide-write-protect", 0, &(settings->divide_wp), 1 },
     { "no-divide-write-protect", 0, &(settings->divide_wp), 0 },
     { "doublescan-mode", 1, NULL, 'D' },
-    { "drive-40-max-track", 1, NULL, 264 },
-    { "drive-80-max-track", 1, NULL, 265 },
-    { "drive-beta128a-type", 1, NULL, 266 },
-    { "drive-beta128b-type", 1, NULL, 267 },
-    { "drive-beta128c-type", 1, NULL, 268 },
-    { "drive-beta128d-type", 1, NULL, 269 },
-    { "drive-opus1-type", 1, NULL, 270 },
-    { "drive-opus2-type", 1, NULL, 271 },
-    { "drive-plus3a-type", 1, NULL, 272 },
-    { "drive-plus3b-type", 1, NULL, 273 },
-    { "drive-plusd1-type", 1, NULL, 274 },
-    { "drive-plusd2-type", 1, NULL, 275 },
+    { "drive-40-max-track", 1, NULL, 265 },
+    { "drive-80-max-track", 1, NULL, 266 },
+    { "drive-beta128a-type", 1, NULL, 267 },
+    { "drive-beta128b-type", 1, NULL, 268 },
+    { "drive-beta128c-type", 1, NULL, 269 },
+    { "drive-beta128d-type", 1, NULL, 270 },
+    { "drive-disciple1-type", 1, NULL, 271 },
+    { "drive-disciple2-type", 1, NULL, 272 },
+    { "drive-opus1-type", 1, NULL, 273 },
+    { "drive-opus2-type", 1, NULL, 274 },
+    { "drive-plus3a-type", 1, NULL, 275 },
+    { "drive-plus3b-type", 1, NULL, 276 },
+    { "drive-plusd1-type", 1, NULL, 277 },
+    { "drive-plusd2-type", 1, NULL, 278 },
     {    "embed-snapshot", 0, &(settings->embed_snapshot), 1 },
     { "no-embed-snapshot", 0, &(settings->embed_snapshot), 0 },
-    { "speed", 1, NULL, 276 },
+    { "speed", 1, NULL, 279 },
     {    "fastload", 0, &(settings->fastload), 1 },
     { "no-fastload", 0, &(settings->fastload), 0 },
     { "fbmode", 1, NULL, 'v' },
-    { "rate", 1, NULL, 277 },
+    { "rate", 1, NULL, 280 },
     {    "full-screen", 0, &(settings->full_screen), 1 },
     { "no-full-screen", 0, &(settings->full_screen), 0 },
     {    "fuller", 0, &(settings->fuller), 1 },
     { "no-fuller", 0, &(settings->fuller), 0 },
-    { "if2cart", 1, NULL, 278 },
+    { "if2cart", 1, NULL, 281 },
     {    "interface1", 0, &(settings->interface1), 1 },
     { "no-interface1", 0, &(settings->interface1), 0 },
     {    "interface2", 0, &(settings->interface2), 1 },
@@ -3651,133 +4120,149 @@ settings_command_line( settings_info *settings, int *first_arg,
     {    "joystick-prompt", 0, &(settings->joy_prompt), 1 },
     { "no-joystick-prompt", 0, &(settings->joy_prompt), 0 },
     { "joystick-1", 1, NULL, 'j' },
-    { "joystick-1-fire-1", 1, NULL, 279 },
-    { "joystick-1-fire-10", 1, NULL, 280 },
-    { "joystick-1-fire-2", 1, NULL, 281 },
-    { "joystick-1-fire-3", 1, NULL, 282 },
-    { "joystick-1-fire-4", 1, NULL, 283 },
-    { "joystick-1-fire-5", 1, NULL, 284 },
-    { "joystick-1-fire-6", 1, NULL, 285 },
-    { "joystick-1-fire-7", 1, NULL, 286 },
-    { "joystick-1-fire-8", 1, NULL, 287 },
-    { "joystick-1-fire-9", 1, NULL, 288 },
-    { "joystick-1-output", 1, NULL, 289 },
-    { "joystick-2", 1, NULL, 290 },
-    { "joystick-2-fire-1", 1, NULL, 291 },
-    { "joystick-2-fire-10", 1, NULL, 292 },
-    { "joystick-2-fire-2", 1, NULL, 293 },
-    { "joystick-2-fire-3", 1, NULL, 294 },
-    { "joystick-2-fire-4", 1, NULL, 295 },
-    { "joystick-2-fire-5", 1, NULL, 296 },
-    { "joystick-2-fire-6", 1, NULL, 297 },
-    { "joystick-2-fire-7", 1, NULL, 298 },
-    { "joystick-2-fire-8", 1, NULL, 299 },
-    { "joystick-2-fire-9", 1, NULL, 300 },
-    { "joystick-2-output", 1, NULL, 301 },
-    { "joystick-keyboard-down", 1, NULL, 302 },
-    { "joystick-keyboard-fire", 1, NULL, 303 },
-    { "joystick-keyboard-left", 1, NULL, 304 },
-    { "joystick-keyboard-output", 1, NULL, 305 },
-    { "joystick-keyboard-right", 1, NULL, 306 },
-    { "joystick-keyboard-up", 1, NULL, 307 },
+    { "joystick-1-fire-1", 1, NULL, 282 },
+    { "joystick-1-fire-10", 1, NULL, 283 },
+    { "joystick-1-fire-11", 1, NULL, 284 },
+    { "joystick-1-fire-12", 1, NULL, 285 },
+    { "joystick-1-fire-13", 1, NULL, 286 },
+    { "joystick-1-fire-14", 1, NULL, 287 },
+    { "joystick-1-fire-15", 1, NULL, 288 },
+    { "joystick-1-fire-2", 1, NULL, 289 },
+    { "joystick-1-fire-3", 1, NULL, 290 },
+    { "joystick-1-fire-4", 1, NULL, 291 },
+    { "joystick-1-fire-5", 1, NULL, 292 },
+    { "joystick-1-fire-6", 1, NULL, 293 },
+    { "joystick-1-fire-7", 1, NULL, 294 },
+    { "joystick-1-fire-8", 1, NULL, 295 },
+    { "joystick-1-fire-9", 1, NULL, 296 },
+    { "joystick-1-output", 1, NULL, 297 },
+    { "joystick-2", 1, NULL, 298 },
+    { "joystick-2-fire-1", 1, NULL, 299 },
+    { "joystick-2-fire-10", 1, NULL, 300 },
+    { "joystick-2-fire-11", 1, NULL, 301 },
+    { "joystick-2-fire-12", 1, NULL, 302 },
+    { "joystick-2-fire-13", 1, NULL, 303 },
+    { "joystick-2-fire-14", 1, NULL, 304 },
+    { "joystick-2-fire-15", 1, NULL, 305 },
+    { "joystick-2-fire-2", 1, NULL, 306 },
+    { "joystick-2-fire-3", 1, NULL, 307 },
+    { "joystick-2-fire-4", 1, NULL, 308 },
+    { "joystick-2-fire-5", 1, NULL, 309 },
+    { "joystick-2-fire-6", 1, NULL, 310 },
+    { "joystick-2-fire-7", 1, NULL, 311 },
+    { "joystick-2-fire-8", 1, NULL, 312 },
+    { "joystick-2-fire-9", 1, NULL, 313 },
+    { "joystick-2-output", 1, NULL, 314 },
+    { "joystick-keyboard-down", 1, NULL, 315 },
+    { "joystick-keyboard-fire", 1, NULL, 316 },
+    { "joystick-keyboard-left", 1, NULL, 317 },
+    { "joystick-keyboard-output", 1, NULL, 318 },
+    { "joystick-keyboard-right", 1, NULL, 319 },
+    { "joystick-keyboard-up", 1, NULL, 320 },
     {    "kempston-mouse", 0, &(settings->kempston_mouse), 1 },
     { "no-kempston-mouse", 0, &(settings->kempston_mouse), 0 },
     {    "late-timings", 0, &(settings->late_timings), 1 },
     { "no-late-timings", 0, &(settings->late_timings), 0 },
-    { "microdrive-file", 1, NULL, 308 },
-    { "microdrive-2-file", 1, NULL, 309 },
-    { "microdrive-3-file", 1, NULL, 310 },
-    { "microdrive-4-file", 1, NULL, 311 },
-    { "microdrive-5-file", 1, NULL, 312 },
-    { "microdrive-6-file", 1, NULL, 313 },
-    { "microdrive-7-file", 1, NULL, 314 },
-    { "microdrive-8-file", 1, NULL, 315 },
-    { "mdr-len", 1, NULL, 316 },
+    { "microdrive-file", 1, NULL, 321 },
+    { "microdrive-2-file", 1, NULL, 322 },
+    { "microdrive-3-file", 1, NULL, 323 },
+    { "microdrive-4-file", 1, NULL, 324 },
+    { "microdrive-5-file", 1, NULL, 325 },
+    { "microdrive-6-file", 1, NULL, 326 },
+    { "microdrive-7-file", 1, NULL, 327 },
+    { "microdrive-8-file", 1, NULL, 328 },
+    { "mdr-len", 1, NULL, 329 },
     {    "mdr-random-len", 0, &(settings->mdr_random_len), 1 },
     { "no-mdr-random-len", 0, &(settings->mdr_random_len), 0 },
     {    "melodik", 0, &(settings->melodik), 1 },
     { "no-melodik", 0, &(settings->melodik), 0 },
     {    "mouse-swap-buttons", 0, &(settings->mouse_swap_buttons), 1 },
     { "no-mouse-swap-buttons", 0, &(settings->mouse_swap_buttons), 0 },
+    { "movie-compr", 1, NULL, 330 },
+    { "movie-start", 1, NULL, 331 },
+    {    "movie-stop-after-rzx", 0, &(settings->movie_stop_after_rzx), 1 },
+    { "no-movie-stop-after-rzx", 0, &(settings->movie_stop_after_rzx), 0 },
     {    "opus", 0, &(settings->opus), 1 },
     { "no-opus", 0, &(settings->opus), 0 },
-    { "opusdisk", 1, NULL, 317 },
+    { "opusdisk", 1, NULL, 332 },
     {    "pal-tv2x", 0, &(settings->pal_tv2x), 1 },
     { "no-pal-tv2x", 0, &(settings->pal_tv2x), 0 },
     { "playback", 1, NULL, 'p' },
     {    "plus3-detect-speedlock", 0, &(settings->plus3_detect_speedlock), 1 },
     { "no-plus3-detect-speedlock", 0, &(settings->plus3_detect_speedlock), 0 },
-    { "plus3disk", 1, NULL, 318 },
+    { "plus3disk", 1, NULL, 333 },
     {    "plusd", 0, &(settings->plusd), 1 },
     { "no-plusd", 0, &(settings->plusd), 0 },
-    { "plusddisk", 1, NULL, 319 },
+    { "plusddisk", 1, NULL, 334 },
     {    "printer", 0, &(settings->printer), 1 },
     { "no-printer", 0, &(settings->printer), 0 },
-    { "graphicsfile", 1, NULL, 320 },
-    { "textfile", 1, NULL, 321 },
+    { "graphicsfile", 1, NULL, 335 },
+    { "textfile", 1, NULL, 336 },
     {    "raw-s-net", 0, &(settings->raw_s_net), 1 },
     { "no-raw-s-net", 0, &(settings->raw_s_net), 0 },
     { "record", 1, NULL, 'r' },
-    { "rom-128-0", 1, NULL, 323 },
-    { "rom-128-1", 1, NULL, 324 },
-    { "rom-16", 1, NULL, 325 },
-    { "rom-48", 1, NULL, 326 },
-    { "rom-beta128", 1, NULL, 327 },
-    { "rom-interface-i", 1, NULL, 328 },
-    { "rom-opus", 1, NULL, 329 },
-    { "rom-pentagon1024-0", 1, NULL, 330 },
-    { "rom-pentagon1024-1", 1, NULL, 331 },
-    { "rom-pentagon1024-2", 1, NULL, 332 },
-    { "rom-pentagon1024-3", 1, NULL, 333 },
-    { "rom-pentagon512-0", 1, NULL, 334 },
-    { "rom-pentagon512-1", 1, NULL, 335 },
-    { "rom-pentagon512-2", 1, NULL, 336 },
-    { "rom-pentagon512-3", 1, NULL, 337 },
-    { "rom-pentagon-0", 1, NULL, 338 },
-    { "rom-pentagon-1", 1, NULL, 339 },
-    { "rom-pentagon-2", 1, NULL, 340 },
-    { "rom-plus2-0", 1, NULL, 341 },
-    { "rom-plus2-1", 1, NULL, 342 },
-    { "rom-plus2a-0", 1, NULL, 343 },
-    { "rom-plus2a-1", 1, NULL, 344 },
-    { "rom-plus2a-2", 1, NULL, 345 },
-    { "rom-plus2a-3", 1, NULL, 346 },
-    { "rom-plus3-0", 1, NULL, 347 },
-    { "rom-plus3-1", 1, NULL, 348 },
-    { "rom-plus3-2", 1, NULL, 349 },
-    { "rom-plus3-3", 1, NULL, 350 },
-    { "rom-plus3e-0", 1, NULL, 351 },
-    { "rom-plus3e-1", 1, NULL, 352 },
-    { "rom-plus3e-2", 1, NULL, 353 },
-    { "rom-plus3e-3", 1, NULL, 354 },
-    { "rom-plusd", 1, NULL, 355 },
-    { "rom-scorpion-0", 1, NULL, 356 },
-    { "rom-scorpion-1", 1, NULL, 357 },
-    { "rom-scorpion-2", 1, NULL, 358 },
-    { "rom-scorpion-3", 1, NULL, 359 },
-    { "rom-spec-se-0", 1, NULL, 360 },
-    { "rom-spec-se-1", 1, NULL, 361 },
-    { "rom-tc2048", 1, NULL, 362 },
-    { "rom-tc2068-0", 1, NULL, 363 },
-    { "rom-tc2068-1", 1, NULL, 364 },
-    { "rom-ts2068-0", 1, NULL, 365 },
-    { "rom-ts2068-1", 1, NULL, 366 },
+    { "rom-128-0", 1, NULL, 338 },
+    { "rom-128-1", 1, NULL, 339 },
+    { "rom-16", 1, NULL, 340 },
+    { "rom-48", 1, NULL, 341 },
+    { "rom-beta128", 1, NULL, 342 },
+    { "rom-disciple", 1, NULL, 343 },
+    { "rom-interface-i", 1, NULL, 344 },
+    { "rom-opus", 1, NULL, 345 },
+    { "rom-pentagon1024-0", 1, NULL, 346 },
+    { "rom-pentagon1024-1", 1, NULL, 347 },
+    { "rom-pentagon1024-2", 1, NULL, 348 },
+    { "rom-pentagon1024-3", 1, NULL, 349 },
+    { "rom-pentagon512-0", 1, NULL, 350 },
+    { "rom-pentagon512-1", 1, NULL, 351 },
+    { "rom-pentagon512-2", 1, NULL, 352 },
+    { "rom-pentagon512-3", 1, NULL, 353 },
+    { "rom-pentagon-0", 1, NULL, 354 },
+    { "rom-pentagon-1", 1, NULL, 355 },
+    { "rom-pentagon-2", 1, NULL, 356 },
+    { "rom-plus2-0", 1, NULL, 357 },
+    { "rom-plus2-1", 1, NULL, 358 },
+    { "rom-plus2a-0", 1, NULL, 359 },
+    { "rom-plus2a-1", 1, NULL, 360 },
+    { "rom-plus2a-2", 1, NULL, 361 },
+    { "rom-plus2a-3", 1, NULL, 362 },
+    { "rom-plus3-0", 1, NULL, 363 },
+    { "rom-plus3-1", 1, NULL, 364 },
+    { "rom-plus3-2", 1, NULL, 365 },
+    { "rom-plus3-3", 1, NULL, 366 },
+    { "rom-plus3e-0", 1, NULL, 367 },
+    { "rom-plus3e-1", 1, NULL, 368 },
+    { "rom-plus3e-2", 1, NULL, 369 },
+    { "rom-plus3e-3", 1, NULL, 370 },
+    { "rom-plusd", 1, NULL, 371 },
+    { "rom-scorpion-0", 1, NULL, 372 },
+    { "rom-scorpion-1", 1, NULL, 373 },
+    { "rom-scorpion-2", 1, NULL, 374 },
+    { "rom-scorpion-3", 1, NULL, 375 },
+    { "rom-spec-se-0", 1, NULL, 376 },
+    { "rom-spec-se-1", 1, NULL, 377 },
+    { "rom-speccyboot", 1, NULL, 378 },
+    { "rom-tc2048", 1, NULL, 379 },
+    { "rom-tc2068-0", 1, NULL, 380 },
+    { "rom-tc2068-1", 1, NULL, 381 },
+    { "rom-ts2068-0", 1, NULL, 382 },
+    { "rom-ts2068-1", 1, NULL, 383 },
     {    "rs232-handshake", 0, &(settings->rs232_handshake), 1 },
     { "no-rs232-handshake", 0, &(settings->rs232_handshake), 0 },
-    { "rs232-rx", 1, NULL, 367 },
-    { "rs232-tx", 1, NULL, 368 },
+    { "rs232-rx", 1, NULL, 384 },
+    { "rs232-tx", 1, NULL, 385 },
     {    "rzx-autosaves", 0, &(settings->rzx_autosaves), 1 },
     { "no-rzx-autosaves", 0, &(settings->rzx_autosaves), 0 },
     {    "compress-rzx", 0, &(settings->rzx_compression), 1 },
     { "no-compress-rzx", 0, &(settings->rzx_compression), 0 },
     {    "simpleide", 0, &(settings->simpleide_active), 1 },
     { "no-simpleide", 0, &(settings->simpleide_active), 0 },
-    { "simpleide-masterfile", 1, NULL, 369 },
-    { "simpleide-slavefile", 1, NULL, 370 },
+    { "simpleide-masterfile", 1, NULL, 386 },
+    { "simpleide-slavefile", 1, NULL, 387 },
     {    "slt", 0, &(settings->slt_traps), 1 },
     { "no-slt", 0, &(settings->slt_traps), 0 },
     { "snapshot", 1, NULL, 's' },
-    { "snet", 1, NULL, 372 },
+    { "snet", 1, NULL, 389 },
     {    "sound", 0, &(settings->sound), 1 },
     { "no-sound", 0, &(settings->sound), 0 },
     { "sound-device", 1, NULL, 'd' },
@@ -3786,39 +4271,50 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "sound-freq", 1, NULL, 'f' },
     {    "loading-sound", 0, &(settings->sound_load), 1 },
     { "no-loading-sound", 0, &(settings->sound_load), 0 },
-    { "speaker-type", 1, NULL, 373 },
+    { "speaker-type", 1, NULL, 390 },
+    {    "speccyboot", 0, &(settings->speccyboot), 1 },
+    { "no-speccyboot", 0, &(settings->speccyboot), 0 },
+    { "speccyboot-tap", 1, NULL, 391 },
+    {    "specdrum", 0, &(settings->specdrum), 1 },
+    { "no-specdrum", 0, &(settings->specdrum), 0 },
+    {    "spectranet", 0, &(settings->spectranet), 1 },
+    { "no-spectranet", 0, &(settings->spectranet), 0 },
+    {    "spectranet-disable", 0, &(settings->spectranet_disable), 1 },
+    { "no-spectranet-disable", 0, &(settings->spectranet_disable), 0 },
     { "machine", 1, NULL, 'm' },
     { "graphics-filter", 1, NULL, 'g' },
     {    "statusbar", 0, &(settings->statusbar), 1 },
     { "no-statusbar", 0, &(settings->statusbar), 0 },
-    {    "separation", 0, &(settings->stereo_ay), 1 },
-    { "no-separation", 0, &(settings->stereo_ay), 0 },
+    { "separation", 1, NULL, 392 },
     {    "strict-aspect-hint", 0, &(settings->strict_aspect_hint), 1 },
     { "no-strict-aspect-hint", 0, &(settings->strict_aspect_hint), 0 },
-    { "svga-modes", 1, NULL, 374 },
+    { "svga-modes", 1, NULL, 393 },
     { "tape", 1, NULL, 't' },
     {    "traps", 0, &(settings->tape_traps), 1 },
     { "no-traps", 0, &(settings->tape_traps), 0 },
     {    "unittests", 0, &(settings->unittests), 1 },
     { "no-unittests", 0, &(settings->unittests), 0 },
-    { "volume-ay", 1, NULL, 375 },
-    { "volume-beeper", 1, NULL, 376 },
+    { "volume-ay", 1, NULL, 394 },
+    { "volume-beeper", 1, NULL, 395 },
+    { "volume-specdrum", 1, NULL, 396 },
     {    "writable-roms", 0, &(settings->writable_roms), 1 },
     { "no-writable-roms", 0, &(settings->writable_roms), 0 },
     {    "zxatasp", 0, &(settings->zxatasp_active), 1 },
     { "no-zxatasp", 0, &(settings->zxatasp_active), 0 },
-    { "zxatasp-masterfile", 1, NULL, 377 },
-    { "zxatasp-slavefile", 1, NULL, 378 },
+    { "zxatasp-masterfile", 1, NULL, 397 },
+    { "zxatasp-slavefile", 1, NULL, 398 },
     {    "zxatasp-upload", 0, &(settings->zxatasp_upload), 1 },
     { "no-zxatasp-upload", 0, &(settings->zxatasp_upload), 0 },
     {    "zxatasp-write-protect", 0, &(settings->zxatasp_wp), 1 },
     { "no-zxatasp-write-protect", 0, &(settings->zxatasp_wp), 0 },
     {    "zxcf", 0, &(settings->zxcf_active), 1 },
     { "no-zxcf", 0, &(settings->zxcf_active), 0 },
-    { "zxcf-cffile", 1, NULL, 379 },
+    { "zxcf-cffile", 1, NULL, 399 },
     {    "zxcf-upload", 0, &(settings->zxcf_upload), 1 },
     { "no-zxcf-upload", 0, &(settings->zxcf_upload), 0 },
-#line 613"../settings.pl"
+    {    "zxprinter", 0, &(settings->zxprinter), 1 },
+    { "no-zxprinter", 0, &(settings->zxprinter), 0 },
+#line 614"../settings.pl"
 
     { "help", 0, NULL, 'h' },
     { "version", 0, NULL, 'V' },
@@ -3848,135 +4344,155 @@ settings_command_line( settings_info *settings, int *first_arg,
     case 257: settings->competition_code = atoi( optarg ); break;
     case 258: settings_set_string( &settings->dck_file, optarg ); break;
     case 259: settings_set_string( &settings->debugger_command, optarg ); break;
-    case 260: settings_set_string( &settings->disk_try_merge, optarg ); break;
-    case 261: settings_set_string( &settings->divide_master_file, optarg ); break;
-    case 262: settings_set_string( &settings->divide_slave_file, optarg ); break;
+    case 260: settings_set_string( &settings->discipledisk_file, optarg ); break;
+    case 261: settings_set_string( &settings->disk_try_merge, optarg ); break;
+    case 262: settings_set_string( &settings->divide_master_file, optarg ); break;
+    case 263: settings_set_string( &settings->divide_slave_file, optarg ); break;
     case 'D': settings->doublescan_mode = atoi( optarg ); break;
-    case 264: settings->drive_40_max_track = atoi( optarg ); break;
-    case 265: settings->drive_80_max_track = atoi( optarg ); break;
-    case 266: settings_set_string( &settings->drive_beta128a_type, optarg ); break;
-    case 267: settings_set_string( &settings->drive_beta128b_type, optarg ); break;
-    case 268: settings_set_string( &settings->drive_beta128c_type, optarg ); break;
-    case 269: settings_set_string( &settings->drive_beta128d_type, optarg ); break;
-    case 270: settings_set_string( &settings->drive_opus1_type, optarg ); break;
-    case 271: settings_set_string( &settings->drive_opus2_type, optarg ); break;
-    case 272: settings_set_string( &settings->drive_plus3a_type, optarg ); break;
-    case 273: settings_set_string( &settings->drive_plus3b_type, optarg ); break;
-    case 274: settings_set_string( &settings->drive_plusd1_type, optarg ); break;
-    case 275: settings_set_string( &settings->drive_plusd2_type, optarg ); break;
-    case 276: settings->emulation_speed = atoi( optarg ); break;
+    case 265: settings->drive_40_max_track = atoi( optarg ); break;
+    case 266: settings->drive_80_max_track = atoi( optarg ); break;
+    case 267: settings_set_string( &settings->drive_beta128a_type, optarg ); break;
+    case 268: settings_set_string( &settings->drive_beta128b_type, optarg ); break;
+    case 269: settings_set_string( &settings->drive_beta128c_type, optarg ); break;
+    case 270: settings_set_string( &settings->drive_beta128d_type, optarg ); break;
+    case 271: settings_set_string( &settings->drive_disciple1_type, optarg ); break;
+    case 272: settings_set_string( &settings->drive_disciple2_type, optarg ); break;
+    case 273: settings_set_string( &settings->drive_opus1_type, optarg ); break;
+    case 274: settings_set_string( &settings->drive_opus2_type, optarg ); break;
+    case 275: settings_set_string( &settings->drive_plus3a_type, optarg ); break;
+    case 276: settings_set_string( &settings->drive_plus3b_type, optarg ); break;
+    case 277: settings_set_string( &settings->drive_plusd1_type, optarg ); break;
+    case 278: settings_set_string( &settings->drive_plusd2_type, optarg ); break;
+    case 279: settings->emulation_speed = atoi( optarg ); break;
     case 'v': settings->fb_mode = atoi( optarg ); break;
-    case 277: settings->frame_rate = atoi( optarg ); break;
-    case 278: settings_set_string( &settings->if2_file, optarg ); break;
+    case 280: settings->frame_rate = atoi( optarg ); break;
+    case 281: settings_set_string( &settings->if2_file, optarg ); break;
     case 'j': settings_set_string( &settings->joystick_1, optarg ); break;
-    case 279: settings->joystick_1_fire_1 = atoi( optarg ); break;
-    case 280: settings->joystick_1_fire_10 = atoi( optarg ); break;
-    case 281: settings->joystick_1_fire_2 = atoi( optarg ); break;
-    case 282: settings->joystick_1_fire_3 = atoi( optarg ); break;
-    case 283: settings->joystick_1_fire_4 = atoi( optarg ); break;
-    case 284: settings->joystick_1_fire_5 = atoi( optarg ); break;
-    case 285: settings->joystick_1_fire_6 = atoi( optarg ); break;
-    case 286: settings->joystick_1_fire_7 = atoi( optarg ); break;
-    case 287: settings->joystick_1_fire_8 = atoi( optarg ); break;
-    case 288: settings->joystick_1_fire_9 = atoi( optarg ); break;
-    case 289: settings->joystick_1_output = atoi( optarg ); break;
-    case 290: settings_set_string( &settings->joystick_2, optarg ); break;
-    case 291: settings->joystick_2_fire_1 = atoi( optarg ); break;
-    case 292: settings->joystick_2_fire_10 = atoi( optarg ); break;
-    case 293: settings->joystick_2_fire_2 = atoi( optarg ); break;
-    case 294: settings->joystick_2_fire_3 = atoi( optarg ); break;
-    case 295: settings->joystick_2_fire_4 = atoi( optarg ); break;
-    case 296: settings->joystick_2_fire_5 = atoi( optarg ); break;
-    case 297: settings->joystick_2_fire_6 = atoi( optarg ); break;
-    case 298: settings->joystick_2_fire_7 = atoi( optarg ); break;
-    case 299: settings->joystick_2_fire_8 = atoi( optarg ); break;
-    case 300: settings->joystick_2_fire_9 = atoi( optarg ); break;
-    case 301: settings->joystick_2_output = atoi( optarg ); break;
-    case 302: settings->joystick_keyboard_down = atoi( optarg ); break;
-    case 303: settings->joystick_keyboard_fire = atoi( optarg ); break;
-    case 304: settings->joystick_keyboard_left = atoi( optarg ); break;
-    case 305: settings->joystick_keyboard_output = atoi( optarg ); break;
-    case 306: settings->joystick_keyboard_right = atoi( optarg ); break;
-    case 307: settings->joystick_keyboard_up = atoi( optarg ); break;
-    case 308: settings_set_string( &settings->mdr_file, optarg ); break;
-    case 309: settings_set_string( &settings->mdr_file2, optarg ); break;
-    case 310: settings_set_string( &settings->mdr_file3, optarg ); break;
-    case 311: settings_set_string( &settings->mdr_file4, optarg ); break;
-    case 312: settings_set_string( &settings->mdr_file5, optarg ); break;
-    case 313: settings_set_string( &settings->mdr_file6, optarg ); break;
-    case 314: settings_set_string( &settings->mdr_file7, optarg ); break;
-    case 315: settings_set_string( &settings->mdr_file8, optarg ); break;
-    case 316: settings->mdr_len = atoi( optarg ); break;
-    case 317: settings_set_string( &settings->opusdisk_file, optarg ); break;
+    case 282: settings->joystick_1_fire_1 = atoi( optarg ); break;
+    case 283: settings->joystick_1_fire_10 = atoi( optarg ); break;
+    case 284: settings->joystick_1_fire_11 = atoi( optarg ); break;
+    case 285: settings->joystick_1_fire_12 = atoi( optarg ); break;
+    case 286: settings->joystick_1_fire_13 = atoi( optarg ); break;
+    case 287: settings->joystick_1_fire_14 = atoi( optarg ); break;
+    case 288: settings->joystick_1_fire_15 = atoi( optarg ); break;
+    case 289: settings->joystick_1_fire_2 = atoi( optarg ); break;
+    case 290: settings->joystick_1_fire_3 = atoi( optarg ); break;
+    case 291: settings->joystick_1_fire_4 = atoi( optarg ); break;
+    case 292: settings->joystick_1_fire_5 = atoi( optarg ); break;
+    case 293: settings->joystick_1_fire_6 = atoi( optarg ); break;
+    case 294: settings->joystick_1_fire_7 = atoi( optarg ); break;
+    case 295: settings->joystick_1_fire_8 = atoi( optarg ); break;
+    case 296: settings->joystick_1_fire_9 = atoi( optarg ); break;
+    case 297: settings->joystick_1_output = atoi( optarg ); break;
+    case 298: settings_set_string( &settings->joystick_2, optarg ); break;
+    case 299: settings->joystick_2_fire_1 = atoi( optarg ); break;
+    case 300: settings->joystick_2_fire_10 = atoi( optarg ); break;
+    case 301: settings->joystick_2_fire_11 = atoi( optarg ); break;
+    case 302: settings->joystick_2_fire_12 = atoi( optarg ); break;
+    case 303: settings->joystick_2_fire_13 = atoi( optarg ); break;
+    case 304: settings->joystick_2_fire_14 = atoi( optarg ); break;
+    case 305: settings->joystick_2_fire_15 = atoi( optarg ); break;
+    case 306: settings->joystick_2_fire_2 = atoi( optarg ); break;
+    case 307: settings->joystick_2_fire_3 = atoi( optarg ); break;
+    case 308: settings->joystick_2_fire_4 = atoi( optarg ); break;
+    case 309: settings->joystick_2_fire_5 = atoi( optarg ); break;
+    case 310: settings->joystick_2_fire_6 = atoi( optarg ); break;
+    case 311: settings->joystick_2_fire_7 = atoi( optarg ); break;
+    case 312: settings->joystick_2_fire_8 = atoi( optarg ); break;
+    case 313: settings->joystick_2_fire_9 = atoi( optarg ); break;
+    case 314: settings->joystick_2_output = atoi( optarg ); break;
+    case 315: settings->joystick_keyboard_down = atoi( optarg ); break;
+    case 316: settings->joystick_keyboard_fire = atoi( optarg ); break;
+    case 317: settings->joystick_keyboard_left = atoi( optarg ); break;
+    case 318: settings->joystick_keyboard_output = atoi( optarg ); break;
+    case 319: settings->joystick_keyboard_right = atoi( optarg ); break;
+    case 320: settings->joystick_keyboard_up = atoi( optarg ); break;
+    case 321: settings_set_string( &settings->mdr_file, optarg ); break;
+    case 322: settings_set_string( &settings->mdr_file2, optarg ); break;
+    case 323: settings_set_string( &settings->mdr_file3, optarg ); break;
+    case 324: settings_set_string( &settings->mdr_file4, optarg ); break;
+    case 325: settings_set_string( &settings->mdr_file5, optarg ); break;
+    case 326: settings_set_string( &settings->mdr_file6, optarg ); break;
+    case 327: settings_set_string( &settings->mdr_file7, optarg ); break;
+    case 328: settings_set_string( &settings->mdr_file8, optarg ); break;
+    case 329: settings->mdr_len = atoi( optarg ); break;
+    case 330: settings_set_string( &settings->movie_compr, optarg ); break;
+    case 331: settings_set_string( &settings->movie_start, optarg ); break;
+    case 332: settings_set_string( &settings->opusdisk_file, optarg ); break;
     case 'p': settings_set_string( &settings->playback_file, optarg ); break;
-    case 318: settings_set_string( &settings->plus3disk_file, optarg ); break;
-    case 319: settings_set_string( &settings->plusddisk_file, optarg ); break;
-    case 320: settings_set_string( &settings->printer_graphics_filename, optarg ); break;
-    case 321: settings_set_string( &settings->printer_text_filename, optarg ); break;
+    case 333: settings_set_string( &settings->plus3disk_file, optarg ); break;
+    case 334: settings_set_string( &settings->plusddisk_file, optarg ); break;
+    case 335: settings_set_string( &settings->printer_graphics_filename, optarg ); break;
+    case 336: settings_set_string( &settings->printer_text_filename, optarg ); break;
     case 'r': settings_set_string( &settings->record_file, optarg ); break;
-    case 323: settings_set_string( &settings->rom_128_0, optarg ); break;
-    case 324: settings_set_string( &settings->rom_128_1, optarg ); break;
-    case 325: settings_set_string( &settings->rom_16, optarg ); break;
-    case 326: settings_set_string( &settings->rom_48, optarg ); break;
-    case 327: settings_set_string( &settings->rom_beta128, optarg ); break;
-    case 328: settings_set_string( &settings->rom_interface_i, optarg ); break;
-    case 329: settings_set_string( &settings->rom_opus, optarg ); break;
-    case 330: settings_set_string( &settings->rom_pentagon1024_0, optarg ); break;
-    case 331: settings_set_string( &settings->rom_pentagon1024_1, optarg ); break;
-    case 332: settings_set_string( &settings->rom_pentagon1024_2, optarg ); break;
-    case 333: settings_set_string( &settings->rom_pentagon1024_3, optarg ); break;
-    case 334: settings_set_string( &settings->rom_pentagon512_0, optarg ); break;
-    case 335: settings_set_string( &settings->rom_pentagon512_1, optarg ); break;
-    case 336: settings_set_string( &settings->rom_pentagon512_2, optarg ); break;
-    case 337: settings_set_string( &settings->rom_pentagon512_3, optarg ); break;
-    case 338: settings_set_string( &settings->rom_pentagon_0, optarg ); break;
-    case 339: settings_set_string( &settings->rom_pentagon_1, optarg ); break;
-    case 340: settings_set_string( &settings->rom_pentagon_2, optarg ); break;
-    case 341: settings_set_string( &settings->rom_plus2_0, optarg ); break;
-    case 342: settings_set_string( &settings->rom_plus2_1, optarg ); break;
-    case 343: settings_set_string( &settings->rom_plus2a_0, optarg ); break;
-    case 344: settings_set_string( &settings->rom_plus2a_1, optarg ); break;
-    case 345: settings_set_string( &settings->rom_plus2a_2, optarg ); break;
-    case 346: settings_set_string( &settings->rom_plus2a_3, optarg ); break;
-    case 347: settings_set_string( &settings->rom_plus3_0, optarg ); break;
-    case 348: settings_set_string( &settings->rom_plus3_1, optarg ); break;
-    case 349: settings_set_string( &settings->rom_plus3_2, optarg ); break;
-    case 350: settings_set_string( &settings->rom_plus3_3, optarg ); break;
-    case 351: settings_set_string( &settings->rom_plus3e_0, optarg ); break;
-    case 352: settings_set_string( &settings->rom_plus3e_1, optarg ); break;
-    case 353: settings_set_string( &settings->rom_plus3e_2, optarg ); break;
-    case 354: settings_set_string( &settings->rom_plus3e_3, optarg ); break;
-    case 355: settings_set_string( &settings->rom_plusd, optarg ); break;
-    case 356: settings_set_string( &settings->rom_scorpion_0, optarg ); break;
-    case 357: settings_set_string( &settings->rom_scorpion_1, optarg ); break;
-    case 358: settings_set_string( &settings->rom_scorpion_2, optarg ); break;
-    case 359: settings_set_string( &settings->rom_scorpion_3, optarg ); break;
-    case 360: settings_set_string( &settings->rom_spec_se_0, optarg ); break;
-    case 361: settings_set_string( &settings->rom_spec_se_1, optarg ); break;
-    case 362: settings_set_string( &settings->rom_tc2048, optarg ); break;
-    case 363: settings_set_string( &settings->rom_tc2068_0, optarg ); break;
-    case 364: settings_set_string( &settings->rom_tc2068_1, optarg ); break;
-    case 365: settings_set_string( &settings->rom_ts2068_0, optarg ); break;
-    case 366: settings_set_string( &settings->rom_ts2068_1, optarg ); break;
-    case 367: settings_set_string( &settings->rs232_rx, optarg ); break;
-    case 368: settings_set_string( &settings->rs232_tx, optarg ); break;
-    case 369: settings_set_string( &settings->simpleide_master_file, optarg ); break;
-    case 370: settings_set_string( &settings->simpleide_slave_file, optarg ); break;
+    case 338: settings_set_string( &settings->rom_128_0, optarg ); break;
+    case 339: settings_set_string( &settings->rom_128_1, optarg ); break;
+    case 340: settings_set_string( &settings->rom_16, optarg ); break;
+    case 341: settings_set_string( &settings->rom_48, optarg ); break;
+    case 342: settings_set_string( &settings->rom_beta128, optarg ); break;
+    case 343: settings_set_string( &settings->rom_disciple, optarg ); break;
+    case 344: settings_set_string( &settings->rom_interface_i, optarg ); break;
+    case 345: settings_set_string( &settings->rom_opus, optarg ); break;
+    case 346: settings_set_string( &settings->rom_pentagon1024_0, optarg ); break;
+    case 347: settings_set_string( &settings->rom_pentagon1024_1, optarg ); break;
+    case 348: settings_set_string( &settings->rom_pentagon1024_2, optarg ); break;
+    case 349: settings_set_string( &settings->rom_pentagon1024_3, optarg ); break;
+    case 350: settings_set_string( &settings->rom_pentagon512_0, optarg ); break;
+    case 351: settings_set_string( &settings->rom_pentagon512_1, optarg ); break;
+    case 352: settings_set_string( &settings->rom_pentagon512_2, optarg ); break;
+    case 353: settings_set_string( &settings->rom_pentagon512_3, optarg ); break;
+    case 354: settings_set_string( &settings->rom_pentagon_0, optarg ); break;
+    case 355: settings_set_string( &settings->rom_pentagon_1, optarg ); break;
+    case 356: settings_set_string( &settings->rom_pentagon_2, optarg ); break;
+    case 357: settings_set_string( &settings->rom_plus2_0, optarg ); break;
+    case 358: settings_set_string( &settings->rom_plus2_1, optarg ); break;
+    case 359: settings_set_string( &settings->rom_plus2a_0, optarg ); break;
+    case 360: settings_set_string( &settings->rom_plus2a_1, optarg ); break;
+    case 361: settings_set_string( &settings->rom_plus2a_2, optarg ); break;
+    case 362: settings_set_string( &settings->rom_plus2a_3, optarg ); break;
+    case 363: settings_set_string( &settings->rom_plus3_0, optarg ); break;
+    case 364: settings_set_string( &settings->rom_plus3_1, optarg ); break;
+    case 365: settings_set_string( &settings->rom_plus3_2, optarg ); break;
+    case 366: settings_set_string( &settings->rom_plus3_3, optarg ); break;
+    case 367: settings_set_string( &settings->rom_plus3e_0, optarg ); break;
+    case 368: settings_set_string( &settings->rom_plus3e_1, optarg ); break;
+    case 369: settings_set_string( &settings->rom_plus3e_2, optarg ); break;
+    case 370: settings_set_string( &settings->rom_plus3e_3, optarg ); break;
+    case 371: settings_set_string( &settings->rom_plusd, optarg ); break;
+    case 372: settings_set_string( &settings->rom_scorpion_0, optarg ); break;
+    case 373: settings_set_string( &settings->rom_scorpion_1, optarg ); break;
+    case 374: settings_set_string( &settings->rom_scorpion_2, optarg ); break;
+    case 375: settings_set_string( &settings->rom_scorpion_3, optarg ); break;
+    case 376: settings_set_string( &settings->rom_spec_se_0, optarg ); break;
+    case 377: settings_set_string( &settings->rom_spec_se_1, optarg ); break;
+    case 378: settings_set_string( &settings->rom_speccyboot, optarg ); break;
+    case 379: settings_set_string( &settings->rom_tc2048, optarg ); break;
+    case 380: settings_set_string( &settings->rom_tc2068_0, optarg ); break;
+    case 381: settings_set_string( &settings->rom_tc2068_1, optarg ); break;
+    case 382: settings_set_string( &settings->rom_ts2068_0, optarg ); break;
+    case 383: settings_set_string( &settings->rom_ts2068_1, optarg ); break;
+    case 384: settings_set_string( &settings->rs232_rx, optarg ); break;
+    case 385: settings_set_string( &settings->rs232_tx, optarg ); break;
+    case 386: settings_set_string( &settings->simpleide_master_file, optarg ); break;
+    case 387: settings_set_string( &settings->simpleide_slave_file, optarg ); break;
     case 's': settings_set_string( &settings->snapshot, optarg ); break;
-    case 372: settings_set_string( &settings->snet, optarg ); break;
+    case 389: settings_set_string( &settings->snet, optarg ); break;
     case 'd': settings_set_string( &settings->sound_device, optarg ); break;
     case 'f': settings->sound_freq = atoi( optarg ); break;
-    case 373: settings_set_string( &settings->speaker_type, optarg ); break;
+    case 390: settings_set_string( &settings->speaker_type, optarg ); break;
+    case 391: settings_set_string( &settings->speccyboot_tap, optarg ); break;
     case 'm': settings_set_string( &settings->start_machine, optarg ); break;
     case 'g': settings_set_string( &settings->start_scaler_mode, optarg ); break;
-    case 374: settings_set_string( &settings->svga_modes, optarg ); break;
+    case 392: settings_set_string( &settings->stereo_ay, optarg ); break;
+    case 393: settings_set_string( &settings->svga_modes, optarg ); break;
     case 't': settings_set_string( &settings->tape_file, optarg ); break;
-    case 375: settings->volume_ay = atoi( optarg ); break;
-    case 376: settings->volume_beeper = atoi( optarg ); break;
-    case 377: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
-    case 378: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
-    case 379: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
-#line 663"../settings.pl"
+    case 394: settings->volume_ay = atoi( optarg ); break;
+    case 395: settings->volume_beeper = atoi( optarg ); break;
+    case 396: settings->volume_specdrum = atoi( optarg ); break;
+    case 397: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
+    case 398: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
+    case 399: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
+#line 664"../settings.pl"
 
     case 'h': settings->show_help = 1; break;
     case 'V': settings->show_version = 1; break;
@@ -4003,24 +4519,17 @@ settings_command_line( settings_info *settings, int *first_arg,
 static int
 settings_copy_internal( settings_info *dest, settings_info *src )
 {
-  if( dest->start_machine ) {
-    free( dest->start_machine );
-    dest->start_machine = NULL;
-  }
-  if( dest->start_scaler_mode ) {
-    free( dest->start_scaler_mode );
-    dest->start_scaler_mode = NULL;
-  }
+  settings_free( dest );
 
   dest->accelerate_loader = src->accelerate_loader;
   dest->aspect_hint = src->aspect_hint;
   dest->auto_load = src->auto_load;
   dest->autosave_settings = src->autosave_settings;
   dest->beta128 = src->beta128;
+  dest->beta128_48boot = src->beta128_48boot;
   dest->betadisk_file = NULL;
   if( src->betadisk_file ) {
-    dest->betadisk_file = strdup( src->betadisk_file );
-    if( !dest->betadisk_file ) { settings_free( dest ); return 1; }
+    dest->betadisk_file = utils_safe_strdup( src->betadisk_file );
   }
   dest->bw_tv = src->bw_tv;
   dest->competition_code = src->competition_code;
@@ -4028,31 +4537,31 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->confirm_actions = src->confirm_actions;
   dest->dck_file = NULL;
   if( src->dck_file ) {
-    dest->dck_file = strdup( src->dck_file );
-    if( !dest->dck_file ) { settings_free( dest ); return 1; }
+    dest->dck_file = utils_safe_strdup( src->dck_file );
   }
   dest->debugger_command = NULL;
   if( src->debugger_command ) {
-    dest->debugger_command = strdup( src->debugger_command );
-    if( !dest->debugger_command ) { settings_free( dest ); return 1; }
+    dest->debugger_command = utils_safe_strdup( src->debugger_command );
   }
   dest->detect_loader = src->detect_loader;
+  dest->disciple = src->disciple;
+  dest->discipledisk_file = NULL;
+  if( src->discipledisk_file ) {
+    dest->discipledisk_file = utils_safe_strdup( src->discipledisk_file );
+  }
   dest->disk_ask_merge = src->disk_ask_merge;
   dest->disk_try_merge = NULL;
   if( src->disk_try_merge ) {
-    dest->disk_try_merge = strdup( src->disk_try_merge );
-    if( !dest->disk_try_merge ) { settings_free( dest ); return 1; }
+    dest->disk_try_merge = utils_safe_strdup( src->disk_try_merge );
   }
   dest->divide_enabled = src->divide_enabled;
   dest->divide_master_file = NULL;
   if( src->divide_master_file ) {
-    dest->divide_master_file = strdup( src->divide_master_file );
-    if( !dest->divide_master_file ) { settings_free( dest ); return 1; }
+    dest->divide_master_file = utils_safe_strdup( src->divide_master_file );
   }
   dest->divide_slave_file = NULL;
   if( src->divide_slave_file ) {
-    dest->divide_slave_file = strdup( src->divide_slave_file );
-    if( !dest->divide_slave_file ) { settings_free( dest ); return 1; }
+    dest->divide_slave_file = utils_safe_strdup( src->divide_slave_file );
   }
   dest->divide_wp = src->divide_wp;
   dest->doublescan_mode = src->doublescan_mode;
@@ -4060,53 +4569,51 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->drive_80_max_track = src->drive_80_max_track;
   dest->drive_beta128a_type = NULL;
   if( src->drive_beta128a_type ) {
-    dest->drive_beta128a_type = strdup( src->drive_beta128a_type );
-    if( !dest->drive_beta128a_type ) { settings_free( dest ); return 1; }
+    dest->drive_beta128a_type = utils_safe_strdup( src->drive_beta128a_type );
   }
   dest->drive_beta128b_type = NULL;
   if( src->drive_beta128b_type ) {
-    dest->drive_beta128b_type = strdup( src->drive_beta128b_type );
-    if( !dest->drive_beta128b_type ) { settings_free( dest ); return 1; }
+    dest->drive_beta128b_type = utils_safe_strdup( src->drive_beta128b_type );
   }
   dest->drive_beta128c_type = NULL;
   if( src->drive_beta128c_type ) {
-    dest->drive_beta128c_type = strdup( src->drive_beta128c_type );
-    if( !dest->drive_beta128c_type ) { settings_free( dest ); return 1; }
+    dest->drive_beta128c_type = utils_safe_strdup( src->drive_beta128c_type );
   }
   dest->drive_beta128d_type = NULL;
   if( src->drive_beta128d_type ) {
-    dest->drive_beta128d_type = strdup( src->drive_beta128d_type );
-    if( !dest->drive_beta128d_type ) { settings_free( dest ); return 1; }
+    dest->drive_beta128d_type = utils_safe_strdup( src->drive_beta128d_type );
+  }
+  dest->drive_disciple1_type = NULL;
+  if( src->drive_disciple1_type ) {
+    dest->drive_disciple1_type = utils_safe_strdup( src->drive_disciple1_type );
+  }
+  dest->drive_disciple2_type = NULL;
+  if( src->drive_disciple2_type ) {
+    dest->drive_disciple2_type = utils_safe_strdup( src->drive_disciple2_type );
   }
   dest->drive_opus1_type = NULL;
   if( src->drive_opus1_type ) {
-    dest->drive_opus1_type = strdup( src->drive_opus1_type );
-    if( !dest->drive_opus1_type ) { settings_free( dest ); return 1; }
+    dest->drive_opus1_type = utils_safe_strdup( src->drive_opus1_type );
   }
   dest->drive_opus2_type = NULL;
   if( src->drive_opus2_type ) {
-    dest->drive_opus2_type = strdup( src->drive_opus2_type );
-    if( !dest->drive_opus2_type ) { settings_free( dest ); return 1; }
+    dest->drive_opus2_type = utils_safe_strdup( src->drive_opus2_type );
   }
   dest->drive_plus3a_type = NULL;
   if( src->drive_plus3a_type ) {
-    dest->drive_plus3a_type = strdup( src->drive_plus3a_type );
-    if( !dest->drive_plus3a_type ) { settings_free( dest ); return 1; }
+    dest->drive_plus3a_type = utils_safe_strdup( src->drive_plus3a_type );
   }
   dest->drive_plus3b_type = NULL;
   if( src->drive_plus3b_type ) {
-    dest->drive_plus3b_type = strdup( src->drive_plus3b_type );
-    if( !dest->drive_plus3b_type ) { settings_free( dest ); return 1; }
+    dest->drive_plus3b_type = utils_safe_strdup( src->drive_plus3b_type );
   }
   dest->drive_plusd1_type = NULL;
   if( src->drive_plusd1_type ) {
-    dest->drive_plusd1_type = strdup( src->drive_plusd1_type );
-    if( !dest->drive_plusd1_type ) { settings_free( dest ); return 1; }
+    dest->drive_plusd1_type = utils_safe_strdup( src->drive_plusd1_type );
   }
   dest->drive_plusd2_type = NULL;
   if( src->drive_plusd2_type ) {
-    dest->drive_plusd2_type = strdup( src->drive_plusd2_type );
-    if( !dest->drive_plusd2_type ) { settings_free( dest ); return 1; }
+    dest->drive_plusd2_type = utils_safe_strdup( src->drive_plusd2_type );
   }
   dest->embed_snapshot = src->embed_snapshot;
   dest->emulation_speed = src->emulation_speed;
@@ -4117,8 +4624,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->fuller = src->fuller;
   dest->if2_file = NULL;
   if( src->if2_file ) {
-    dest->if2_file = strdup( src->if2_file );
-    if( !dest->if2_file ) { settings_free( dest ); return 1; }
+    dest->if2_file = utils_safe_strdup( src->if2_file );
   }
   dest->interface1 = src->interface1;
   dest->interface2 = src->interface2;
@@ -4127,11 +4633,15 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->joy_prompt = src->joy_prompt;
   dest->joystick_1 = NULL;
   if( src->joystick_1 ) {
-    dest->joystick_1 = strdup( src->joystick_1 );
-    if( !dest->joystick_1 ) { settings_free( dest ); return 1; }
+    dest->joystick_1 = utils_safe_strdup( src->joystick_1 );
   }
   dest->joystick_1_fire_1 = src->joystick_1_fire_1;
   dest->joystick_1_fire_10 = src->joystick_1_fire_10;
+  dest->joystick_1_fire_11 = src->joystick_1_fire_11;
+  dest->joystick_1_fire_12 = src->joystick_1_fire_12;
+  dest->joystick_1_fire_13 = src->joystick_1_fire_13;
+  dest->joystick_1_fire_14 = src->joystick_1_fire_14;
+  dest->joystick_1_fire_15 = src->joystick_1_fire_15;
   dest->joystick_1_fire_2 = src->joystick_1_fire_2;
   dest->joystick_1_fire_3 = src->joystick_1_fire_3;
   dest->joystick_1_fire_4 = src->joystick_1_fire_4;
@@ -4143,11 +4653,15 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->joystick_1_output = src->joystick_1_output;
   dest->joystick_2 = NULL;
   if( src->joystick_2 ) {
-    dest->joystick_2 = strdup( src->joystick_2 );
-    if( !dest->joystick_2 ) { settings_free( dest ); return 1; }
+    dest->joystick_2 = utils_safe_strdup( src->joystick_2 );
   }
   dest->joystick_2_fire_1 = src->joystick_2_fire_1;
   dest->joystick_2_fire_10 = src->joystick_2_fire_10;
+  dest->joystick_2_fire_11 = src->joystick_2_fire_11;
+  dest->joystick_2_fire_12 = src->joystick_2_fire_12;
+  dest->joystick_2_fire_13 = src->joystick_2_fire_13;
+  dest->joystick_2_fire_14 = src->joystick_2_fire_14;
+  dest->joystick_2_fire_15 = src->joystick_2_fire_15;
   dest->joystick_2_fire_2 = src->joystick_2_fire_2;
   dest->joystick_2_fire_3 = src->joystick_2_fire_3;
   dest->joystick_2_fire_4 = src->joystick_2_fire_4;
@@ -4167,407 +4681,363 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->late_timings = src->late_timings;
   dest->mdr_file = NULL;
   if( src->mdr_file ) {
-    dest->mdr_file = strdup( src->mdr_file );
-    if( !dest->mdr_file ) { settings_free( dest ); return 1; }
+    dest->mdr_file = utils_safe_strdup( src->mdr_file );
   }
   dest->mdr_file2 = NULL;
   if( src->mdr_file2 ) {
-    dest->mdr_file2 = strdup( src->mdr_file2 );
-    if( !dest->mdr_file2 ) { settings_free( dest ); return 1; }
+    dest->mdr_file2 = utils_safe_strdup( src->mdr_file2 );
   }
   dest->mdr_file3 = NULL;
   if( src->mdr_file3 ) {
-    dest->mdr_file3 = strdup( src->mdr_file3 );
-    if( !dest->mdr_file3 ) { settings_free( dest ); return 1; }
+    dest->mdr_file3 = utils_safe_strdup( src->mdr_file3 );
   }
   dest->mdr_file4 = NULL;
   if( src->mdr_file4 ) {
-    dest->mdr_file4 = strdup( src->mdr_file4 );
-    if( !dest->mdr_file4 ) { settings_free( dest ); return 1; }
+    dest->mdr_file4 = utils_safe_strdup( src->mdr_file4 );
   }
   dest->mdr_file5 = NULL;
   if( src->mdr_file5 ) {
-    dest->mdr_file5 = strdup( src->mdr_file5 );
-    if( !dest->mdr_file5 ) { settings_free( dest ); return 1; }
+    dest->mdr_file5 = utils_safe_strdup( src->mdr_file5 );
   }
   dest->mdr_file6 = NULL;
   if( src->mdr_file6 ) {
-    dest->mdr_file6 = strdup( src->mdr_file6 );
-    if( !dest->mdr_file6 ) { settings_free( dest ); return 1; }
+    dest->mdr_file6 = utils_safe_strdup( src->mdr_file6 );
   }
   dest->mdr_file7 = NULL;
   if( src->mdr_file7 ) {
-    dest->mdr_file7 = strdup( src->mdr_file7 );
-    if( !dest->mdr_file7 ) { settings_free( dest ); return 1; }
+    dest->mdr_file7 = utils_safe_strdup( src->mdr_file7 );
   }
   dest->mdr_file8 = NULL;
   if( src->mdr_file8 ) {
-    dest->mdr_file8 = strdup( src->mdr_file8 );
-    if( !dest->mdr_file8 ) { settings_free( dest ); return 1; }
+    dest->mdr_file8 = utils_safe_strdup( src->mdr_file8 );
   }
   dest->mdr_len = src->mdr_len;
   dest->mdr_random_len = src->mdr_random_len;
   dest->melodik = src->melodik;
   dest->mouse_swap_buttons = src->mouse_swap_buttons;
+  dest->movie_compr = NULL;
+  if( src->movie_compr ) {
+    dest->movie_compr = utils_safe_strdup( src->movie_compr );
+  }
+  dest->movie_start = NULL;
+  if( src->movie_start ) {
+    dest->movie_start = utils_safe_strdup( src->movie_start );
+  }
+  dest->movie_stop_after_rzx = src->movie_stop_after_rzx;
   dest->opus = src->opus;
   dest->opusdisk_file = NULL;
   if( src->opusdisk_file ) {
-    dest->opusdisk_file = strdup( src->opusdisk_file );
-    if( !dest->opusdisk_file ) { settings_free( dest ); return 1; }
+    dest->opusdisk_file = utils_safe_strdup( src->opusdisk_file );
   }
   dest->pal_tv2x = src->pal_tv2x;
   dest->playback_file = NULL;
   if( src->playback_file ) {
-    dest->playback_file = strdup( src->playback_file );
-    if( !dest->playback_file ) { settings_free( dest ); return 1; }
+    dest->playback_file = utils_safe_strdup( src->playback_file );
   }
   dest->plus3_detect_speedlock = src->plus3_detect_speedlock;
   dest->plus3disk_file = NULL;
   if( src->plus3disk_file ) {
-    dest->plus3disk_file = strdup( src->plus3disk_file );
-    if( !dest->plus3disk_file ) { settings_free( dest ); return 1; }
+    dest->plus3disk_file = utils_safe_strdup( src->plus3disk_file );
   }
   dest->plusd = src->plusd;
   dest->plusddisk_file = NULL;
   if( src->plusddisk_file ) {
-    dest->plusddisk_file = strdup( src->plusddisk_file );
-    if( !dest->plusddisk_file ) { settings_free( dest ); return 1; }
+    dest->plusddisk_file = utils_safe_strdup( src->plusddisk_file );
   }
   dest->printer = src->printer;
   dest->printer_graphics_filename = NULL;
   if( src->printer_graphics_filename ) {
-    dest->printer_graphics_filename = strdup( src->printer_graphics_filename );
-    if( !dest->printer_graphics_filename ) { settings_free( dest ); return 1; }
+    dest->printer_graphics_filename = utils_safe_strdup( src->printer_graphics_filename );
   }
   dest->printer_text_filename = NULL;
   if( src->printer_text_filename ) {
-    dest->printer_text_filename = strdup( src->printer_text_filename );
-    if( !dest->printer_text_filename ) { settings_free( dest ); return 1; }
+    dest->printer_text_filename = utils_safe_strdup( src->printer_text_filename );
   }
   dest->raw_s_net = src->raw_s_net;
   dest->record_file = NULL;
   if( src->record_file ) {
-    dest->record_file = strdup( src->record_file );
-    if( !dest->record_file ) { settings_free( dest ); return 1; }
+    dest->record_file = utils_safe_strdup( src->record_file );
   }
   dest->rom_128_0 = NULL;
   if( src->rom_128_0 ) {
-    dest->rom_128_0 = strdup( src->rom_128_0 );
-    if( !dest->rom_128_0 ) { settings_free( dest ); return 1; }
+    dest->rom_128_0 = utils_safe_strdup( src->rom_128_0 );
   }
   dest->rom_128_1 = NULL;
   if( src->rom_128_1 ) {
-    dest->rom_128_1 = strdup( src->rom_128_1 );
-    if( !dest->rom_128_1 ) { settings_free( dest ); return 1; }
+    dest->rom_128_1 = utils_safe_strdup( src->rom_128_1 );
   }
   dest->rom_16 = NULL;
   if( src->rom_16 ) {
-    dest->rom_16 = strdup( src->rom_16 );
-    if( !dest->rom_16 ) { settings_free( dest ); return 1; }
+    dest->rom_16 = utils_safe_strdup( src->rom_16 );
   }
   dest->rom_48 = NULL;
   if( src->rom_48 ) {
-    dest->rom_48 = strdup( src->rom_48 );
-    if( !dest->rom_48 ) { settings_free( dest ); return 1; }
+    dest->rom_48 = utils_safe_strdup( src->rom_48 );
   }
   dest->rom_beta128 = NULL;
   if( src->rom_beta128 ) {
-    dest->rom_beta128 = strdup( src->rom_beta128 );
-    if( !dest->rom_beta128 ) { settings_free( dest ); return 1; }
+    dest->rom_beta128 = utils_safe_strdup( src->rom_beta128 );
+  }
+  dest->rom_disciple = NULL;
+  if( src->rom_disciple ) {
+    dest->rom_disciple = utils_safe_strdup( src->rom_disciple );
   }
   dest->rom_interface_i = NULL;
   if( src->rom_interface_i ) {
-    dest->rom_interface_i = strdup( src->rom_interface_i );
-    if( !dest->rom_interface_i ) { settings_free( dest ); return 1; }
+    dest->rom_interface_i = utils_safe_strdup( src->rom_interface_i );
   }
   dest->rom_opus = NULL;
   if( src->rom_opus ) {
-    dest->rom_opus = strdup( src->rom_opus );
-    if( !dest->rom_opus ) { settings_free( dest ); return 1; }
+    dest->rom_opus = utils_safe_strdup( src->rom_opus );
   }
   dest->rom_pentagon1024_0 = NULL;
   if( src->rom_pentagon1024_0 ) {
-    dest->rom_pentagon1024_0 = strdup( src->rom_pentagon1024_0 );
-    if( !dest->rom_pentagon1024_0 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon1024_0 = utils_safe_strdup( src->rom_pentagon1024_0 );
   }
   dest->rom_pentagon1024_1 = NULL;
   if( src->rom_pentagon1024_1 ) {
-    dest->rom_pentagon1024_1 = strdup( src->rom_pentagon1024_1 );
-    if( !dest->rom_pentagon1024_1 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon1024_1 = utils_safe_strdup( src->rom_pentagon1024_1 );
   }
   dest->rom_pentagon1024_2 = NULL;
   if( src->rom_pentagon1024_2 ) {
-    dest->rom_pentagon1024_2 = strdup( src->rom_pentagon1024_2 );
-    if( !dest->rom_pentagon1024_2 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon1024_2 = utils_safe_strdup( src->rom_pentagon1024_2 );
   }
   dest->rom_pentagon1024_3 = NULL;
   if( src->rom_pentagon1024_3 ) {
-    dest->rom_pentagon1024_3 = strdup( src->rom_pentagon1024_3 );
-    if( !dest->rom_pentagon1024_3 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon1024_3 = utils_safe_strdup( src->rom_pentagon1024_3 );
   }
   dest->rom_pentagon512_0 = NULL;
   if( src->rom_pentagon512_0 ) {
-    dest->rom_pentagon512_0 = strdup( src->rom_pentagon512_0 );
-    if( !dest->rom_pentagon512_0 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon512_0 = utils_safe_strdup( src->rom_pentagon512_0 );
   }
   dest->rom_pentagon512_1 = NULL;
   if( src->rom_pentagon512_1 ) {
-    dest->rom_pentagon512_1 = strdup( src->rom_pentagon512_1 );
-    if( !dest->rom_pentagon512_1 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon512_1 = utils_safe_strdup( src->rom_pentagon512_1 );
   }
   dest->rom_pentagon512_2 = NULL;
   if( src->rom_pentagon512_2 ) {
-    dest->rom_pentagon512_2 = strdup( src->rom_pentagon512_2 );
-    if( !dest->rom_pentagon512_2 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon512_2 = utils_safe_strdup( src->rom_pentagon512_2 );
   }
   dest->rom_pentagon512_3 = NULL;
   if( src->rom_pentagon512_3 ) {
-    dest->rom_pentagon512_3 = strdup( src->rom_pentagon512_3 );
-    if( !dest->rom_pentagon512_3 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon512_3 = utils_safe_strdup( src->rom_pentagon512_3 );
   }
   dest->rom_pentagon_0 = NULL;
   if( src->rom_pentagon_0 ) {
-    dest->rom_pentagon_0 = strdup( src->rom_pentagon_0 );
-    if( !dest->rom_pentagon_0 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon_0 = utils_safe_strdup( src->rom_pentagon_0 );
   }
   dest->rom_pentagon_1 = NULL;
   if( src->rom_pentagon_1 ) {
-    dest->rom_pentagon_1 = strdup( src->rom_pentagon_1 );
-    if( !dest->rom_pentagon_1 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon_1 = utils_safe_strdup( src->rom_pentagon_1 );
   }
   dest->rom_pentagon_2 = NULL;
   if( src->rom_pentagon_2 ) {
-    dest->rom_pentagon_2 = strdup( src->rom_pentagon_2 );
-    if( !dest->rom_pentagon_2 ) { settings_free( dest ); return 1; }
+    dest->rom_pentagon_2 = utils_safe_strdup( src->rom_pentagon_2 );
   }
   dest->rom_plus2_0 = NULL;
   if( src->rom_plus2_0 ) {
-    dest->rom_plus2_0 = strdup( src->rom_plus2_0 );
-    if( !dest->rom_plus2_0 ) { settings_free( dest ); return 1; }
+    dest->rom_plus2_0 = utils_safe_strdup( src->rom_plus2_0 );
   }
   dest->rom_plus2_1 = NULL;
   if( src->rom_plus2_1 ) {
-    dest->rom_plus2_1 = strdup( src->rom_plus2_1 );
-    if( !dest->rom_plus2_1 ) { settings_free( dest ); return 1; }
+    dest->rom_plus2_1 = utils_safe_strdup( src->rom_plus2_1 );
   }
   dest->rom_plus2a_0 = NULL;
   if( src->rom_plus2a_0 ) {
-    dest->rom_plus2a_0 = strdup( src->rom_plus2a_0 );
-    if( !dest->rom_plus2a_0 ) { settings_free( dest ); return 1; }
+    dest->rom_plus2a_0 = utils_safe_strdup( src->rom_plus2a_0 );
   }
   dest->rom_plus2a_1 = NULL;
   if( src->rom_plus2a_1 ) {
-    dest->rom_plus2a_1 = strdup( src->rom_plus2a_1 );
-    if( !dest->rom_plus2a_1 ) { settings_free( dest ); return 1; }
+    dest->rom_plus2a_1 = utils_safe_strdup( src->rom_plus2a_1 );
   }
   dest->rom_plus2a_2 = NULL;
   if( src->rom_plus2a_2 ) {
-    dest->rom_plus2a_2 = strdup( src->rom_plus2a_2 );
-    if( !dest->rom_plus2a_2 ) { settings_free( dest ); return 1; }
+    dest->rom_plus2a_2 = utils_safe_strdup( src->rom_plus2a_2 );
   }
   dest->rom_plus2a_3 = NULL;
   if( src->rom_plus2a_3 ) {
-    dest->rom_plus2a_3 = strdup( src->rom_plus2a_3 );
-    if( !dest->rom_plus2a_3 ) { settings_free( dest ); return 1; }
+    dest->rom_plus2a_3 = utils_safe_strdup( src->rom_plus2a_3 );
   }
   dest->rom_plus3_0 = NULL;
   if( src->rom_plus3_0 ) {
-    dest->rom_plus3_0 = strdup( src->rom_plus3_0 );
-    if( !dest->rom_plus3_0 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3_0 = utils_safe_strdup( src->rom_plus3_0 );
   }
   dest->rom_plus3_1 = NULL;
   if( src->rom_plus3_1 ) {
-    dest->rom_plus3_1 = strdup( src->rom_plus3_1 );
-    if( !dest->rom_plus3_1 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3_1 = utils_safe_strdup( src->rom_plus3_1 );
   }
   dest->rom_plus3_2 = NULL;
   if( src->rom_plus3_2 ) {
-    dest->rom_plus3_2 = strdup( src->rom_plus3_2 );
-    if( !dest->rom_plus3_2 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3_2 = utils_safe_strdup( src->rom_plus3_2 );
   }
   dest->rom_plus3_3 = NULL;
   if( src->rom_plus3_3 ) {
-    dest->rom_plus3_3 = strdup( src->rom_plus3_3 );
-    if( !dest->rom_plus3_3 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3_3 = utils_safe_strdup( src->rom_plus3_3 );
   }
   dest->rom_plus3e_0 = NULL;
   if( src->rom_plus3e_0 ) {
-    dest->rom_plus3e_0 = strdup( src->rom_plus3e_0 );
-    if( !dest->rom_plus3e_0 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3e_0 = utils_safe_strdup( src->rom_plus3e_0 );
   }
   dest->rom_plus3e_1 = NULL;
   if( src->rom_plus3e_1 ) {
-    dest->rom_plus3e_1 = strdup( src->rom_plus3e_1 );
-    if( !dest->rom_plus3e_1 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3e_1 = utils_safe_strdup( src->rom_plus3e_1 );
   }
   dest->rom_plus3e_2 = NULL;
   if( src->rom_plus3e_2 ) {
-    dest->rom_plus3e_2 = strdup( src->rom_plus3e_2 );
-    if( !dest->rom_plus3e_2 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3e_2 = utils_safe_strdup( src->rom_plus3e_2 );
   }
   dest->rom_plus3e_3 = NULL;
   if( src->rom_plus3e_3 ) {
-    dest->rom_plus3e_3 = strdup( src->rom_plus3e_3 );
-    if( !dest->rom_plus3e_3 ) { settings_free( dest ); return 1; }
+    dest->rom_plus3e_3 = utils_safe_strdup( src->rom_plus3e_3 );
   }
   dest->rom_plusd = NULL;
   if( src->rom_plusd ) {
-    dest->rom_plusd = strdup( src->rom_plusd );
-    if( !dest->rom_plusd ) { settings_free( dest ); return 1; }
+    dest->rom_plusd = utils_safe_strdup( src->rom_plusd );
   }
   dest->rom_scorpion_0 = NULL;
   if( src->rom_scorpion_0 ) {
-    dest->rom_scorpion_0 = strdup( src->rom_scorpion_0 );
-    if( !dest->rom_scorpion_0 ) { settings_free( dest ); return 1; }
+    dest->rom_scorpion_0 = utils_safe_strdup( src->rom_scorpion_0 );
   }
   dest->rom_scorpion_1 = NULL;
   if( src->rom_scorpion_1 ) {
-    dest->rom_scorpion_1 = strdup( src->rom_scorpion_1 );
-    if( !dest->rom_scorpion_1 ) { settings_free( dest ); return 1; }
+    dest->rom_scorpion_1 = utils_safe_strdup( src->rom_scorpion_1 );
   }
   dest->rom_scorpion_2 = NULL;
   if( src->rom_scorpion_2 ) {
-    dest->rom_scorpion_2 = strdup( src->rom_scorpion_2 );
-    if( !dest->rom_scorpion_2 ) { settings_free( dest ); return 1; }
+    dest->rom_scorpion_2 = utils_safe_strdup( src->rom_scorpion_2 );
   }
   dest->rom_scorpion_3 = NULL;
   if( src->rom_scorpion_3 ) {
-    dest->rom_scorpion_3 = strdup( src->rom_scorpion_3 );
-    if( !dest->rom_scorpion_3 ) { settings_free( dest ); return 1; }
+    dest->rom_scorpion_3 = utils_safe_strdup( src->rom_scorpion_3 );
   }
   dest->rom_spec_se_0 = NULL;
   if( src->rom_spec_se_0 ) {
-    dest->rom_spec_se_0 = strdup( src->rom_spec_se_0 );
-    if( !dest->rom_spec_se_0 ) { settings_free( dest ); return 1; }
+    dest->rom_spec_se_0 = utils_safe_strdup( src->rom_spec_se_0 );
   }
   dest->rom_spec_se_1 = NULL;
   if( src->rom_spec_se_1 ) {
-    dest->rom_spec_se_1 = strdup( src->rom_spec_se_1 );
-    if( !dest->rom_spec_se_1 ) { settings_free( dest ); return 1; }
+    dest->rom_spec_se_1 = utils_safe_strdup( src->rom_spec_se_1 );
+  }
+  dest->rom_speccyboot = NULL;
+  if( src->rom_speccyboot ) {
+    dest->rom_speccyboot = utils_safe_strdup( src->rom_speccyboot );
   }
   dest->rom_tc2048 = NULL;
   if( src->rom_tc2048 ) {
-    dest->rom_tc2048 = strdup( src->rom_tc2048 );
-    if( !dest->rom_tc2048 ) { settings_free( dest ); return 1; }
+    dest->rom_tc2048 = utils_safe_strdup( src->rom_tc2048 );
   }
   dest->rom_tc2068_0 = NULL;
   if( src->rom_tc2068_0 ) {
-    dest->rom_tc2068_0 = strdup( src->rom_tc2068_0 );
-    if( !dest->rom_tc2068_0 ) { settings_free( dest ); return 1; }
+    dest->rom_tc2068_0 = utils_safe_strdup( src->rom_tc2068_0 );
   }
   dest->rom_tc2068_1 = NULL;
   if( src->rom_tc2068_1 ) {
-    dest->rom_tc2068_1 = strdup( src->rom_tc2068_1 );
-    if( !dest->rom_tc2068_1 ) { settings_free( dest ); return 1; }
+    dest->rom_tc2068_1 = utils_safe_strdup( src->rom_tc2068_1 );
   }
   dest->rom_ts2068_0 = NULL;
   if( src->rom_ts2068_0 ) {
-    dest->rom_ts2068_0 = strdup( src->rom_ts2068_0 );
-    if( !dest->rom_ts2068_0 ) { settings_free( dest ); return 1; }
+    dest->rom_ts2068_0 = utils_safe_strdup( src->rom_ts2068_0 );
   }
   dest->rom_ts2068_1 = NULL;
   if( src->rom_ts2068_1 ) {
-    dest->rom_ts2068_1 = strdup( src->rom_ts2068_1 );
-    if( !dest->rom_ts2068_1 ) { settings_free( dest ); return 1; }
+    dest->rom_ts2068_1 = utils_safe_strdup( src->rom_ts2068_1 );
   }
   dest->rs232_handshake = src->rs232_handshake;
   dest->rs232_rx = NULL;
   if( src->rs232_rx ) {
-    dest->rs232_rx = strdup( src->rs232_rx );
-    if( !dest->rs232_rx ) { settings_free( dest ); return 1; }
+    dest->rs232_rx = utils_safe_strdup( src->rs232_rx );
   }
   dest->rs232_tx = NULL;
   if( src->rs232_tx ) {
-    dest->rs232_tx = strdup( src->rs232_tx );
-    if( !dest->rs232_tx ) { settings_free( dest ); return 1; }
+    dest->rs232_tx = utils_safe_strdup( src->rs232_tx );
   }
   dest->rzx_autosaves = src->rzx_autosaves;
   dest->rzx_compression = src->rzx_compression;
   dest->simpleide_active = src->simpleide_active;
   dest->simpleide_master_file = NULL;
   if( src->simpleide_master_file ) {
-    dest->simpleide_master_file = strdup( src->simpleide_master_file );
-    if( !dest->simpleide_master_file ) { settings_free( dest ); return 1; }
+    dest->simpleide_master_file = utils_safe_strdup( src->simpleide_master_file );
   }
   dest->simpleide_slave_file = NULL;
   if( src->simpleide_slave_file ) {
-    dest->simpleide_slave_file = strdup( src->simpleide_slave_file );
-    if( !dest->simpleide_slave_file ) { settings_free( dest ); return 1; }
+    dest->simpleide_slave_file = utils_safe_strdup( src->simpleide_slave_file );
   }
   dest->slt_traps = src->slt_traps;
   dest->snapshot = NULL;
   if( src->snapshot ) {
-    dest->snapshot = strdup( src->snapshot );
-    if( !dest->snapshot ) { settings_free( dest ); return 1; }
+    dest->snapshot = utils_safe_strdup( src->snapshot );
   }
   dest->snet = NULL;
   if( src->snet ) {
-    dest->snet = strdup( src->snet );
-    if( !dest->snet ) { settings_free( dest ); return 1; }
+    dest->snet = utils_safe_strdup( src->snet );
   }
   dest->sound = src->sound;
   dest->sound_device = NULL;
   if( src->sound_device ) {
-    dest->sound_device = strdup( src->sound_device );
-    if( !dest->sound_device ) { settings_free( dest ); return 1; }
+    dest->sound_device = utils_safe_strdup( src->sound_device );
   }
   dest->sound_force_8bit = src->sound_force_8bit;
   dest->sound_freq = src->sound_freq;
   dest->sound_load = src->sound_load;
   dest->speaker_type = NULL;
   if( src->speaker_type ) {
-    dest->speaker_type = strdup( src->speaker_type );
-    if( !dest->speaker_type ) { settings_free( dest ); return 1; }
+    dest->speaker_type = utils_safe_strdup( src->speaker_type );
   }
+  dest->speccyboot = src->speccyboot;
+  dest->speccyboot_tap = NULL;
+  if( src->speccyboot_tap ) {
+    dest->speccyboot_tap = utils_safe_strdup( src->speccyboot_tap );
+  }
+  dest->specdrum = src->specdrum;
+  dest->spectranet = src->spectranet;
+  dest->spectranet_disable = src->spectranet_disable;
   dest->start_machine = NULL;
   if( src->start_machine ) {
-    dest->start_machine = strdup( src->start_machine );
-    if( !dest->start_machine ) { settings_free( dest ); return 1; }
+    dest->start_machine = utils_safe_strdup( src->start_machine );
   }
   dest->start_scaler_mode = NULL;
   if( src->start_scaler_mode ) {
-    dest->start_scaler_mode = strdup( src->start_scaler_mode );
-    if( !dest->start_scaler_mode ) { settings_free( dest ); return 1; }
+    dest->start_scaler_mode = utils_safe_strdup( src->start_scaler_mode );
   }
   dest->statusbar = src->statusbar;
-  dest->stereo_ay = src->stereo_ay;
+  dest->stereo_ay = NULL;
+  if( src->stereo_ay ) {
+    dest->stereo_ay = utils_safe_strdup( src->stereo_ay );
+  }
   dest->strict_aspect_hint = src->strict_aspect_hint;
   dest->svga_modes = NULL;
   if( src->svga_modes ) {
-    dest->svga_modes = strdup( src->svga_modes );
-    if( !dest->svga_modes ) { settings_free( dest ); return 1; }
+    dest->svga_modes = utils_safe_strdup( src->svga_modes );
   }
   dest->tape_file = NULL;
   if( src->tape_file ) {
-    dest->tape_file = strdup( src->tape_file );
-    if( !dest->tape_file ) { settings_free( dest ); return 1; }
+    dest->tape_file = utils_safe_strdup( src->tape_file );
   }
   dest->tape_traps = src->tape_traps;
   dest->unittests = src->unittests;
   dest->volume_ay = src->volume_ay;
   dest->volume_beeper = src->volume_beeper;
+  dest->volume_specdrum = src->volume_specdrum;
   dest->writable_roms = src->writable_roms;
   dest->zxatasp_active = src->zxatasp_active;
   dest->zxatasp_master_file = NULL;
   if( src->zxatasp_master_file ) {
-    dest->zxatasp_master_file = strdup( src->zxatasp_master_file );
-    if( !dest->zxatasp_master_file ) { settings_free( dest ); return 1; }
+    dest->zxatasp_master_file = utils_safe_strdup( src->zxatasp_master_file );
   }
   dest->zxatasp_slave_file = NULL;
   if( src->zxatasp_slave_file ) {
-    dest->zxatasp_slave_file = strdup( src->zxatasp_slave_file );
-    if( !dest->zxatasp_slave_file ) { settings_free( dest ); return 1; }
+    dest->zxatasp_slave_file = utils_safe_strdup( src->zxatasp_slave_file );
   }
   dest->zxatasp_upload = src->zxatasp_upload;
   dest->zxatasp_wp = src->zxatasp_wp;
   dest->zxcf_active = src->zxcf_active;
   dest->zxcf_pri_file = NULL;
   if( src->zxcf_pri_file ) {
-    dest->zxcf_pri_file = strdup( src->zxcf_pri_file );
-    if( !dest->zxcf_pri_file ) { settings_free( dest ); return 1; }
+    dest->zxcf_pri_file = utils_safe_strdup( src->zxcf_pri_file );
   }
   dest->zxcf_upload = src->zxcf_upload;
-#line 718"../settings.pl"
+  dest->zxprinter = src->zxprinter;
+#line 711"../settings.pl"
 
   return 0;
 }
@@ -4626,124 +5096,130 @@ settings_get_rom_setting( settings_info *settings, size_t which )
   case 40: return &( settings->rom_interface_i );
   case 41: return &( settings->rom_beta128 );
   case 42: return &( settings->rom_plusd );
+  case 43: return &( settings->rom_disciple );
+  case 44: return &( settings->rom_opus );
+  case 45: return &( settings->rom_speccyboot );
   default: return NULL;
   }
 }
 
-int
+void
 settings_set_string( char **string_setting, const char *value )
 {
   /* No need to do anything if the two strings are in fact the
      same pointer */
-  if( *string_setting == value ) return 0;
+  if( *string_setting == value ) return;
 
-  if( *string_setting) free( *string_setting );
-  *string_setting = strdup( value );
-  if( !( *string_setting ) ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-    return 1;
-  }
-
-  return 0;
+  if( *string_setting ) libspectrum_free( *string_setting );
+  *string_setting = utils_safe_strdup( value );
 }
 
 int
 settings_free( settings_info *settings )
 {
-  if( settings->betadisk_file ) free( settings->betadisk_file );
-  if( settings->dck_file ) free( settings->dck_file );
-  if( settings->debugger_command ) free( settings->debugger_command );
-  if( settings->disk_try_merge ) free( settings->disk_try_merge );
-  if( settings->divide_master_file ) free( settings->divide_master_file );
-  if( settings->divide_slave_file ) free( settings->divide_slave_file );
-  if( settings->drive_beta128a_type ) free( settings->drive_beta128a_type );
-  if( settings->drive_beta128b_type ) free( settings->drive_beta128b_type );
-  if( settings->drive_beta128c_type ) free( settings->drive_beta128c_type );
-  if( settings->drive_beta128d_type ) free( settings->drive_beta128d_type );
-  if( settings->drive_opus1_type ) free( settings->drive_opus1_type );
-  if( settings->drive_opus2_type ) free( settings->drive_opus2_type );
-  if( settings->drive_plus3a_type ) free( settings->drive_plus3a_type );
-  if( settings->drive_plus3b_type ) free( settings->drive_plus3b_type );
-  if( settings->drive_plusd1_type ) free( settings->drive_plusd1_type );
-  if( settings->drive_plusd2_type ) free( settings->drive_plusd2_type );
-  if( settings->if2_file ) free( settings->if2_file );
-  if( settings->joystick_1 ) free( settings->joystick_1 );
-  if( settings->joystick_2 ) free( settings->joystick_2 );
-  if( settings->mdr_file ) free( settings->mdr_file );
-  if( settings->mdr_file2 ) free( settings->mdr_file2 );
-  if( settings->mdr_file3 ) free( settings->mdr_file3 );
-  if( settings->mdr_file4 ) free( settings->mdr_file4 );
-  if( settings->mdr_file5 ) free( settings->mdr_file5 );
-  if( settings->mdr_file6 ) free( settings->mdr_file6 );
-  if( settings->mdr_file7 ) free( settings->mdr_file7 );
-  if( settings->mdr_file8 ) free( settings->mdr_file8 );
-  if( settings->opusdisk_file ) free( settings->opusdisk_file );
-  if( settings->playback_file ) free( settings->playback_file );
-  if( settings->plus3disk_file ) free( settings->plus3disk_file );
-  if( settings->plusddisk_file ) free( settings->plusddisk_file );
-  if( settings->printer_graphics_filename ) free( settings->printer_graphics_filename );
-  if( settings->printer_text_filename ) free( settings->printer_text_filename );
-  if( settings->record_file ) free( settings->record_file );
-  if( settings->rom_128_0 ) free( settings->rom_128_0 );
-  if( settings->rom_128_1 ) free( settings->rom_128_1 );
-  if( settings->rom_16 ) free( settings->rom_16 );
-  if( settings->rom_48 ) free( settings->rom_48 );
-  if( settings->rom_beta128 ) free( settings->rom_beta128 );
-  if( settings->rom_interface_i ) free( settings->rom_interface_i );
-  if( settings->rom_opus ) free( settings->rom_opus );
-  if( settings->rom_pentagon1024_0 ) free( settings->rom_pentagon1024_0 );
-  if( settings->rom_pentagon1024_1 ) free( settings->rom_pentagon1024_1 );
-  if( settings->rom_pentagon1024_2 ) free( settings->rom_pentagon1024_2 );
-  if( settings->rom_pentagon1024_3 ) free( settings->rom_pentagon1024_3 );
-  if( settings->rom_pentagon512_0 ) free( settings->rom_pentagon512_0 );
-  if( settings->rom_pentagon512_1 ) free( settings->rom_pentagon512_1 );
-  if( settings->rom_pentagon512_2 ) free( settings->rom_pentagon512_2 );
-  if( settings->rom_pentagon512_3 ) free( settings->rom_pentagon512_3 );
-  if( settings->rom_pentagon_0 ) free( settings->rom_pentagon_0 );
-  if( settings->rom_pentagon_1 ) free( settings->rom_pentagon_1 );
-  if( settings->rom_pentagon_2 ) free( settings->rom_pentagon_2 );
-  if( settings->rom_plus2_0 ) free( settings->rom_plus2_0 );
-  if( settings->rom_plus2_1 ) free( settings->rom_plus2_1 );
-  if( settings->rom_plus2a_0 ) free( settings->rom_plus2a_0 );
-  if( settings->rom_plus2a_1 ) free( settings->rom_plus2a_1 );
-  if( settings->rom_plus2a_2 ) free( settings->rom_plus2a_2 );
-  if( settings->rom_plus2a_3 ) free( settings->rom_plus2a_3 );
-  if( settings->rom_plus3_0 ) free( settings->rom_plus3_0 );
-  if( settings->rom_plus3_1 ) free( settings->rom_plus3_1 );
-  if( settings->rom_plus3_2 ) free( settings->rom_plus3_2 );
-  if( settings->rom_plus3_3 ) free( settings->rom_plus3_3 );
-  if( settings->rom_plus3e_0 ) free( settings->rom_plus3e_0 );
-  if( settings->rom_plus3e_1 ) free( settings->rom_plus3e_1 );
-  if( settings->rom_plus3e_2 ) free( settings->rom_plus3e_2 );
-  if( settings->rom_plus3e_3 ) free( settings->rom_plus3e_3 );
-  if( settings->rom_plusd ) free( settings->rom_plusd );
-  if( settings->rom_scorpion_0 ) free( settings->rom_scorpion_0 );
-  if( settings->rom_scorpion_1 ) free( settings->rom_scorpion_1 );
-  if( settings->rom_scorpion_2 ) free( settings->rom_scorpion_2 );
-  if( settings->rom_scorpion_3 ) free( settings->rom_scorpion_3 );
-  if( settings->rom_spec_se_0 ) free( settings->rom_spec_se_0 );
-  if( settings->rom_spec_se_1 ) free( settings->rom_spec_se_1 );
-  if( settings->rom_tc2048 ) free( settings->rom_tc2048 );
-  if( settings->rom_tc2068_0 ) free( settings->rom_tc2068_0 );
-  if( settings->rom_tc2068_1 ) free( settings->rom_tc2068_1 );
-  if( settings->rom_ts2068_0 ) free( settings->rom_ts2068_0 );
-  if( settings->rom_ts2068_1 ) free( settings->rom_ts2068_1 );
-  if( settings->rs232_rx ) free( settings->rs232_rx );
-  if( settings->rs232_tx ) free( settings->rs232_tx );
-  if( settings->simpleide_master_file ) free( settings->simpleide_master_file );
-  if( settings->simpleide_slave_file ) free( settings->simpleide_slave_file );
-  if( settings->snapshot ) free( settings->snapshot );
-  if( settings->snet ) free( settings->snet );
-  if( settings->sound_device ) free( settings->sound_device );
-  if( settings->speaker_type ) free( settings->speaker_type );
-  if( settings->start_machine ) free( settings->start_machine );
-  if( settings->start_scaler_mode ) free( settings->start_scaler_mode );
-  if( settings->svga_modes ) free( settings->svga_modes );
-  if( settings->tape_file ) free( settings->tape_file );
-  if( settings->zxatasp_master_file ) free( settings->zxatasp_master_file );
-  if( settings->zxatasp_slave_file ) free( settings->zxatasp_slave_file );
-  if( settings->zxcf_pri_file ) free( settings->zxcf_pri_file );
-#line 809"../settings.pl"
+  if( settings->betadisk_file ) libspectrum_free( settings->betadisk_file );
+  if( settings->dck_file ) libspectrum_free( settings->dck_file );
+  if( settings->debugger_command ) libspectrum_free( settings->debugger_command );
+  if( settings->discipledisk_file ) libspectrum_free( settings->discipledisk_file );
+  if( settings->disk_try_merge ) libspectrum_free( settings->disk_try_merge );
+  if( settings->divide_master_file ) libspectrum_free( settings->divide_master_file );
+  if( settings->divide_slave_file ) libspectrum_free( settings->divide_slave_file );
+  if( settings->drive_beta128a_type ) libspectrum_free( settings->drive_beta128a_type );
+  if( settings->drive_beta128b_type ) libspectrum_free( settings->drive_beta128b_type );
+  if( settings->drive_beta128c_type ) libspectrum_free( settings->drive_beta128c_type );
+  if( settings->drive_beta128d_type ) libspectrum_free( settings->drive_beta128d_type );
+  if( settings->drive_disciple1_type ) libspectrum_free( settings->drive_disciple1_type );
+  if( settings->drive_disciple2_type ) libspectrum_free( settings->drive_disciple2_type );
+  if( settings->drive_opus1_type ) libspectrum_free( settings->drive_opus1_type );
+  if( settings->drive_opus2_type ) libspectrum_free( settings->drive_opus2_type );
+  if( settings->drive_plus3a_type ) libspectrum_free( settings->drive_plus3a_type );
+  if( settings->drive_plus3b_type ) libspectrum_free( settings->drive_plus3b_type );
+  if( settings->drive_plusd1_type ) libspectrum_free( settings->drive_plusd1_type );
+  if( settings->drive_plusd2_type ) libspectrum_free( settings->drive_plusd2_type );
+  if( settings->if2_file ) libspectrum_free( settings->if2_file );
+  if( settings->joystick_1 ) libspectrum_free( settings->joystick_1 );
+  if( settings->joystick_2 ) libspectrum_free( settings->joystick_2 );
+  if( settings->mdr_file ) libspectrum_free( settings->mdr_file );
+  if( settings->mdr_file2 ) libspectrum_free( settings->mdr_file2 );
+  if( settings->mdr_file3 ) libspectrum_free( settings->mdr_file3 );
+  if( settings->mdr_file4 ) libspectrum_free( settings->mdr_file4 );
+  if( settings->mdr_file5 ) libspectrum_free( settings->mdr_file5 );
+  if( settings->mdr_file6 ) libspectrum_free( settings->mdr_file6 );
+  if( settings->mdr_file7 ) libspectrum_free( settings->mdr_file7 );
+  if( settings->mdr_file8 ) libspectrum_free( settings->mdr_file8 );
+  if( settings->movie_compr ) libspectrum_free( settings->movie_compr );
+  if( settings->movie_start ) libspectrum_free( settings->movie_start );
+  if( settings->opusdisk_file ) libspectrum_free( settings->opusdisk_file );
+  if( settings->playback_file ) libspectrum_free( settings->playback_file );
+  if( settings->plus3disk_file ) libspectrum_free( settings->plus3disk_file );
+  if( settings->plusddisk_file ) libspectrum_free( settings->plusddisk_file );
+  if( settings->printer_graphics_filename ) libspectrum_free( settings->printer_graphics_filename );
+  if( settings->printer_text_filename ) libspectrum_free( settings->printer_text_filename );
+  if( settings->record_file ) libspectrum_free( settings->record_file );
+  if( settings->rom_128_0 ) libspectrum_free( settings->rom_128_0 );
+  if( settings->rom_128_1 ) libspectrum_free( settings->rom_128_1 );
+  if( settings->rom_16 ) libspectrum_free( settings->rom_16 );
+  if( settings->rom_48 ) libspectrum_free( settings->rom_48 );
+  if( settings->rom_beta128 ) libspectrum_free( settings->rom_beta128 );
+  if( settings->rom_disciple ) libspectrum_free( settings->rom_disciple );
+  if( settings->rom_interface_i ) libspectrum_free( settings->rom_interface_i );
+  if( settings->rom_opus ) libspectrum_free( settings->rom_opus );
+  if( settings->rom_pentagon1024_0 ) libspectrum_free( settings->rom_pentagon1024_0 );
+  if( settings->rom_pentagon1024_1 ) libspectrum_free( settings->rom_pentagon1024_1 );
+  if( settings->rom_pentagon1024_2 ) libspectrum_free( settings->rom_pentagon1024_2 );
+  if( settings->rom_pentagon1024_3 ) libspectrum_free( settings->rom_pentagon1024_3 );
+  if( settings->rom_pentagon512_0 ) libspectrum_free( settings->rom_pentagon512_0 );
+  if( settings->rom_pentagon512_1 ) libspectrum_free( settings->rom_pentagon512_1 );
+  if( settings->rom_pentagon512_2 ) libspectrum_free( settings->rom_pentagon512_2 );
+  if( settings->rom_pentagon512_3 ) libspectrum_free( settings->rom_pentagon512_3 );
+  if( settings->rom_pentagon_0 ) libspectrum_free( settings->rom_pentagon_0 );
+  if( settings->rom_pentagon_1 ) libspectrum_free( settings->rom_pentagon_1 );
+  if( settings->rom_pentagon_2 ) libspectrum_free( settings->rom_pentagon_2 );
+  if( settings->rom_plus2_0 ) libspectrum_free( settings->rom_plus2_0 );
+  if( settings->rom_plus2_1 ) libspectrum_free( settings->rom_plus2_1 );
+  if( settings->rom_plus2a_0 ) libspectrum_free( settings->rom_plus2a_0 );
+  if( settings->rom_plus2a_1 ) libspectrum_free( settings->rom_plus2a_1 );
+  if( settings->rom_plus2a_2 ) libspectrum_free( settings->rom_plus2a_2 );
+  if( settings->rom_plus2a_3 ) libspectrum_free( settings->rom_plus2a_3 );
+  if( settings->rom_plus3_0 ) libspectrum_free( settings->rom_plus3_0 );
+  if( settings->rom_plus3_1 ) libspectrum_free( settings->rom_plus3_1 );
+  if( settings->rom_plus3_2 ) libspectrum_free( settings->rom_plus3_2 );
+  if( settings->rom_plus3_3 ) libspectrum_free( settings->rom_plus3_3 );
+  if( settings->rom_plus3e_0 ) libspectrum_free( settings->rom_plus3e_0 );
+  if( settings->rom_plus3e_1 ) libspectrum_free( settings->rom_plus3e_1 );
+  if( settings->rom_plus3e_2 ) libspectrum_free( settings->rom_plus3e_2 );
+  if( settings->rom_plus3e_3 ) libspectrum_free( settings->rom_plus3e_3 );
+  if( settings->rom_plusd ) libspectrum_free( settings->rom_plusd );
+  if( settings->rom_scorpion_0 ) libspectrum_free( settings->rom_scorpion_0 );
+  if( settings->rom_scorpion_1 ) libspectrum_free( settings->rom_scorpion_1 );
+  if( settings->rom_scorpion_2 ) libspectrum_free( settings->rom_scorpion_2 );
+  if( settings->rom_scorpion_3 ) libspectrum_free( settings->rom_scorpion_3 );
+  if( settings->rom_spec_se_0 ) libspectrum_free( settings->rom_spec_se_0 );
+  if( settings->rom_spec_se_1 ) libspectrum_free( settings->rom_spec_se_1 );
+  if( settings->rom_speccyboot ) libspectrum_free( settings->rom_speccyboot );
+  if( settings->rom_tc2048 ) libspectrum_free( settings->rom_tc2048 );
+  if( settings->rom_tc2068_0 ) libspectrum_free( settings->rom_tc2068_0 );
+  if( settings->rom_tc2068_1 ) libspectrum_free( settings->rom_tc2068_1 );
+  if( settings->rom_ts2068_0 ) libspectrum_free( settings->rom_ts2068_0 );
+  if( settings->rom_ts2068_1 ) libspectrum_free( settings->rom_ts2068_1 );
+  if( settings->rs232_rx ) libspectrum_free( settings->rs232_rx );
+  if( settings->rs232_tx ) libspectrum_free( settings->rs232_tx );
+  if( settings->simpleide_master_file ) libspectrum_free( settings->simpleide_master_file );
+  if( settings->simpleide_slave_file ) libspectrum_free( settings->simpleide_slave_file );
+  if( settings->snapshot ) libspectrum_free( settings->snapshot );
+  if( settings->snet ) libspectrum_free( settings->snet );
+  if( settings->sound_device ) libspectrum_free( settings->sound_device );
+  if( settings->speaker_type ) libspectrum_free( settings->speaker_type );
+  if( settings->speccyboot_tap ) libspectrum_free( settings->speccyboot_tap );
+  if( settings->start_machine ) libspectrum_free( settings->start_machine );
+  if( settings->start_scaler_mode ) libspectrum_free( settings->start_scaler_mode );
+  if( settings->stereo_ay ) libspectrum_free( settings->stereo_ay );
+  if( settings->svga_modes ) libspectrum_free( settings->svga_modes );
+  if( settings->tape_file ) libspectrum_free( settings->tape_file );
+  if( settings->zxatasp_master_file ) libspectrum_free( settings->zxatasp_master_file );
+  if( settings->zxatasp_slave_file ) libspectrum_free( settings->zxatasp_slave_file );
+  if( settings->zxcf_pri_file ) libspectrum_free( settings->zxcf_pri_file );
+#line 799"../settings.pl"
 
   return 0;
 }
@@ -4755,6 +5231,10 @@ settings_end( void )
     settings_write_config( &settings_current );
 
   settings_free( &settings_current );
+
+#ifdef HAVE_LIB_XML2
+  xmlCleanupParser();
+#endif				/* #ifdef HAVE_LIB_XML2 */
 
   return 0;
 }

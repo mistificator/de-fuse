@@ -1,7 +1,7 @@
 /* win32joystick.c: Joystick emulation
    Copyright (c) 2003-2008 Darren Salt, Philip Kendall, Marek Januszewski
 
-   $Id: win32joystick.c 3954 2009-01-12 19:58:08Z specu $
+   $Id: win32joystick.c 4914 2013-04-04 22:03:43Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@
 #include <windows.h>
 
 #include "fuse.h"
-#include "joystick.h"
 #include "input.h"
 #include "keyboard.h"
 #include "menu.h"
+#include "peripherals/joystick.h"
 #include "settings.h"
 #include "win32internals.h"
 
@@ -95,19 +95,17 @@ win32joystick_buttonevent( int which_joystick, int button_down,
 {
   input_event_t event;
   int button = 0;
-  
-  if( wParam & JOY_BUTTON1 ) button = INPUT_JOYSTICK_FIRE_1;
-  else if( wParam & JOY_BUTTON2 ) button = INPUT_JOYSTICK_FIRE_2;
-  else if( wParam & JOY_BUTTON3 ) button = INPUT_JOYSTICK_FIRE_3;
-  else if( wParam & JOY_BUTTON4 ) button = INPUT_JOYSTICK_FIRE_4;
-  else if( wParam & JOY_BUTTON5 ) button = INPUT_JOYSTICK_FIRE_5;
-  else if( wParam & JOY_BUTTON6 ) button = INPUT_JOYSTICK_FIRE_6;
-  else if( wParam & JOY_BUTTON7 ) button = INPUT_JOYSTICK_FIRE_7;
-  else if( wParam & JOY_BUTTON8 ) button = INPUT_JOYSTICK_FIRE_8;
-  else if( wParam & JOY_BUTTON9 ) button = INPUT_JOYSTICK_FIRE_9;
-  else if( wParam & JOY_BUTTON10 ) button = INPUT_JOYSTICK_FIRE_10;
-  else return; /* Fuse supports up to 10 joystick buttons */
- 
+
+ /* FIXME: buttons higher than 4 are not catched through window messages.
+    We should use DirectInput. Polling with JoyGetPosEx would take
+    up to 8 milliseconds in analog joysticks (digital joysticks just
+    a few clock cycles) */
+  if( wParam & JOY_BUTTON1CHG ) button = INPUT_JOYSTICK_FIRE_1;
+  else if( wParam & JOY_BUTTON2CHG ) button = INPUT_JOYSTICK_FIRE_2;
+  else if( wParam & JOY_BUTTON3CHG ) button = INPUT_JOYSTICK_FIRE_3;
+  else if( wParam & JOY_BUTTON4CHG ) button = INPUT_JOYSTICK_FIRE_4;
+  else return; /* Fuse for Windows supports up to 4 joystick buttons */
+
   event.types.joystick.which = which_joystick; 
   event.type = button_down
                ? INPUT_EVENT_JOYSTICK_PRESS : INPUT_EVENT_JOYSTICK_RELEASE;
@@ -187,7 +185,7 @@ static void
 create_fire_button_selector( const TCHAR *title, struct button_info *info,
                              HWND hwndDlg );
 static void set_key_text( HWND hlabel, keyboard_key_name key );
-static void joystick_done( LONG user_data );
+static void joystick_done( LONG_PTR user_data );
 static void show_key_selection_popoup( HWND hwndDlg, LPARAM lParam );
 
 void
@@ -211,7 +209,7 @@ dialog_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
   switch( uMsg ) {
 
     case WM_INITDIALOG:
-      SetWindowLong( hwndDlg, GWL_USERDATA, lParam );
+      SetWindowLongPtr( hwndDlg, GWLP_USERDATA, lParam );
       dialog_init( hwndDlg, ( struct joystick_info * ) lParam );
       return FALSE;
 
@@ -231,7 +229,7 @@ dialog_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
           return 0;
           
         case IDOK:
-          joystick_done( GetWindowLong( hwndDlg, GWL_USERDATA ) );
+          joystick_done( GetWindowLongPtr( hwndDlg, GWLP_USERDATA ) );
           EndDialog( hwndDlg, 0 );
           return 0;
 
@@ -384,7 +382,7 @@ create_fire_button_selector( const TCHAR *title, struct button_info *info,
   set_key_text( info->label, info->key );
   set_key_text( info->static_label, info->key );
 
-  SetWindowLong( info->label, GWL_USERDATA, ( LONG ) info );
+  SetWindowLongPtr( info->label, GWLP_USERDATA, ( LONG_PTR ) info );
 }
 
 static void
@@ -401,7 +399,7 @@ set_key_text( HWND hlabel, keyboard_key_name key )
 }
 
 static void
-joystick_done( LONG user_data )
+joystick_done( LONG_PTR user_data )
 {
   struct joystick_info *info = ( struct joystick_info * ) user_data;
 
@@ -428,8 +426,8 @@ show_key_selection_popoup( HWND hwndDlg, LPARAM lParam )
   struct button_info *info;
   BOOL menu_id;
   
-  info = ( struct button_info * ) GetWindowLong( ( HWND ) lParam,
-                                                 GWL_USERDATA );
+  info = ( struct button_info * ) GetWindowLongPtr( ( HWND ) lParam,
+                                                    GWLP_USERDATA );
   /* create a popup right over the button that has been clicked */
   GetWindowRect( ( HWND ) lParam, &rect );
   hpopup = GetSubMenu( LoadMenu( fuse_hInstance,

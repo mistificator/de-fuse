@@ -1,7 +1,7 @@
 /* expression.c: A numeric expression
    Copyright (c) 2003-2008 Philip Kendall
 
-   $Id: expression.c 3669 2008-06-12 23:02:19Z fredm $
+   $Id: expression.c 4633 2012-01-19 23:26:10Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 #include "fuse.h"
 #include "mempool.h"
 #include "ui/ui.h"
+#include "utils.h"
 
 typedef enum expression_type {
 
@@ -321,11 +322,7 @@ debugger_expression_copy( debugger_expression *src )
     break;
 
   case DEBUGGER_EXPRESSION_TYPE_VARIABLE:
-    dest->types.variable = strdup( src->types.variable );
-    if( !dest->types.variable ) {
-      free( dest );
-      return NULL;
-    }
+    dest->types.variable = utils_safe_strdup( src->types.variable );
     break;
 
   }

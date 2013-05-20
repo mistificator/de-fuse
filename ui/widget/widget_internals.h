@@ -1,7 +1,7 @@
 /* widget_internals.h: Functions internal to the widget code
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall
 
-   $Id: widget_internals.h 3990 2009-03-15 01:25:58Z fredm $
+   $Id: widget_internals.h 4543 2011-09-19 01:46:48Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -214,6 +214,12 @@ void widget_error_keyhandler( input_key key );
 
 int widget_debugger_draw( void *data );
 void widget_debugger_keyhandler( input_key key );
+
+/* The poke file widget */
+
+int widget_pokemem_draw( void *data );
+void widget_pokemem_keyhandler( input_key key );
+int widget_pokemem_finish( widget_finish_state finished );
 
 /* The poke finder widget */
 

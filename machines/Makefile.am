@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2004 Philip Kendall
 
-## $Id: Makefile.am 4148 2010-08-25 21:20:50Z pak21 $
+## $Id: Makefile.am 4743 2012-10-10 13:20:50Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,11 +25,12 @@ AUTOMAKE_OPTIONS = foreign
 
 AM_CPPFLAGS = -I$(srcdir)/..
 
-INCLUDES = @LIBSPEC_CFLAGS@ @GTK_CFLAGS@ @GLIB_CFLAGS@
+AM_CPPFLAGS += @LIBSPEC_CFLAGS@ @GTK_CFLAGS@ @GLIB_CFLAGS@
 
 noinst_LIBRARIES = libmachines.a
 
-libmachines_a_SOURCES = pentagon.c \
+libmachines_a_SOURCES = machines_periph.c \
+                        pentagon.c \
 			pentagon512.c \
 			pentagon1024.c \
 			scorpion.c \
@@ -47,6 +48,7 @@ libmachines_a_SOURCES = pentagon.c \
 			ts2068.c
 
 noinst_HEADERS = machines.h \
+		 machines_periph.h \
 		 pentagon.h \
 		 scorpion.h \
 		 spec128.h \

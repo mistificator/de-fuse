@@ -1,7 +1,7 @@
 /* tape.c: tape handling routines
-   Copyright (c) 1999-2008 Philip Kendall, Darren Salt, Witold Filipczyk
+   Copyright (c) 1999-2011 Philip Kendall, Darren Salt, Witold Filipczyk
 
-   $Id: tape.c 4155 2010-09-05 11:58:37Z fredm $
+   $Id: tape.c 4863 2013-01-27 11:28:00Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,20 +33,18 @@
 #include <libspectrum.h>
 
 #include "debugger/debugger.h"
-#include "disk/beta.h"
 #include "event.h"
 #include "fuse.h"
 #include "loader.h"
 #include "machine.h"
 #include "memory.h"
-#include "scld.h"
+#include "peripherals/ula.h"
 #include "settings.h"
 #include "sound.h"
 #include "settings.h"
 #include "snapshot.h"
 #include "tape.h"
 #include "timer/timer.h"
-#include "ula.h"
 #include "ui/ui.h"
 #include "utils.h"
 #include "z80/z80.h"
@@ -91,7 +89,8 @@ tape_event_record_sample( libspectrum_dword last_tstates, int type,
 
 /* Function definitions */
 
-int tape_init( void )
+void
+tape_init( void )
 {
   tape = libspectrum_tape_alloc();
 
@@ -99,14 +98,10 @@ int tape_init( void )
 					play_event_detail_string );
   stop_event = debugger_event_register( event_type_string,
 					stop_event_detail_string );
-  if( play_event == -1 || stop_event == -1 ) return 1;
 
   tape_edge_event = event_register( tape_next_edge, "Tape edge" );
-  if( tape_edge_event == -1 ) return 1;
-
   record_event = event_register( tape_event_record_sample,
 				 "Tape sample record" );
-  if( record_event == -1 ) return 1;
 
   tape_modified = 0;
 
@@ -114,7 +109,13 @@ int tape_init( void )
      so we can't update the statusbar */
   tape_playing = 0;
   tape_microphone = 0;
-  return 0;
+}
+
+void
+tape_end( void )
+{
+  libspectrum_tape_free( tape );
+  tape = NULL;
 }
 
 int tape_open( const char *filename, int autoload )
@@ -163,7 +164,7 @@ tape_read_buffer( unsigned char *buffer, size_t length, libspectrum_id_t type,
 static int
 tape_autoload( libspectrum_machine hardware )
 {
-  int error; const char *id; compat_fd fd;
+  int error; const char *id;
   char filename[80];
   utils_file snap;
   libspectrum_id_t type;
@@ -177,31 +178,25 @@ tape_autoload( libspectrum_machine hardware )
   /* Look for an autoload snap. Try .szx first, then .z80 */
   type = LIBSPECTRUM_ID_SNAPSHOT_SZX;
   snprintf( filename, sizeof(filename), "tape_%s.szx", id );
-  fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_LIB );
-  if( fd == COMPAT_FILE_OPEN_FAILED ) {
+  error = utils_read_auxiliary_file( filename, &snap, UTILS_AUXILIARY_LIB );
+  if( error == -1 ) {
     type = LIBSPECTRUM_ID_SNAPSHOT_Z80;
     snprintf( filename, sizeof(filename), "tape_%s.z80", id );
-    fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_LIB );
+    error = utils_read_auxiliary_file( filename, &snap, UTILS_AUXILIARY_LIB );
   }
     
   /* If we couldn't find either, give up */
-  if( fd == COMPAT_FILE_OPEN_FAILED ) {
+  if( error == -1 ) {
     ui_error( UI_ERROR_ERROR,
 	      "Couldn't find autoload snap for machine type '%s'", id );
     return 1;
   }
-
-  error = utils_read_fd( fd, filename, &snap );
   if( error ) return error;
 
   error = snapshot_read_buffer( snap.buffer, snap.length, type );
   if( error ) { utils_close_file( &snap ); return error; }
 
-  if( utils_close_file( &snap ) ) {
-    ui_error( UI_ERROR_ERROR, "Couldn't close '%s': %s", filename,
-	      strerror( errno ) );
-    return 1;
-  }
+  utils_close_file( &snap );
     
   return 0;
 }
@@ -304,12 +299,12 @@ int tape_write( const char* filename )
   if( error != LIBSPECTRUM_ERROR_NONE ) return error;
 
   error = utils_write_file( filename, buffer, length );
-  if( error ) { free( buffer ); return error; }
+  if( error ) { libspectrum_free( buffer ); return error; }
 
   tape_modified = 0;
   ui_tape_browser_update( UI_TAPE_BROWSER_MODIFIED, NULL );
 
-  free( buffer );
+  libspectrum_free( buffer );
 
   return 0;
 
@@ -511,8 +506,7 @@ int tape_save_trap( void )
   length = DE + 2;
   libspectrum_tape_block_set_data_length( block, length );
 
-  data = malloc( length * sizeof(libspectrum_byte) );
-  if( !data ) { free( block ); return 1; }
+  data = libspectrum_malloc( length * sizeof(libspectrum_byte) );
   libspectrum_tape_block_set_data( block, data );
 
   /* First, store the flag byte (and initialise the parity counter) */
@@ -555,6 +549,9 @@ trap_check_rom( void )
   if( plusd_available && plusd_active )
     return 0;		/* +D must not be active */
 
+  if( disciple_available && disciple_active )
+    return 0;		/* DISCiPLE must not be active */
+
   if( opus_available && opus_active )
     return 0;		/* Opus must not be active */
 
@@ -565,17 +562,17 @@ trap_check_rom( void )
   case LIBSPECTRUM_MACHINE_16:
   case LIBSPECTRUM_MACHINE_48:
   case LIBSPECTRUM_MACHINE_48_NTSC:
+  case LIBSPECTRUM_MACHINE_SE:
   case LIBSPECTRUM_MACHINE_TC2048:
     return 1;		/* Always OK here */
 
   case LIBSPECTRUM_MACHINE_TC2068:
   case LIBSPECTRUM_MACHINE_TS2068:
     /* OK if we're in the EXROM (location of the tape routines) */
-    return( memory_map_read[0].bank == MEMORY_BANK_EXROM );
+    return( memory_map_read[0].source == memory_source_exrom );
 
   case LIBSPECTRUM_MACHINE_128:
   case LIBSPECTRUM_MACHINE_PLUS2:
-  case LIBSPECTRUM_MACHINE_SE:
     /* OK if we're in ROM 1 */
     return( machine_current->ram.current_rom == 1 );
 
@@ -586,6 +583,13 @@ trap_check_rom( void )
        ROM 3 */
     return( ! machine_current->ram.special &&
 	    machine_current->ram.current_rom == 3 );
+
+  case LIBSPECTRUM_MACHINE_128E:
+    /* OK if we're not in a 64Kb RAM configuration and we're in
+       either ROM 1 or ROM 3 (which are the same) */
+    return( ! machine_current->ram.special &&
+	    ( machine_current->ram.current_rom == 1 ||
+              machine_current->ram.current_rom == 3    ));
 
   case LIBSPECTRUM_MACHINE_PENT:
   case LIBSPECTRUM_MACHINE_PENT512:
@@ -699,24 +703,20 @@ int tape_recording = 0;
 
 static tape_rec_state rec_state;
 
-int
+void
 tape_record_start( void )
 {
-  int error;
-
   /* sample rate will be 44.1KHz */
   rec_state.tstates_per_sample =
     machine_current->timings.processor_speed/44100;
 
   rec_state.tape_buffer_size = 8192;
-  rec_state.tape_buffer = malloc(rec_state.tape_buffer_size);
+  rec_state.tape_buffer = libspectrum_malloc(rec_state.tape_buffer_size);
   rec_state.tape_buffer_used = 0;
 
   /* start scheduling events that record into a buffer that we
      start allocating here */
-  error = event_add( tstates + rec_state.tstates_per_sample,
-                     record_event );
-  if( error ) return error;
+  event_add( tstates + rec_state.tstates_per_sample, record_event );
 
   rec_state.last_level = ula_tape_level();
   rec_state.last_level_count = 1;
@@ -725,8 +725,6 @@ tape_record_start( void )
 
   /* Also want to disable other tape actions */
   ui_menu_activate( UI_MENU_ITEM_TAPE_RECORDING, 1 );
-
-  return 0;
 }
 
 static int
@@ -751,8 +749,6 @@ void
 tape_event_record_sample( libspectrum_dword last_tstates, int type,
 			  void *user_data )
 {
-  int error;
-
   if( rec_state.last_level != (ula_tape_level()) ) {
     /* put a sample into the recording buffer */
     rec_state.tape_buffer_used =
@@ -765,20 +761,15 @@ tape_event_record_sample( libspectrum_dword last_tstates, int type,
     /* make sure we can still fit a dword and a flag byte in the buffer */
     if( rec_state.tape_buffer_used+5 >= rec_state.tape_buffer_size ) {
       rec_state.tape_buffer_size = rec_state.tape_buffer_size*2;
-      rec_state.tape_buffer = realloc( rec_state.tape_buffer,
-                                       rec_state.tape_buffer_size );
+      rec_state.tape_buffer = libspectrum_realloc( rec_state.tape_buffer,
+                                                   rec_state.tape_buffer_size );
     }
   }
 
   rec_state.last_level_count++;
 
   /* schedule next timer */
-  error = event_add( last_tstates + rec_state.tstates_per_sample,
-                     record_event );
-  if( error ) {
-    ui_error( UI_ERROR_ERROR,
-              "tape_event_record_sample: error scheduling next event" );
-  }
+  event_add( last_tstates + rec_state.tstates_per_sample, record_event );
 }
 
 int
@@ -836,7 +827,10 @@ tape_next_edge( libspectrum_dword last_tstates, int type, void *user_data )
   if( libspec_error != LIBSPECTRUM_ERROR_NONE ) return;
 
   /* Invert the microphone state */
-  if( edge_tstates || ( flags & LIBSPECTRUM_TAPE_FLAGS_STOP ) ) {
+  if( edge_tstates ||
+      ( flags & ( LIBSPECTRUM_TAPE_FLAGS_STOP |
+                  LIBSPECTRUM_TAPE_FLAGS_LEVEL_LOW |
+                  LIBSPECTRUM_TAPE_FLAGS_LEVEL_HIGH ) ) ) {
 
     if( flags & LIBSPECTRUM_TAPE_FLAGS_NO_EDGE ) {
       /* Do nothing */
@@ -885,7 +879,7 @@ tape_next_edge( libspectrum_dword last_tstates, int type, void *user_data )
      should occur 'edge_tstates' after the last edge, not after the
      current time (these will be slightly different as we only process
      events between instructions). */
-  if( event_add( last_tstates + edge_tstates, tape_edge_event ) ) return;
+  event_add( last_tstates + edge_tstates, tape_edge_event );
 
   /* Store length flags for acceleration purposes */
   loader_set_acceleration_flags( flags );
@@ -952,6 +946,7 @@ tape_block_details( char *buffer, size_t length,
   case LIBSPECTRUM_TAPE_BLOCK_TURBO:
   case LIBSPECTRUM_TAPE_BLOCK_PURE_DATA:
   case LIBSPECTRUM_TAPE_BLOCK_RAW_DATA:
+  case LIBSPECTRUM_TAPE_BLOCK_DATA_BLOCK:
     snprintf( buffer, length, "%lu bytes",
 	      (unsigned long)libspectrum_tape_block_data_length( block ) );
     break;
@@ -962,6 +957,7 @@ tape_block_details( char *buffer, size_t length,
     break;
 
   case LIBSPECTRUM_TAPE_BLOCK_PULSES:
+  case LIBSPECTRUM_TAPE_BLOCK_PULSE_SEQUENCE:
     snprintf( buffer, length, "%lu pulses",
 	      (unsigned long)libspectrum_tape_block_count( block ) );
     break;
@@ -1009,6 +1005,7 @@ tape_block_details( char *buffer, size_t length,
   case LIBSPECTRUM_TAPE_BLOCK_GROUP_END:
   case LIBSPECTRUM_TAPE_BLOCK_LOOP_END:
   case LIBSPECTRUM_TAPE_BLOCK_STOP48:
+  case LIBSPECTRUM_TAPE_BLOCK_SET_SIGNAL_LEVEL:
   case LIBSPECTRUM_TAPE_BLOCK_ARCHIVE_INFO:
   case LIBSPECTRUM_TAPE_BLOCK_HARDWARE:
   case LIBSPECTRUM_TAPE_BLOCK_CONCAT:

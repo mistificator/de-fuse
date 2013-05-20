@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001,2002 Philip Kendall
 
-## $Id: Makefile.am 4010 2009-04-15 13:01:27Z fredm $
+## $Id: Makefile.am 4743 2012-10-10 13:20:50Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ libwidget_a_SOURCES = \
 	menu_data.c \
 	options.c \
 	picture.c \
+	pokemem.c \
 	pokefinder.c \
 	query.c \
 	roms.c \
@@ -44,7 +45,7 @@ libwidget_a_SOURCES = \
 	text.c \
 	widget.c
 
-INCLUDES = @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@ @SDL_CFLAGS@
+AM_CPPFLAGS += @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@ @SDL_CFLAGS@
 
 BUILT_SOURCES = menu_data.c \
 		options.c \
@@ -73,5 +74,5 @@ EXTRA_DIST = mkfusefont.pl \
 
 CLEANFILES = menu_data.c \
 	     options.c \
-	     options.h \
+	     options_internals.h \
 	     fuse.font

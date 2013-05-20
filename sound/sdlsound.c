@@ -2,7 +2,7 @@
    Copyright (c) 2002-2004 Alexander Yurchenko, Russell Marks, Philip Kendall,
 			   Fredrick Meunier
 
-   $Id: sdlsound.c 4031 2009-06-08 00:33:53Z fredm $
+   $Id: sdlsound.c 4670 2012-02-20 10:24:22Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ sdlwrite( void *userdata, Uint8 *stream, int len )
 
   /* Try to only read an even number of bytes so as not to fragment a sample */
   len = MIN( len, sfifo_used( &sound_fifo ) );
-  len &= sound_stereo ? 0xfffc : 0xfffe;
+  len &= sound_stereo_ay ? 0xfffc : 0xfffe;
 
   /* Read input_size bytes from fifo into sound stream */
   while( ( f = sfifo_read( &sound_fifo, stream, len ) ) > 0 ) {

@@ -1,7 +1,7 @@
 /* fbjoystick.c: Joystick emulation
    Copyright (c) 2003 Darren Salt
 
-   $Id: fbjoystick.c 3096 2007-08-06 09:20:34Z pak21 $
+   $Id: fbjoystick.c 4301 2011-02-10 00:01:17Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,4 +27,5 @@
 
 #include <config.h>
 
+#include "peripherals/joystick.h"
 #include "../uijoystick.c"

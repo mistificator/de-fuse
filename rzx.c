@@ -1,7 +1,7 @@
 /* rzx.c: .rzx files
    Copyright (c) 2002-2003 Philip Kendall
 
-   $Id: rzx.c 4159 2010-09-13 11:51:13Z fredm $
+   $Id: rzx.c 4717 2012-06-07 03:54:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,12 +37,13 @@
 #include "event.h"
 #include "fuse.h"
 #include "machine.h"
+#include "movie.h"
+#include "peripherals/ula.h"
 #include "rzx.h"
 #include "settings.h"
 #include "snapshot.h"
 #include "timer/timer.h"
 #include "ui/ui.h"
-#include "ula.h"
 #include "utils.h"
 #include "z80/z80.h"
 #include "z80/z80_macros.h"
@@ -115,7 +116,8 @@ static void rzx_sentinel( libspectrum_dword ts, int type,
 
 static int sentinel_event;
 
-int rzx_init( void )
+void
+rzx_init( void )
 {
   rzx_recording = rzx_playback = 0;
 
@@ -123,12 +125,8 @@ int rzx_init( void )
   rzx_in_allocated = 0;
 
   sentinel_event = event_register( rzx_sentinel, "RZX sentinel" );
-  if( sentinel_event == -1 ) return 1;
 
   end_event = debugger_event_register( event_type_string, end_event_detail_string );
-  if( end_event == -1 ) return 1;
-
-  return 0;
 }
 
 int rzx_start_recording( const char *filename, int embed_snapshot )
@@ -140,11 +138,7 @@ int rzx_start_recording( const char *filename, int embed_snapshot )
   rzx = libspectrum_rzx_alloc();
 
   /* Store the filename */
-  rzx_filename = strdup( filename );
-  if( rzx_filename == NULL ) {
-    ui_error( UI_ERROR_ERROR, "out of memory in rzx_start_recording" );
-    return 1;
-  }
+  rzx_filename = utils_safe_strdup( filename );
 
   /* If we're embedding a snapshot, create it now */
   if( embed_snapshot ) {
@@ -203,6 +197,7 @@ int rzx_stop_recording( void )
 
   /* Stop recording data */
   rzx_recording = 0;
+  if( settings_current.movie_stop_after_rzx ) movie_stop();
 
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 0 );
   ui_menu_activate( UI_MENU_ITEM_RECORDING_ROLLBACK, 0 );
@@ -212,6 +207,7 @@ int rzx_stop_recording( void )
   );
 
   length = 0;
+  buffer = NULL;
   libspec_error = libspectrum_rzx_write(
     &buffer, &length, rzx, LIBSPECTRUM_ID_UNKNOWN, fuse_creator,
     settings_current.rzx_compression, rzx_competition_mode ? &rzx_key : NULL
@@ -222,10 +218,14 @@ int rzx_stop_recording( void )
   }
 
   error = utils_write_file( rzx_filename, buffer, length );
-  free( rzx_filename );
-  if( error ) { free( buffer ); libspectrum_rzx_free( rzx ); return error; }
+  libspectrum_free( rzx_filename );
+  if( error ) {
+    libspectrum_free( buffer );
+    libspectrum_rzx_free( rzx );
+    return error;
+  }
 
-  free( buffer );
+  libspectrum_free( buffer );
 
   libspec_error = libspectrum_rzx_free( rzx );
   if( libspec_error != LIBSPECTRUM_ERROR_NONE ) return libspec_error;
@@ -286,10 +286,7 @@ int rzx_start_playback( const char *filename, int check_snapshot )
     return libspec_error;
   }
 
-  if( utils_close_file( &file ) ) {
-    libspectrum_rzx_free( rzx );
-    return 1;
-  }
+  utils_close_file( &file );
 
   snap = rzx_get_initial_snapshot();
   if( !snap && check_snapshot ) {
@@ -357,8 +354,7 @@ start_playback( libspectrum_rzx *rzx )
   event_remove_type( spectrum_frame_event );
 
   /* Add a sentinel event to prevent tstates overrun (bug #1057471) */
-  error = event_add( RZX_SENTINEL_TIME, sentinel_event );
-  if( error ) return error;
+  event_add( RZX_SENTINEL_TIME, sentinel_event );
 
   tstates = libspectrum_rzx_tstates( rzx );
   rzx_instruction_count = libspectrum_rzx_instructions( rzx );
@@ -373,9 +369,10 @@ start_playback( libspectrum_rzx *rzx )
 
 int rzx_stop_playback( int add_interrupt )
 {
-  libspectrum_error libspec_error; int error;
+  libspectrum_error libspec_error;
 
   rzx_playback = 0;
+  if( settings_current.movie_stop_after_rzx ) movie_stop();
 
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 0 );
   ui_menu_activate( UI_MENU_ITEM_RECORDING_ROLLBACK, 0 );
@@ -388,9 +385,8 @@ int rzx_stop_playback( int add_interrupt )
      and everything works normally as rzx_playback is now zero again */
   if( add_interrupt ) {
 
-    error = event_add( machine_current->timings.tstates_per_frame,
-		       spectrum_frame_event );
-    if( error ) return error;
+    event_add( machine_current->timings.tstates_per_frame,
+               spectrum_frame_event );
 
     /* We're no longer doing RZX playback, so tstates now be <= the
        normal frame count */
@@ -474,7 +470,7 @@ autosave_prune( void )
       libspectrum_rzx_iterator_delete( rzx, save1.it );
   }
 
-  g_array_set_size( autosaves, 0 );
+  g_array_free( autosaves, TRUE );
 }
 
 static void
@@ -581,13 +577,9 @@ int rzx_store_byte( libspectrum_byte value )
 
     new_allocated = rzx_in_allocated >= 25 ? 2 * rzx_in_allocated : 50;
     ptr =
-      (libspectrum_byte*)realloc(
+      (libspectrum_byte*)libspectrum_realloc(
         rzx_in_bytes, new_allocated * sizeof(libspectrum_byte)
       );
-    if( ptr == NULL ) {
-      ui_error( UI_ERROR_ERROR, "Out of memory in rzx_store_byte" );
-      return 1;
-    }
 
     rzx_in_bytes = ptr;
     rzx_in_allocated = new_allocated;
@@ -701,8 +693,6 @@ rzx_rollback_to( void )
 static void
 rzx_sentinel( libspectrum_dword ts, int type, void *user_data )
 {
-  int error;
-
   ui_error( UI_ERROR_WARNING, "RZX frame is longer than %u tstates",
 	    RZX_SENTINEL_TIME );
   tstates -= RZX_SENTINEL_TIME_REDUCE;
@@ -710,6 +700,5 @@ rzx_sentinel( libspectrum_dword ts, int type, void *user_data )
 
   /* Add another sentinel event in case this frame continues a lot more after
      this */
-  error = event_add( RZX_SENTINEL_TIME, sentinel_event );
-  if( error ) return;
+  event_add( RZX_SENTINEL_TIME, sentinel_event );
 }
