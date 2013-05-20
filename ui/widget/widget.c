@@ -1,7 +1,7 @@
 /* widget.c: Simple dialog boxes for all user interfaces.
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall, Russell Marks
 
-   $Id: widget.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: widget.c 4697 2012-05-07 02:28:52Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@
 #include "display.h"
 #include "machine.h"
 #include "ui/uidisplay.h"
-#include "joystick.h"
 #include "keyboard.h"
 #include "menu.h"
 #include "options_internals.h"
 #include "periph.h"
+#include "peripherals/joystick.h"
 #include "pokefinder/pokefinder.h"
 #include "screenshot.h"
 #include "timer/timer.h"
@@ -95,18 +95,15 @@ settings_info widget_options_settings;
 
 static int widget_read_font( const char *filename )
 {
-  compat_fd fd;
   utils_file file;
   int error;
   int i;
 
-  fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_WIDGET );
-  if( fd == COMPAT_FILE_OPEN_FAILED ) {
+  error = utils_read_auxiliary_file( filename, &file, UTILS_AUXILIARY_WIDGET );
+  if( error == -1 ) {
     ui_error( UI_ERROR_ERROR, "couldn't find font file '%s'", filename );
     return 1;
   }
-
-  error = utils_read_fd( fd, filename, &file );
   if( error ) return error;
 
   i = 0;
@@ -156,8 +153,7 @@ static int widget_read_font( const char *filename )
     i += 3 + width;
   }
 
-  error = utils_close_file( &file );
-  if( error ) return error;
+  utils_close_file( &file );
 
   return 0;
 }
@@ -470,7 +466,7 @@ int widget_init( void )
   widget_numfiles = 0;
 
   ui_menu_activate( UI_MENU_ITEM_AY_LOGGING, 0 );
-  ui_menu_activate( UI_MENU_ITEM_FILE_MOVIES_RECORDING, 0 );
+  ui_menu_activate( UI_MENU_ITEM_FILE_MOVIE_RECORDING, 0 );
   ui_menu_activate( UI_MENU_ITEM_MACHINE_PROFILER, 0 );
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 0 );
   ui_menu_activate( UI_MENU_ITEM_RECORDING_ROLLBACK, 0 );
@@ -491,6 +487,9 @@ int widget_end( void )
     free( widget_filenames );
   }
 
+  /* we don't currently have more than page 0 */
+  free( widget_font[0] );
+
   return 0;
 }
 
@@ -498,10 +497,13 @@ int widget_end( void )
 
 int widget_do( widget_type which, void *data )
 {
-  int error;
-
   /* If we don't have a UI yet, we can't output widgets */
   if( !display_ui_initialised ) return 1;
+
+  if( which == WIDGET_TYPE_QUERY && !settings_current.confirm_actions ) {
+    widget_query.confirm = 1;
+    return 0;
+  }
 
   if( ui_widget_level == -1 ) uidisplay_frame_save();
 
@@ -515,7 +517,7 @@ int widget_do( widget_type which, void *data )
   uidisplay_frame_restore();
 
   /* Draw this widget */
-  error = widget_data[ which ].draw( data );
+  widget_data[ which ].draw( data );
 
   /* Set up the keyhandler for this widget */
   widget_keyhandler = widget_data[which].keyhandler;
@@ -680,20 +682,23 @@ widget_t widget_data[] = {
   { widget_sound_draw,	  widget_options_finish, widget_sound_keyhandler    },
   { widget_error_draw,	  NULL,			 widget_error_keyhandler    },
   { widget_rzx_draw,      widget_options_finish, widget_rzx_keyhandler      },
+  { widget_movie_draw,    widget_options_finish, widget_movie_keyhandler    },
   { widget_browse_draw,   widget_browse_finish,  widget_browse_keyhandler   },
   { widget_text_draw,	  widget_text_finish,	 widget_text_keyhandler     },
   { widget_debugger_draw, NULL,			 widget_debugger_keyhandler },
   { widget_pokefinder_draw, NULL,		 widget_pokefinder_keyhandler },
+  { widget_pokemem_draw, widget_pokemem_finish,	widget_pokemem_keyhandler },
   { widget_memory_draw,   NULL,			 widget_memory_keyhandler   },
   { widget_roms_draw,     widget_roms_finish,	 widget_roms_keyhandler     },
-  { widget_peripherals_draw, widget_options_finish,
-			                      widget_peripherals_keyhandler },
+  { widget_peripherals_general_draw, widget_options_finish, widget_peripherals_general_keyhandler },
+  { widget_peripherals_disk_draw, widget_options_finish, widget_peripherals_disk_keyhandler },
   { widget_query_draw,    NULL,			 widget_query_keyhandler    },
   { widget_query_save_draw,NULL,		 widget_query_save_keyhandler },
   { widget_diskoptions_draw, widget_options_finish, widget_diskoptions_keyhandler  },
 };
 
 #ifndef UI_SDL
+#ifndef UI_X
 /* The statusbar handling functions */
 /* TODO: make these do something useful */
 int
@@ -702,7 +707,6 @@ ui_statusbar_update( ui_statusbar_item item, ui_statusbar_state state )
   return 0;
 }
 
-#ifndef UI_X
 int
 ui_statusbar_update_speed( float speed )
 {
@@ -723,6 +727,8 @@ ui_tape_browser_update( ui_tape_browser_update_type change,
 ui_confirm_save_t
 ui_confirm_save_specific( const char *message )
 {
+  if( !settings_current.confirm_actions ) return UI_CONFIRM_SAVE_DONTSAVE;
+
   if( widget_do( WIDGET_TYPE_QUERY_SAVE, (void *) message ) )
     return UI_CONFIRM_SAVE_CANCEL;
   return widget_query.confirm;

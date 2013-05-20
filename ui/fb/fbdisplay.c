@@ -2,7 +2,7 @@
    Copyright (c) 2000-2003 Philip Kendall, Matan Ziv-Av, Darren Salt,
 			   Witold Filipczyk
 
-   $Id: fbdisplay.c 4206 2010-12-03 11:59:23Z fredm $
+   $Id: fbdisplay.c 4205 2010-12-03 10:39:39Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

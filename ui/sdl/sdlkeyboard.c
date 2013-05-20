@@ -1,7 +1,7 @@
 /* sdlkeyboard.c: routines for dealing with the SDL keyboard
    Copyright (c) 2000-2005 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
 
-   $Id: sdlkeyboard.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: sdlkeyboard.c 4698 2012-05-07 02:38:35Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -84,7 +84,12 @@ sdlkeyboard_keypress( SDL_KeyboardEvent *keyevent )
   input_event_t fuse_event;
 
   fuse_keysym = keysyms_remap( keyevent->keysym.sym );
-  unicode_keysym = unicode_keysyms_remap( keyevent->keysym.unicode & 0xff80 );
+
+  /* Currently unicode_keysyms_map contains ASCII character keys */
+  if( ( keyevent->keysym.unicode & 0xFF80 ) == 0 ) 
+    unicode_keysym = unicode_keysyms_remap( keyevent->keysym.unicode );
+  else
+    unicode_keysym = INPUT_KEY_NONE;
 
   if( fuse_keysym == INPUT_KEY_NONE && unicode_keysym == INPUT_KEY_NONE )
     return;

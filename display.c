@@ -2,7 +2,7 @@
    Copyright (c) 1999-2006 Philip Kendall, Thomas Harte, Witold Filipczyk
                            and Fredrick Meunier
 
-   $Id: display.c 4105 2009-12-15 10:15:43Z fredm $
+   $Id: display.c 4717 2012-06-07 03:54:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,13 +35,14 @@
 #include "event.h"
 #include "fuse.h"
 #include "machine.h"
+#include "movie.h"
+#include "peripherals/scld.h"
 #include "rectangle.h"
 #include "screenshot.h"
 #include "settings.h"
 #include "spectrum.h"
 #include "ui/ui.h"
 #include "ui/uidisplay.h"
-#include "scld.h"
 
 /* Set once we have initialised the UI */
 int display_ui_initialised = 0;
@@ -53,7 +54,7 @@ libspectrum_byte display_last_border;
 
 /* Stores the pixel, attribute and SCLD screen mode information used to
    draw each 8x1 group of pixels (including border) last frame */
-static libspectrum_dword
+libspectrum_dword
 display_last_screen[ DISPLAY_SCREEN_WIDTH_COLS * DISPLAY_SCREEN_HEIGHT ];
 
 /* Offsets as to where the data and the attributes for each pixel
@@ -136,14 +137,10 @@ alloc_change(void)
 
   if( border_changes_size == border_changes_last ) {
     border_changes_size += 10;
-    border_changes = realloc( border_changes,
-                              border_changes_size*
-                                sizeof( struct border_change_t )
-                            );
-    if( !border_changes ) {
-      ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-      fuse_abort();
-    }
+    border_changes = libspectrum_realloc( border_changes,
+                                          border_changes_size *
+                                            sizeof( struct border_change_t )
+                                        );
   }
   return border_changes + border_changes_last++; 
 }
@@ -202,7 +199,7 @@ display_init( int *argc, char ***argv )
 
   border_changes_last = 0;
   if( border_changes ) {
-    free( border_changes );
+    libspectrum_free( border_changes );
   }
   border_changes = NULL;
   error = add_border_sentinel(); if( error ) return error;
@@ -884,23 +881,33 @@ update_ui_screen( void )
 
   if( settings_current.frame_rate <= ++frame_count ) {
     frame_count = 0;
+    if( movie_recording ) {
+      movie_start_frame();
+    }
 
     if( display_redraw_all ) {
+      if( movie_recording ) {
+        movie_add_area( 0, 0, DISPLAY_ASPECT_WIDTH >> 3,
+                        DISPLAY_SCREEN_HEIGHT );
+      }
       uidisplay_area( 0, 0,
-		      scale * DISPLAY_ASPECT_WIDTH,
-		      scale * DISPLAY_SCREEN_HEIGHT );
+                      scale * DISPLAY_ASPECT_WIDTH,
+                      scale * DISPLAY_SCREEN_HEIGHT );
       display_redraw_all = 0;
     } else {
       for( i = 0, ptr = rectangle_inactive;
-	   i < rectangle_inactive_count;
-	   i++, ptr++ ) {
-            uidisplay_area( 8 * scale * ptr->x, scale * ptr->y,
-			8 * scale * ptr->w, scale * ptr->h );
+           i < rectangle_inactive_count;
+           i++, ptr++ ) {
+            if( movie_recording ) {
+              movie_add_area( ptr->x, ptr->y, ptr->w, ptr->h );
+            }
+              uidisplay_area( 8 * scale * ptr->x, scale * ptr->y,
+                        8 * scale * ptr->w, scale * ptr->h );
       }
     }
 
     rectangle_inactive_count = 0;
-    
+
     uidisplay_frame_end();
   }
 }
@@ -915,26 +922,6 @@ display_frame( void )
   update_border();
   update_dirty_rects();
   update_ui_screen();
-
-  if( screenshot_movie_record == 1 ) {
-
-    snprintf( screenshot_movie_name, SCREENSHOT_MOVIE_FILE_MAX,
-              "%s-frame-%09ld.scr", screenshot_movie_file,
-              screenshot_movie_frame++ );
-    screenshot_scr_write( screenshot_movie_name );
-
-#ifdef USE_LIBPNG
-
-  } else if( screenshot_movie_record == 2 ) {
-
-    snprintf( screenshot_movie_name, SCREENSHOT_MOVIE_FILE_MAX,
-              "%s-frame-%09ld.png", screenshot_movie_file,
-              screenshot_movie_frame++ );
-    screenshot_write_fast( screenshot_movie_name, screenshot_movie_scaler );
-
-#endif                          /* #ifdef USE_LIBPNG */
-
-  }
 
   display_frame_count++;
   if(display_frame_count==16) {

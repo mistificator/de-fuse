@@ -1,7 +1,7 @@
 /* debugger.h: Fuse's monitor/debugger
    Copyright (c) 2002-2008 Philip Kendall
 
-   $Id: debugger.h 3632 2008-05-26 19:51:17Z pak21 $
+   $Id: debugger.h 4635 2012-01-19 23:39:04Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ extern enum debugger_mode_t debugger_mode;
 /* Which base should we display things in */
 extern int debugger_output_base;
 
-int debugger_init( void );
-int debugger_reset( void );
+void debugger_init( void );
+void debugger_reset( void );
 
 int debugger_end( void );
 
@@ -66,7 +66,7 @@ void debugger_disassemble( char *buffer, size_t buflen, size_t *length,
 			   libspectrum_word address );
 
 /* Evaluate a debugger command */
-int debugger_command_evaluate( const char *command );
+void debugger_command_evaluate( const char *command );
 
 /* Get a deparsed expression */
 int debugger_expression_deparse( char *buffer, size_t length,

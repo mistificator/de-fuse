@@ -1,7 +1,7 @@
 /* tape.h: tape handling routines
    Copyright (c) 1999-2004 Philip Kendall
 
-   $Id: tape.h 3714 2008-07-06 18:10:29Z fredm $
+   $Id: tape.h 4696 2012-05-07 02:05:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@
 
 #include <libspectrum.h>
 
-int tape_init( void );
+void tape_init( void );
+void tape_end( void );
 
 int tape_open( const char *filename, int autoload );
 
@@ -57,7 +58,7 @@ int tape_stop( void );
 int tape_is_playing( void );
 int tape_present( void );
 
-int tape_record_start( void );
+void tape_record_start( void );
 int tape_record_stop( void );
 
 /* Call a user-supplied function for every block in the current tape */

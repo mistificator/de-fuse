@@ -1,9 +1,9 @@
 /* pentagon.c: Pentagon 128K specific routines, this is intended to be a 1991
                era Pentagon machine with Beta 128 and AY as described in the
                Russian Speccy FAQ and emulated on most Spectrum emulators.
-   Copyright (c) 1999-2007 Philip Kendall and Fredrick Meunier
+   Copyright (c) 1999-2012 Philip Kendall and Fredrick Meunier
 
-   $Id: pentagon.c 4099 2009-10-22 10:59:02Z fredm $
+   $Id: pentagon.c 4737 2012-09-28 13:15:27Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,34 +30,32 @@
 #include <libspectrum.h>
 
 #include "compat.h"
-#include "disk/beta.h"
-#include "joystick.h"
 #include "machine.h"
 #include "machines.h"
+#include "machines_periph.h"
 #include "memory.h"
+#include "module.h"
 #include "pentagon.h"
 #include "periph.h"
+#include "peripherals/disk/beta.h"
+#include "peripherals/joystick.h"
 #include "settings.h"
 #include "spec48.h"
 #include "spec128.h"
-#include "ula.h"
 
-static int pentagon_reset( void );
+static void pentagon_from_snapshot( libspectrum_snap *snap );
 
-const periph_t pentagon_peripherals[] = {
-  { 0x00ff, 0x001f, pentagon_select_1f_read, beta_cr_write },
-  { 0x00ff, 0x003f, beta_tr_read, beta_tr_write },
-  { 0x00ff, 0x005f, beta_sec_read, beta_sec_write },
-  { 0x00ff, 0x007f, beta_dr_read, beta_dr_write },
-  { 0x00ff, 0x00fe, ula_read, ula_write },
-  { 0x00ff, 0x00ff, pentagon_select_ff_read, beta_sp_write },
-  { 0xc002, 0xc000, ay_registerport_read, ay_registerport_write },
-  { 0xc002, 0x8000, NULL, ay_dataport_write },
-  { 0x8002, 0x0000, NULL, spec128_memoryport_write },
+static module_info_t pentagon_module_info = {
+
+  NULL,
+  NULL,
+  NULL,
+  pentagon_from_snapshot,
+  NULL,
+
 };
 
-const size_t pentagon_peripherals_count =
-  sizeof( pentagon_peripherals ) / sizeof( periph_t );
+static int pentagon_reset( void );
 
 libspectrum_byte
 pentagon_select_1f_read( libspectrum_word port, int *attached )
@@ -66,7 +64,7 @@ pentagon_select_1f_read( libspectrum_word port, int *attached )
   int tmpattached = 0;
 
   data = beta_sr_read( port, &tmpattached );
-  if( !tmpattached )
+  if( !tmpattached && settings_current.joy_kempston )
     data = joystick_kempston_read( port, &tmpattached );
 
   if( tmpattached ) {
@@ -101,8 +99,6 @@ pentagon_port_from_ula( libspectrum_word port GCC_UNUSED )
 int
 pentagon_init( fuse_machine_info *machine )
 {
-  int i;
-
   machine->machine = LIBSPECTRUM_MACHINE_PENT;
   machine->id = "pentagon";
 
@@ -112,13 +108,15 @@ pentagon_init( fuse_machine_info *machine )
   machine->ram.port_from_ula  = pentagon_port_from_ula;
   machine->ram.contend_delay  = spectrum_contend_delay_none;
   machine->ram.contend_delay_no_mreq = spectrum_contend_delay_none;
+  machine->ram.valid_pages    = 8;
 
   machine->unattached_port = spectrum_unattached_port_none;
 
   machine->shutdown = NULL;
 
   machine->memory_map = spec128_memory_map;
-  for( i = 0; i < 2; i++ ) beta_memory_map_romcs[i].bank = MEMORY_BANK_ROMCS;
+
+  module_register( &pentagon_module_info );
 
   return 0;
 }
@@ -128,13 +126,13 @@ pentagon_reset(void)
 {
   int error;
 
-  error = machine_load_rom( 0, 0, settings_current.rom_pentagon_0,
+  error = machine_load_rom( 0, settings_current.rom_pentagon_0,
                             settings_default.rom_pentagon_0, 0x4000 );
   if( error ) return error;
-  error = machine_load_rom( 2, 1, settings_current.rom_pentagon_1,
+  error = machine_load_rom( 1, settings_current.rom_pentagon_1,
                             settings_default.rom_pentagon_1, 0x4000 );
   if( error ) return error;
-  error = machine_load_rom_bank( beta_memory_map_romcs, 0, 0,
+  error = machine_load_rom_bank( beta_memory_map_romcs, 0,
                                  settings_current.rom_pentagon_2,
                                  settings_default.rom_pentagon_2, 0x4000 );
   if( error ) return error;
@@ -142,10 +140,12 @@ pentagon_reset(void)
   error = spec128_common_reset( 0 );
   if( error ) return error;
 
-  error = periph_setup( pentagon_peripherals, pentagon_peripherals_count );
-  if( error ) return error;
-  periph_setup_kempston( PERIPH_PRESENT_OPTIONAL );
-  periph_setup_beta128( PERIPH_PRESENT_ALWAYS );
+  periph_clear();
+  machines_periph_pentagon();
+
+  /* Earlier style Betadisk 128 interface */
+  periph_set_present( PERIPH_TYPE_BETA128_PENTAGON, PERIPH_PRESENT_ALWAYS );
+
   periph_update();
 
   beta_builtin = 1;
@@ -157,4 +157,20 @@ pentagon_reset(void)
   spec48_common_display_setup();
 
   return 0;
+}
+
+static void
+pentagon_from_snapshot( libspectrum_snap *snap )
+{
+  /* During init we set beta_active to true unconditionally to bootstrap into
+     the TR-DOS ROM, but during snapshot loading we should repect the paging
+     setting from the snapshot itself */
+  if( periph_is_active( PERIPH_TYPE_BETA128_PENTAGON ) || 
+      periph_is_active( PERIPH_TYPE_BETA128_PENTAGON_LATE ) ) {
+    if( libspectrum_snap_beta_paged( snap ) ) {
+      beta_page();
+    } else {
+      beta_unpage();
+    }
+  }
 }

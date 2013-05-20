@@ -1,7 +1,7 @@
 /* picture.c: Win32 routines to draw the keyboard picture
    Copyright (c) 2002-2008 Philip Kendall, Marek Januszewski, Stuart Brady
 
-   $Id: picture.c 4092 2009-09-03 12:38:38Z fredm $
+   $Id: picture.c 4909 2013-03-10 22:23:36Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 */
 
+#include <config.h>
+
 #include "display.h"
 #include "picture.h"
 #include "ui/ui.h"
@@ -41,7 +43,6 @@ static HWND hDialogPicture = NULL;
 static utils_file screen;
 static HBITMAP picture_BMP;
 
-static int read_screen( const char *filename, utils_file *screen );
 static void draw_screen( libspectrum_byte *screen, int border );
 
 static LRESULT WINAPI picture_wnd_proc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
@@ -80,15 +81,13 @@ win32ui_picture( const char *filename, int border )
     picture_BMP = CreateDIBSection( dc, &picture_BMI, DIB_RGB_COLORS, &picture,
                                     NULL, 0 );
 
-    if( read_screen( filename, &screen ) ) {
+    if( utils_read_screen( filename, &screen ) ) {
       return 1;
     }
 
     draw_screen( screen.buffer, border );
 
-    if( utils_close_file( &screen ) ) {
-      return 1;
-    }
+    utils_close_file( &screen );
 
     ReleaseDC( hDialogPicture, dc );
 
@@ -105,14 +104,16 @@ picture_wnd_proc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
     case WM_PAINT:
     {
       PAINTSTRUCT ps;
+      HBITMAP old_bmp;
       HDC dest_dc = BeginPaint( hWnd, &ps );
       HDC pic_dc = CreateCompatibleDC( dest_dc );
 
-      SelectObject( pic_dc, picture_BMP );
+      old_bmp = SelectObject( pic_dc, picture_BMP );
       BitBlt( dest_dc, 0, 0, DISPLAY_ASPECT_WIDTH,
               DISPLAY_SCREEN_HEIGHT, pic_dc, 0, 0, SRCCOPY );
 
       EndPaint( hWnd, &ps );
+      SelectObject( pic_dc, old_bmp );
       DeleteDC( pic_dc );
       return 0;
     }
@@ -136,33 +137,6 @@ picture_wnd_proc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
     }
   }
   return FALSE;
-}
-
-
-static int
-read_screen( const char *filename, utils_file *screen )
-{
-  int error;
-  compat_fd fd;
-
-  fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_LIB );
-  if( fd == COMPAT_FILE_OPEN_FAILED ) {
-    ui_error( UI_ERROR_ERROR, "couldn't find keyboard picture ('%s')",
-              filename );
-    return 1;
-  }
-
-  error = utils_read_fd( fd, filename, screen );
-  if( error ) return error;
-
-  if( screen->length != 6912 ) {
-    utils_close_file( screen );
-    ui_error( UI_ERROR_ERROR, "keyboard picture ('%s') is not 6912 bytes long",
-              filename );
-    return 1;
-  }
-
-  return 0;
 }
 
 static void

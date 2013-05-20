@@ -1,7 +1,7 @@
 /* xjoystick.c: Joystick emulation
    Copyright (c) 2003 Darren Salt
 
-   $Id: xjoystick.c 3096 2007-08-06 09:20:34Z pak21 $
+   $Id: xjoystick.c 4400 2011-04-30 12:00:36Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,5 +26,14 @@
 */
 
 #include <config.h>
+#include "peripherals/joystick.h"
 
+#if !defined USE_JOYSTICK || defined HAVE_JSW_H
+/* Fake joystick, or override UI-specific handling */
 #include "../uijoystick.c"
+
+#else			/* #if !defined USE_JOYSTICK || defined HAVE_JSW_H */
+
+#include "../sdl/sdljoystick.c"
+
+#endif

@@ -3,7 +3,7 @@
 # settings.pl: generate settings.c from settings.dat
 # Copyright (c) 2002-2005 Philip Kendall
 
-# $Id: settings.pl 4156 2010-09-09 13:01:38Z fredm $
+# $Id: settings.pl 4841 2013-01-02 01:55:24Z zubzero $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -192,7 +192,10 @@ read_config_file( settings_info *settings )
     return 1;
   }
 
-  if( parse_xml( doc, settings ) ) { xmlFreeDoc( doc ); return 1; }
+  if( parse_xml( doc, settings ) ) {
+    xmlFreeDoc( doc );
+    return 1;
+  }
 
   xmlFreeDoc( doc );
 
@@ -238,8 +241,8 @@ CODE
     if( !strcmp( (const char*)node->name, "$options{$name}->{configfile}" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
-        free( settings->$name );
-        settings->$name = strdup( (char*)xmlstring );
+        libspectrum_free( settings->$name );
+        settings->$name = utils_safe_strdup( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -318,6 +321,8 @@ CODE
   print hashline( __LINE__ ), << 'CODE';
 
   xmlSaveFormatFile( path, doc, 1 );
+
+  xmlFreeDoc( doc );
 
   return 0;
 }
@@ -445,14 +450,10 @@ parse_ini( utils_file *file, settings_info *settings )
 	n = (char *)cpos - value;
 	if( n > 0 ) {
 	  if( *val_char != NULL ) {
-	    free( *val_char );
+	    libspectrum_free( *val_char );
 	    *val_char = NULL;
 	  }
-	  *val_char = malloc( n + 1 );
-	  if( ! *val_char ) {
-	    ui_error( UI_ERROR_WARNING, "Out of memory!" );
-	    return 1;
-	  }
+	  *val_char = libspectrum_malloc( n + 1 );
 	  (*val_char)[n] = '\\0';
 	  memcpy( *val_char, value, n );
 	}
@@ -686,14 +687,7 @@ print hashline( __LINE__ ), << 'CODE';
 static int
 settings_copy_internal( settings_info *dest, settings_info *src )
 {
-  if( dest->start_machine ) {
-    free( dest->start_machine );
-    dest->start_machine = NULL;
-  }
-  if( dest->start_scaler_mode ) {
-    free( dest->start_scaler_mode );
-    dest->start_scaler_mode = NULL;
-  }
+  settings_free( dest );
 
 CODE
 
@@ -707,8 +701,7 @@ foreach my $name ( sort keys %options ) {
 	print << "CODE";
   dest->$name = NULL;
   if( src->$name ) {
-    dest->$name = strdup( src->$name );
-    if( !dest->$name ) { settings_free( dest ); return 1; }
+    dest->$name = utils_safe_strdup( src->$name );
   }
 CODE
     }
@@ -773,25 +766,22 @@ settings_get_rom_setting( settings_info *settings, size_t which )
   case 40: return &( settings->rom_interface_i );
   case 41: return &( settings->rom_beta128 );
   case 42: return &( settings->rom_plusd );
+  case 43: return &( settings->rom_disciple );
+  case 44: return &( settings->rom_opus );
+  case 45: return &( settings->rom_speccyboot );
   default: return NULL;
   }
 }
 
-int
+void
 settings_set_string( char **string_setting, const char *value )
 {
   /* No need to do anything if the two strings are in fact the
      same pointer */
-  if( *string_setting == value ) return 0;
+  if( *string_setting == value ) return;
 
-  if( *string_setting) free( *string_setting );
-  *string_setting = strdup( value );
-  if( !( *string_setting ) ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-    return 1;
-  }
-
-  return 0;
+  if( *string_setting ) libspectrum_free( *string_setting );
+  *string_setting = utils_safe_strdup( value );
 }
 
 int
@@ -801,7 +791,7 @@ CODE
 
 foreach my $name ( sort keys %options ) {
     if( $options{$name}->{type} eq 'string' ) {
-	print "  if( settings->$name ) free( settings->$name );\n";
+	print "  if( settings->$name ) libspectrum_free( settings->$name );\n";
     }
 }
 
@@ -817,6 +807,10 @@ settings_end( void )
     settings_write_config( &settings_current );
 
   settings_free( &settings_current );
+
+#ifdef HAVE_LIB_XML2
+  xmlCleanupParser();
+#endif				/* #ifdef HAVE_LIB_XML2 */
 
   return 0;
 }

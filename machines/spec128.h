@@ -1,7 +1,7 @@
 /* spec128.h: Spectrum 128K specific routines
    Copyright (c) 1999-2004 Philip Kendall
 
-   $Id: spec128.h 3566 2008-03-18 12:59:16Z pak21 $
+   $Id: spec128.h 4924 2013-05-05 07:40:02Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,10 +29,6 @@
 #include <libspectrum.h>
 
 #include "machine.h"
-#include "periph.h"
-
-extern const periph_t spec128_peripherals[];
-extern const size_t spec128_peripherals_count;
 
 int spec128_init( fuse_machine_info *machine );
 int spec128_common_reset( int contention );

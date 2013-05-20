@@ -1,7 +1,7 @@
 /* fileselector.c: Win32 fileselector routines
    Copyright (c) 2008 Marek Januszewski
 
-   $Id: fileselector.c 3922 2008-12-31 19:01:31Z zubzero $
+   $Id: fileselector.c 4643 2012-01-21 16:12:10Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 #include <windows.h>
 
+#include "utils.h"
 #include "win32internals.h"
 
 /* FIXME: remember the last directory when opening/saving
@@ -74,7 +75,7 @@ run_dialog( const char *title, int is_saving )
   if( !result ) {
     return NULL;
   } else {
-    return strdup( ofn.lpstrFile );
+    return utils_safe_strdup( ofn.lpstrFile );
   }
 }
 

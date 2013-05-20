@@ -1,7 +1,7 @@
 /* slt.c: SLT data handling routines
    Copyright (c) 2004 Philip Kendall
 
-   $Id: slt.c 3389 2007-12-03 12:54:17Z fredm $
+   $Id: slt.c 4715 2012-06-07 03:32:59Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,12 +57,10 @@ static module_info_t slt_module_info = {
 
 };
 
-int
+void
 slt_init( void )
 {
   module_register( &slt_module_info );
-
-  return 0;
 }
 
 int
@@ -136,12 +134,7 @@ slt_to_snapshot( libspectrum_snap *snap )
 
       libspectrum_byte *buffer;
 
-      buffer = malloc( slt_length[i] * sizeof(libspectrum_byte) );
-      if( !buffer ) {
-	ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__,
-		  __LINE__ );
-	return;
-      }
+      buffer = libspectrum_malloc( slt_length[i] * sizeof(libspectrum_byte) );
 
       memcpy( buffer, slt[i], slt_length[i] );
       libspectrum_snap_set_slt( snap, i, buffer );
@@ -150,12 +143,7 @@ slt_to_snapshot( libspectrum_snap *snap )
 
   if( slt_screen ) {
  
-    buffer = malloc( 6912 * sizeof( libspectrum_byte ) );
-
-    if( !buffer ) {
-      ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-      return;
-    }
+    buffer = libspectrum_malloc( 6912 * sizeof( libspectrum_byte ) );
 
     memcpy( buffer, slt_screen, 6912 );
     libspectrum_snap_set_slt_screen( snap, buffer );

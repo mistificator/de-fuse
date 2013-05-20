@@ -1,7 +1,7 @@
 /* keyboard.h: Routines for dealing with the Spectrum's keyboard
    Copyright (c) 1999-2003 Philip Kendall
 
-   $Id: keyboard.h 3111 2007-08-17 12:42:10Z pak21 $
+   $Id: keyboard.h 4696 2012-05-07 02:05:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -91,6 +91,7 @@ typedef enum keyboard_key_name {
 } keyboard_key_name;
 
 void fuse_keyboard_init(void);
+void fuse_keyboard_end(void);
 libspectrum_byte keyboard_read( libspectrum_byte porth );
 void keyboard_press(keyboard_key_name key);
 void keyboard_release(keyboard_key_name key);

@@ -1,7 +1,7 @@
 /* xkeyboard.c: X routines for dealing with the keyboard
    Copyright (c) 2000-2003 Philip Kendall
 
-   $Id: xkeyboard.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: xkeyboard.c 4698 2012-05-07 02:38:35Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <stdio.h>
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <X11/keysym.h>
 
 #include "display.h"
@@ -44,11 +45,10 @@
 static void
 get_keysyms( XKeyEvent *event, input_event_t *fuse_event )
 {
-  int index;
   KeySym native, spectrum;
 
-  index = event->state & ShiftMask ? 1 : 0;
-  native = XLookupKeysym( event, index );
+  /* Get keysyms taking into account Shift, Caps_Lock, Mode_switch modifiers */
+  XLookupString( event, NULL, 0, &native, NULL );
   fuse_event->types.key.native_key = keysyms_remap( native );
 
   spectrum = XLookupKeysym( event, 0 );

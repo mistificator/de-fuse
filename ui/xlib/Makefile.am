@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2004 Philip Kendall
 
-## $Id: Makefile.am 3151 2007-09-05 15:41:46Z zubzero $
+## $Id: Makefile.am 4756 2012-11-07 11:11:44Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -34,13 +34,18 @@ libuixlib_a_SOURCES = xdisplay.c \
 		      xui.c \
 		      keysyms.c
 
-BUILT_SOURCES = keysyms.c
+BUILT_SOURCES = keysyms.c xpixmaps.c
 
 keysyms.c: $(srcdir)/../../keysyms.pl $(srcdir)/../../keysyms.dat
 	@PERL@ -I$(srcdir)/../../perl $(srcdir)/../../keysyms.pl x $(srcdir)/../../keysyms.dat > $@.tmp && mv $@.tmp $@
 
-INCLUDES = @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@
+xpixmaps.c: xstatusbar.pl $(srcdir)/../gtk/pixmaps.c
+	@PERL@ -I$(srcdir)/../../perl $(srcdir)/xstatusbar.pl $(srcdir)/../gtk/pixmaps.c > $@.tmp && mv $@.tmp $@
+
+AM_CPPFLAGS += @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@
 
 noinst_HEADERS = xdisplay.h xkeyboard.h xui.h
 
-CLEANFILES = keysyms.c
+EXTRA_DIST = xstatusbar.pl
+
+CLEANFILES = keysyms.c xpixmaps.c

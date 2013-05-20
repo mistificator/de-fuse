@@ -1,7 +1,7 @@
 /* gtkkeyboard.c: GTK+ routines for dealing with the keyboard
    Copyright (c) 2000-2008 Philip Kendall, Russell Marks
 
-   $Id: gtkkeyboard.c 4176 2010-10-06 10:56:05Z fredm $
+   $Id: gtkkeyboard.c 4723 2012-07-08 13:26:15Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 
 #include "compat.h"
+#include "gtkcompat.h"
 #include "gtkinternals.h"
 #include "input.h"
 #include "keyboard.h"
@@ -41,10 +42,11 @@ static guint
 unshift_keysym( guint keycode, gint group )
 {
   GdkKeymapKey *maps;
-  guint *keyvals, i, r = GDK_VoidSymbol, r2 = GDK_VoidSymbol;
+  guint *keyvals, i, r = GDK_KEY_VoidSymbol, r2 = GDK_KEY_VoidSymbol;
   gint count;
 
-  gdk_keymap_get_entries_for_keycode( NULL, keycode, &maps, &keyvals, &count );
+  gdk_keymap_get_entries_for_keycode( gdk_keymap_get_default(), keycode,
+                                      &maps, &keyvals, &count );
 
   for( i = 0; i < count; i++ ) {
     if( maps[i].group == group && maps[i].level == 0 ) {
@@ -82,7 +84,7 @@ gtkkeyboard_keypress( GtkWidget *widget GCC_UNUSED, GdkEvent *event,
 {
   input_event_t fuse_event;
 
-  if( event->key.keyval == GDK_F1 && event->key.state == 0 )
+  if( event->key.keyval == GDK_KEY_F1 && event->key.state == 0 )
     ui_mouse_suspend();
 
   fuse_event.type = INPUT_EVENT_KEYPRESS;

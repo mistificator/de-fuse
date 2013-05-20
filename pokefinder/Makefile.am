@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2003 Philip Kendall
 
-## $Id: Makefile.am 3115 2007-08-19 02:49:14Z fredm $
+## $Id: Makefile.am 4743 2012-10-10 13:20:50Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -27,8 +27,10 @@ AM_CPPFLAGS = -I$(srcdir)/..
 
 noinst_LIBRARIES = libpokefinder.a
 
-libpokefinder_a_SOURCES = pokefinder.c
+libpokefinder_a_SOURCES = pokefinder.c \
+  pokemem.c
 
-noinst_HEADERS = pokefinder.h
+noinst_HEADERS = pokefinder.h \
+  pokemem.h
 
-INCLUDES = @LIBSPEC_CFLAGS@
+AM_CPPFLAGS += @GLIB_CFLAGS@ @GTK_CFLAGS@ @LIBSPEC_CFLAGS@

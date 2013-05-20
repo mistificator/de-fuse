@@ -1,7 +1,7 @@
 /* sdldisplay.c: Routines for dealing with the SDL display
    Copyright (c) 2000-2006 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
 
-   $Id: sdldisplay.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: sdldisplay.c 4696 2012-05-07 02:05:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 #include "display.h"
 #include "fuse.h"
 #include "machine.h"
-#include "scld.h"
+#include "peripherals/scld.h"
 #include "screenshot.h"
 #include "settings.h"
 #include "ui/ui.h"
@@ -286,11 +286,14 @@ static void
 sdldisplay_find_best_fullscreen_scaler( void )
 {
   static int windowed_scaler = -1;
+  static int searching_fullscreen_scaler = 0;
 
   /* Make sure we have at least more than half of the screen covered in
      fullscreen to avoid the "postage stamp" on machines that don't support
      320x240 anymore e.g. Mac notebooks */
   if( settings_current.full_screen ) {
+    if( searching_fullscreen_scaler ) return;
+    searching_fullscreen_scaler = 1;
     int i = 0;
     while( i < SCALER_NUM &&
            ( image_height*sdldisplay_current_size <= min_fullscreen_height/2 ||
@@ -307,6 +310,7 @@ sdldisplay_find_best_fullscreen_scaler( void )
         sdldisplay_current_size = scaler_get_scaling_factor( current_scaler );
       }
     }
+    searching_fullscreen_scaler = 0;
   } else {
     if( windowed_scaler != -1 ) {
       scaler_select_scaler( windowed_scaler );
@@ -323,7 +327,13 @@ sdldisplay_load_gfx_mode( void )
 
   sdldisplay_force_full_refresh = 1;
 
-  tmp_screen = NULL;
+  /* Free the old surface */
+  if( tmp_screen ) {
+    free( tmp_screen->pixels );
+    SDL_FreeSurface( tmp_screen );
+    tmp_screen = NULL;
+  }
+
   tmp_screen_width = (image_width + 3);
 
   sdldisplay_current_size = scaler_get_scaling_factor( current_scaler );

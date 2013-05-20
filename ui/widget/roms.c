@@ -1,7 +1,7 @@
 /* roms.c: select ROMs widget
    Copyright (c) 2003-2004 Philip Kendall
 
-   $Id: roms.c 4103 2009-11-21 10:16:36Z fredm $
+   $Id: roms.c 4633 2012-01-19 23:26:10Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -136,7 +136,6 @@ widget_roms_keyhandler( input_key key )
       key - INPUT_KEY_a < (ptrdiff_t)rom_count ) {
 
     char **setting;
-    int error;
     char buf[32];
     widget_filesel_data data;
 
@@ -150,8 +149,7 @@ widget_roms_keyhandler( input_key key )
     if( !widget_filesel_name ) return;
 
     setting = settings_get_rom_setting( widget_settings, key + first_rom );
-    error = settings_set_string( setting, widget_filesel_name );
-    if( error ) return;
+    settings_set_string( setting, widget_filesel_name );
 
     print_rom( key );
   }

@@ -1,10 +1,22 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Define to 1 if SpeccyBoot is supported. */
+#undef BUILD_SPECCYBOOT
+
+/* Defined if we support spectranet */
+#undef BUILD_SPECTRANET
+
 /* DirectX 7 or higher is required */
 #undef DIRECTSOUND_VERSION
+
+/* Define copyright of Fuse */
+#undef FUSE_COPYRIGHT
+
+/* Define version information for win32 executables */
+#undef FUSE_RC_VERSION
 
 /* Define to 1 if you have the `dirname' function. */
 #undef HAVE_DIRNAME
@@ -36,6 +48,9 @@
 /* Define to 1 if you have the <libgen.h> header file. */
 #undef HAVE_LIBGEN_H
 
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
+
 /* Define to 1 if you have the <libpng/png.h> header file. */
 #undef HAVE_LIBPNG_PNG_H
 
@@ -53,6 +68,12 @@
 
 /* Define to 1 if you have the `mkstemp' function. */
 #undef HAVE_MKSTEMP
+
+/* Define if you have POSIX threads libraries and header files. */
+#undef HAVE_PTHREAD
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
 
 /* Define to 1 if you have the <siginfo.h> header file. */
 #undef HAVE_SIGINFO_H
@@ -90,6 +111,9 @@
 /* Define to 1 if you have the <X11/extensions/XShm.h> header file. */
 #undef HAVE_X11_EXTENSIONS_XSHM_H
 
+/* Define to 1 if you have the <zlib.h> header file. */
+#undef HAVE_ZLIB_H
+
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
@@ -118,6 +142,10 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
+
 /* Location of the ROM images */
 #undef ROMSDIR
 
@@ -130,7 +158,7 @@
 /* Defined if framebuffer UI in use */
 #undef UI_FB
 
-/* Defined if GTK+ UI (either 1.2 or 2.x) is in use */
+/* Defined if GTK+ UI is in use */
 #undef UI_GTK
 
 /* Defined if the SDL UI in use */
@@ -160,8 +188,8 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define version information for win32 executable */
-#undef VERSION_WIN32
+/* Exclude rarely used stuff from Windows headers <windows.h> */
+#undef WIN32_LEAN_AND_MEAN
 
 /* Minimal supported version of Windows is 95 or NT4 */
 #undef WINVER

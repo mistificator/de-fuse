@@ -3,7 +3,7 @@
    Copyright (c) 1999-2009 Philip Kendall, Thomas Harte, Witold Filipczyk
                            and Fredrick Meunier
 
-   $Id: rectangle.c 4105 2009-12-15 10:15:43Z fredm $
+   $Id: rectangle.c 4785 2012-12-07 23:56:40Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
    E-mail: philip-fuse@shadowmagic.org.uk
 
 */
+
+#include <config.h>
 
 #include <stdlib.h>
 
@@ -70,11 +72,8 @@ rectangle_add( int y, int x, int w )
                 2 * rectangle_active_allocated :
                 8;
 
-    ptr = realloc( rectangle_active, new_alloc * sizeof( struct rectangle ) );
-    if( !ptr ) {
-      ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-      fuse_abort();
-    }
+    ptr = libspectrum_realloc( rectangle_active,
+                               new_alloc * sizeof( struct rectangle ) );
 
     rectangle_active_allocated = new_alloc; rectangle_active = ptr;
   }
@@ -171,13 +170,8 @@ rectangle_end_line( int y )
 	          2 * rectangle_inactive_allocated :
 	          8;
 
-      ptr = realloc( rectangle_inactive,
-		     new_alloc * sizeof( struct rectangle ) );
-      if( !ptr ) {
-	ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d",
-		  __FILE__, __LINE__ );
-        fuse_abort();
-      }
+      ptr = libspectrum_realloc( rectangle_inactive,
+                                 new_alloc * sizeof( struct rectangle ) );
 
       rectangle_inactive_allocated = new_alloc; rectangle_inactive = ptr;
     }

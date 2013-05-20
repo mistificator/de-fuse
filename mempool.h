@@ -1,7 +1,7 @@
 /* mempool.c: pooled system memory
    Copyright (c) 2008 Philip Kendall
 
-   $Id: mempool.h 3922 2008-12-31 19:01:31Z zubzero $
+   $Id: mempool.h 4635 2012-01-19 23:39:04Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,11 +28,12 @@
 
 extern const int MEMPOOL_UNTRACKED;
 
-int mempool_init( void );
+void mempool_init( void );
 int mempool_register_pool( void );
 void* mempool_alloc( int pool, size_t size );
 char* mempool_strdup( int pool, const char *string );
 void mempool_free( int pool );
+void mempool_end( void );
 
 /* Unit test helper routines */
 

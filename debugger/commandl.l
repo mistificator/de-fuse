@@ -1,7 +1,7 @@
 /* commandl.l: Debugger command lexical scanner
    Copyright (c) 2002-2008 Philip Kendall
 
-   $Id: commandl.l 4130 2010-05-18 12:06:19Z fredm $
+   $Id: commandl.l 4730 2012-09-03 12:50:19Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -96,6 +96,9 @@ af|bc|de|hl|"af\'"|"bc\'"|"de\'"|"hl\'" {
 sp|pc|ix|iy { yylval.reg = debugger_register_hash( yytext );
 	      return DEBUGGER_REGISTER; }
 
+im|iff1|iff2 { yylval.reg = debugger_register_hash( yytext );
+	      return DEBUGGER_REGISTER; }
+
 "("		{ return '('; }
 ")"		{ return ')'; }
 
@@ -138,8 +141,6 @@ $[[:xdigit:]]+	{ yylval.integer = strtol( yytext+1, NULL, 16 );
 [[:digit:]]+	{ yylval.integer = atoi( yytext );
 		  if( YY_START == COMMANDSTATE1 ) BEGIN( COMMANDSTATE2 );
 		  return NUMBER; }
-
-[cdrx][[:digit:]]+ { yylval.integer = debugger_page_hash( yytext ); return PAGE; }
 
 {ID}		{ yylval.string = mempool_strdup( debugger_memory_pool, yytext ); return STRING; }
 ${ID}		{ yylval.string = mempool_strdup( debugger_memory_pool, yytext + 1 ); return VARIABLE; }

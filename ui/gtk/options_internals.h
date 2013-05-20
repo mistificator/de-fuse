@@ -60,9 +60,9 @@ typedef struct menu_options_general_t {
 
 } menu_options_general_t;
 
-void menu_options_peripherals( GtkWidget *widget, gpointer data );
+void menu_options_peripherals_general( GtkWidget *widget, gpointer data );
 
-typedef struct menu_options_peripherals_t {
+typedef struct menu_options_peripherals_general_t {
 
   GtkWidget *dialog;
 
@@ -74,6 +74,20 @@ typedef struct menu_options_peripherals_t {
   GtkWidget *interface1;
   GtkWidget *interface2;
   GtkWidget *printer;
+  GtkWidget *zxprinter;
+  GtkWidget *speccyboot;
+  GtkWidget *specdrum;
+  GtkWidget *spectranet;
+  GtkWidget *spectranet_disable;
+
+} menu_options_peripherals_general_t;
+
+void menu_options_peripherals_disk( GtkWidget *widget, gpointer data );
+
+typedef struct menu_options_peripherals_disk_t {
+
+  GtkWidget *dialog;
+
   GtkWidget *simpleide_active;
   GtkWidget *zxatasp_active;
   GtkWidget *zxatasp_upload;
@@ -83,10 +97,12 @@ typedef struct menu_options_peripherals_t {
   GtkWidget *divide_enabled;
   GtkWidget *divide_wp;
   GtkWidget *plusd;
+  GtkWidget *disciple;
   GtkWidget *beta128;
+  GtkWidget *beta128_48boot;
   GtkWidget *opus;
 
-} menu_options_peripherals_t;
+} menu_options_peripherals_disk_t;
 
 void menu_options_rzx( GtkWidget *widget, gpointer data );
 
@@ -115,6 +131,7 @@ typedef struct menu_options_sound_t {
   GtkWidget *speaker_type;
   GtkWidget *volume_ay;
   GtkWidget *volume_beeper;
+  GtkWidget *volume_specdrum;
 
 } menu_options_sound_t;
 
@@ -133,11 +150,24 @@ typedef struct menu_options_diskoptions_t {
   GtkWidget *drive_beta128d_type;
   GtkWidget *drive_plusd1_type;
   GtkWidget *drive_plusd2_type;
+  GtkWidget *drive_disciple1_type;
+  GtkWidget *drive_disciple2_type;
   GtkWidget *drive_opus1_type;
   GtkWidget *drive_opus2_type;
   GtkWidget *disk_try_merge;
   GtkWidget *disk_ask_merge;
 
 } menu_options_diskoptions_t;
+
+void menu_options_movie( GtkWidget *widget, gpointer data );
+
+typedef struct menu_options_movie_t {
+
+  GtkWidget *dialog;
+
+  GtkWidget *movie_compr;
+  GtkWidget *movie_stop_after_rzx;
+
+} menu_options_movie_t;
 
 #endif				/* #ifndef FUSE_GTKOPTIONS_ITERNALS_H */

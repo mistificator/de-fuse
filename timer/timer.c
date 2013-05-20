@@ -1,7 +1,7 @@
 /* timer.c: Speed routines for Fuse
    Copyright (c) 1999-2008 Philip Kendall, Marek Januszewski, Fredrick Meunier
 
-   $Id: timer.c 4023 2009-05-29 23:49:52Z fredm $
+   $Id: timer.c 4664 2012-02-12 11:51:01Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,13 +26,14 @@
 #include <config.h>
 
 #include "event.h"
+#include "movie.h"
 #include "settings.h"
 #include "sound.h"
 #include "tape.h"
 #include "timer.h"
 #include "ui/ui.h"
 
-static int timer_frame_callback_sound( libspectrum_dword last_tstates );
+static void timer_frame_callback_sound( libspectrum_dword last_tstates );
 
 /*
  * Routines for estimating emulation speed
@@ -110,15 +111,11 @@ timer_estimate_reset( void )
 int
 timer_init( void )
 {
-  int error;
-
   start_time = timer_get_time(); if( start_time < 0 ) return 1;
 
   timer_event = event_register( timer_frame, "Timer" );
-  if( timer_event == -1 ) return 1;
 
-  error = event_add( 0, timer_event );
-  if( error ) return error;
+  event_add( 0, timer_event );
 
   return 0;
 }
@@ -136,7 +133,7 @@ timer_end( void )
 
 extern sfifo_t sound_fifo;
 
-static int
+static void
 timer_frame_callback_sound( libspectrum_dword last_tstates )
 {
   for(;;) {
@@ -150,24 +147,18 @@ timer_frame_callback_sound( libspectrum_dword last_tstates )
 
   }
 
-  if( event_add( last_tstates + machine_current->timings.tstates_per_frame,
-                 timer_event ) )
-    return 1;
-
-  return 0;
+  event_add( last_tstates + machine_current->timings.tstates_per_frame,
+             timer_event );
 }
 
 #else                           /* #ifdef SOUND_FIFO */
 
 /* Blocking socket-style sound based timer */
-static int
+static void
 timer_frame_callback_sound( libspectrum_dword last_tstates )
 {
-  if( event_add( last_tstates + machine_current->timings.tstates_per_frame,
-                 timer_event ) )
-    return 1;
-
-  return 0;
+  event_add( last_tstates + machine_current->timings.tstates_per_frame,
+             timer_event );
 }
   
 #endif                          /* #ifdef SOUND_FIFO */
@@ -179,7 +170,7 @@ timer_frame( libspectrum_dword last_tstates, int event GCC_UNUSED,
   double current_time, difference;
   long tstates;
 
-  if( sound_enabled ) {
+  if( sound_enabled && settings_current.sound ) {
     timer_frame_callback_sound( last_tstates );
     return;
   }
@@ -191,7 +182,7 @@ timer_frame( libspectrum_dword last_tstates, int event GCC_UNUSED,
     libspectrum_dword next_check_time =
       last_tstates + machine_current->timings.tstates_per_frame;
 
-    if( event_add( next_check_time, timer_event ) ) return;
+    event_add( next_check_time, timer_event );
 
   } else {
 
@@ -220,7 +211,7 @@ timer_frame( libspectrum_dword last_tstates, int event GCC_UNUSED,
 		machine_current->timings.processor_speed
 		) * speed + 0.5;
   
-    if( event_add( last_tstates + tstates, timer_event ) ) return;
+    event_add( last_tstates + tstates, timer_event );
 
     start_time = current_time + TEN_MS / 1000.0;
   }

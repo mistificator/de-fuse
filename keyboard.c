@@ -1,7 +1,7 @@
 /* keyboard.c: Routines for dealing with the Spectrum's keyboard
    Copyright (c) 1999-2000 Philip Kendall
 
-   $Id: keyboard.c 4103 2009-11-21 10:16:36Z fredm $
+   $Id: keyboard.c 4696 2012-05-07 02:05:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
 
 #include "ui/ui.h"
 #include "keyboard.h"
-#include "scld.h"
 
 /* Bit masks for each of the eight keyboard half-rows; `AND' the selected
    ones of these to get the value to return
@@ -293,6 +292,14 @@ void fuse_keyboard_init(void)
   for( ptr4 = key_text_table; ptr4->key != -1; ptr4++ )
     g_hash_table_insert( key_text, &( ptr4->key ), &( ptr4->text ) );
 
+}
+
+void fuse_keyboard_end(void)
+{
+  g_hash_table_destroy( keyboard_data );
+  g_hash_table_destroy( spectrum_keys );
+  g_hash_table_destroy( keysyms_hash );
+  g_hash_table_destroy( key_text );
 }
 
 libspectrum_byte

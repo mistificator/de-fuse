@@ -1,7 +1,7 @@
 /* tc2068.h: Timex TC2068 specific routines
    Copyright (c) 2004 Fredrick Meunier
 
-   $Id: tc2068.h 4038 2009-06-24 14:25:23Z fredm $
+   $Id: tc2068.h 4624 2012-01-09 20:59:35Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,10 +41,6 @@ libspectrum_byte tc2068_ay_dataport_read( libspectrum_word port,
 
 int tc2068_memory_map( void );
 
-extern libspectrum_byte fake_bank[ MEMORY_PAGE_SIZE ];
-extern memory_page fake_mapping;
-
-extern const periph_t tc2068_peripherals[];
-extern const size_t tc2068_peripherals_count;
+extern memory_page tc2068_empty_mapping[MEMORY_PAGES_IN_8K];
 
 #endif			/* #ifndef FUSE_TS2068_H */

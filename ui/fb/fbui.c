@@ -1,7 +1,7 @@
 /* fbui.c: Routines for dealing with the linux fbdev user interface
    Copyright (c) 2000-2004 Philip Kendall, Matan Ziv-Av, Witold Filipczyk
 
-   $Id: fbui.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: fbui.c 4543 2011-09-19 01:46:48Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

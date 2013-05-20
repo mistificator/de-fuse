@@ -1,7 +1,7 @@
 /* svgajoystick.c: Joystick emulation (using svgalib)
    Copyright (c) 2003-4 Darren Salt
 
-   $Id: svgajoystick.c 4015 2009-05-04 13:07:43Z fredm $
+   $Id: svgajoystick.c 4301 2011-02-10 00:01:17Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 */
 
 #include <config.h>
+#include "peripherals/joystick.h"
 
 #if !defined USE_JOYSTICK || defined HAVE_JSW_H
 
@@ -43,7 +44,6 @@
 #include <vgajoystick.h>
 
 #include "fuse.h"
-#include "joystick.h"
 #include "keyboard.h"
 #include "settings.h"
 #include "spectrum.h"

@@ -1,7 +1,7 @@
 /* roms.c: ROM selector dialog box
    Copyright (c) 2003-2004 Philip Kendall
 
-   $Id: roms.c 3405 2007-12-05 01:18:52Z zubzero $
+   $Id: roms.c 4723 2012-07-08 13:26:15Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 
 #include "compat.h"
 #include "fuse.h"
+#include "gtkcompat.h"
 #include "gtkinternals.h"
 #include "menu.h"
 #include "settings.h"
@@ -73,17 +74,17 @@ menu_select_roms_with_title( const char *title, size_t start, size_t n )
   info.n = n;
 
   /* Create the OK and Cancel buttons */
-  gtkstock_create_ok_cancel( dialog, NULL, GTK_SIGNAL_FUNC( roms_done ), &info,
+  gtkstock_create_ok_cancel( dialog, NULL, G_CALLBACK( roms_done ), &info,
 			     NULL );
 
   /* And the current values of each of the ROMs */
-  vbox = GTK_BOX( GTK_DIALOG( dialog )->vbox );
+  vbox = GTK_BOX( gtk_dialog_get_content_area( GTK_DIALOG( dialog ) ) );
 
   gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
   for( i = 0; i < n; i++ ) add_rom( vbox, start, i );
 
   /* Users shouldn't be able to resize this window */
-  gtk_window_set_policy( GTK_WINDOW( dialog ), FALSE, FALSE, TRUE );
+  gtk_window_set_resizable( GTK_WINDOW( dialog ), FALSE );
 
   /* Display the window */
   gtk_widget_show_all( dialog );
@@ -107,7 +108,7 @@ add_rom( GtkBox *parent, size_t start, gint row )
   frame = gtk_frame_new( buffer );
   gtk_box_pack_start( parent, frame, FALSE, FALSE, 2 );
 
-  hbox = gtk_hbox_new( FALSE, 4 );
+  hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 4 );
   gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
   gtk_container_add( GTK_CONTAINER( frame ), hbox );
 
@@ -117,9 +118,9 @@ add_rom( GtkBox *parent, size_t start, gint row )
   gtk_box_pack_start( GTK_BOX( hbox ), rom[ row ], FALSE, FALSE, 2 );
 
   change_button = gtk_button_new_with_label( "Select..." );
-  gtk_signal_connect( GTK_OBJECT( change_button ), "clicked",
-		      GTK_SIGNAL_FUNC( select_new_rom ),
-		      rom[ row ] );
+  g_signal_connect( G_OBJECT( change_button ), "clicked",
+		    G_CALLBACK( select_new_rom ),
+		    rom[ row ] );
   gtk_box_pack_start( GTK_BOX( hbox ), change_button, FALSE, FALSE, 2 );
 }
 
@@ -140,7 +141,6 @@ static void
 roms_done( GtkButton *button GCC_UNUSED, gpointer data )
 {
   size_t i;
-  int error;
   
   char **setting; const char *string;
 
@@ -151,7 +151,6 @@ roms_done( GtkButton *button GCC_UNUSED, gpointer data )
     setting = settings_get_rom_setting( &settings_current, info->start + i );
     string = gtk_entry_get_text( GTK_ENTRY( rom[i] ) );
 
-    error = settings_set_string( setting, string ); if( error ) return;
-
+    settings_set_string( setting, string );
   }
 }

@@ -1,7 +1,7 @@
 /* binary.c: Win32 routines to load/save chunks of binary data
    Copyright (c) 2003-2008 Philip Kendall, Marek Januszewski
 
-   $Id: binary.c 3720 2008-07-21 20:09:50Z specu $
+   $Id: binary.c 4785 2012-12-07 23:56:40Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,15 +43,15 @@ struct binary_info {
 
   TCHAR *dialog_title;
   
-  void (*on_change_filename)( HWND hwndDlg, LONG user_data );
-  void (*on_execute)( HWND hwndDlg, LONG user_data );
+  void (*on_change_filename)( HWND hwndDlg, LONG_PTR user_data );
+  void (*on_execute)( HWND hwndDlg, LONG_PTR user_data );
 };
 
-static void change_load_filename( HWND hwndDlg, LONG user_data );
-static void load_data( HWND hwndDlg, LONG user_data );
+static void change_load_filename( HWND hwndDlg, LONG_PTR user_data );
+static void load_data( HWND hwndDlg, LONG_PTR user_data );
 
-static void change_save_filename();
-static void save_data( HWND hwndDlg, LONG user_data );
+static void change_save_filename( HWND hwndDlg, LONG_PTR user_data );
+static void save_data( HWND hwndDlg, LONG_PTR user_data );
 
 static INT_PTR CALLBACK
 binarydata_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
@@ -100,7 +100,7 @@ binarydata_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
       info = ( struct binary_info * ) lParam;
 
       /* save the pointer to info with this dialog window */
-      SetWindowLong( hwndDlg, GWL_USERDATA, ( LONG ) info );
+      SetWindowLongPtr( hwndDlg, GWLP_USERDATA, ( LONG_PTR ) info );
                           
       SendMessage( hwndDlg, WM_SETTEXT, 0, ( LPARAM ) info->dialog_title );
 
@@ -117,13 +117,13 @@ binarydata_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
     case WM_COMMAND:
       switch( LOWORD( wParam ) ) {
         case IDC_BINARY_BUTTON_BROWSE:
-          info = ( struct binary_info * ) GetWindowLong( hwndDlg, GWL_USERDATA );
-          info->on_change_filename( hwndDlg, ( LONG ) info ) ;
+          info = ( struct binary_info * ) GetWindowLongPtr( hwndDlg, GWLP_USERDATA );
+          info->on_change_filename( hwndDlg, ( LONG_PTR ) info ) ;
           return 0;
 
         case IDOK:
-          info = ( struct binary_info * ) GetWindowLong( hwndDlg, GWL_USERDATA );
-          info->on_execute( hwndDlg, ( LONG ) info ) ;
+          info = ( struct binary_info * ) GetWindowLongPtr( hwndDlg, GWLP_USERDATA );
+          info->on_execute( hwndDlg, ( LONG_PTR ) info ) ;
           return 0;
 
         case IDCANCEL:
@@ -140,7 +140,7 @@ binarydata_proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 }
 
 static void
-change_load_filename( HWND hwndDlg, LONG user_data )
+change_load_filename( HWND hwndDlg, LONG_PTR user_data )
 {
   struct binary_info *info = ( struct binary_info * ) user_data;
   
@@ -157,8 +157,7 @@ change_load_filename( HWND hwndDlg, LONG user_data )
   if( error ) { free( new_filename ); return; }
 
   /* Remove the data for the old file */
-  error = utils_close_file( &info->file );
-  if( error ) { free( new_filename ); return; }
+  utils_close_file( &info->file );
 
   free( info->filename );
 
@@ -175,7 +174,7 @@ change_load_filename( HWND hwndDlg, LONG user_data )
 }
 
 static void
-load_data( HWND hwndDlg, LONG user_data )
+load_data( HWND hwndDlg, LONG_PTR user_data )
 {
   struct binary_info *info = ( struct binary_info * )user_data;
 
@@ -254,7 +253,7 @@ menu_file_savebinarydata( int action )
 }
 
 static void
-change_save_filename( HWND hwndDlg, LONG user_data )
+change_save_filename( HWND hwndDlg, LONG_PTR user_data )
 {
   struct binary_info *info = ( struct binary_info * ) user_data;
   TCHAR *new_filename;
@@ -271,7 +270,7 @@ change_save_filename( HWND hwndDlg, LONG user_data )
 }
 
 static void
-save_data( HWND hwndDlg, LONG user_data )
+save_data( HWND hwndDlg, LONG_PTR user_data )
 {
   struct binary_info *info = ( struct binary_info * ) user_data;
 
@@ -312,11 +311,13 @@ save_data( HWND hwndDlg, LONG user_data )
   free( temp_buffer );
   if( errno || start < 0 || start > 0xffff ) {
     ui_error( UI_ERROR_ERROR, "Start must be between 0 and 65535" );
+    free( buffer );
     return;
   }
 
   if( start + length > 0x10000 ) {
     ui_error( UI_ERROR_ERROR, "Block ends after address 65535" );
+    free( buffer );
     return;
   }
 

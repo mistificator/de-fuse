@@ -1,7 +1,7 @@
 /* z80.h: z80 emulation core
-   Copyright (c) 1999-2003 Philip Kendall
+   Copyright (c) 1999-2013 Philip Kendall
 
-   $Id: z80.h 3681 2008-06-16 09:40:29Z pak21 $
+   $Id: z80.h 4905 2013-03-08 20:21:40Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,10 +55,11 @@ typedef struct {
 
 } processor;
 
-int z80_init( void );
+void z80_init( void );
 void z80_reset( int hard_reset );
 
 int z80_interrupt( void );
+void z80_retn( void );
 
 void z80_do_opcodes(void);
 

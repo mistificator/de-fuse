@@ -1,7 +1,7 @@
 /* win32sound.c: Win32 sound using MS Windows Mulitmedia API
    Copyright (c) 2007 Marek Januszewski
 
-   $Id: win32sound.c 3754 2008-08-20 03:34:23Z specu $
+   $Id: win32sound.c 4785 2012-12-07 23:56:40Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include <config.h>
 
 #include <windows.h>
+#include <mmsystem.h>
 
 #include "settings.h"
 #include "sound.h"
@@ -50,7 +51,8 @@ static void
 sound_display_mmresult( char *func, MMRESULT result );
 
 static void CALLBACK
-sound_callback( HWAVEOUT hwo,UINT uMsg,DWORD dwInstance,DWORD dwParam1,DWORD dwParam2 );
+sound_callback( HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance,
+                DWORD_PTR dwParam1, DWORD_PTR dwParam2 );
 
 int
 sound_lowlevel_init( const char *device, int *freqptr, int *stereoptr )

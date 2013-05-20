@@ -12,11 +12,13 @@ Public License along with this module; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 Original C++ source:
- Blip_Buffer 0.4.0. http:www.slack.net/~ant/
+ Blip_Buffer 0.4.0. http://www.slack.net/~ant/
 
 partially reimplemented in C by Gergely Szasz for FUSE
 
 */
+
+#include <config.h>
 
 #include <limits.h>
 #include <string.h>
@@ -405,7 +407,7 @@ gen_sinc( float *out, int count, double oversample, double treble,
   }
 }
 
-void
+static void
 blip_eq_generate( blip_eq_t * eq, float *out, int count )
 {
   /* lower cutoff freq for narrow kernels with their wider transition band

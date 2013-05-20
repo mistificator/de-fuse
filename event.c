@@ -1,7 +1,7 @@
 /* event.c: Routines needed for dealing with the event list
    Copyright (c) 2000-2008 Philip Kendall
 
-   $Id: event.c 3912 2008-12-15 05:10:21Z pak21 $
+   $Id: event.c 4717 2012-06-07 03:54:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,9 @@
 #include <libspectrum.h>
 
 #include "event.h"
+#include "fuse.h"
 #include "ui/ui.h"
+#include "utils.h"
 
 /* A large value to mean `no events due' */
 static const libspectrum_dword event_no_events = 0xffffffff;
@@ -54,20 +56,14 @@ typedef struct event_descriptor_t {
 
 static GArray *registered_events;
 
-int
+void
 event_init( void )
 {
   registered_events = g_array_new( FALSE, FALSE, sizeof( event_descriptor_t ) );
-  if( !registered_events ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d\n", __FILE__, __LINE__ );
-    return 1;
-  }
 
   event_type_null = event_register( NULL, "[Deleted event]" );
-  if( event_type_null == -1 ) return 1;
 
   event_next_event = event_no_events;
-  return 0;
 }
 
 int
@@ -76,11 +72,7 @@ event_register( event_fn_t fn, const char *description )
   event_descriptor_t descriptor;
 
   descriptor.fn = fn;
-  descriptor.description = strdup( description );
-  if( !descriptor.description ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d\n", __FILE__, __LINE__ );
-    return -1;
-  }
+  descriptor.description = utils_safe_strdup( description );
 
   g_array_append_val( registered_events, descriptor );
 
@@ -97,7 +89,7 @@ event_add_cmp( gconstpointer a1, gconstpointer b1 )
 }
 
 /* Add an event at the correct place in the event list */
-int
+void
 event_add_with_data( libspectrum_dword event_time, int type, void *user_data )
 {
   event_t *ptr;
@@ -106,8 +98,7 @@ event_add_with_data( libspectrum_dword event_time, int type, void *user_data )
     ptr = event_free;
     event_free = NULL;
   } else {
-    ptr = malloc( sizeof( *ptr ) );
-    if( !ptr ) return 1;
+    ptr = libspectrum_malloc( sizeof( *ptr ) );
   }
 
   ptr->tstates = event_time;
@@ -120,8 +111,6 @@ event_add_with_data( libspectrum_dword event_time, int type, void *user_data )
   } else {
     event_list = g_slist_insert_sorted( event_list, ptr, event_add_cmp );
   }
-
-  return 0;
 }
 
 /* Do all events which have passed */
@@ -147,7 +136,7 @@ event_do_events( void )
     if( descriptor.fn ) descriptor.fn( ptr->tstates, ptr->type, ptr->user_data );
 
     if( event_free ) {
-      free( ptr );
+      libspectrum_free( ptr );
     } else {
       event_free = ptr;
     }
@@ -233,7 +222,7 @@ event_remove_type_user_data( int type, gpointer user_data )
 static void
 event_free_entry( gpointer data, gpointer user_data GCC_UNUSED )
 {
-  free( data );
+  libspectrum_free( data );
 }
 
 /* Clear the event stack */
@@ -246,7 +235,7 @@ event_reset( void )
 
   event_next_event = event_no_events;
 
-  free( event_free );
+  libspectrum_free( event_free );
   event_free = NULL;
 }
 
@@ -264,9 +253,27 @@ event_name( int type )
   return g_array_index( registered_events, event_descriptor_t, type ).description;
 }
 
+void
+registered_events_free( void )
+{
+  int i;
+  event_descriptor_t descriptor;
+
+  if( !registered_events ) return;
+
+  for( i = 0; i < registered_events->len; i++ ) {
+    descriptor = g_array_index( registered_events, event_descriptor_t, i );
+    libspectrum_free( descriptor.description );
+  }
+
+  g_array_free( registered_events, TRUE );
+  registered_events = NULL;
+}
+
 /* Tidy-up function called at end of emulation */
 void
 event_end( void )
 {
-  return event_reset();
+  event_reset();
+  registered_events_free();
 }

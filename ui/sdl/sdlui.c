@@ -1,7 +1,7 @@
 /* sdlui.c: Routines for dealing with the SDL user interface
    Copyright (c) 2000-2002 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
 
-   $Id: sdlui.c 4109 2009-12-27 06:15:10Z fredm $
+   $Id: sdlui.c 4543 2011-09-19 01:46:48Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

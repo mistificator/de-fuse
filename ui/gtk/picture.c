@@ -1,7 +1,7 @@
 /* picture.c: GTK+ routines to draw the keyboard picture
    Copyright (c) 2002-2005 Philip Kendall
 
-   $Id: picture.c 4090 2009-09-03 12:06:32Z fredm $
+   $Id: picture.c 4723 2012-07-08 13:26:15Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <libspectrum.h>
 
 #include "display.h"
@@ -46,10 +46,19 @@ static const gint picture_pitch = DISPLAY_ASPECT_WIDTH * 4;
 
 static int dialog_created = 0;
 
-static int read_screen( const char *filename, utils_file *screen );
 static void draw_screen( libspectrum_byte *screen, int border );
+
+#if !GTK_CHECK_VERSION( 3, 0, 0 )
+
 static gint
 picture_expose( GtkWidget *widget, GdkEvent *event, gpointer data );
+
+#else
+
+static gboolean
+picture_draw( GtkWidget *widget, cairo_t *cr, gpointer user_data );
+
+#endif                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
 
 static GtkWidget *dialog;
 
@@ -58,68 +67,48 @@ gtkui_picture( const char *filename, int border )
 {
   utils_file screen;
 
-  GtkWidget *drawing_area;
+  GtkWidget *drawing_area, *content_area;
 
   if( !dialog_created ) {
 
-    if( read_screen( filename, &screen ) ) {
+    if( utils_read_screen( filename, &screen ) ) {
       return 1;
     }
 
     draw_screen( screen.buffer, border );
 
-    if( utils_close_file( &screen ) ) {
-      return 1;
-    }
+    utils_close_file( &screen );
 
     dialog = gtkstock_dialog_new( "Fuse - Keyboard",
-				  GTK_SIGNAL_FUNC( gtk_widget_hide ) );
+				  G_CALLBACK( gtk_widget_hide ) );
   
     drawing_area = gtk_drawing_area_new();
-    gtk_drawing_area_size( GTK_DRAWING_AREA( drawing_area ),
-			   DISPLAY_ASPECT_WIDTH, DISPLAY_SCREEN_HEIGHT );
-    gtk_signal_connect( GTK_OBJECT( drawing_area ),
-			"expose_event", GTK_SIGNAL_FUNC( picture_expose ),
-			NULL );
-    gtk_container_add( GTK_CONTAINER( GTK_DIALOG( dialog )->vbox ),
-		       drawing_area );
+    gtk_widget_set_size_request( drawing_area, DISPLAY_ASPECT_WIDTH,
+                                 DISPLAY_SCREEN_HEIGHT );
 
-    gtkstock_create_close( dialog, NULL, GTK_SIGNAL_FUNC( gtk_widget_hide ),
+#if !GTK_CHECK_VERSION( 3, 0, 0 )
+    g_signal_connect( G_OBJECT( drawing_area ),
+		      "expose_event", G_CALLBACK( picture_expose ),
+		      NULL );
+#else
+    g_signal_connect( G_OBJECT( drawing_area ),
+		      "draw", G_CALLBACK( picture_draw ),
+		      NULL );
+#endif                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
+
+    content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+    gtk_container_add( GTK_CONTAINER( content_area ), drawing_area );
+
+    gtkstock_create_close( dialog, NULL, G_CALLBACK( gtk_widget_hide ),
 			   FALSE );
 
     /* Stop users resizing this window */
-    gtk_window_set_policy( GTK_WINDOW( dialog ), FALSE, FALSE, TRUE );
+    gtk_window_set_resizable( GTK_WINDOW( dialog ), FALSE );
 
     dialog_created = 1;
   }
 
   gtk_widget_show_all( dialog );
-
-  return 0;
-}
-
-static int
-read_screen( const char *filename, utils_file *screen )
-{
-  int error;
-  compat_fd fd;
-
-  fd = utils_find_auxiliary_file( filename, UTILS_AUXILIARY_LIB );
-  if( fd == COMPAT_FILE_OPEN_FAILED ) {
-    ui_error( UI_ERROR_ERROR, "couldn't find keyboard picture ('%s')",
-	      filename );
-    return 1;
-  }
-  
-  error = utils_read_fd( fd, filename, screen );
-  if( error ) return error;
-
-  if( screen->length != 6912 ) {
-    utils_close_file( screen );
-    ui_error( UI_ERROR_ERROR, "keyboard picture ('%s') is not 6912 bytes long",
-	      filename );
-    return 1;
-  }
 
   return 0;
 }
@@ -178,6 +167,8 @@ draw_screen( libspectrum_byte *screen, int border )
   }
 }
 
+#if !GTK_CHECK_VERSION( 3, 0, 0 )
+
 static gint
 picture_expose( GtkWidget *widget, GdkEvent *event, gpointer data GCC_UNUSED )
 {
@@ -192,3 +183,27 @@ picture_expose( GtkWidget *widget, GdkEvent *event, gpointer data GCC_UNUSED )
 
   return TRUE;
 }
+
+#else                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */
+
+static gboolean
+picture_draw( GtkWidget *widget, cairo_t *cr, gpointer user_data )
+{
+  cairo_surface_t *surface;
+
+  surface = cairo_image_surface_create_for_data( picture,
+                                                 CAIRO_FORMAT_RGB24,
+                                                 DISPLAY_ASPECT_WIDTH,
+                                                 DISPLAY_SCREEN_HEIGHT,
+                                                 picture_pitch );
+
+  cairo_set_source_surface( cr, surface, 0, 0 );
+  cairo_set_operator( cr, CAIRO_OPERATOR_SOURCE );
+  cairo_paint( cr );
+
+  cairo_surface_destroy( surface );
+
+  return FALSE;
+}
+
+#endif                /* #if !GTK_CHECK_VERSION( 3, 0, 0 ) */

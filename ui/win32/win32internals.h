@@ -1,7 +1,7 @@
 /* win32internals.h: stuff internal to the Win32 UI
    Copyright (c) 2004 Marek Januszewski
 
-   $Id: win32internals.h 3804 2008-11-03 04:21:02Z specu $
+   $Id: win32internals.h 4669 2012-02-14 12:34:59Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@
 
 #define ID_STATUSBAR 900
 
+/* Reduce listview flickering. Defined from WINVER >= 6.00 */
+#ifndef LVS_EX_DOUBLEBUFFER
+#define LVS_EX_DOUBLEBUFFER 0x00010000
+#endif
+
 /* window handler */
 HWND fuse_hWnd;
 
@@ -54,6 +59,9 @@ HWND fuse_hPFWnd;
 /* debugger window handle */
 HWND fuse_hDBGWnd;
 
+/* about window handle */
+HWND fuse_hABOWnd;
+
 /*
  * Display routines (win32display.c)
  */
@@ -63,12 +71,15 @@ extern libspectrum_dword win32display_colours[16];
 
 int win32display_init( void );
 int win32display_end( void );
+int win32display_scaled_height( void );
+int win32display_scaled_width( void );
+
 
 /* Below variables and functions are shared
    between win32display.c and win32ui.c */
 
 void win32display_area(int x, int y, int width, int height);
-int win32display_drawing_area_resize( int width, int height );
+int win32display_drawing_area_resize( int width, int height, int force_scaler );
 
 void blit( void );
 
@@ -90,6 +101,8 @@ void win32mouse_button( int button, int down );
  * General user interface routines (win32ui.c)
  */
 
+void win32ui_fuse_resize( int width, int height );
+
 int win32ui_confirm( const char *string );
 
 int win32ui_picture( const char *filename, int border );
@@ -109,10 +122,11 @@ void win32ui_process_messages( int process_queue_once );
  * Statusbar routines (statusbar.c)
  */
 
-void win32statusbar_create();
+void win32statusbar_create( HWND hWnd );
 int win32statusbar_set_visibility( int visible );
 void win32statusbar_redraw( HWND hWnd, LPARAM lParam );
 void win32statusbar_resize( HWND hWnd, WPARAM wParam, LPARAM lParam );
+void win32statusbar_update_machine( const char *name );
 
 /*
  * Dialog box reset

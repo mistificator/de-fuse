@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2003 Philip Kendall
 
-## $Id: Makefile.am 3229 2007-10-23 19:32:05Z zubzero $
+## $Id: Makefile.am 4743 2012-10-10 13:20:50Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ noinst_LIBRARIES = libz80.a
 
 libz80_a_SOURCES = z80.c z80_ops.c
 
-INCLUDES = @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@
+AM_CPPFLAGS += @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBSPEC_CFLAGS@
 
 BUILT_SOURCES = opcodes_base.c z80_cb.c z80_ddfd.c z80_ddfdcb.c z80_ed.c
 

@@ -32,13 +32,16 @@
 
 #include "display.h"
 #include "fuse.h"
+#include "options.h"
 #include "options_internals.h"
 #include "periph.h"
 #include "settings.h"
+#include "utils.h"
 #include "win32internals.h"
 
 static int
-option_enumerate_combo( char **options, char *value, int count, int def ) {
+option_enumerate_combo( const char **options, char *value, int count,
+			int def ) {
   int i;
   if( value != NULL ) {
     for( i = 0; i < count; i++) {
@@ -64,7 +67,7 @@ menu_options_general_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
     {
       /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
       SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
-	(LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+        (LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
 
       /* initialize the controls with current settings */
 
@@ -73,46 +76,65 @@ menu_options_general_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
       snprintf( buffer, 80, "%d", settings_current.emulation_speed );
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_EMULATION_SPEED, WM_SETTEXT,
         0, (LPARAM) buffer );
+
       /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
       snprintf( buffer, 80, "%d", settings_current.frame_rate );
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_FRAME_RATE, WM_SETTEXT,
         0, (LPARAM) buffer );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_ISSUE2, BM_SETCHECK,
         settings_current.issue2 ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_TAPE_TRAPS, BM_SETCHECK,
         settings_current.tape_traps ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_FASTLOAD, BM_SETCHECK,
         settings_current.fastload ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_DETECT_LOADER, BM_SETCHECK,
         settings_current.detect_loader ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_ACCELERATE_LOADER, BM_SETCHECK,
         settings_current.accelerate_loader ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_AUTO_LOAD, BM_SETCHECK,
         settings_current.auto_load ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_SLT_TRAPS, BM_SETCHECK,
         settings_current.slt_traps ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_WRITABLE_ROMS, BM_SETCHECK,
         settings_current.writable_roms ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_AUTOSAVE_SETTINGS, BM_SETCHECK,
         settings_current.autosave_settings ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
       snprintf( buffer, 80, "%d", settings_current.mdr_len );
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_MDR_LEN, WM_SETTEXT,
         0, (LPARAM) buffer );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_MDR_RANDOM_LEN, BM_SETCHECK,
         settings_current.mdr_random_len ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_RS232_HANDSHAKE, BM_SETCHECK,
         settings_current.rs232_handshake ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_BW_TV, BM_SETCHECK,
         settings_current.bw_tv ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_PAL_TV2X, BM_SETCHECK,
         settings_current.pal_tv2x ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_CONFIRM_ACTIONS, BM_SETCHECK,
         settings_current.confirm_actions ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_STATUSBAR, BM_SETCHECK,
         settings_current.statusbar ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_JOY_PROMPT, BM_SETCHECK,
         settings_current.joy_prompt ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_LATE_TIMINGS, BM_SETCHECK,
         settings_current.late_timings ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -122,72 +144,90 @@ menu_options_general_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
     case WM_COMMAND:
       switch( LOWORD( wParam ) )
       {
-	case IDOK:
-	{
+        case IDOK:
+        {
           /* Read the controls and apply the settings */
-      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
-      SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_EMULATION_SPEED, WM_GETTEXT,
-        80, (LPARAM) buffer );
-      settings_current.emulation_speed = atoi( buffer );  
-      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
-      SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_FRAME_RATE, WM_GETTEXT,
-        80, (LPARAM) buffer );
-      settings_current.frame_rate = atoi( buffer );  
+          /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+          SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_EMULATION_SPEED, WM_GETTEXT, 80, (LPARAM) buffer );
+          settings_current.emulation_speed = atoi( buffer );  
+
+          /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+          SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_FRAME_RATE, WM_GETTEXT, 80, (LPARAM) buffer );
+          settings_current.frame_rate = atoi( buffer );  
+
           settings_current.issue2 =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_ISSUE2 );
+
           settings_current.tape_traps =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_TAPE_TRAPS );
+
           settings_current.fastload =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_FASTLOAD );
+
           settings_current.detect_loader =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_DETECT_LOADER );
+
           settings_current.accelerate_loader =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_ACCELERATE_LOADER );
+
           settings_current.auto_load =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_AUTO_LOAD );
+
           settings_current.slt_traps =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_SLT_TRAPS );
+
           settings_current.writable_roms =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_WRITABLE_ROMS );
+
           settings_current.autosave_settings =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_AUTOSAVE_SETTINGS );
-      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
-      SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_MDR_LEN, WM_GETTEXT,
-        80, (LPARAM) buffer );
-      settings_current.mdr_len = atoi( buffer );  
+
+          /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+          SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_MDR_LEN, WM_GETTEXT, 80, (LPARAM) buffer );
+          settings_current.mdr_len = atoi( buffer );  
+
           settings_current.mdr_random_len =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_MDR_RANDOM_LEN );
+
           settings_current.rs232_handshake =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_RS232_HANDSHAKE );
+
           settings_current.bw_tv =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_BW_TV );
+
           settings_current.pal_tv2x =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_PAL_TV2X );
+
           settings_current.confirm_actions =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_CONFIRM_ACTIONS );
+
           settings_current.statusbar =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_STATUSBAR );
+
           settings_current.joy_prompt =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_JOY_PROMPT );
+
           settings_current.late_timings =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_LATE_TIMINGS );
+
           win32statusbar_set_visibility( settings_current.statusbar );
           display_refresh_all();
 
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-	}
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
 
-	case IDCANCEL:
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-      }
-      break;
+        case IDCANCEL:
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+        break;
 
     case WM_CLOSE:
       EndDialog( hwndDlg, 0 );
       return 0;
   }
+
   return FALSE;
 }
 
@@ -203,7 +243,7 @@ menu_options_general( int action )
 }
 
 static BOOL CALLBACK
-menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
+menu_options_peripherals_general_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
   char buffer[80];
   int i;
@@ -217,48 +257,189 @@ menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
     {
       /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
       SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
-	(LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+        (LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
 
       /* initialize the controls with current settings */
 
       /* FIXME split *_init and *_done functions out of *_proc function */
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_JOY_KEMPSTON, BM_SETCHECK,
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_JOY_KEMPSTON, BM_SETCHECK,
         settings_current.joy_kempston ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_KEMPSTON_MOUSE, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_KEMPSTON_MOUSE, BM_SETCHECK,
         settings_current.kempston_mouse ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_MOUSE_SWAP_BUTTONS, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MOUSE_SWAP_BUTTONS, BM_SETCHECK,
         settings_current.mouse_swap_buttons ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_FULLER, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_FULLER, BM_SETCHECK,
         settings_current.fuller ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_MELODIK, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MELODIK, BM_SETCHECK,
         settings_current.melodik ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_INTERFACE1, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_INTERFACE1, BM_SETCHECK,
         settings_current.interface1 ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_INTERFACE2, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_INTERFACE2, BM_SETCHECK,
         settings_current.interface2 ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_PRINTER, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_PRINTER, BM_SETCHECK,
         settings_current.printer ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_SIMPLEIDE_ACTIVE, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_ZXPRINTER, BM_SETCHECK,
+        settings_current.zxprinter ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECCYBOOT, BM_SETCHECK,
+        settings_current.speccyboot ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECDRUM, BM_SETCHECK,
+        settings_current.specdrum ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET, BM_SETCHECK,
+        settings_current.spectranet ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET_DISABLE, BM_SETCHECK,
+        settings_current.spectranet_disable ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      return FALSE;
+    }
+
+    case WM_COMMAND:
+      switch( LOWORD( wParam ) )
+      {
+        case IDOK:
+        {
+          /* Read the controls and apply the settings */
+          settings_current.joy_kempston =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_JOY_KEMPSTON );
+
+          settings_current.kempston_mouse =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_KEMPSTON_MOUSE );
+
+          settings_current.mouse_swap_buttons =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MOUSE_SWAP_BUTTONS );
+
+          settings_current.fuller =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_FULLER );
+
+          settings_current.melodik =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MELODIK );
+
+          settings_current.interface1 =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_INTERFACE1 );
+
+          settings_current.interface2 =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_INTERFACE2 );
+
+          settings_current.printer =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_PRINTER );
+
+          settings_current.zxprinter =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_ZXPRINTER );
+
+          settings_current.speccyboot =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECCYBOOT );
+
+          settings_current.specdrum =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECDRUM );
+
+          settings_current.spectranet =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET );
+
+          settings_current.spectranet_disable =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET_DISABLE );
+
+          periph_posthook();
+
+          win32statusbar_set_visibility( settings_current.statusbar );
+          display_refresh_all();
+
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+
+        case IDCANCEL:
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+        break;
+
+    case WM_CLOSE:
+      EndDialog( hwndDlg, 0 );
+      return 0;
+  }
+
+  return FALSE;
+}
+
+void
+menu_options_peripherals_general( int action )
+{
+  fuse_emulation_pause();
+
+  DialogBox( fuse_hInstance, MAKEINTRESOURCE( IDD_OPT_PERIPHERALS_GENERAL ),
+             fuse_hWnd, (DLGPROC) menu_options_peripherals_general_proc );
+
+  fuse_emulation_unpause();
+}
+
+static BOOL CALLBACK
+menu_options_peripherals_disk_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+  char buffer[80];
+  int i;
+  
+  i = 0;
+  buffer[0] = '\0';		/* Shut gcc up */
+  
+  switch( msg )
+  {
+    case WM_INITDIALOG:
+    {
+      /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
+      SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
+        (LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+
+      /* initialize the controls with current settings */
+
+      /* FIXME split *_init and *_done functions out of *_proc function */
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_SIMPLEIDE_ACTIVE, BM_SETCHECK,
         settings_current.simpleide_active ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_ZXATASP_ACTIVE, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXATASP_ACTIVE, BM_SETCHECK,
         settings_current.zxatasp_active ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_ZXATASP_UPLOAD, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXATASP_UPLOAD, BM_SETCHECK,
         settings_current.zxatasp_upload ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_ZXATASP_WP, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXATASP_WP, BM_SETCHECK,
         settings_current.zxatasp_wp ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_ZXCF_ACTIVE, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXCF_ACTIVE, BM_SETCHECK,
         settings_current.zxcf_active ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_ZXCF_UPLOAD, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXCF_UPLOAD, BM_SETCHECK,
         settings_current.zxcf_upload ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DIVIDE_ENABLED, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVIDE_ENABLED, BM_SETCHECK,
         settings_current.divide_enabled ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DIVIDE_WP, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVIDE_WP, BM_SETCHECK,
         settings_current.divide_wp ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_PLUSD, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_PLUSD, BM_SETCHECK,
         settings_current.plusd ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_BETA128, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DISCIPLE, BM_SETCHECK,
+        settings_current.disciple ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_BETA128, BM_SETCHECK,
         settings_current.beta128 ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_OPUS, BM_SETCHECK,
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_BETA128_48BOOT, BM_SETCHECK,
+        settings_current.beta128_48boot ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_OPUS, BM_SETCHECK,
         settings_current.opus ? BST_CHECKED : BST_UNCHECKED, 0 );
 
       return FALSE;
@@ -267,76 +448,78 @@ menu_options_peripherals_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
     case WM_COMMAND:
       switch( LOWORD( wParam ) )
       {
-	case IDOK:
-	{
+        case IDOK:
+        {
           /* Read the controls and apply the settings */
-          settings_current.joy_kempston =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_JOY_KEMPSTON );
-          settings_current.kempston_mouse =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_KEMPSTON_MOUSE );
-          settings_current.mouse_swap_buttons =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_MOUSE_SWAP_BUTTONS );
-          settings_current.fuller =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_FULLER );
-          settings_current.melodik =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_MELODIK );
-          settings_current.interface1 =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_INTERFACE1 );
-          settings_current.interface2 =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_INTERFACE2 );
-          settings_current.printer =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_PRINTER );
           settings_current.simpleide_active =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_SIMPLEIDE_ACTIVE );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_SIMPLEIDE_ACTIVE );
+
           settings_current.zxatasp_active =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_ZXATASP_ACTIVE );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXATASP_ACTIVE );
+
           settings_current.zxatasp_upload =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_ZXATASP_UPLOAD );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXATASP_UPLOAD );
+
           settings_current.zxatasp_wp =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_ZXATASP_WP );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXATASP_WP );
+
           settings_current.zxcf_active =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_ZXCF_ACTIVE );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXCF_ACTIVE );
+
           settings_current.zxcf_upload =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_ZXCF_UPLOAD );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXCF_UPLOAD );
+
           settings_current.divide_enabled =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DIVIDE_ENABLED );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVIDE_ENABLED );
+
           settings_current.divide_wp =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DIVIDE_WP );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVIDE_WP );
+
           settings_current.plusd =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_PLUSD );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_PLUSD );
+
+          settings_current.disciple =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DISCIPLE );
+
           settings_current.beta128 =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_BETA128 );
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_BETA128 );
+
+          settings_current.beta128_48boot =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_BETA128_48BOOT );
+
           settings_current.opus =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_OPUS );
-          periph_update();
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_OPUS );
+
+          periph_posthook();
 
           win32statusbar_set_visibility( settings_current.statusbar );
           display_refresh_all();
 
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-	}
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
 
-	case IDCANCEL:
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-      }
-      break;
+        case IDCANCEL:
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+        break;
 
     case WM_CLOSE:
       EndDialog( hwndDlg, 0 );
       return 0;
   }
+
   return FALSE;
 }
 
 void
-menu_options_peripherals( int action )
+menu_options_peripherals_disk( int action )
 {
   fuse_emulation_pause();
 
-  DialogBox( fuse_hInstance, MAKEINTRESOURCE( IDD_OPT_PERIPHERALS ),
-             fuse_hWnd, (DLGPROC) menu_options_peripherals_proc );
+  DialogBox( fuse_hInstance, MAKEINTRESOURCE( IDD_OPT_PERIPHERALS_DISK ),
+             fuse_hWnd, (DLGPROC) menu_options_peripherals_disk_proc );
 
   fuse_emulation_unpause();
 }
@@ -356,21 +539,25 @@ menu_options_rzx_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
     {
       /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
       SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
-	(LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+        (LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
 
       /* initialize the controls with current settings */
 
       /* FIXME split *_init and *_done functions out of *_proc function */
       SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_RZX_AUTOSAVES, BM_SETCHECK,
         settings_current.rzx_autosaves ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_RZX_COMPRESSION, BM_SETCHECK,
         settings_current.rzx_compression ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_COMPETITION_MODE, BM_SETCHECK,
         settings_current.competition_mode ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
       snprintf( buffer, 80, "%d", settings_current.competition_code );
       SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_COMPETITION_CODE, WM_SETTEXT,
         0, (LPARAM) buffer );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_EMBED_SNAPSHOT, BM_SETCHECK,
         settings_current.embed_snapshot ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -380,38 +567,43 @@ menu_options_rzx_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
     case WM_COMMAND:
       switch( LOWORD( wParam ) )
       {
-	case IDOK:
-	{
+        case IDOK:
+        {
           /* Read the controls and apply the settings */
           settings_current.rzx_autosaves =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_RZX_RZX_AUTOSAVES );
+
           settings_current.rzx_compression =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_RZX_RZX_COMPRESSION );
+
           settings_current.competition_mode =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_RZX_COMPETITION_MODE );
-      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
-      SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_COMPETITION_CODE, WM_GETTEXT,
-        80, (LPARAM) buffer );
-      settings_current.competition_code = atoi( buffer );  
+
+          /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+          SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_COMPETITION_CODE, WM_GETTEXT, 80, (LPARAM) buffer );
+          settings_current.competition_code = atoi( buffer );  
+
           settings_current.embed_snapshot =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_RZX_EMBED_SNAPSHOT );
+
           win32statusbar_set_visibility( settings_current.statusbar );
           display_refresh_all();
 
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-	}
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
 
-	case IDCANCEL:
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-      }
-      break;
+        case IDCANCEL:
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+        break;
 
     case WM_CLOSE:
       EndDialog( hwndDlg, 0 );
       return 0;
   }
+
   return FALSE;
 }
 
@@ -427,15 +619,33 @@ menu_options_rzx( int action )
 }
 
 
-static char * sound_speaker_type_combo[] = {
-  "TV speaker",
-  "Beeper",
+static const char *sound_stereo_ay_combo[] = {
+  "None",
+  "ACB",
+  "ABC",
 };
 
-static const int sound_speaker_type_combo_count = 2;
+static const int sound_stereo_ay_combo_count = 3;
 
 int
-option_enumerate_sound_speaker_type() {
+option_enumerate_sound_stereo_ay( void ) {
+  return option_enumerate_combo( sound_stereo_ay_combo,
+				 settings_current.stereo_ay,
+				 sound_stereo_ay_combo_count,
+				 0 );
+}
+
+
+static const char *sound_speaker_type_combo[] = {
+  "TV speaker",
+  "Beeper",
+  "Unfiltered",
+};
+
+static const int sound_speaker_type_combo_count = 3;
+
+int
+option_enumerate_sound_speaker_type( void ) {
   return option_enumerate_combo( sound_speaker_type_combo,
 				 settings_current.speaker_type,
 				 sound_speaker_type_combo_count,
@@ -457,19 +667,37 @@ menu_options_sound_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
     {
       /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
       SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
-	(LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+        (LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
 
       /* initialize the controls with current settings */
 
       /* FIXME split *_init and *_done functions out of *_proc function */
       SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SOUND, BM_SETCHECK,
         settings_current.sound ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SOUND_LOAD, BM_SETCHECK,
         settings_current.sound_load ? BST_CHECKED : BST_UNCHECKED, 0 );
-      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_STEREO_AY, BM_SETCHECK,
-        settings_current.stereo_ay ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      for( i = 0; i < sound_stereo_ay_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_STEREO_AY, CB_ADDSTRING,
+          0, (LPARAM) sound_stereo_ay_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_STEREO_AY, CB_SETCURSEL,
+        (LPARAM) 0, 0 );
+      if( settings_current.stereo_ay != NULL ) {
+        for( i = 0; i < sound_stereo_ay_combo_count; i++ ) {
+          if( !strcmp( settings_current.stereo_ay,
+                       sound_stereo_ay_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_STEREO_AY,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SOUND_FORCE_8BIT, BM_SETCHECK,
         settings_current.sound_force_8bit ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       for( i = 0; i < sound_speaker_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SPEAKER_TYPE, CB_ADDSTRING,
@@ -486,13 +714,20 @@ menu_options_sound_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
           }
         }
       }
+
       /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
       snprintf( buffer, 80, "%d", settings_current.volume_ay );
       SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_AY, WM_SETTEXT,
         0, (LPARAM) buffer );
+
       /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
       snprintf( buffer, 80, "%d", settings_current.volume_beeper );
       SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_BEEPER, WM_SETTEXT,
+        0, (LPARAM) buffer );
+
+      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+      snprintf( buffer, 80, "%d", settings_current.volume_specdrum );
+      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_SPECDRUM, WM_SETTEXT,
         0, (LPARAM) buffer );
 
       return FALSE;
@@ -501,47 +736,58 @@ menu_options_sound_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
     case WM_COMMAND:
       switch( LOWORD( wParam ) )
       {
-	case IDOK:
-	{
+        case IDOK:
+        {
           /* Read the controls and apply the settings */
           settings_current.sound =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_SOUND );
+
           settings_current.sound_load =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_SOUND_LOAD );
+
+          free( settings_current.stereo_ay );
           settings_current.stereo_ay =
-            IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_STEREO_AY );
+            utils_safe_strdup( sound_stereo_ay_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_STEREO_AY, CB_GETCURSEL, 0, 0 ) ] );
+
           settings_current.sound_force_8bit =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_SOUND_SOUND_FORCE_8BIT );
-      free( settings_current.speaker_type );
-      settings_current.speaker_type =
-        strdup( sound_speaker_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SPEAKER_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
-      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_AY, WM_GETTEXT,
-        80, (LPARAM) buffer );
-      settings_current.volume_ay = atoi( buffer );  
-      /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
-      SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_BEEPER, WM_GETTEXT,
-        80, (LPARAM) buffer );
-      settings_current.volume_beeper = atoi( buffer );  
+
+          free( settings_current.speaker_type );
+          settings_current.speaker_type =
+            utils_safe_strdup( sound_speaker_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_SPEAKER_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+          SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_AY, WM_GETTEXT, 80, (LPARAM) buffer );
+          settings_current.volume_ay = atoi( buffer );  
+
+          /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+          SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_BEEPER, WM_GETTEXT, 80, (LPARAM) buffer );
+          settings_current.volume_beeper = atoi( buffer );  
+
+          /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+          SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_SPECDRUM, WM_GETTEXT, 80, (LPARAM) buffer );
+          settings_current.volume_specdrum = atoi( buffer );  
+
           win32statusbar_set_visibility( settings_current.statusbar );
           display_refresh_all();
 
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-	}
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
 
-	case IDCANCEL:
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-      }
-      break;
+        case IDCANCEL:
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+        break;
 
     case WM_CLOSE:
       EndDialog( hwndDlg, 0 );
       return 0;
   }
+
   return FALSE;
 }
 
@@ -557,7 +803,7 @@ menu_options_sound( int action )
 }
 
 
-static char * diskoptions_drive_plus3a_type_combo[] = {
+static const char *diskoptions_drive_plus3a_type_combo[] = {
   "Single-sided 40 track",
   "Double-sided 40 track",
   "Single-sided 80 track",
@@ -567,7 +813,7 @@ static char * diskoptions_drive_plus3a_type_combo[] = {
 static const int diskoptions_drive_plus3a_type_combo_count = 4;
 
 int
-option_enumerate_diskoptions_drive_plus3a_type() {
+option_enumerate_diskoptions_drive_plus3a_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plus3a_type_combo,
 				 settings_current.drive_plus3a_type,
 				 diskoptions_drive_plus3a_type_combo_count,
@@ -575,7 +821,7 @@ option_enumerate_diskoptions_drive_plus3a_type() {
 }
 
 
-static char * diskoptions_drive_plus3b_type_combo[] = {
+static const char *diskoptions_drive_plus3b_type_combo[] = {
   "Disabled",
   "Single-sided 40 track",
   "Double-sided 40 track",
@@ -586,7 +832,7 @@ static char * diskoptions_drive_plus3b_type_combo[] = {
 static const int diskoptions_drive_plus3b_type_combo_count = 5;
 
 int
-option_enumerate_diskoptions_drive_plus3b_type() {
+option_enumerate_diskoptions_drive_plus3b_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plus3b_type_combo,
 				 settings_current.drive_plus3b_type,
 				 diskoptions_drive_plus3b_type_combo_count,
@@ -597,7 +843,7 @@ option_enumerate_diskoptions_drive_plus3b_type() {
 #define diskoptions_drive_beta128a_type_combo_count diskoptions_drive_plus3a_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128a_type() {
+option_enumerate_diskoptions_drive_beta128a_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128a_type_combo,
 				 settings_current.drive_beta128a_type,
 				 diskoptions_drive_beta128a_type_combo_count,
@@ -608,7 +854,7 @@ option_enumerate_diskoptions_drive_beta128a_type() {
 #define diskoptions_drive_beta128b_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128b_type() {
+option_enumerate_diskoptions_drive_beta128b_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128b_type_combo,
 				 settings_current.drive_beta128b_type,
 				 diskoptions_drive_beta128b_type_combo_count,
@@ -619,7 +865,7 @@ option_enumerate_diskoptions_drive_beta128b_type() {
 #define diskoptions_drive_beta128c_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128c_type() {
+option_enumerate_diskoptions_drive_beta128c_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128c_type_combo,
 				 settings_current.drive_beta128c_type,
 				 diskoptions_drive_beta128c_type_combo_count,
@@ -630,7 +876,7 @@ option_enumerate_diskoptions_drive_beta128c_type() {
 #define diskoptions_drive_beta128d_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_beta128d_type() {
+option_enumerate_diskoptions_drive_beta128d_type( void ) {
   return option_enumerate_combo( diskoptions_drive_beta128d_type_combo,
 				 settings_current.drive_beta128d_type,
 				 diskoptions_drive_beta128d_type_combo_count,
@@ -641,7 +887,7 @@ option_enumerate_diskoptions_drive_beta128d_type() {
 #define diskoptions_drive_plusd1_type_combo_count diskoptions_drive_plus3a_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_plusd1_type() {
+option_enumerate_diskoptions_drive_plusd1_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plusd1_type_combo,
 				 settings_current.drive_plusd1_type,
 				 diskoptions_drive_plusd1_type_combo_count,
@@ -652,10 +898,32 @@ option_enumerate_diskoptions_drive_plusd1_type() {
 #define diskoptions_drive_plusd2_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_plusd2_type() {
+option_enumerate_diskoptions_drive_plusd2_type( void ) {
   return option_enumerate_combo( diskoptions_drive_plusd2_type_combo,
 				 settings_current.drive_plusd2_type,
 				 diskoptions_drive_plusd2_type_combo_count,
+				 4 );
+}
+
+#define diskoptions_drive_disciple1_type_combo diskoptions_drive_plus3a_type_combo
+#define diskoptions_drive_disciple1_type_combo_count diskoptions_drive_plus3a_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_disciple1_type( void ) {
+  return option_enumerate_combo( diskoptions_drive_disciple1_type_combo,
+				 settings_current.drive_disciple1_type,
+				 diskoptions_drive_disciple1_type_combo_count,
+				 3 );
+}
+
+#define diskoptions_drive_disciple2_type_combo diskoptions_drive_plus3b_type_combo
+#define diskoptions_drive_disciple2_type_combo_count diskoptions_drive_plus3b_type_combo_count
+
+int
+option_enumerate_diskoptions_drive_disciple2_type( void ) {
+  return option_enumerate_combo( diskoptions_drive_disciple2_type_combo,
+				 settings_current.drive_disciple2_type,
+				 diskoptions_drive_disciple2_type_combo_count,
 				 4 );
 }
 
@@ -663,7 +931,7 @@ option_enumerate_diskoptions_drive_plusd2_type() {
 #define diskoptions_drive_opus1_type_combo_count diskoptions_drive_plus3a_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_opus1_type() {
+option_enumerate_diskoptions_drive_opus1_type( void ) {
   return option_enumerate_combo( diskoptions_drive_opus1_type_combo,
 				 settings_current.drive_opus1_type,
 				 diskoptions_drive_opus1_type_combo_count,
@@ -674,7 +942,7 @@ option_enumerate_diskoptions_drive_opus1_type() {
 #define diskoptions_drive_opus2_type_combo_count diskoptions_drive_plus3b_type_combo_count
 
 int
-option_enumerate_diskoptions_drive_opus2_type() {
+option_enumerate_diskoptions_drive_opus2_type( void ) {
   return option_enumerate_combo( diskoptions_drive_opus2_type_combo,
 				 settings_current.drive_opus2_type,
 				 diskoptions_drive_opus2_type_combo_count,
@@ -682,7 +950,7 @@ option_enumerate_diskoptions_drive_opus2_type() {
 }
 
 
-static char * diskoptions_disk_try_merge_combo[] = {
+static const char *diskoptions_disk_try_merge_combo[] = {
   "Never",
   "With single-sided drives",
   "Always",
@@ -691,7 +959,7 @@ static char * diskoptions_disk_try_merge_combo[] = {
 static const int diskoptions_disk_try_merge_combo_count = 3;
 
 int
-option_enumerate_diskoptions_disk_try_merge() {
+option_enumerate_diskoptions_disk_try_merge( void ) {
   return option_enumerate_combo( diskoptions_disk_try_merge_combo,
 				 settings_current.disk_try_merge,
 				 diskoptions_disk_try_merge_combo_count,
@@ -713,7 +981,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
     {
       /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
       SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
-	(LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+        (LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
 
       /* initialize the controls with current settings */
 
@@ -734,6 +1002,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_drive_plus3b_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3B_TYPE, CB_ADDSTRING,
@@ -750,8 +1019,10 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_PLUS3_DETECT_SPEEDLOCK, BM_SETCHECK,
         settings_current.plus3_detect_speedlock ? BST_CHECKED : BST_UNCHECKED, 0 );
+
       for( i = 0; i < diskoptions_drive_beta128a_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128A_TYPE, CB_ADDSTRING,
@@ -768,6 +1039,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_drive_beta128b_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128B_TYPE, CB_ADDSTRING,
@@ -784,6 +1056,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_drive_beta128c_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128C_TYPE, CB_ADDSTRING,
@@ -800,6 +1073,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_drive_beta128d_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128D_TYPE, CB_ADDSTRING,
@@ -816,6 +1090,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_drive_plusd1_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD1_TYPE, CB_ADDSTRING,
@@ -832,6 +1107,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_drive_plusd2_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD2_TYPE, CB_ADDSTRING,
@@ -848,6 +1124,41 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
+      for( i = 0; i < diskoptions_drive_disciple1_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE1_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_disciple1_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE1_TYPE, CB_SETCURSEL,
+        (LPARAM) 3, 0 );
+      if( settings_current.drive_disciple1_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_disciple1_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_disciple1_type,
+                       diskoptions_drive_disciple1_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE1_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+
+      for( i = 0; i < diskoptions_drive_disciple2_type_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE2_TYPE, CB_ADDSTRING,
+          0, (LPARAM) diskoptions_drive_disciple2_type_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE2_TYPE, CB_SETCURSEL,
+        (LPARAM) 4, 0 );
+      if( settings_current.drive_disciple2_type != NULL ) {
+        for( i = 0; i < diskoptions_drive_disciple2_type_combo_count; i++ ) {
+          if( !strcmp( settings_current.drive_disciple2_type,
+                       diskoptions_drive_disciple2_type_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE2_TYPE,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+
       for( i = 0; i < diskoptions_drive_opus1_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS1_TYPE, CB_ADDSTRING,
@@ -864,6 +1175,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_drive_opus2_type_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS2_TYPE, CB_ADDSTRING,
@@ -880,6 +1192,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       for( i = 0; i < diskoptions_disk_try_merge_combo_count; i++ ) {
         /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
         SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_TRY_MERGE, CB_ADDSTRING,
@@ -896,6 +1209,7 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
           }
         }
       }
+
       SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_ASK_MERGE, BM_SETCHECK,
         settings_current.disk_ask_merge ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -905,85 +1219,98 @@ menu_options_diskoptions_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPa
     case WM_COMMAND:
       switch( LOWORD( wParam ) )
       {
-	case IDOK:
-	{
+        case IDOK:
+        {
           /* Read the controls and apply the settings */
-      free( settings_current.drive_plus3a_type );
-      settings_current.drive_plus3a_type =
-        strdup( diskoptions_drive_plus3a_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3A_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_plus3b_type );
-      settings_current.drive_plus3b_type =
-        strdup( diskoptions_drive_plus3b_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3B_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
+          free( settings_current.drive_plus3a_type );
+          settings_current.drive_plus3a_type =
+            utils_safe_strdup( diskoptions_drive_plus3a_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3A_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_plus3b_type );
+          settings_current.drive_plus3b_type =
+            utils_safe_strdup( diskoptions_drive_plus3b_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUS3B_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
           settings_current.plus3_detect_speedlock =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_DISKOPTIONS_PLUS3_DETECT_SPEEDLOCK );
-      free( settings_current.drive_beta128a_type );
-      settings_current.drive_beta128a_type =
-        strdup( diskoptions_drive_beta128a_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128A_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_beta128b_type );
-      settings_current.drive_beta128b_type =
-        strdup( diskoptions_drive_beta128b_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128B_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_beta128c_type );
-      settings_current.drive_beta128c_type =
-        strdup( diskoptions_drive_beta128c_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128C_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_beta128d_type );
-      settings_current.drive_beta128d_type =
-        strdup( diskoptions_drive_beta128d_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128D_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_plusd1_type );
-      settings_current.drive_plusd1_type =
-        strdup( diskoptions_drive_plusd1_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD1_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_plusd2_type );
-      settings_current.drive_plusd2_type =
-        strdup( diskoptions_drive_plusd2_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD2_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_opus1_type );
-      settings_current.drive_opus1_type =
-        strdup( diskoptions_drive_opus1_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS1_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.drive_opus2_type );
-      settings_current.drive_opus2_type =
-        strdup( diskoptions_drive_opus2_type_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS2_TYPE,
-          CB_GETCURSEL, 0, 0 ) ] );
-      free( settings_current.disk_try_merge );
-      settings_current.disk_try_merge =
-        strdup( diskoptions_disk_try_merge_combo[
-        SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_TRY_MERGE,
-          CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_beta128a_type );
+          settings_current.drive_beta128a_type =
+            utils_safe_strdup( diskoptions_drive_beta128a_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128A_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_beta128b_type );
+          settings_current.drive_beta128b_type =
+            utils_safe_strdup( diskoptions_drive_beta128b_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128B_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_beta128c_type );
+          settings_current.drive_beta128c_type =
+            utils_safe_strdup( diskoptions_drive_beta128c_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128C_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_beta128d_type );
+          settings_current.drive_beta128d_type =
+            utils_safe_strdup( diskoptions_drive_beta128d_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_BETA128D_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_plusd1_type );
+          settings_current.drive_plusd1_type =
+            utils_safe_strdup( diskoptions_drive_plusd1_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD1_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_plusd2_type );
+          settings_current.drive_plusd2_type =
+            utils_safe_strdup( diskoptions_drive_plusd2_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_PLUSD2_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_disciple1_type );
+          settings_current.drive_disciple1_type =
+            utils_safe_strdup( diskoptions_drive_disciple1_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE1_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_disciple2_type );
+          settings_current.drive_disciple2_type =
+            utils_safe_strdup( diskoptions_drive_disciple2_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_DISCIPLE2_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_opus1_type );
+          settings_current.drive_opus1_type =
+            utils_safe_strdup( diskoptions_drive_opus1_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS1_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.drive_opus2_type );
+          settings_current.drive_opus2_type =
+            utils_safe_strdup( diskoptions_drive_opus2_type_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DRIVE_OPUS2_TYPE, CB_GETCURSEL, 0, 0 ) ] );
+
+          free( settings_current.disk_try_merge );
+          settings_current.disk_try_merge =
+            utils_safe_strdup( diskoptions_disk_try_merge_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_TRY_MERGE, CB_GETCURSEL, 0, 0 ) ] );
+
           settings_current.disk_ask_merge =
             IsDlgButtonChecked( hwndDlg, IDC_OPT_DISKOPTIONS_DISK_ASK_MERGE );
+
           win32statusbar_set_visibility( settings_current.statusbar );
           display_refresh_all();
 
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-	}
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
 
-	case IDCANCEL:
-	  EndDialog( hwndDlg, 0 );
-	  return 0;
-      }
-      break;
+        case IDCANCEL:
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+        break;
 
     case WM_CLOSE:
       EndDialog( hwndDlg, 0 );
       return 0;
   }
+
   return FALSE;
 }
 
@@ -994,6 +1321,112 @@ menu_options_diskoptions( int action )
 
   DialogBox( fuse_hInstance, MAKEINTRESOURCE( IDD_OPT_DISKOPTIONS ),
              fuse_hWnd, (DLGPROC) menu_options_diskoptions_proc );
+
+  fuse_emulation_unpause();
+}
+
+
+static const char *movie_movie_compr_combo[] = {
+  "None",
+  "Lossless",
+  "High",
+};
+
+static const int movie_movie_compr_combo_count = 3;
+
+int
+option_enumerate_movie_movie_compr( void ) {
+  return option_enumerate_combo( movie_movie_compr_combo,
+				 settings_current.movie_compr,
+				 movie_movie_compr_combo_count,
+				 1 );
+}
+
+static BOOL CALLBACK
+menu_options_movie_proc( HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+  char buffer[80];
+  int i;
+  
+  i = 0;
+  buffer[0] = '\0';		/* Shut gcc up */
+  
+  switch( msg )
+  {
+    case WM_INITDIALOG:
+    {
+      /* FIXME: save the handle returned by LoadIcon() in win32ui.c */
+      SendMessage( hwndDlg, WM_SETICON, ICON_SMALL,
+        (LPARAM)LoadIcon( fuse_hInstance, "win32_icon" ) );
+
+      /* initialize the controls with current settings */
+
+      /* FIXME split *_init and *_done functions out of *_proc function */
+      for( i = 0; i < movie_movie_compr_combo_count; i++ ) {
+        /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+        SendDlgItemMessage( hwndDlg, IDC_OPT_MOVIE_MOVIE_COMPR, CB_ADDSTRING,
+          0, (LPARAM) movie_movie_compr_combo[i] );
+      }
+      SendDlgItemMessage( hwndDlg, IDC_OPT_MOVIE_MOVIE_COMPR, CB_SETCURSEL,
+        (LPARAM) 1, 0 );
+      if( settings_current.movie_compr != NULL ) {
+        for( i = 0; i < movie_movie_compr_combo_count; i++ ) {
+          if( !strcmp( settings_current.movie_compr,
+                       movie_movie_compr_combo[i] ) ) {
+            SendDlgItemMessage( hwndDlg, IDC_OPT_MOVIE_MOVIE_COMPR,
+              CB_SETCURSEL, i, 0 );
+          }
+        }
+      }
+
+      SendDlgItemMessage( hwndDlg, IDC_OPT_MOVIE_MOVIE_STOP_AFTER_RZX, BM_SETCHECK,
+        settings_current.movie_stop_after_rzx ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+      return FALSE;
+    }
+
+    case WM_COMMAND:
+      switch( LOWORD( wParam ) )
+      {
+        case IDOK:
+        {
+          /* Read the controls and apply the settings */
+          free( settings_current.movie_compr );
+          settings_current.movie_compr =
+            utils_safe_strdup( movie_movie_compr_combo[
+            SendDlgItemMessage( hwndDlg, IDC_OPT_MOVIE_MOVIE_COMPR, CB_GETCURSEL, 0, 0 ) ] );
+
+          settings_current.movie_stop_after_rzx =
+            IsDlgButtonChecked( hwndDlg, IDC_OPT_MOVIE_MOVIE_STOP_AFTER_RZX );
+
+          win32statusbar_set_visibility( settings_current.statusbar );
+          display_refresh_all();
+
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+
+        case IDCANCEL:
+          EndDialog( hwndDlg, 0 );
+          return 0;
+        }
+        break;
+
+    case WM_CLOSE:
+      EndDialog( hwndDlg, 0 );
+      return 0;
+  }
+
+  return FALSE;
+}
+
+void
+menu_options_movie( int action )
+{
+  fuse_emulation_pause();
+
+  DialogBox( fuse_hInstance, MAKEINTRESOURCE( IDD_OPT_MOVIE ),
+             fuse_hWnd, (DLGPROC) menu_options_movie_proc );
 
   fuse_emulation_unpause();
 }

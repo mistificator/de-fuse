@@ -27,28 +27,36 @@
 #ifndef FUSE_OPTIONS_H
 #define FUSE_OPTIONS_H
 
-int option_enumerate_sound_speaker_type();
+int option_enumerate_sound_stereo_ay( void );
 
-int option_enumerate_diskoptions_drive_plus3a_type();
+int option_enumerate_sound_speaker_type( void );
 
-int option_enumerate_diskoptions_drive_plus3b_type();
+int option_enumerate_diskoptions_drive_plus3a_type( void );
 
-int option_enumerate_diskoptions_drive_beta128a_type();
+int option_enumerate_diskoptions_drive_plus3b_type( void );
 
-int option_enumerate_diskoptions_drive_beta128b_type();
+int option_enumerate_diskoptions_drive_beta128a_type( void );
 
-int option_enumerate_diskoptions_drive_beta128c_type();
+int option_enumerate_diskoptions_drive_beta128b_type( void );
 
-int option_enumerate_diskoptions_drive_beta128d_type();
+int option_enumerate_diskoptions_drive_beta128c_type( void );
 
-int option_enumerate_diskoptions_drive_plusd1_type();
+int option_enumerate_diskoptions_drive_beta128d_type( void );
 
-int option_enumerate_diskoptions_drive_plusd2_type();
+int option_enumerate_diskoptions_drive_plusd1_type( void );
 
-int option_enumerate_diskoptions_drive_opus1_type();
+int option_enumerate_diskoptions_drive_plusd2_type( void );
 
-int option_enumerate_diskoptions_drive_opus2_type();
+int option_enumerate_diskoptions_drive_disciple1_type( void );
 
-int option_enumerate_diskoptions_disk_try_merge();
+int option_enumerate_diskoptions_drive_disciple2_type( void );
+
+int option_enumerate_diskoptions_drive_opus1_type( void );
+
+int option_enumerate_diskoptions_drive_opus2_type( void );
+
+int option_enumerate_diskoptions_disk_try_merge( void );
+
+int option_enumerate_movie_movie_compr( void );
 
 #endif				/* #ifndef FUSE_OPTIONS_H */

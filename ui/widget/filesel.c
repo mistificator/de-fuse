@@ -2,7 +2,7 @@
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall, Russell Marks,
 			   Marek Januszewski
 
-   $Id: filesel.c 4246 2011-01-09 20:47:53Z pak21 $
+   $Id: filesel.c 4892 2013-02-23 15:41:04Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -135,11 +135,8 @@ widget_get_filename( const char *title, int saving )
     wtype = WIDGET_TYPE_FILESELECTOR;
   }
   widget_do( wtype, &data );
-  if( widget_filesel_name ) {
-    filename = strdup( widget_filesel_name );
-    if( !filename )
-      ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-  }
+  if( widget_filesel_name )
+    filename = utils_safe_strdup( widget_filesel_name );
 
   return filename;
   
@@ -254,7 +251,7 @@ amiga_asl( char *title, BOOL is_saving ) {
 #else				/* #ifndef __MORPHOS__ */
         AddPart( filename, filereq->fr_File, 1024 );
 #endif				/* #ifndef __MORPHOS__ */
-        widget_filesel_name = strdup( filename );
+        widget_filesel_name = utils_safe_strdup( filename );
 #ifndef __MORPHOS__
         IExec->FreeVec( filename );
 #else				/* #ifndef __MORPHOS__ */
@@ -497,19 +494,21 @@ widget_filesel_draw( void *data )
   /* Create the dialog box */
   error = widget_dialog_with_border( 1, 2, 30, 22 );
   if( error ) {
-    if( directory ) free( directory );
+    free( directory );
     return error; 
   }
 
 #ifdef WIN32
   if( directory == NULL ) {
-    directory = "Drive selection";
+    directory = utils_safe_strdup( "Drive selection" );
   }
 #endif				/* #ifdef WIN32 */
 
   /* Show all the filenames */
   widget_print_all_filenames( widget_filenames, widget_numfiles,
 			      top_left_file, current_file, directory );
+
+  free( directory );
 
 #endif /* ifndef AMIGA */
 
@@ -911,11 +910,7 @@ widget_filesel_keyhandler( input_key key )
         strcat( fn, FUSE_DIR_SEP_STR );
         strcat( fn, widget_text_text );
       } else {						/* absolute name */
-	fn = strdup( widget_text_text );
-        if( !fn ) {
-	  widget_end_widget( WIDGET_FINISHED_CANCEL );
-	  return;
-        }
+	fn = utils_safe_strdup( widget_text_text );
       }
       widget_filesel_name = fn;
       if( exit_all_widgets ) {
@@ -950,7 +945,7 @@ widget_filesel_keyhandler( input_key key )
 
 #ifdef WIN32
   if( is_drivesel ) {
-    dirtitle = "Drive selection";
+    dirtitle = utils_safe_strdup( "Drive selection" );
   } else {
 #endif				/* #ifdef WIN32 */
     dirtitle = widget_getcwd();
@@ -994,5 +989,7 @@ widget_filesel_keyhandler( input_key key )
     current_file = new_current_file;
 
   }
+
+  free( dirtitle );
 #endif /* ifdef AMIGA */
 }

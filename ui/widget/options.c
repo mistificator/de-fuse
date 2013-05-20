@@ -33,6 +33,7 @@
 
 #include "display.h"
 #include "fuse.h"
+#include "options.h"
 #include "options_internals.h"
 #include "periph.h"
 #include "ui/widget/widget_internals.h"
@@ -92,14 +93,29 @@ option_enumerate_combo( const char **options, char *value, int def ) {
   return def;
 }
 
-static const char *widget_speaker_type_combo[] = {
-  "TV speaker",
-  "Beeper",
+static const char *widget_stereo_ay_combo[] = {
+  "None",
+  "ACB",
+  "ABC",
   NULL
 };
 
 int
-option_enumerate_sound_speaker_type() {
+option_enumerate_sound_stereo_ay( void ) {
+  return option_enumerate_combo( widget_stereo_ay_combo,
+				 settings_current.stereo_ay,
+				 0 );
+}
+
+static const char *widget_speaker_type_combo[] = {
+  "TV speaker",
+  "Beeper",
+  "Unfiltered",
+  NULL
+};
+
+int
+option_enumerate_sound_speaker_type( void ) {
   return option_enumerate_combo( widget_speaker_type_combo,
 				 settings_current.speaker_type,
 				 0 );
@@ -114,7 +130,7 @@ static const char *widget_drive_plus3a_type_combo[] = {
 };
 
 int
-option_enumerate_diskoptions_drive_plus3a_type() {
+option_enumerate_diskoptions_drive_plus3a_type( void ) {
   return option_enumerate_combo( widget_drive_plus3a_type_combo,
 				 settings_current.drive_plus3a_type,
 				 0 );
@@ -130,7 +146,7 @@ static const char *widget_drive_plus3b_type_combo[] = {
 };
 
 int
-option_enumerate_diskoptions_drive_plus3b_type() {
+option_enumerate_diskoptions_drive_plus3b_type( void ) {
   return option_enumerate_combo( widget_drive_plus3b_type_combo,
 				 settings_current.drive_plus3b_type,
 				 4 );
@@ -139,7 +155,7 @@ option_enumerate_diskoptions_drive_plus3b_type() {
 #define widget_drive_beta128a_type_combo widget_drive_plus3a_type_combo
 
 int
-option_enumerate_diskoptions_drive_beta128a_type() {
+option_enumerate_diskoptions_drive_beta128a_type( void ) {
   return option_enumerate_combo( widget_drive_beta128a_type_combo,
 				 settings_current.drive_beta128a_type,
 				 3 );
@@ -148,7 +164,7 @@ option_enumerate_diskoptions_drive_beta128a_type() {
 #define widget_drive_beta128b_type_combo widget_drive_plus3b_type_combo
 
 int
-option_enumerate_diskoptions_drive_beta128b_type() {
+option_enumerate_diskoptions_drive_beta128b_type( void ) {
   return option_enumerate_combo( widget_drive_beta128b_type_combo,
 				 settings_current.drive_beta128b_type,
 				 4 );
@@ -157,7 +173,7 @@ option_enumerate_diskoptions_drive_beta128b_type() {
 #define widget_drive_beta128c_type_combo widget_drive_plus3b_type_combo
 
 int
-option_enumerate_diskoptions_drive_beta128c_type() {
+option_enumerate_diskoptions_drive_beta128c_type( void ) {
   return option_enumerate_combo( widget_drive_beta128c_type_combo,
 				 settings_current.drive_beta128c_type,
 				 4 );
@@ -166,7 +182,7 @@ option_enumerate_diskoptions_drive_beta128c_type() {
 #define widget_drive_beta128d_type_combo widget_drive_plus3b_type_combo
 
 int
-option_enumerate_diskoptions_drive_beta128d_type() {
+option_enumerate_diskoptions_drive_beta128d_type( void ) {
   return option_enumerate_combo( widget_drive_beta128d_type_combo,
 				 settings_current.drive_beta128d_type,
 				 4 );
@@ -175,7 +191,7 @@ option_enumerate_diskoptions_drive_beta128d_type() {
 #define widget_drive_plusd1_type_combo widget_drive_plus3a_type_combo
 
 int
-option_enumerate_diskoptions_drive_plusd1_type() {
+option_enumerate_diskoptions_drive_plusd1_type( void ) {
   return option_enumerate_combo( widget_drive_plusd1_type_combo,
 				 settings_current.drive_plusd1_type,
 				 3 );
@@ -184,16 +200,34 @@ option_enumerate_diskoptions_drive_plusd1_type() {
 #define widget_drive_plusd2_type_combo widget_drive_plus3b_type_combo
 
 int
-option_enumerate_diskoptions_drive_plusd2_type() {
+option_enumerate_diskoptions_drive_plusd2_type( void ) {
   return option_enumerate_combo( widget_drive_plusd2_type_combo,
 				 settings_current.drive_plusd2_type,
+				 4 );
+}
+
+#define widget_drive_disciple1_type_combo widget_drive_plus3a_type_combo
+
+int
+option_enumerate_diskoptions_drive_disciple1_type( void ) {
+  return option_enumerate_combo( widget_drive_disciple1_type_combo,
+				 settings_current.drive_disciple1_type,
+				 3 );
+}
+
+#define widget_drive_disciple2_type_combo widget_drive_plus3b_type_combo
+
+int
+option_enumerate_diskoptions_drive_disciple2_type( void ) {
+  return option_enumerate_combo( widget_drive_disciple2_type_combo,
+				 settings_current.drive_disciple2_type,
 				 4 );
 }
 
 #define widget_drive_opus1_type_combo widget_drive_plus3a_type_combo
 
 int
-option_enumerate_diskoptions_drive_opus1_type() {
+option_enumerate_diskoptions_drive_opus1_type( void ) {
   return option_enumerate_combo( widget_drive_opus1_type_combo,
 				 settings_current.drive_opus1_type,
 				 0 );
@@ -202,7 +236,7 @@ option_enumerate_diskoptions_drive_opus1_type() {
 #define widget_drive_opus2_type_combo widget_drive_plus3b_type_combo
 
 int
-option_enumerate_diskoptions_drive_opus2_type() {
+option_enumerate_diskoptions_drive_opus2_type( void ) {
   return option_enumerate_combo( widget_drive_opus2_type_combo,
 				 settings_current.drive_opus2_type,
 				 1 );
@@ -216,9 +250,23 @@ static const char *widget_disk_try_merge_combo[] = {
 };
 
 int
-option_enumerate_diskoptions_disk_try_merge() {
+option_enumerate_diskoptions_disk_try_merge( void ) {
   return option_enumerate_combo( widget_disk_try_merge_combo,
 				 settings_current.disk_try_merge,
+				 1 );
+}
+
+static const char *widget_movie_compr_combo[] = {
+  "None",
+  "Lossless",
+  "High",
+  NULL
+};
+
+int
+option_enumerate_movie_movie_compr( void ) {
+  return option_enumerate_combo( widget_movie_compr_combo,
+				 settings_current.movie_compr,
 				 1 );
 }
 
@@ -263,7 +311,7 @@ static void widget_joy_prompt_click( void );
 static void widget_option_joy_prompt_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_late_timings_click( void );
 static void widget_option_late_timings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static int  widget_peripherals_running = 0;
+static int  widget_peripherals_general_running = 0;
 static void widget_joy_kempston_click( void );
 static void widget_option_joy_kempston_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_kempston_mouse_click( void );
@@ -280,6 +328,17 @@ static void widget_interface2_click( void );
 static void widget_option_interface2_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_printer_click( void );
 static void widget_option_printer_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_zxprinter_click( void );
+static void widget_option_zxprinter_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_speccyboot_click( void );
+static void widget_option_speccyboot_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_specdrum_click( void );
+static void widget_option_specdrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_spectranet_click( void );
+static void widget_option_spectranet_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_spectranet_disable_click( void );
+static void widget_option_spectranet_disable_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static int  widget_peripherals_disk_running = 0;
 static void widget_simpleide_active_click( void );
 static void widget_option_simpleide_active_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_zxatasp_active_click( void );
@@ -298,8 +357,12 @@ static void widget_divide_wp_click( void );
 static void widget_option_divide_wp_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_plusd_click( void );
 static void widget_option_plusd_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_disciple_click( void );
+static void widget_option_disciple_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_beta128_click( void );
 static void widget_option_beta128_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_beta128_48boot_click( void );
+static void widget_option_beta128_48boot_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_opus_click( void );
 static void widget_option_opus_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static int  widget_rzx_running = 0;
@@ -328,6 +391,8 @@ static void widget_volume_ay_click( void );
 static void widget_option_volume_ay_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_volume_beeper_click( void );
 static void widget_option_volume_beeper_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_volume_specdrum_click( void );
+static void widget_option_volume_specdrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static int  widget_diskoptions_running = 0;
 static void widget_drive_plus3a_type_click( void );
 static void widget_option_drive_plus3a_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
@@ -347,6 +412,10 @@ static void widget_drive_plusd1_type_click( void );
 static void widget_option_drive_plusd1_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_drive_plusd2_type_click( void );
 static void widget_option_drive_plusd2_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_drive_disciple1_type_click( void );
+static void widget_option_drive_disciple1_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_drive_disciple2_type_click( void );
+static void widget_option_drive_disciple2_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_drive_opus1_type_click( void );
 static void widget_option_drive_opus1_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_drive_opus2_type_click( void );
@@ -355,6 +424,11 @@ static void widget_disk_try_merge_click( void );
 static void widget_option_disk_try_merge_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_disk_ask_merge_click( void );
 static void widget_option_disk_ask_merge_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static int  widget_movie_running = 0;
+static void widget_movie_compr_click( void );
+static void widget_option_movie_compr_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_movie_stop_after_rzx_click( void );
+static void widget_option_movie_stop_after_rzx_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 
 static widget_option_entry options_general[] = {
   { "General Options" },
@@ -381,27 +455,39 @@ static widget_option_entry options_general[] = {
   { NULL }
 };
 
-static widget_option_entry options_peripherals[] = {
-  { "Peripheral Options" },
+static widget_option_entry options_peripherals_general[] = {
+  { "General Peripheral Options" },
   { "\012K\001empston joystick", 0, INPUT_KEY_k, NULL, NULL, widget_joy_kempston_click, widget_option_joy_kempston_draw },
   { "Kempston \012m\001ouse", 1, INPUT_KEY_m, NULL, NULL, widget_kempston_mouse_click, widget_option_kempston_mouse_draw },
   { "\012S\001wap mouse buttons", 2, INPUT_KEY_s, NULL, NULL, widget_mouse_swap_buttons_click, widget_option_mouse_swap_buttons_draw },
-  { "Full\012e\001r Box", 3, INPUT_KEY_e, NULL, NULL, widget_fuller_click, widget_option_fuller_draw },
-  { "Mel\012o\001dik", 4, INPUT_KEY_o, NULL, NULL, widget_melodik_click, widget_option_melodik_draw },
-  { "Inter\012f\001ace I", 5, INPUT_KEY_f, NULL, NULL, widget_interface1_click, widget_option_interface1_draw },
-  { "\012I\001nterface II", 6, INPUT_KEY_i, NULL, NULL, widget_interface2_click, widget_option_interface2_draw },
+  { "\012F\001uller Box", 3, INPUT_KEY_f, NULL, NULL, widget_fuller_click, widget_option_fuller_draw },
+  { "M\012e\001lodik", 4, INPUT_KEY_e, NULL, NULL, widget_melodik_click, widget_option_melodik_draw },
+  { "\012I\001nterface 1", 5, INPUT_KEY_i, NULL, NULL, widget_interface1_click, widget_option_interface1_draw },
+  { "In\012t\001erface 2", 6, INPUT_KEY_t, NULL, NULL, widget_interface2_click, widget_option_interface2_draw },
   { "Emulate \012p\001rinters", 7, INPUT_KEY_p, NULL, NULL, widget_printer_click, widget_option_printer_draw },
-  { "Simple \0128\001-bit IDE", 8, INPUT_KEY_8, NULL, NULL, widget_simpleide_active_click, widget_option_simpleide_active_draw },
-  { "\012Z\001XATASP interface", 9, INPUT_KEY_z, NULL, NULL, widget_zxatasp_active_click, widget_option_zxatasp_active_draw },
-  { "ZXATASP \012u\001pload", 10, INPUT_KEY_u, NULL, NULL, widget_zxatasp_upload_click, widget_option_zxatasp_upload_draw },
-  { "ZXATASP \012w\001rite protect", 11, INPUT_KEY_w, NULL, NULL, widget_zxatasp_wp_click, widget_option_zxatasp_wp_draw },
-  { "ZX\012C\001F interface", 12, INPUT_KEY_c, NULL, NULL, widget_zxcf_active_click, widget_option_zxcf_active_draw },
-  { "ZXCF up\012l\001oad", 13, INPUT_KEY_l, NULL, NULL, widget_zxcf_upload_click, widget_option_zxcf_upload_draw },
-  { "\012D\001ivIDE interface", 14, INPUT_KEY_d, NULL, NULL, widget_divide_enabled_click, widget_option_divide_enabled_draw },
-  { "DivIDE w\012r\001ite protect", 15, INPUT_KEY_r, NULL, NULL, widget_divide_wp_click, widget_option_divide_wp_draw },
-  { "+D i\012n\001terface", 16, INPUT_KEY_n, NULL, NULL, widget_plusd_click, widget_option_plusd_draw },
-  { "\012B\001eta 128 interface", 17, INPUT_KEY_b, NULL, NULL, widget_beta128_click, widget_option_beta128_draw },
-  { "Opus Discovery in\012t\001erface", 18, INPUT_KEY_t, NULL, NULL, widget_opus_click, widget_option_opus_draw },
+  { "\012Z\001X Printer", 8, INPUT_KEY_z, NULL, NULL, widget_zxprinter_click, widget_option_zxprinter_draw },
+  { "Speccy\012B\001oot interface", 9, INPUT_KEY_b, NULL, NULL, widget_speccyboot_click, widget_option_speccyboot_draw },
+  { "Spec\012D\001rum interface", 10, INPUT_KEY_d, NULL, NULL, widget_specdrum_click, widget_option_specdrum_draw },
+  { "Spectra\012n\001et", 11, INPUT_KEY_n, NULL, NULL, widget_spectranet_click, widget_option_spectranet_draw },
+  { "Spe\012c\001tranet disable", 12, INPUT_KEY_c, NULL, NULL, widget_spectranet_disable_click, widget_option_spectranet_disable_draw },
+  { NULL }
+};
+
+static widget_option_entry options_peripherals_disk[] = {
+  { "Disk Peripheral Options" },
+  { "Simple \0128\001-bit IDE", 0, INPUT_KEY_8, NULL, NULL, widget_simpleide_active_click, widget_option_simpleide_active_draw },
+  { "\012Z\001XATASP interface", 1, INPUT_KEY_z, NULL, NULL, widget_zxatasp_active_click, widget_option_zxatasp_active_draw },
+  { "ZXATASP up\012l\001oad", 2, INPUT_KEY_l, NULL, NULL, widget_zxatasp_upload_click, widget_option_zxatasp_upload_draw },
+  { "Z\012X\001ATASP write protect", 3, INPUT_KEY_x, NULL, NULL, widget_zxatasp_wp_click, widget_option_zxatasp_wp_draw },
+  { "ZX\012C\001F interface", 4, INPUT_KEY_c, NULL, NULL, widget_zxcf_active_click, widget_option_zxcf_active_draw },
+  { "ZXCF \012u\001pload", 5, INPUT_KEY_u, NULL, NULL, widget_zxcf_upload_click, widget_option_zxcf_upload_draw },
+  { "Div\012I\001DE interface", 6, INPUT_KEY_i, NULL, NULL, widget_divide_enabled_click, widget_option_divide_enabled_draw },
+  { "DivIDE \012w\001rite protect", 7, INPUT_KEY_w, NULL, NULL, widget_divide_wp_click, widget_option_divide_wp_draw },
+  { "+\012D\001 interface", 8, INPUT_KEY_d, NULL, NULL, widget_plusd_click, widget_option_plusd_draw },
+  { "DISCi\012P\001LE interf(a)ce", 9, INPUT_KEY_p, NULL, NULL, widget_disciple_click, widget_option_disciple_draw },
+  { "\012B\001eta 128 interface", 10, INPUT_KEY_b, NULL, NULL, widget_beta128_click, widget_option_beta128_draw },
+  { "Beta 128 \012a\001uto-boot in 48K machines", 11, INPUT_KEY_a, NULL, NULL, widget_beta128_48boot_click, widget_option_beta128_48boot_draw },
+  { "\012O\001pus Discovery interface", 12, INPUT_KEY_o, NULL, NULL, widget_opus_click, widget_option_opus_draw },
   { NULL }
 };
 
@@ -419,11 +505,12 @@ static widget_option_entry options_sound[] = {
   { "Sound Options" },
   { "\012S\001ound enabled", 0, INPUT_KEY_s, NULL, NULL, widget_sound_click, widget_option_sound_draw },
   { "\012L\001oading sound", 1, INPUT_KEY_l, NULL, NULL, widget_sound_load_click, widget_option_sound_load_draw },
-  { "\012A\001Y stereo separation", 2, INPUT_KEY_a, NULL, NULL, widget_stereo_ay_click, widget_option_stereo_ay_draw },
+  { "\012A\001Y stereo separation", 2, INPUT_KEY_a, NULL, widget_stereo_ay_combo, widget_stereo_ay_click, widget_option_stereo_ay_draw },
   { "\012F\001orce 8-bit", 3, INPUT_KEY_f, NULL, NULL, widget_sound_force_8bit_click, widget_option_sound_force_8bit_draw },
   { "Speaker \012t\001ype", 4, INPUT_KEY_t, NULL, widget_speaker_type_combo, widget_speaker_type_click, widget_option_speaker_type_draw },
   { "A\012Y\001 volume", 5, INPUT_KEY_y, "%", NULL, widget_volume_ay_click, widget_option_volume_ay_draw },
   { "B\012e\001eper volume", 6, INPUT_KEY_e, "%", NULL, widget_volume_beeper_click, widget_option_volume_beeper_draw },
+  { "Spec\012D\001rum volume", 7, INPUT_KEY_d, "%", NULL, widget_volume_specdrum_click, widget_option_volume_specdrum_draw },
   { NULL }
 };
 
@@ -438,10 +525,19 @@ static widget_option_entry options_diskoptions[] = {
   { "Beta 128 Drive \012D\001", 6, INPUT_KEY_d, NULL, widget_drive_beta128d_type_combo, widget_drive_beta128d_type_click, widget_option_drive_beta128d_type_draw },
   { "+D Drive \0121\001", 7, INPUT_KEY_1, NULL, widget_drive_plusd1_type_combo, widget_drive_plusd1_type_click, widget_option_drive_plusd1_type_draw },
   { "+D Drive \0122\001", 8, INPUT_KEY_2, NULL, widget_drive_plusd2_type_combo, widget_drive_plusd2_type_click, widget_option_drive_plusd2_type_draw },
-  { "\012O\001pus Drive 1", 9, INPUT_KEY_o, NULL, widget_drive_opus1_type_combo, widget_drive_opus1_type_click, widget_option_drive_opus1_type_draw },
-  { "O\012p\001us Drive 2", 10, INPUT_KEY_p, NULL, widget_drive_opus2_type_combo, widget_drive_opus2_type_click, widget_option_drive_opus2_type_draw },
-  { "\012T\001ry merge 'B' side of disks", 11, INPUT_KEY_t, NULL, widget_disk_try_merge_combo, widget_disk_try_merge_click, widget_option_disk_try_merge_draw },
-  { "Con\012f\001irm merge disk sides", 12, INPUT_KEY_f, NULL, NULL, widget_disk_ask_merge_click, widget_option_disk_ask_merge_draw },
+  { "DISCiPLE Drive \0121\001", 9, INPUT_KEY_1, NULL, widget_drive_disciple1_type_combo, widget_drive_disciple1_type_click, widget_option_drive_disciple1_type_draw },
+  { "DISCiPLE Drive \0122\001", 10, INPUT_KEY_2, NULL, widget_drive_disciple2_type_combo, widget_drive_disciple2_type_click, widget_option_drive_disciple2_type_draw },
+  { "\012O\001pus Drive 1", 11, INPUT_KEY_o, NULL, widget_drive_opus1_type_combo, widget_drive_opus1_type_click, widget_option_drive_opus1_type_draw },
+  { "O\012p\001us Drive 2", 12, INPUT_KEY_p, NULL, widget_drive_opus2_type_combo, widget_drive_opus2_type_click, widget_option_drive_opus2_type_draw },
+  { "\012T\001ry merge 'B' side of disks", 13, INPUT_KEY_t, NULL, widget_disk_try_merge_combo, widget_disk_try_merge_click, widget_option_disk_try_merge_draw },
+  { "Con\012f\001irm merge disk sides", 14, INPUT_KEY_f, NULL, NULL, widget_disk_ask_merge_click, widget_option_disk_ask_merge_draw },
+  { NULL }
+};
+
+static widget_option_entry options_movie[] = {
+  { "Movie Options" },
+  { "Movie \012c\001ompression", 0, INPUT_KEY_c, NULL, widget_movie_compr_combo, widget_movie_compr_click, widget_option_movie_compr_draw },
+  { "\012S\001top recording after RZX ends", 1, INPUT_KEY_S, NULL, NULL, widget_movie_stop_after_rzx_click, widget_option_movie_stop_after_rzx_draw },
   { NULL }
 };
 
@@ -591,7 +687,7 @@ widget_options_finish( widget_finish_state finished )
   if( finished == WIDGET_FINISHED_OK ) {
     error = settings_copy( &settings_current, &widget_options_settings );
     /* Bring the peripherals list into sync with the new options */
-    periph_update();
+    periph_posthook();
     /* make the needed UI changes */
     uidisplay_hotswap_gfx_mode();
   }
@@ -663,14 +759,13 @@ widget_general_draw( void *data GCC_UNUSED )
 static void
 widget_emulation_speed_click( void )
 {
-  int error;
   widget_text_t text_data;
 
   text_data.title = "Emulation speed";
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.emulation_speed );
-  error = widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.emulation_speed = atoi( widget_text_text );
@@ -687,14 +782,13 @@ widget_option_emulation_speed_draw( int left_edge, int width, struct widget_opti
 static void
 widget_frame_rate_click( void )
 {
-  int error;
   widget_text_t text_data;
 
   text_data.title = "Frame rate (1:n)";
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.frame_rate );
-  error = widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.frame_rate = atoi( widget_text_text );
@@ -819,14 +913,13 @@ widget_option_autosave_settings_draw( int left_edge, int width, struct widget_op
 static void
 widget_mdr_len_click( void )
 {
-  int error;
   widget_text_t text_data;
 
   text_data.title = "MDR cartridge len";
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.mdr_len );
-  error = widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.mdr_len = atoi( widget_text_text );
@@ -1038,19 +1131,19 @@ widget_general_keyhandler( input_key key )
 }
 
 int
-widget_peripherals_draw( void *data GCC_UNUSED )
+widget_peripherals_general_draw( void *data GCC_UNUSED )
 {
   int error;
 
-  if( !widget_peripherals_running ) {		/* we want to copy settings, only when start up */
+  if( !widget_peripherals_general_running ) {		/* we want to copy settings, only when start up */
     highlight_line = 0;
     /* Get a copy of the current settings */
     error = settings_copy( &widget_options_settings, &settings_current );
     if( error ) { settings_free( &widget_options_settings ); return error; }
-    widget_peripherals_running = 1;
+    widget_peripherals_general_running = 1;
   }
 
-  error = widget_options_show_all( options_peripherals, &widget_options_settings );
+  error = widget_options_show_all( options_peripherals_general, &widget_options_settings );
   if( error ) { settings_free( &widget_options_settings ); return error; }
 
   return 0;
@@ -1150,6 +1243,186 @@ static void
 widget_option_printer_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
   widget_options_print_option( left_edge, width, menu->index, menu->text, show->printer );
+}
+
+static void
+widget_zxprinter_click( void )
+{
+  widget_options_settings.zxprinter = ! widget_options_settings.zxprinter;
+}
+
+static void
+widget_option_zxprinter_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->zxprinter );
+}
+
+static void
+widget_speccyboot_click( void )
+{
+  widget_options_settings.speccyboot = ! widget_options_settings.speccyboot;
+}
+
+static void
+widget_option_speccyboot_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->speccyboot );
+}
+
+static void
+widget_specdrum_click( void )
+{
+  widget_options_settings.specdrum = ! widget_options_settings.specdrum;
+}
+
+static void
+widget_option_specdrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->specdrum );
+}
+
+static void
+widget_spectranet_click( void )
+{
+  widget_options_settings.spectranet = ! widget_options_settings.spectranet;
+}
+
+static void
+widget_option_spectranet_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->spectranet );
+}
+
+static void
+widget_spectranet_disable_click( void )
+{
+  widget_options_settings.spectranet_disable = ! widget_options_settings.spectranet_disable;
+}
+
+static void
+widget_option_spectranet_disable_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->spectranet_disable );
+}
+
+void
+widget_peripherals_general_keyhandler( input_key key )
+{
+  widget_text_t text_data;
+  int new_highlight_line = 0;
+  int cursor_pressed = 0;
+  widget_option_entry *ptr;
+  int menu_width = widget_calculate_option_width(options_peripherals_general);
+  int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
+
+  text_data = text_data;	/* Keep gcc happy */
+
+  switch( key ) {
+
+#if 0
+  case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
+    widget_dialog_with_border( 1, 2, 30, 2 + 13 );
+    widget_peripherals_general_show_all( &widget_options_settings );
+    break;
+#endif
+    
+  case INPUT_KEY_Escape:
+  case INPUT_JOYSTICK_FIRE_2:
+    widget_end_widget( WIDGET_FINISHED_CANCEL );
+    widget_peripherals_general_running = 0;
+    break;
+
+  case INPUT_KEY_Up:
+  case INPUT_KEY_7:
+  case INPUT_JOYSTICK_UP:
+    if ( highlight_line ) {
+      new_highlight_line = highlight_line - 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_Down:
+  case INPUT_KEY_6:
+  case INPUT_JOYSTICK_DOWN:
+    if ( highlight_line + 1 < 13 ) {
+      new_highlight_line = highlight_line + 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_Home:
+    if ( highlight_line ) {
+      new_highlight_line = 0;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_End:
+    if ( highlight_line + 2 < 13 ) {
+      new_highlight_line = 13 - 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_space:
+  case INPUT_KEY_0:
+  case INPUT_JOYSTICK_RIGHT:
+    options_peripherals_general[highlight_line+1].click();
+    options_peripherals_general[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_general + highlight_line + 1, &widget_options_settings );
+    return;
+    break;
+
+  case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
+  case INPUT_JOYSTICK_FIRE_1:
+    widget_end_all( WIDGET_FINISHED_OK );
+    widget_peripherals_general_running = 0;
+    display_refresh_all();
+    return;
+    break;
+
+  default:	/* Keep gcc happy */
+    break;
+
+  }
+
+  if( cursor_pressed ) {
+    int old_highlight_line = highlight_line;
+    highlight_line = new_highlight_line;
+    options_peripherals_general[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_general + old_highlight_line + 1, &widget_options_settings );
+    options_peripherals_general[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_general + highlight_line + 1, &widget_options_settings );
+    return;
+  }
+
+  for( ptr=&options_peripherals_general[1]; ptr->text != NULL; ptr++ ) {
+    if( key == ptr->key ) {
+      int old_highlight_line = highlight_line;
+      ptr->click();
+      highlight_line = ptr->index;
+      options_peripherals_general[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_general + old_highlight_line + 1, &widget_options_settings );
+      ptr->draw( menu_left_edge_x, menu_width, ptr, &widget_options_settings );
+      break;
+    }
+  }
+}
+
+int
+widget_peripherals_disk_draw( void *data GCC_UNUSED )
+{
+  int error;
+
+  if( !widget_peripherals_disk_running ) {		/* we want to copy settings, only when start up */
+    highlight_line = 0;
+    /* Get a copy of the current settings */
+    error = settings_copy( &widget_options_settings, &settings_current );
+    if( error ) { settings_free( &widget_options_settings ); return error; }
+    widget_peripherals_disk_running = 1;
+  }
+
+  error = widget_options_show_all( options_peripherals_disk, &widget_options_settings );
+  if( error ) { settings_free( &widget_options_settings ); return error; }
+
+  return 0;
 }
 
 static void
@@ -1261,6 +1534,18 @@ widget_option_plusd_draw( int left_edge, int width, struct widget_option_entry *
 }
 
 static void
+widget_disciple_click( void )
+{
+  widget_options_settings.disciple = ! widget_options_settings.disciple;
+}
+
+static void
+widget_option_disciple_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->disciple );
+}
+
+static void
 widget_beta128_click( void )
 {
   widget_options_settings.beta128 = ! widget_options_settings.beta128;
@@ -1270,6 +1555,18 @@ static void
 widget_option_beta128_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
   widget_options_print_option( left_edge, width, menu->index, menu->text, show->beta128 );
+}
+
+static void
+widget_beta128_48boot_click( void )
+{
+  widget_options_settings.beta128_48boot = ! widget_options_settings.beta128_48boot;
+}
+
+static void
+widget_option_beta128_48boot_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->beta128_48boot );
 }
 
 static void
@@ -1285,13 +1582,13 @@ widget_option_opus_draw( int left_edge, int width, struct widget_option_entry *m
 }
 
 void
-widget_peripherals_keyhandler( input_key key )
+widget_peripherals_disk_keyhandler( input_key key )
 {
   widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
-  int menu_width = widget_calculate_option_width(options_peripherals);
+  int menu_width = widget_calculate_option_width(options_peripherals_disk);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
 
   text_data = text_data;	/* Keep gcc happy */
@@ -1300,15 +1597,15 @@ widget_peripherals_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 19 );
-    widget_peripherals_show_all( &widget_options_settings );
+    widget_dialog_with_border( 1, 2, 30, 2 + 13 );
+    widget_peripherals_disk_show_all( &widget_options_settings );
     break;
 #endif
     
   case INPUT_KEY_Escape:
   case INPUT_JOYSTICK_FIRE_2:
     widget_end_widget( WIDGET_FINISHED_CANCEL );
-    widget_peripherals_running = 0;
+    widget_peripherals_disk_running = 0;
     break;
 
   case INPUT_KEY_Up:
@@ -1323,7 +1620,7 @@ widget_peripherals_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 19 ) {
+    if ( highlight_line + 1 < 13 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1337,8 +1634,8 @@ widget_peripherals_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 19 ) {
-      new_highlight_line = 19 - 1;
+    if ( highlight_line + 2 < 13 ) {
+      new_highlight_line = 13 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -1346,8 +1643,8 @@ widget_peripherals_keyhandler( input_key key )
   case INPUT_KEY_space:
   case INPUT_KEY_0:
   case INPUT_JOYSTICK_RIGHT:
-    options_peripherals[highlight_line+1].click();
-    options_peripherals[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals + highlight_line + 1, &widget_options_settings );
+    options_peripherals_disk[highlight_line+1].click();
+    options_peripherals_disk[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_disk + highlight_line + 1, &widget_options_settings );
     return;
     break;
 
@@ -1355,8 +1652,7 @@ widget_peripherals_keyhandler( input_key key )
   case INPUT_KEY_KP_Enter:
   case INPUT_JOYSTICK_FIRE_1:
     widget_end_all( WIDGET_FINISHED_OK );
-    widget_peripherals_running = 0;
-    periph_update();
+    widget_peripherals_disk_running = 0;
     display_refresh_all();
     return;
     break;
@@ -1369,17 +1665,17 @@ widget_peripherals_keyhandler( input_key key )
   if( cursor_pressed ) {
     int old_highlight_line = highlight_line;
     highlight_line = new_highlight_line;
-    options_peripherals[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals + old_highlight_line + 1, &widget_options_settings );
-    options_peripherals[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals + highlight_line + 1, &widget_options_settings );
+    options_peripherals_disk[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_disk + old_highlight_line + 1, &widget_options_settings );
+    options_peripherals_disk[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_disk + highlight_line + 1, &widget_options_settings );
     return;
   }
 
-  for( ptr=&options_peripherals[1]; ptr->text != NULL; ptr++ ) {
+  for( ptr=&options_peripherals_disk[1]; ptr->text != NULL; ptr++ ) {
     if( key == ptr->key ) {
       int old_highlight_line = highlight_line;
       ptr->click();
       highlight_line = ptr->index;
-      options_peripherals[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals + old_highlight_line + 1, &widget_options_settings );
+      options_peripherals_disk[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_disk + old_highlight_line + 1, &widget_options_settings );
       ptr->draw( menu_left_edge_x, menu_width, ptr, &widget_options_settings );
       break;
     }
@@ -1444,14 +1740,13 @@ widget_option_competition_mode_draw( int left_edge, int width, struct widget_opt
 static void
 widget_competition_code_click( void )
 {
-  int error;
   widget_text_t text_data;
 
   text_data.title = "Competition code";
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.competition_code );
-  error = widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.competition_code = atoi( widget_text_text );
@@ -1624,13 +1919,16 @@ widget_option_sound_load_draw( int left_edge, int width, struct widget_option_en
 static void
 widget_stereo_ay_click( void )
 {
-  widget_options_settings.stereo_ay = ! widget_options_settings.stereo_ay;
+  widget_combo_click( "AY stereo separation", widget_stereo_ay_combo,
+				&widget_options_settings.stereo_ay,
+				0 );
 }
 
 static void
 widget_option_stereo_ay_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->stereo_ay );
+  widget_options_print_combo( left_edge, width, menu->index, menu->text, menu->options,
+			      show->stereo_ay, 0 );
 }
 
 static void
@@ -1663,14 +1961,13 @@ widget_option_speaker_type_draw( int left_edge, int width, struct widget_option_
 static void
 widget_volume_ay_click( void )
 {
-  int error;
   widget_text_t text_data;
 
   text_data.title = "AY volume";
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_ay );
-  error = widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.volume_ay = atoi( widget_text_text );
@@ -1687,14 +1984,13 @@ widget_option_volume_ay_draw( int left_edge, int width, struct widget_option_ent
 static void
 widget_volume_beeper_click( void )
 {
-  int error;
   widget_text_t text_data;
 
   text_data.title = "Beeper volume";
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_beeper );
-  error = widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.volume_beeper = atoi( widget_text_text );
@@ -1705,6 +2001,29 @@ static void
 widget_option_volume_beeper_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
   widget_options_print_entry( left_edge, width, menu->index, menu->text, show->volume_beeper,
+                              menu->suffix );
+}
+
+static void
+widget_volume_specdrum_click( void )
+{
+  widget_text_t text_data;
+
+  text_data.title = "SpecDrum volume";
+  text_data.allow = WIDGET_INPUT_DIGIT;
+  snprintf( text_data.text, 40, "%d",
+            widget_options_settings.volume_specdrum );
+  widget_do( WIDGET_TYPE_TEXT, &text_data );
+
+  if( widget_text_text ) {
+    widget_options_settings.volume_specdrum = atoi( widget_text_text );
+  }
+}
+
+static void
+widget_option_volume_specdrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_entry( left_edge, width, menu->index, menu->text, show->volume_specdrum,
                               menu->suffix );
 }
 
@@ -1724,7 +2043,7 @@ widget_sound_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 7 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 8 );
     widget_sound_show_all( &widget_options_settings );
     break;
 #endif
@@ -1747,7 +2066,7 @@ widget_sound_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 7 ) {
+    if ( highlight_line + 1 < 8 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1761,8 +2080,8 @@ widget_sound_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 7 ) {
-      new_highlight_line = 7 - 1;
+    if ( highlight_line + 2 < 8 ) {
+      new_highlight_line = 8 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -1961,6 +2280,36 @@ widget_option_drive_plusd2_type_draw( int left_edge, int width, struct widget_op
 }
 
 static void
+widget_drive_disciple1_type_click( void )
+{
+  widget_combo_click( "DISCiPLE Drive 1", widget_drive_disciple1_type_combo,
+				&widget_options_settings.drive_disciple1_type,
+				3 );
+}
+
+static void
+widget_option_drive_disciple1_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_combo( left_edge, width, menu->index, menu->text, menu->options,
+			      show->drive_disciple1_type, 3 );
+}
+
+static void
+widget_drive_disciple2_type_click( void )
+{
+  widget_combo_click( "DISCiPLE Drive 2", widget_drive_disciple2_type_combo,
+				&widget_options_settings.drive_disciple2_type,
+				4 );
+}
+
+static void
+widget_option_drive_disciple2_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_combo( left_edge, width, menu->index, menu->text, menu->options,
+			      show->drive_disciple2_type, 4 );
+}
+
+static void
 widget_drive_opus1_type_click( void )
 {
   widget_combo_click( "Opus Drive 1", widget_drive_opus1_type_combo,
@@ -2033,7 +2382,7 @@ widget_diskoptions_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 13 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 15 );
     widget_diskoptions_show_all( &widget_options_settings );
     break;
 #endif
@@ -2056,7 +2405,7 @@ widget_diskoptions_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 13 ) {
+    if ( highlight_line + 1 < 15 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -2070,8 +2419,8 @@ widget_diskoptions_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 13 ) {
-      new_highlight_line = 13 - 1;
+    if ( highlight_line + 2 < 15 ) {
+      new_highlight_line = 15 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -2112,6 +2461,153 @@ widget_diskoptions_keyhandler( input_key key )
       ptr->click();
       highlight_line = ptr->index;
       options_diskoptions[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_diskoptions + old_highlight_line + 1, &widget_options_settings );
+      ptr->draw( menu_left_edge_x, menu_width, ptr, &widget_options_settings );
+      break;
+    }
+  }
+}
+
+int
+widget_movie_draw( void *data GCC_UNUSED )
+{
+  int error;
+
+  if( !widget_movie_running ) {		/* we want to copy settings, only when start up */
+    highlight_line = 0;
+    /* Get a copy of the current settings */
+    error = settings_copy( &widget_options_settings, &settings_current );
+    if( error ) { settings_free( &widget_options_settings ); return error; }
+    widget_movie_running = 1;
+  }
+
+  error = widget_options_show_all( options_movie, &widget_options_settings );
+  if( error ) { settings_free( &widget_options_settings ); return error; }
+
+  return 0;
+}
+
+static void
+widget_movie_compr_click( void )
+{
+  widget_combo_click( "Movie compression", widget_movie_compr_combo,
+				&widget_options_settings.movie_compr,
+				1 );
+}
+
+static void
+widget_option_movie_compr_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_combo( left_edge, width, menu->index, menu->text, menu->options,
+			      show->movie_compr, 1 );
+}
+
+static void
+widget_movie_stop_after_rzx_click( void )
+{
+  widget_options_settings.movie_stop_after_rzx = ! widget_options_settings.movie_stop_after_rzx;
+}
+
+static void
+widget_option_movie_stop_after_rzx_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->movie_stop_after_rzx );
+}
+
+void
+widget_movie_keyhandler( input_key key )
+{
+  widget_text_t text_data;
+  int new_highlight_line = 0;
+  int cursor_pressed = 0;
+  widget_option_entry *ptr;
+  int menu_width = widget_calculate_option_width(options_movie);
+  int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
+
+  text_data = text_data;	/* Keep gcc happy */
+
+  switch( key ) {
+
+#if 0
+  case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
+    widget_dialog_with_border( 1, 2, 30, 2 + 2 );
+    widget_movie_show_all( &widget_options_settings );
+    break;
+#endif
+    
+  case INPUT_KEY_Escape:
+  case INPUT_JOYSTICK_FIRE_2:
+    widget_end_widget( WIDGET_FINISHED_CANCEL );
+    widget_movie_running = 0;
+    break;
+
+  case INPUT_KEY_Up:
+  case INPUT_KEY_7:
+  case INPUT_JOYSTICK_UP:
+    if ( highlight_line ) {
+      new_highlight_line = highlight_line - 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_Down:
+  case INPUT_KEY_6:
+  case INPUT_JOYSTICK_DOWN:
+    if ( highlight_line + 1 < 2 ) {
+      new_highlight_line = highlight_line + 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_Home:
+    if ( highlight_line ) {
+      new_highlight_line = 0;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_End:
+    if ( highlight_line + 2 < 2 ) {
+      new_highlight_line = 2 - 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_space:
+  case INPUT_KEY_0:
+  case INPUT_JOYSTICK_RIGHT:
+    options_movie[highlight_line+1].click();
+    options_movie[highlight_line+1].draw( menu_left_edge_x, menu_width, options_movie + highlight_line + 1, &widget_options_settings );
+    return;
+    break;
+
+  case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
+  case INPUT_JOYSTICK_FIRE_1:
+    widget_end_all( WIDGET_FINISHED_OK );
+    widget_movie_running = 0;
+    display_refresh_all();
+    return;
+    break;
+
+  default:	/* Keep gcc happy */
+    break;
+
+  }
+
+  if( cursor_pressed ) {
+    int old_highlight_line = highlight_line;
+    highlight_line = new_highlight_line;
+    options_movie[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_movie + old_highlight_line + 1, &widget_options_settings );
+    options_movie[highlight_line+1].draw( menu_left_edge_x, menu_width, options_movie + highlight_line + 1, &widget_options_settings );
+    return;
+  }
+
+  for( ptr=&options_movie[1]; ptr->text != NULL; ptr++ ) {
+    if( key == ptr->key ) {
+      int old_highlight_line = highlight_line;
+      ptr->click();
+      highlight_line = ptr->index;
+      options_movie[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_movie + old_highlight_line + 1, &widget_options_settings );
       ptr->draw( menu_left_edge_x, menu_width, ptr, &widget_options_settings );
       break;
     }

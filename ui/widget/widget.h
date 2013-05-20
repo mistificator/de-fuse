@@ -1,7 +1,7 @@
 /* widget.h: Simple dialog boxes for all user interfaces.
    Copyright (c) 2001-2004 Matan Ziv-Av, Philip Kendall
 
-   $Id: widget.h 4109 2009-12-27 06:15:10Z fredm $
+   $Id: widget.h 4671 2012-02-20 10:33:32Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,13 +46,16 @@ typedef enum widget_type {
   WIDGET_TYPE_SOUND,		/* Sound options */
   WIDGET_TYPE_ERROR,		/* Error report */
   WIDGET_TYPE_RZX,		/* RZX options */
+  WIDGET_TYPE_MOVIE,		/* Movie options */
   WIDGET_TYPE_BROWSE,		/* Browse tape */
   WIDGET_TYPE_TEXT,		/* Text entry widget */
   WIDGET_TYPE_DEBUGGER,		/* Debugger widget */
   WIDGET_TYPE_POKEFINDER,	/* Poke finder widget */
+  WIDGET_TYPE_POKEMEM,  	/* Poke memory widget */
   WIDGET_TYPE_MEMORYBROWSER,	/* Memory browser widget */
   WIDGET_TYPE_ROM,		/* ROM selector widget */
-  WIDGET_TYPE_PERIPHERALS,	/* Peripherals options */
+  WIDGET_TYPE_PERIPHERALS_GENERAL, /* General peripherals options */
+  WIDGET_TYPE_PERIPHERALS_DISK, /* Disk peripherals options */
   WIDGET_TYPE_QUERY,		/* Query (yes/no) */
   WIDGET_TYPE_QUERY_SAVE,	/* Query (save/don't save/cancel) */
   WIDGET_TYPE_DISKOPTIONS,	/* Disk options widget */

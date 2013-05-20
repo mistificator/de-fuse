@@ -1,7 +1,7 @@
 /* fileselector.c: GTK+ fileselector routines
    Copyright (c) 2000-2007 Philip Kendall
 
-   $Id: fileselector.c 3504 2008-02-02 22:18:32Z pak21 $
+   $Id: fileselector.c 4335 2011-04-02 12:41:34Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <gtk/gtk.h>
 
 #include "gtkinternals.h"
+#include "ui/ui.h"
 
 static gchar *current_folder;
 
