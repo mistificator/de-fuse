@@ -1,7 +1,7 @@
 /* pokemem.c: GTK+ interface that handles pok files
    Copyright (c) 2011 Philip Kendall, Sergio Baldoví
 
-   $Id: pokemem.c 4769 2012-11-22 12:42:08Z fredm $
+   $Id: pokemem.c 4962 2013-05-19 05:25:15Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -182,6 +182,7 @@ create_dialog( void )
   gtkstock_create_ok_cancel( dialog, accel_group,
                              G_CALLBACK( pokemem_update_list ),
                              (gpointer) &dialog,
+                             G_CALLBACK( pokemem_close ),
                              G_CALLBACK( pokemem_close ) );
   gtk_accel_group_disconnect_key( accel_group, GDK_KEY_Return, 0 );
 

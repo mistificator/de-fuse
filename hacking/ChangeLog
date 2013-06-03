@@ -3401,6 +3401,7 @@
          everything else (fixes bug #3084862) (thanks, Phil) (Fred).
 20110104 nic: add .deps and Makefile to the ignore property (Fred).
 20110109 ui/widget/filesel.c: make Amiga work again (Chris Young).
+20110112 ChangeLog,README,configure.in,man/fuse.1: updates for 1.0.0.1 release.
 20110113 ui/win32/installer/fuse.nsi: windows installer improvements; optionally
          delete configuration file (fuse.cfg) on uninstall, silently uninstall
          previous version if reinstalling to the same folder, include AUTHORS
@@ -3552,8 +3553,11 @@
          Makefile.am}: remove ROMs that there is no formal permission to
          distribute.
 20110327 roms/Makefile.am: distribute README.copyright.
+20110327 ChangeLog,README,configure.in,fuse.c,man/fuse.1: updates for 1.0.0.1a
+         release.
 20110328 configure.in: allow the user to say they do not want to use windres
          (works around bug #3248008; thanks, Cygnus).
+20110401 ChangeLog,man/fuse.1: didn't manage to release this earlier.
 20110401 peripherals/disk/{opus,plusd}.c: remove incorrect use of GCC_UNUSED
          (Stuart).
 20110401 fuse.c,ui/{gtk/gtkui.c,widget/menu.c},windres.rc: update copyright
@@ -4480,6 +4484,47 @@
          complete some missing field initializers (Sergio).
 20130505 peripherals/if1.c: put braces around empty body in ‘do’ statements
          (Sergio).
+20130512 ui/win32/options.pl: refactor options dialogs to split *_init and
+         *_done functions out of *_proc function (Sergio).
+20130513 settings-header.pl,settings.pl: change settings_defaults(),
+         settings_copy() and settings_copy_internal() to void functions (Fred).
+20130513 ui/widget/{options.pl,roms.c}: change settings_copy() to void function
+         on widget UIs (Sergio).
 20130516 man/fuse.1: update date and version for 1.1 release.
 20130516 ChangeLog: update date in main changelog.
+20130517 periph.[c|h],perl/Fuse/Dialog.pm,ui/gtk/{binary.c,confirm.c,
+         gtkinternals.h,gtkjoystick.c,gtkui.c,options.pl,pokemem.c,rollback.c,
+         roms.c,stock.c},ui/options.dat,ui/win32/options.pl: display
+         confirmation dialogue for reset due to peripheral changes (Sergio).
 20130517 README: update date for 1.1 release.
+20130518 README: mention DISCiPLE support (Stuart).
+20130518 ui/widget/options.pl: display confirmation dialogue for reset due to
+         peripheral changes (Stuart).
+20130518 ui/widget/options.pl: update peripherals list when a machine reset is
+         not needed (Sergio).
+20130519 ui/widget/{query.c,widget.c,widget_internals.h}: display confirmation
+         messages (Stuart).
+20130519 ui/widget/{options.pl,query.c}: choose no/cancel upon pressing escape
+         for all all confirmation dialogues, and remove workaround for this
+         from peripheral reset confirmation dialogue (Stuart).
+20130519 ui/{gtk/gtkui.c,widget/menu.c,win32/win32ui.c}: use different
+         confirmation messages for hard and soft resets (Stuart).
+20130519 ChangeLog,README,man/fuse.1: update date for 1.1 release (Stuart).
+20130519 AUTHOR,man/fuse.1: Add Sergio Baldoví (Stuart).
+20130519 lib/Makefile.am: distribute tests/success.{mgt.bz2,opd} (Stuart).
+20130519 Makefile.am,hacking/Makefile.am,sound/Makefile.am,ui/wii/Makefile.am:
+         distribute PORTING,hacking/valgrind.supp,sound/wiisound.c,
+         ui/wii/wiimouse.h (Stuart).
+20130524 ChangeLog,README: updates for a "1.1.1" release (Fred).
+20130524 ChangeLog,README,configure.ac,man/fuse.1: fill in date and bump
+         version number (Stuart).
+20130526 Makefile.am,ui/win32/installer/fuse.nsi.in: distribute ChangeLog and
+         build notes in Windows packages (Sergio).
+20130527 pokefinder/pokemem.c: fix crash when opening a file without extension
+         (patch #312) (UB880D and Sergio).
+20130531 man/fuse.1: correct Spectranet initialisation script (thanks, Guesser)
+         (Fred).
+20130531 man/fuse.1: add missing documentation (fixes bug #282) (Stuart).
+20130531 ui/win32/installer/fuse.nsi.in: adding Fuse to the OpenWith list for
+         file extensions could result in an true association under some
+         circumstances on Windows 7 (thanks, Alessandro Grussu) (Sergio).

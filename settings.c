@@ -294,7 +294,7 @@ static int parse_ini( utils_file *file, settings_info *settings );
 static int settings_command_line( settings_info *settings, int *first_arg,
 				  int argc, char **argv );
 
-static int settings_copy_internal( settings_info *dest, settings_info *src );
+static void settings_copy_internal( settings_info *dest, settings_info *src );
 
 /* Called on emulator startup */
 int
@@ -302,11 +302,7 @@ settings_init( int *first_arg, int argc, char **argv )
 {
   int error;
 
-  error = settings_defaults( &settings_current );
-  if( error ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-    return error;
-  }
+  settings_defaults( &settings_current );
 
   error = read_config_file( &settings_current );
   if( error ) return error;
@@ -318,9 +314,9 @@ settings_init( int *first_arg, int argc, char **argv )
 }
 
 /* Fill the settings structure with sensible defaults */
-int settings_defaults( settings_info *settings )
+void settings_defaults( settings_info *settings )
 {
-  return settings_copy_internal( settings, &settings_default );
+  settings_copy_internal( settings, &settings_default );
 }
 
 #ifdef HAVE_LIB_XML2
@@ -1962,7 +1958,7 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
-#line 265"../settings.pl"
+#line 261"../settings.pl"
     if( !strcmp( (const char*)node->name, "text" ) ) {
       /* Do nothing */
     } else {
@@ -2354,7 +2350,7 @@ settings_write_config( settings_info *settings )
     xmlNewTextChild( root, NULL, (const xmlChar*)"zxcfcffile", (const xmlChar*)settings->zxcf_pri_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"zxcfupload", (const xmlChar*)(settings->zxcf_upload ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"zxprinter", (const xmlChar*)(settings->zxprinter ? "1" : "0") );
-#line 322"../settings.pl"
+#line 318"../settings.pl"
 
   xmlSaveFormatFile( path, doc, 1 );
 
@@ -3333,7 +3329,7 @@ parse_ini( utils_file *file, settings_info *settings )
     while( ( cpos < ( file->buffer + file->length ) ) &&
            ( *cpos == '\r' || *cpos == '\n' ) ) cpos++;
 
-#line 467"../settings.pl"
+#line 463"../settings.pl"
   }
 
   return 0;
@@ -4019,7 +4015,7 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "zxprinter",
                               settings->zxprinter ) )
     goto error;
-#line 559"../settings.pl"
+#line 555"../settings.pl"
 
   compat_file_close( doc );
 
@@ -4314,7 +4310,7 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-zxcf-upload", 0, &(settings->zxcf_upload), 0 },
     {    "zxprinter", 0, &(settings->zxprinter), 1 },
     { "no-zxprinter", 0, &(settings->zxprinter), 0 },
-#line 614"../settings.pl"
+#line 610"../settings.pl"
 
     { "help", 0, NULL, 'h' },
     { "version", 0, NULL, 'V' },
@@ -4492,7 +4488,7 @@ settings_command_line( settings_info *settings, int *first_arg,
     case 397: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
     case 398: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
     case 399: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
-#line 664"../settings.pl"
+#line 660"../settings.pl"
 
     case 'h': settings->show_help = 1; break;
     case 'V': settings->show_version = 1; break;
@@ -4516,7 +4512,7 @@ settings_command_line( settings_info *settings, int *first_arg,
 }
 
 /* Copy one settings object to another */
-static int
+static void
 settings_copy_internal( settings_info *dest, settings_info *src )
 {
   settings_free( dest );
@@ -5037,16 +5033,14 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   }
   dest->zxcf_upload = src->zxcf_upload;
   dest->zxprinter = src->zxprinter;
-#line 711"../settings.pl"
-
-  return 0;
+#line 707"../settings.pl"
 }
 
 /* Copy one settings object to another */
-int settings_copy( settings_info *dest, settings_info *src )
+void settings_copy( settings_info *dest, settings_info *src )
 {
-  if( settings_defaults( dest ) ) return 1;
-  return settings_copy_internal( dest, src );
+  settings_defaults( dest );
+  settings_copy_internal( dest, src );
 }
 
 char **
@@ -5219,7 +5213,7 @@ settings_free( settings_info *settings )
   if( settings->zxatasp_master_file ) libspectrum_free( settings->zxatasp_master_file );
   if( settings->zxatasp_slave_file ) libspectrum_free( settings->zxatasp_slave_file );
   if( settings->zxcf_pri_file ) libspectrum_free( settings->zxcf_pri_file );
-#line 799"../settings.pl"
+#line 793"../settings.pl"
 
   return 0;
 }

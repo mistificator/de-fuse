@@ -23,7 +23,7 @@
 .\" E-mail: philip-fuse@shadowmagic.org.uk
 .\"
 .\"
-.TH fuse 1 "18th May, 2013" "Version 1.1.0" "Emulators"
+.TH fuse 1 "24th May, 2013" "Version 1.1.1" "Emulators"
 .\"
 .\"------------------------------------------------------------------
 .\"
@@ -1988,6 +1988,13 @@ time it takes to load programs. You may wish to disable this option if
 you wish to stop the tape at a specific point.
 .RE
 .PP
+.I "Accelerate loaders"
+.RS
+If this option is enabled, then Fuse will attempt to accelerate tape
+loaders by \(lqshort circuiting\(rq the loading loop. This will in
+general speed up loading, but may cause some loaders to fail.
+.RE
+.PP
 .I "Detect loaders"
 .RS
 If this option is enabled, Fuse will attempt to detect when a loading
@@ -2044,6 +2051,14 @@ configuration file.
 .RS
 This option controls the number of blocks in a new Microdrive cartridge.
 If the value smaller than 4 or greater than 254 Fuse assumes 4 or 254.
+.RE
+.PP
+.I "Random length MDR cartridge"
+.RS
+If this option is enabled, Fuse will use a random Microdrive cartridge
+length instead of the length specified in the
+.I "MDR cartridge len"
+option.
 .RE
 .PP
 .I "RS-232 handshake"
@@ -2211,6 +2226,12 @@ Linux, with a 2.6-series kernel) any type of mouse can be used and any
 connected mouse may be used.
 .RE
 .PP
+.I "Swap mouse buttons"
+.RS
+If this option is enabled, the left and right mouse buttons will be swapped
+when emulating a Kempston mouse.
+.RE
+.PP
 .I "Fuller Box"
 .RS
 If this option is selected, Fuse will emulate a Fuller Box AY sound and
@@ -2365,14 +2386,6 @@ jumper. See the
 section for more details.
 .RE
 .PP
-.I "Opus Discovery interface"
-.RS
-If this option is selected, Fuse will emulate the Opus Discovery interface.
-See the
-.B "OPUS DISCOVERY EMULATION"
-section for more details.
-.RE
-.PP
 .I "+D interface"
 .RS
 If this option is selected, Fuse will emulate the +D interface.  See the
@@ -2394,6 +2407,20 @@ See the
 .B "BETA\ 128 EMULATION"
 section for more details. Beta\ 128 emulation is enabled for the
 Pentagon and Scorpion machines regardless of this option.
+.RE
+.PP
+.I "Beta\ 128 auto-boot in 48K\ machines"
+.RS
+If this option is selected, then when a Beta\ 128 interface is used in 48K
+or TC2048 emulation, the machine will boot directly into the TR-DOS system.
+.RE
+.PP
+.I "Opus Discovery interface"
+.RS
+If this option is selected, Fuse will emulate the Opus Discovery interface.
+See the
+.B "OPUS DISCOVERY EMULATION"
+section for more details.
 .RE
 .RE
 .PP
@@ -3740,11 +3767,7 @@ Spectranet information at the top \(em there should be four status lines,
 starting with \(lqAlioth Spectranet\(rq and ending with the Spectranet's IP
 address (which will be 255.255.255.255 at this stage).
 .PP
-If you see all that, type the following command:
-.PP
-%cfgnew
-.PP
-Which will show the standard 0 OK, 0:1 at the bottom of the screen. Now trigger an NMI (the Machine / NMI menu option)
+Now trigger an NMI (the Machine / NMI menu option)
 and you should get a white on blue Spectranet NMI menu with five
 options.
 .PP
@@ -3798,7 +3821,17 @@ l s.
 .PP
 If everything looks correct, select [I] Save changes and exit (you'll
 see a brief \(lqSaving configuration...\(rq message) followed by [E] Exit,
-at which point you'll be returned to BASIC. Reset the Spectrum again
+at which point you'll be returned to BASIC.
+.PP
+Now type the following commands:
+.PP
+%cfgnew
+.br
+%cfgcommit
+.PP
+Which will show the standard 0 OK, 0:1 at the bottom of the screen. 
+.PP
+Reset the Spectrum again
 and you'll see the same four line status display, but this time with
 your IP address on the last line.
 .PP
@@ -4778,6 +4811,8 @@ Matthew Westcott wrote the AY logging code and the DivIDE emulation.
 .PP
 Marek Januszewski wrote various bits of code to make Fuse work under
 Win32, including the DirectDraw user interface.
+.PP
+Sergio Baldov\('i made many improvements to the Win32 UI.
 .PP
 Stuart Brady wrote the DISCiPLE and +D emulation, Scorpion emulation
 and the HP-UX sound code.

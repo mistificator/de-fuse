@@ -1,4 +1,13 @@
-2013-05-18  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+2013-05-24  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+
+        * Fuse 1.1.1 released.
+
+        * Distribute PORTING,hacking/valgrind.supp,sound/wiisound.c,
+          tests/success.{mgt.bz2,opd} and ui/wii/wiimouse.h (Stuart Brady).
+        * Add ChangeLog entries for 1.0.0.1 and 1.0.0.1a (Fredrick Meunier).
+        * Release correct version of source files.
+
+2013-05-19  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
 
         * Fuse 1.1.0 released.
 
@@ -56,6 +65,22 @@
           * Support setting late timings from snapshots (Fredrick Meunier).
 
         * Various other minor bugfixes.
+
+2011-04-01  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+
+        * Fuse 1.0.0.1a released.
+
+        * Remove all ROMs for which there isn't explicit permission to
+          distribute (Philip Kendall).
+
+2011-01-12  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+
+        * Fuse 1.0.0.1 released.
+
+        * Fix temporary breakpoints on platforms using replacement Glib
+          (Fredrick Meunier, Sergio Baldovi; thanks, Chris Cowley)
+        * Ensure Amiga port can load files (Chris Young)
+        * Fix SVGAlib compilation (rkd77)
 
 2010-12-16  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
 
@@ -1094,4 +1119,4 @@
 
 	* Version 0.1.0 released.
 
-$Id: ChangeLog 4944 2013-05-16 20:55:22Z pak21 $
+$Id: ChangeLog 4995 2013-05-24 19:54:19Z zubzero $

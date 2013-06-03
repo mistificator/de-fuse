@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2009 Philip Kendall
 
-## $Id: Makefile.am 4782 2012-12-02 22:49:57Z sbaldovi $
+## $Id: Makefile.am 5003 2013-05-26 16:24:03Z sbaldovi $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -203,6 +203,7 @@ noinst_HEADERS = bitmap.h \
 
 EXTRA_DIST = AUTHORS \
 	     INSTALL \
+	     PORTING \
 	     README \
 	     THANKS \
 	     keysyms.dat \
@@ -243,7 +244,7 @@ install-win32: all
 	cp $(top_builddir)/.libs/fuse$(EXEEXT) $(DESTDIR) || \
 	cp $(top_builddir)/fuse$(EXEEXT) $(DESTDIR)
 #	Get text files
-	for file in AUTHORS COPYING README; \
+	for file in AUTHORS ChangeLog COPYING README; \
 	  do cp "$(top_srcdir)/$$file" "$(DESTDIR)/$$file.txt"; \
 	done
 #	Get manuals

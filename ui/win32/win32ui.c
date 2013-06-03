@@ -1,7 +1,7 @@
 /* win32ui.c: Win32 routines for dealing with the user interface
    Copyright (c) 2003-2007 Marek Januszewski, Philip Kendall, Stuart Brady
 
-   $Id: win32ui.c 4849 2013-01-03 23:27:39Z sbaldovi $
+   $Id: win32ui.c 4968 2013-05-19 16:11:17Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -564,8 +564,12 @@ void
 menu_machine_reset( int action )
 {
   int hard_reset = action;
+  const char *message = "Reset?";
+
+  if( hard_reset )
+    message = "Hard reset?";
   
-  if( win32ui_confirm( "Reset?" ) && machine_reset( hard_reset ) ) {
+  if( win32ui_confirm( message ) && machine_reset( hard_reset ) ) {
     ui_error( UI_ERROR_ERROR, "couldn't reset machine: giving up!" );
 
     /* FIXME: abort() seems a bit extreme here, but it'll do for now */

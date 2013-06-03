@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2002-2011 Philip Kendall
 
-## $Id: Makefile.am 4663 2012-02-11 12:48:36Z fredm $
+## $Id: Makefile.am 4980 2013-05-21 12:37:51Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,4 +33,5 @@ EXTRA_DIST = \
 	spectranet.txt \
 	tc2048_tech_notes.txt \
 	timer.txt \
-	ui.txt
+	ui.txt \
+	valgrind.supp

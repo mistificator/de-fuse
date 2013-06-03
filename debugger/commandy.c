@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.7.12-4996.  */
 
 /* Bison implementation for Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.5"
+#define YYBISON_VERSION "2.7.12-4996"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -58,14 +58,11 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
-/* Using locations.  */
-#define YYLSP_NEEDED 0
 
 
 
 /* Copy the first part of user declarations.  */
-
-/* Line 268 of yacc.c  */
+/* Line 371 of yacc.c  */
 #line 26 "commandy.y"
 
 
@@ -86,14 +83,16 @@
 #define YYERROR_VERBOSE
 
 
+/* Line 371 of yacc.c  */
+#line 88 "commandy.c"
 
-/* Line 268 of yacc.c  */
-#line 92 "commandy.c"
-
-/* Enabling traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 1
-#endif
+# ifndef YY_NULL
+#  if defined __cplusplus && 201103L <= __cplusplus
+#   define YY_NULL nullptr
+#  else
+#   define YY_NULL 0
+#  endif
+# endif
 
 /* Enabling verbose error messages.  */
 #ifdef YYERROR_VERBOSE
@@ -103,11 +102,17 @@
 # define YYERROR_VERBOSE 0
 #endif
 
-/* Enabling the token table.  */
-#ifndef YYTOKEN_TABLE
-# define YYTOKEN_TABLE 0
+/* In a future release of Bison, this section will be replaced
+   by #include "y.tab.h".  */
+#ifndef YY_YY_Y_TAB_H_INCLUDED
+# define YY_YY_Y_TAB_H_INCLUDED
+/* Enabling traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 1
 #endif
-
+#if YYDEBUG
+extern int yydebug;
+#endif
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -191,12 +196,10 @@
 
 
 
-
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
 {
-
-/* Line 293 of yacc.c  */
+/* Line 387 of yacc.c  */
 #line 46 "commandy.y"
 
 
@@ -215,21 +218,36 @@ typedef union YYSTYPE
 
 
 
-
-/* Line 293 of yacc.c  */
-#line 221 "commandy.c"
+/* Line 387 of yacc.c  */
+#line 223 "commandy.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+extern YYSTYPE yylval;
+
+#ifdef YYPARSE_PARAM
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void *YYPARSE_PARAM);
+#else
+int yyparse ();
+#endif
+#else /* ! YYPARSE_PARAM */
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
+
+#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
 
-
-/* Line 343 of yacc.c  */
-#line 233 "commandy.c"
+/* Line 390 of yacc.c  */
+#line 251 "commandy.c"
 
 #ifdef short
 # undef short
@@ -282,24 +300,33 @@ typedef short int yytype_int16;
 # if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
-#   define YY_(msgid) dgettext ("bison-runtime", msgid)
+#   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
 #  endif
 # endif
 # ifndef YY_
-#  define YY_(msgid) msgid
+#  define YY_(Msgid) Msgid
+# endif
+#endif
+
+#ifndef __attribute__
+/* This feature is available in gcc versions 2.5 and later.  */
+# if (! defined __GNUC__ || __GNUC__ < 2 \
+      || (__GNUC__ == 2 && __GNUC_MINOR__ < 5))
+#  define __attribute__(Spec) /* empty */
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(e) ((void) (e))
+# define YYUSE(E) ((void) (E))
 #else
-# define YYUSE(e) /* empty */
+# define YYUSE(E) /* empty */
 #endif
+
 
 /* Identity function, used to suppress warnings about constant conditions.  */
 #ifndef lint
-# define YYID(n) (n)
+# define YYID(N) (N)
 #else
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
@@ -335,6 +362,7 @@ YYID (yyi)
 #    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS && (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
+      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
 #     ifndef EXIT_SUCCESS
 #      define EXIT_SUCCESS 0
 #     endif
@@ -426,20 +454,20 @@ union yyalloc
 #endif
 
 #if defined YYCOPY_NEEDED && YYCOPY_NEEDED
-/* Copy COUNT objects from FROM to TO.  The source and destination do
+/* Copy COUNT objects from SRC to DST.  The source and destination do
    not overlap.  */
 # ifndef YYCOPY
 #  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(To, From, Count) \
-      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
+#   define YYCOPY(Dst, Src, Count) \
+      __builtin_memcpy (Dst, Src, (Count) * sizeof (*(Src)))
 #  else
-#   define YYCOPY(To, From, Count)		\
-      do					\
-	{					\
-	  YYSIZE_T yyi;				\
-	  for (yyi = 0; yyi < (Count); yyi++)	\
-	    (To)[yyi] = (From)[yyi];		\
-	}					\
+#   define YYCOPY(Dst, Src, Count)              \
+      do                                        \
+        {                                       \
+          YYSIZE_T yyi;                         \
+          for (yyi = 0; yyi < (Count); yyi++)   \
+            (Dst)[yyi] = (Src)[yyi];            \
+        }                                       \
       while (YYID (0))
 #  endif
 # endif
@@ -553,7 +581,7 @@ static const yytype_uint16 yyrline[] =
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+#if YYDEBUG || YYERROR_VERBOSE || 0
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -569,7 +597,7 @@ static const char *const yytname[] =
   "$accept", "input", "command", "breakpointlife", "breakpointtype",
   "breakpointport", "breakpointlocation", "portbreakpointtype",
   "optionalcondition", "numberorpc", "expressionornull", "number",
-  "expression", "debuggercommands", "debuggercommand", 0
+  "expression", "debuggercommands", "debuggercommand", YY_NULL
 };
 #endif
 
@@ -691,10 +719,10 @@ static const yytype_int8 yytable[] =
       18,     0,     0,    46,     0,    47,     0,     0,    48,    49
 };
 
-#define yypact_value_is_default(yystate) \
-  ((yystate) == (-76))
+#define yypact_value_is_default(Yystate) \
+  (!!((Yystate) == (-76)))
 
-#define yytable_value_is_error(yytable_value) \
+#define yytable_value_is_error(Yytable_value) \
   YYID (0)
 
 static const yytype_int8 yycheck[] =
@@ -767,62 +795,35 @@ static const yytype_uint8 yystos[] =
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)					\
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    {								\
-      yychar = (Token);						\
-      yylval = (Value);						\
-      YYPOPSTACK (1);						\
-      goto yybackup;						\
-    }								\
-  else								\
-    {								\
+#define YYBACKUP(Token, Value)                                  \
+do                                                              \
+  if (yychar == YYEMPTY)                                        \
+    {                                                           \
+      yychar = (Token);                                         \
+      yylval = (Value);                                         \
+      YYPOPSTACK (yylen);                                       \
+      yystate = *yyssp;                                         \
+      goto yybackup;                                            \
+    }                                                           \
+  else                                                          \
+    {                                                           \
       yyerror (YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
 
-
+/* Error token number */
 #define YYTERROR	1
 #define YYERRCODE	256
 
 
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)				\
-    do									\
-      if (YYID (N))                                                    \
-	{								\
-	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
-	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
-	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
-	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
-	}								\
-      else								\
-	{								\
-	  (Current).first_line   = (Current).last_line   =		\
-	    YYRHSLOC (Rhs, 0).last_line;				\
-	  (Current).first_column = (Current).last_column =		\
-	    YYRHSLOC (Rhs, 0).last_column;				\
-	}								\
-    while (YYID (0))
-#endif
-
-
 /* This macro is provided for backward compatibility. */
-
 #ifndef YY_LOCATION_PRINT
 # define YY_LOCATION_PRINT(File, Loc) ((void) 0)
 #endif
 
 
 /* YYLEX -- calling `yylex' with the right arguments.  */
-
 #ifdef YYLEX_PARAM
 # define YYLEX yylex (YYLEX_PARAM)
 #else
@@ -872,6 +873,8 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep)
     YYSTYPE const * const yyvaluep;
 #endif
 {
+  FILE *yyo = yyoutput;
+  YYUSE (yyo);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -880,11 +883,7 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep)
 # else
   YYUSE (yyoutput);
 # endif
-  switch (yytype)
-    {
-      default:
-	break;
-    }
+  YYUSE (yytype);
 }
 
 
@@ -1123,12 +1122,11 @@ static int
 yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 yytype_int16 *yyssp, int yytoken)
 {
-  YYSIZE_T yysize0 = yytnamerr (0, yytname[yytoken]);
+  YYSIZE_T yysize0 = yytnamerr (YY_NULL, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
-  YYSIZE_T yysize1;
   enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
   /* Internationalized format string. */
-  const char *yyformat = 0;
+  const char *yyformat = YY_NULL;
   /* Arguments of yyformat. */
   char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
   /* Number of reported tokens (one for the "unexpected", one per
@@ -1188,11 +1186,13 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                     break;
                   }
                 yyarg[yycount++] = yytname[yyx];
-                yysize1 = yysize + yytnamerr (0, yytname[yyx]);
-                if (! (yysize <= yysize1
-                       && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-                  return 2;
-                yysize = yysize1;
+                {
+                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
+                  if (! (yysize <= yysize1
+                         && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+                    return 2;
+                  yysize = yysize1;
+                }
               }
         }
     }
@@ -1212,10 +1212,12 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 # undef YYCASE_
     }
 
-  yysize1 = yysize + yystrlen (yyformat);
-  if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-    return 2;
-  yysize = yysize1;
+  {
+    YYSIZE_T yysize1 = yysize + yystrlen (yyformat);
+    if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+      return 2;
+    yysize = yysize1;
+  }
 
   if (*yymsg_alloc < yysize)
     {
@@ -1271,36 +1273,26 @@ yydestruct (yymsg, yytype, yyvaluep)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
-  switch (yytype)
-    {
-
-      default:
-	break;
-    }
+  YYUSE (yytype);
 }
 
 
-/* Prevent warnings from -Wmissing-prototypes.  */
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
 
 /* The lookahead symbol.  */
 int yychar;
 
+
+#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END
+#endif
+#ifndef YY_INITIAL_VALUE
+# define YY_INITIAL_VALUE(Value) /* Nothing. */
+#endif
+
 /* The semantic value of the lookahead symbol.  */
-YYSTYPE yylval;
+YYSTYPE yylval YY_INITIAL_VALUE(yyval_default);
 
 /* Number of syntax errors so far.  */
 int yynerrs;
@@ -1340,7 +1332,7 @@ yyparse ()
        `yyss': related to states.
        `yyvs': related to semantic values.
 
-       Refer to the stacks thru separate pointers, to allow yyoverflow
+       Refer to the stacks through separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
 
     /* The state stack.  */
@@ -1358,7 +1350,7 @@ yyparse ()
   int yyn;
   int yyresult;
   /* Lookahead token as an internal (translated) token number.  */
-  int yytoken;
+  int yytoken = 0;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
@@ -1376,9 +1368,8 @@ yyparse ()
      Keep to zero when no symbol should be popped.  */
   int yylen = 0;
 
-  yytoken = 0;
-  yyss = yyssa;
-  yyvs = yyvsa;
+  yyssp = yyss = yyssa;
+  yyvsp = yyvs = yyvsa;
   yystacksize = YYINITDEPTH;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
@@ -1387,14 +1378,6 @@ yyparse ()
   yyerrstatus = 0;
   yynerrs = 0;
   yychar = YYEMPTY; /* Cause a token to be read.  */
-
-  /* Initialize stack pointers.
-     Waste one element of value and location stack
-     so that they stay on the same level as the state stack.
-     The wasted elements are never initialized.  */
-  yyssp = yyss;
-  yyvsp = yyvs;
-
   goto yysetstate;
 
 /*------------------------------------------------------------.
@@ -1535,7 +1518,9 @@ yybackup:
   yychar = YYEMPTY;
 
   yystate = yyn;
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
   goto yynewstate;
 
@@ -1572,15 +1557,13 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 153 "commandy.y"
     { debugger_output_base = (yyvsp[(2) - (2)].integer); }
     break;
 
   case 7:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 154 "commandy.y"
     {
              debugger_breakpoint_add_address( (yyvsp[(2) - (4)].bptype), (yyvsp[(3) - (4)].location).source, (yyvsp[(3) - (4)].location).page, (yyvsp[(3) - (4)].location).offset,
@@ -1589,8 +1572,7 @@ yyreduce:
     break;
 
   case 8:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 158 "commandy.y"
     {
 	     int mask = (yyvsp[(4) - (5)].port).mask;
@@ -1600,8 +1582,7 @@ yyreduce:
     break;
 
   case 9:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 163 "commandy.y"
     {
 	     debugger_breakpoint_add_time( DEBUGGER_BREAKPOINT_TYPE_TIME,
@@ -1610,8 +1591,7 @@ yyreduce:
     break;
 
   case 10:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 167 "commandy.y"
     {
 	     debugger_breakpoint_add_event( DEBUGGER_BREAKPOINT_TYPE_EVENT,
@@ -1620,22 +1600,19 @@ yyreduce:
     break;
 
   case 11:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 171 "commandy.y"
     { debugger_breakpoint_clear( (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 12:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 172 "commandy.y"
     { debugger_breakpoint_set_commands( (yyvsp[(2) - (5)].integer), (yyvsp[(4) - (5)].string) ); }
     break;
 
   case 13:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 173 "commandy.y"
     {
 	     debugger_breakpoint_set_condition( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].exp) );
@@ -1643,50 +1620,43 @@ yyreduce:
     break;
 
   case 14:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 176 "commandy.y"
     { debugger_run(); }
     break;
 
   case 15:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 177 "commandy.y"
     { debugger_breakpoint_remove_all(); }
     break;
 
   case 16:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 178 "commandy.y"
     { debugger_breakpoint_remove( (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 17:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 179 "commandy.y"
     { ui_debugger_disassemble( (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 18:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 180 "commandy.y"
     { debugger_exit_emulator(); }
     break;
 
   case 19:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 181 "commandy.y"
     { debugger_breakpoint_exit(); }
     break;
 
   case 20:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 182 "commandy.y"
     {
 	     debugger_breakpoint_ignore( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].integer) );
@@ -1694,113 +1664,97 @@ yyreduce:
     break;
 
   case 21:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 185 "commandy.y"
     { debugger_next(); }
     break;
 
   case 22:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 186 "commandy.y"
     { debugger_port_write( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 23:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 187 "commandy.y"
     { printf( "0x%x\n", (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 24:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 188 "commandy.y"
     { debugger_poke( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 25:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 189 "commandy.y"
     { debugger_register_set( (yyvsp[(2) - (3)].reg), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 26:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 190 "commandy.y"
     { debugger_variable_set( (yyvsp[(2) - (3)].string), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 27:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 191 "commandy.y"
     { debugger_step(); }
     break;
 
   case 28:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 194 "commandy.y"
     { (yyval.bplife) = DEBUGGER_BREAKPOINT_LIFE_PERMANENT; }
     break;
 
   case 29:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 195 "commandy.y"
     { (yyval.bplife) = DEBUGGER_BREAKPOINT_LIFE_ONESHOT; }
     break;
 
   case 30:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 198 "commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_EXECUTE; }
     break;
 
   case 31:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 199 "commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_READ; }
     break;
 
   case 32:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 200 "commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_WRITE; }
     break;
 
   case 33:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 203 "commandy.y"
     { (yyval.port).mask = 0; (yyval.port).value = (yyvsp[(1) - (1)].integer); }
     break;
 
   case 34:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 204 "commandy.y"
     { (yyval.port).mask = (yyvsp[(1) - (3)].integer); (yyval.port).value = (yyvsp[(3) - (3)].integer); }
     break;
 
   case 35:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 207 "commandy.y"
     { (yyval.location).source = memory_source_any; (yyval.location).offset = (yyvsp[(1) - (1)].integer); }
     break;
 
   case 36:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 208 "commandy.y"
     {
                         (yyval.location).source = memory_source_find( (yyvsp[(1) - (5)].string) );
@@ -1816,71 +1770,61 @@ yyreduce:
     break;
 
   case 37:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 220 "commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_PORT_READ; }
     break;
 
   case 38:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 221 "commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_PORT_WRITE; }
     break;
 
   case 39:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 224 "commandy.y"
     { (yyval.exp) = NULL; }
     break;
 
   case 40:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 225 "commandy.y"
     { (yyval.exp) = (yyvsp[(2) - (2)].exp); }
     break;
 
   case 41:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 228 "commandy.y"
     { (yyval.integer) = PC; }
     break;
 
   case 42:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 229 "commandy.y"
     { (yyval.integer) = (yyvsp[(1) - (1)].integer); }
     break;
 
   case 43:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 232 "commandy.y"
     { (yyval.exp) = NULL; }
     break;
 
   case 44:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 233 "commandy.y"
     { (yyval.exp) = (yyvsp[(1) - (1)].exp); }
     break;
 
   case 45:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 236 "commandy.y"
     { (yyval.integer) = debugger_expression_evaluate( (yyvsp[(1) - (1)].exp) ); }
     break;
 
   case 46:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 239 "commandy.y"
     { (yyval.exp) = debugger_expression_new_number( (yyvsp[(1) - (1)].integer), debugger_memory_pool );
 		       if( !(yyval.exp) ) YYABORT;
@@ -1888,8 +1832,7 @@ yyreduce:
     break;
 
   case 47:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 242 "commandy.y"
     { (yyval.exp) = debugger_expression_new_register( (yyvsp[(1) - (1)].reg), debugger_memory_pool );
 			 if( !(yyval.exp) ) YYABORT;
@@ -1897,8 +1840,7 @@ yyreduce:
     break;
 
   case 48:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 245 "commandy.y"
     { (yyval.exp) = debugger_expression_new_variable( (yyvsp[(1) - (1)].string), debugger_memory_pool );
 			 if( !(yyval.exp) ) YYABORT;
@@ -1906,22 +1848,19 @@ yyreduce:
     break;
 
   case 49:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 248 "commandy.y"
     { (yyval.exp) = (yyvsp[(2) - (3)].exp); }
     break;
 
   case 50:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 249 "commandy.y"
     { (yyval.exp) = (yyvsp[(2) - (2)].exp); }
     break;
 
   case 51:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 250 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_unaryop( '-', (yyvsp[(2) - (2)].exp), debugger_memory_pool );
@@ -1930,8 +1869,7 @@ yyreduce:
     break;
 
   case 52:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 254 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_unaryop( (yyvsp[(1) - (2)].token), (yyvsp[(2) - (2)].exp), debugger_memory_pool );
@@ -1940,8 +1878,7 @@ yyreduce:
     break;
 
   case 53:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 258 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '+', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -1950,8 +1887,7 @@ yyreduce:
     break;
 
   case 54:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 262 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '-', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -1960,8 +1896,7 @@ yyreduce:
     break;
 
   case 55:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 266 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( (yyvsp[(2) - (3)].token), (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -1970,8 +1905,7 @@ yyreduce:
     break;
 
   case 56:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 270 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( (yyvsp[(2) - (3)].token), (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -1980,8 +1914,7 @@ yyreduce:
     break;
 
   case 57:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 274 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( (yyvsp[(2) - (3)].token), (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -1990,8 +1923,7 @@ yyreduce:
     break;
 
   case 58:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 278 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '&', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -2000,8 +1932,7 @@ yyreduce:
     break;
 
   case 59:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 282 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '^', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -2010,8 +1941,7 @@ yyreduce:
     break;
 
   case 60:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 286 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '|', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
@@ -2020,8 +1950,7 @@ yyreduce:
     break;
 
   case 61:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 290 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop(
@@ -2032,8 +1961,7 @@ yyreduce:
     break;
 
   case 62:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 296 "commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop(
@@ -2044,15 +1972,13 @@ yyreduce:
     break;
 
   case 63:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 304 "commandy.y"
     { (yyval.string) = (yyvsp[(1) - (1)].string); }
     break;
 
   case 64:
-
-/* Line 1806 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 305 "commandy.y"
     {
                       (yyval.string) = mempool_alloc( debugger_memory_pool, strlen( (yyvsp[(1) - (2)].string) ) + strlen( (yyvsp[(2) - (2)].string) ) + 2 );
@@ -2061,9 +1987,8 @@ yyreduce:
     break;
 
 
-
-/* Line 1806 of yacc.c  */
-#line 2067 "commandy.c"
+/* Line 1787 of yacc.c  */
+#line 1992 "commandy.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2226,7 +2151,9 @@ yyerrlab1:
       YY_STACK_PRINT (yyss, yyssp);
     }
 
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
 
   /* Shift the error token.  */
@@ -2250,7 +2177,7 @@ yyabortlab:
   yyresult = 1;
   goto yyreturn;
 
-#if !defined(yyoverflow) || YYERROR_VERBOSE
+#if !defined yyoverflow || YYERROR_VERBOSE
 /*-------------------------------------------------.
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
@@ -2292,8 +2219,6 @@ yyreturn:
 }
 
 
-
-/* Line 2067 of yacc.c  */
+/* Line 2050 of yacc.c  */
 #line 312 "commandy.y"
-
 

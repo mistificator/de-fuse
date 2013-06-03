@@ -1,7 +1,7 @@
 /* confirm.c: Confirmation dialog box
    Copyright (c) 2000-2003 Philip Kendall, Russell Marks
 
-   $Id: confirm.c 4723 2012-07-08 13:26:15Z fredm $
+   $Id: confirm.c 4962 2013-05-19 05:25:15Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ gtkui_confirm( const char *string )
   gtk_box_pack_start( GTK_BOX( content_area ), label, TRUE, TRUE, 5 );
 
   gtkstock_create_ok_cancel( dialog, NULL, G_CALLBACK( set_confirmed ),
-			     &confirm, NULL );
+                             &confirm, DEFAULT_DESTROY, DEFAULT_DESTROY );
 
   gtk_widget_show_all( dialog );
   gtk_main();

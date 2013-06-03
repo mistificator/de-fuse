@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2001-2009 Philip Kendall, Bjoern Giesler
 
-## $Id: Makefile.am 4743 2012-10-10 13:20:50Z fredm $
+## $Id: Makefile.am 4980 2013-05-21 12:37:51Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ keysyms.c: $(srcdir)/../../keysyms.pl $(srcdir)/../../keysyms.dat
 
 noinst_HEADERS = wiidisplay.h \
 	         wiikeyboard.h \
-	         wiikeysyms.h
+	         wiikeysyms.h \
+	         wiimouse.h
 
 CLEANFILES = keysyms.c
