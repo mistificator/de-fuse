@@ -1,7 +1,7 @@
 /* periph.h: code for handling peripherals
    Copyright (c) 2004-2011 Philip Kendall
 
-   $Id: periph.h 4906 2013-03-10 11:21:37Z fredm $
+   $Id: periph.h 4962 2013-05-19 05:25:15Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -153,6 +153,8 @@ void writeport_internal( libspectrum_word port, libspectrum_byte b );
 int periph_update( void );
 
 void periph_posthook( void );
+
+int periph_postcheck( void );
 
 /* Register debugger page/unpage events for a peripheral */
 void periph_register_paging_events( const char *type_string, int *page_event,

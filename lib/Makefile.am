@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2004 Philip Kendall
 
-## $Id: Makefile.am 4624 2012-01-09 20:59:35Z pak21 $
+## $Id: Makefile.am 4980 2013-05-21 12:37:51Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -64,6 +64,8 @@ EXTRA_DIST = $(FILES) \
  	tests/fatware-success.hdf.bz2 \
  	tests/idedos-success.hdf.bz2 \
         tests/success.mdr \
+	tests/success.mgt.bz2 \
+	tests/success.opd \
 	tests/success.udi \
 	uncompressed/disk_plus3.szx \
 	uncompressed/tape_128.szx \

@@ -1,7 +1,7 @@
 # Fuse::Dialog: routines for creating Fuse dialog boxes
 # Copyright (c) 2003-2005 Philip Kendall
 
-# $Id: Dialog.pm 2889 2007-05-26 17:45:08Z zubzero $
+# $Id: Dialog.pm 4962 2013-05-19 05:25:15Z sbaldovi $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,12 +49,18 @@ sub read (;$) {
 	my( $name, $title, @widgets ) = split /\n/;
 
 	my @widget_data;
+	my $postcheck;
 	my $posthook;
 
 	foreach( @widgets ) {
 
 	    my( $widget_type, $text, $value, $key, $data1, $data2 ) =
 		split /\s*,\s*/;
+
+	    if( lc $widget_type eq 'postcheck' ) {
+		$postcheck = $text;
+		next;
+	    }
 
 	    if( lc $widget_type eq 'posthook' ) {
 		$posthook = $text;
@@ -72,6 +78,7 @@ sub read (;$) {
 
 	push @dialogs, { name => $name,
 			 title => $title,
+			 postcheck => $postcheck,
 			 posthook => $posthook,
 			 widgets => \@widget_data };
     }

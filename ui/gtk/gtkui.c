@@ -1,7 +1,7 @@
 /* gtkui.c: GTK+ routines for dealing with the user interface
    Copyright (c) 2000-2005 Philip Kendall, Russell Marks
 
-   $Id: gtkui.c 4740 2012-10-10 12:48:21Z fredm $
+   $Id: gtkui.c 4968 2013-05-19 16:11:17Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -456,8 +456,9 @@ menu_get_scaler( scaler_available_fn selector )
 
   /* Create and add the actions buttons to the dialog box */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     G_CALLBACK( menu_options_filter_done ),
-			     (gpointer) &dialog, NULL );
+                             G_CALLBACK( menu_options_filter_done ),
+                             (gpointer) &dialog, DEFAULT_DESTROY,
+                             DEFAULT_DESTROY );
 
   gtk_widget_show_all( dialog.dialog );
 
@@ -535,8 +536,12 @@ void
 menu_machine_reset( GtkAction *gtk_action GCC_UNUSED, guint action )
 {
   int hard_reset = action;
+  const char *message = "Reset?";
 
-  if( gtkui_confirm( "Reset?" ) && machine_reset( hard_reset ) ) {
+  if( hard_reset )
+    message = "Hard reset?";
+
+  if( gtkui_confirm( message ) && machine_reset( hard_reset ) ) {
     ui_error( UI_ERROR_ERROR, "couldn't reset machine: giving up!" );
 
     /* FIXME: abort() seems a bit extreme here, but it'll do for now */
@@ -589,8 +594,9 @@ menu_machine_select( GtkAction *gtk_action GCC_UNUSED,
 
   /* Create and add the actions buttons to the dialog box */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     G_CALLBACK( menu_machine_select_done ),
-			     (gpointer) &dialog, NULL );
+                             G_CALLBACK( menu_machine_select_done ),
+                             (gpointer) &dialog, DEFAULT_DESTROY,
+                             DEFAULT_DESTROY );
 
   gtk_widget_show_all( dialog.dialog );
 
@@ -749,8 +755,9 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type,
 
   /* Create and add the actions buttons to the dialog box */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-			     G_CALLBACK( confirm_joystick_done ),
-			     (gpointer) &dialog, NULL );
+                             G_CALLBACK( confirm_joystick_done ),
+                             (gpointer) &dialog, DEFAULT_DESTROY,
+                             DEFAULT_DESTROY );
 
   gtk_widget_show_all( dialog.dialog );
 

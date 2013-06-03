@@ -1,7 +1,7 @@
 /* roms.c: ROM selector dialog box
    Copyright (c) 2003-2004 Philip Kendall
 
-   $Id: roms.c 4723 2012-07-08 13:26:15Z fredm $
+   $Id: roms.c 4962 2013-05-19 05:25:15Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ menu_select_roms_with_title( const char *title, size_t start, size_t n )
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog, NULL, G_CALLBACK( roms_done ), &info,
-			     NULL );
+                             DEFAULT_DESTROY, DEFAULT_DESTROY );
 
   /* And the current values of each of the ROMs */
   vbox = GTK_BOX( gtk_dialog_get_content_area( GTK_DIALOG( dialog ) ) );

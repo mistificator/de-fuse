@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2004 Philip Kendall
 
-## $Id: Makefile.am 4743 2012-10-10 13:20:50Z fredm $
+## $Id: Makefile.am 4980 2013-05-21 12:37:51Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ EXTRA_libsound_a_SOURCES = dxsound.c \
 		     	   sdlsound.c \
 		     	   sfifo.c \
 		     	   sunsound.c \
+		     	   wiisound.c \
 		     	   win32sound.c
 
 libsound_a_LIBADD = $(SOUND_LIBADD)

@@ -1,7 +1,7 @@
 /* binary.c: GTK+ routines to load/save chunks of binary data
    Copyright (c) 2003-2005 Philip Kendall
 
-   $Id: binary.c 4908 2013-03-10 22:13:57Z sbaldovi $
+   $Id: binary.c 4962 2013-05-19 05:25:15Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@ create_binary_dialog( struct binary_info *info, const char *title )
 
   /* Command buttons */
   gtkstock_create_ok_cancel( info->dialog, NULL, info->activate_data, info,
-                             NULL );
+                             DEFAULT_DESTROY, DEFAULT_DESTROY );
 }
 
 void

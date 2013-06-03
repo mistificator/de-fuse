@@ -1,7 +1,7 @@
 /* gtkinternals.h: stuff internal to the GTK+ UI
    Copyright (c) 2003-2005 Philip Kendall
 
-   $Id: gtkinternals.h 4723 2012-07-08 13:26:15Z fredm $
+   $Id: gtkinternals.h 4962 2013-05-19 05:25:15Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -108,7 +108,8 @@ GtkAccelGroup* gtkstock_create_ok_cancel( GtkWidget *widget,
 					  GtkAccelGroup *accel,
 	/* for OK button -> */	          GCallback action,
 				          gpointer actiondata,
-	/* for both buttons -> */         GCallback destroy );
+	/* for both buttons -> */         GCallback destroy_ok,
+	                                  GCallback destroy_cancel );
 GtkAccelGroup* gtkstock_create_close( GtkWidget *widget, GtkAccelGroup *accel,
 				      GCallback destroy,
 				      gboolean esconly );

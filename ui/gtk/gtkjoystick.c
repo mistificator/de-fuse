@@ -1,7 +1,7 @@
 /* gtkjoystick.c: Joystick emulation
    Copyright (c) 2003-2004 Darren Salt, Philip Kendall
 
-   $Id: gtkjoystick.c 4915 2013-04-07 05:32:09Z fredm $
+   $Id: gtkjoystick.c 4962 2013-05-19 05:25:15Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -231,7 +231,7 @@ menu_options_joysticks_select( GtkAction *gtk_action GCC_UNUSED,
   g_object_unref( model );
 
   gtkstock_create_ok_cancel( dialog, NULL, G_CALLBACK( joystick_done ),
-			     &info, NULL );
+                             &info, DEFAULT_DESTROY, DEFAULT_DESTROY );
 
   gtk_widget_show_all( dialog );
   gtk_main();

@@ -34,6 +34,8 @@ Fuse has been brought to you by:
 * Marek Januszewski: Some patches making Fuse much closer to compiling under
   Win32, and fixing up the GTK+ 2.0 interface.
 
+* Sergio Baldoví: improvements to the Win32 UI.
+
 * Stuart Brady: for the Scorpion, +D interface emulation and HP-UX sound
   support.
 
@@ -52,4 +54,4 @@ Fuse has been brought to you by:
 
 * Philip Kendall: everything else.
 
-$Id: AUTHORS 4835 2012-12-31 15:35:45Z zubzero $
+$Id: AUTHORS 4972 2013-05-19 16:46:43Z zubzero $

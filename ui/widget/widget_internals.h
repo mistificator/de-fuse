@@ -1,7 +1,7 @@
 /* widget_internals.h: Functions internal to the widget code
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall
 
-   $Id: widget_internals.h 4543 2011-09-19 01:46:48Z fredm $
+   $Id: widget_internals.h 4968 2013-05-19 16:11:17Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -259,6 +259,7 @@ int widget_query_draw( void *data );
 void widget_query_keyhandler( input_key key );
 int widget_query_save_draw( void *data );
 void widget_query_save_keyhandler( input_key key );
+int widget_query_finish( widget_finish_state finished );
 
 /* The widgets actually available */
 

@@ -3,7 +3,7 @@
 # settings-header.pl: generate settings.h from settings.dat
 # Copyright (c) 2002-2003 Philip Kendall
 
-# $Id: settings-header.pl 4924 2013-05-05 07:40:02Z sbaldovi $
+# $Id: settings-header.pl 4961 2013-05-19 05:17:30Z sbaldovi $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -102,8 +102,8 @@ extern settings_info settings_current;
 extern settings_info settings_default;
 
 int settings_init( int *first_arg, int argc, char **argv );
-int settings_defaults( settings_info *settings );
-int settings_copy( settings_info *dest, settings_info *src );
+void settings_defaults( settings_info *settings );
+void settings_copy( settings_info *dest, settings_info *src );
 
 #define SETTINGS_ROM_COUNT 30
 char **settings_get_rom_setting( settings_info *settings, size_t which );
