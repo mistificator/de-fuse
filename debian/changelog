@@ -1,3 +1,11 @@
+fuse-emulator (1.1.1+dfsg1-2) unstable; urgency=low
+
+  [ Sergio Baldovi ]
+  * debian/rules: don't override the hardening flags in the GTK+ version
+    (Closes: #712098).
+
+ -- Alberto Garcia <berto@igalia.com>  Thu, 13 Jun 2013 11:55:48 +0300
+
 fuse-emulator (1.1.1+dfsg1-1) unstable; urgency=low
 
   * New upstream release.

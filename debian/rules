@@ -9,7 +9,7 @@ override_dh_auto_configure:
 
 override_dh_auto_build:
 	rm -f ui/gtk/options.c
-	CFLAGS="-g -O2 -Wall -DG_DISABLE_CAST_CHECKS" dh_auto_configure -- \
+	CFLAGS="$(CFLAGS) -DG_DISABLE_CAST_CHECKS" dh_auto_configure -- \
 		$(CONFIGURE_OPTIONS) --with-x --enable-gtk3
 	dh_auto_build
 	mv fuse fuse-gtk
