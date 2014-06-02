@@ -1,3 +1,9 @@
+fuse-emulator (1.1.1+dfsg1-3) UNRELEASED; urgency=medium
+
+  * debian/rules: enable parallel builds.
+
+ -- Alberto Garcia <berto@igalia.com>  Mon, 02 Jun 2014 15:35:14 +0300
+
 fuse-emulator (1.1.1+dfsg1-2) unstable; urgency=low
 
   [ Sergio Baldovi ]

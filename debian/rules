@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 %:
-	dh $@ --with autoreconf
+	dh $@ --with autoreconf --parallel
 
 CONFIGURE_OPTIONS := --with-roms-dir=/usr/share/spectrum-roms \
 	--enable-desktop-integration
