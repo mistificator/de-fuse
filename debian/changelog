@@ -1,13 +1,16 @@
-fuse-emulator (1.1.1+dfsg1-3) UNRELEASED; urgency=medium
+fuse-emulator (1.1.1+dfsg1-3) unstable; urgency=medium
 
-  * debian/rules: enable parallel builds.
+  * debian/rules:
+    - Enable parallel builds.
   * button-settings.patch:
     - Fix segmentation fault in the GTK+ UI due to uninitialised keyboard
       button settings.
   * debian/control:
     - Update Standards-Version to 3.9.6 (no changes).
+  * debian/copyright:
+    - Update copyright years.
 
- -- Alberto Garcia <berto@igalia.com>  Mon, 02 Jun 2014 15:35:14 +0300
+ -- Alberto Garcia <berto@igalia.com>  Tue, 05 May 2015 14:32:31 +0300
 
 fuse-emulator (1.1.1+dfsg1-2) unstable; urgency=low
 
