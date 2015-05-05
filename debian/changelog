@@ -4,6 +4,8 @@ fuse-emulator (1.1.1+dfsg1-3) UNRELEASED; urgency=medium
   * button-settings.patch:
     - Fix segmentation fault in the GTK+ UI due to uninitialised keyboard
       button settings.
+  * debian/control:
+    - Update Standards-Version to 3.9.6 (no changes).
 
  -- Alberto Garcia <berto@igalia.com>  Mon, 02 Jun 2014 15:35:14 +0300
 
