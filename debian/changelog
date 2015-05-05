@@ -1,6 +1,9 @@
 fuse-emulator (1.1.1+dfsg1-3) UNRELEASED; urgency=medium
 
   * debian/rules: enable parallel builds.
+  * button-settings.patch:
+    - Fix segmentation fault in the GTK+ UI due to uninitialised keyboard
+      button settings.
 
  -- Alberto Garcia <berto@igalia.com>  Mon, 02 Jun 2014 15:35:14 +0300
 

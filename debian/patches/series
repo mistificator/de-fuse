@@ -6,3 +6,4 @@ disable-autoload.patch
 dont-use-sdl-audio.patch
 desktop-file.patch
 manpage-errors.patch
+button-settings.patch
