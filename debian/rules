@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
-%:
-	dh $@ --with autoreconf --parallel
+
+BUILD_DIR_GTK=$(CURDIR)/build-gtk
+BUILD_DIR_SDL=$(CURDIR)/build-sdl
 
 CONFIGURE_OPTIONS := --with-roms-dir=/usr/share/spectrum-roms \
 	--with-bash-completion-dir=/usr/share/bash-completion/completions \
@@ -10,32 +11,38 @@ ifeq (,$(filter debug,$(DEB_BUILD_OPTIONS)))
 	CPPFLAGS += -DNDEBUG -DG_DISABLE_CAST_CHECKS
 endif
 
+%:
+	dh $@ --with autoreconf --parallel
+
 override_dh_auto_configure:
+	dh_auto_configure -B$(BUILD_DIR_GTK) -- $(CONFIGURE_OPTIONS) --with-x
+	dh_auto_configure -B$(BUILD_DIR_SDL) -- $(CONFIGURE_OPTIONS) --with-sdl
 
 override_dh_auto_build:
-	rm -f ui/gtk/options.c
-	dh_auto_configure -- $(CONFIGURE_OPTIONS) --with-x --enable-gtk3
-	dh_auto_build
-	mv fuse fuse-gtk
-	mv ui/gtk/menu_data.ui .
-	cat data/fuse.desktop | \
+	dh_auto_build -B$(BUILD_DIR_GTK) -- EXEEXT=-gtk
+	cat $(BUILD_DIR_GTK)/data/fuse.desktop | \
 		sed -e 's,Exec=.*,Exec=/usr/bin/fuse-gtk %f,' \
 		    -e 's,Name=\(.*\),Name=\1 (GTK+ version),' > \
-		debian/fuse-gtk.desktop
-	dh_auto_clean
-	dh_auto_configure -- $(CONFIGURE_OPTIONS) --with-sdl
-	dh_auto_build
-	cp fuse fuse-sdl
-	cat data/fuse.desktop | \
+		$(BUILD_DIR_GTK)/fuse-gtk.desktop
+
+	dh_auto_build -B$(BUILD_DIR_SDL) -- EXEEXT=-sdl
+	cat $(BUILD_DIR_SDL)/data/fuse.desktop | \
 		sed -e 's,Exec=.*,Exec=/usr/bin/fuse-sdl %f,' \
 		    -e 's,Name=\(.*\),Name=\1 (SDL version),' \
 		    -e 's,GNOME;GTK;,,' > \
-		debian/fuse-sdl.desktop
+		$(BUILD_DIR_SDL)/fuse-sdl.desktop
 
-override_dh_clean:
-	rm -f fuse.png menu_data.ui fuse-gtk fuse-sdl
-	rm -f debian/fuse-gtk.desktop debian/fuse-sdl.desktop
-	dh_clean
+override_dh_auto_install:
+	dh_auto_install -B$(BUILD_DIR_GTK) -- EXEEXT=-gtk
+	dh_auto_install -B$(BUILD_DIR_SDL) -- EXEEXT=-sdl
+
+override_dh_auto_test:
+	dh_auto_test -B$(BUILD_DIR_GTK)
+	dh_auto_test -B$(BUILD_DIR_SDL)
+
+override_dh_auto_clean:
+	dh_auto_clean -B$(BUILD_DIR_GTK)
+	dh_auto_clean -B$(BUILD_DIR_SDL)
 
 VERSION := $(shell dpkg-parsechangelog | sed -ne 's/^Version: \(.*\)-.*/\1/p')
 UPSTREAM_VERSION := $(shell echo $(VERSION) | sed 's/+dfsg1//')

@@ -1,2 +1,2 @@
-debian/fuse-sdl.desktop usr/share/applications
-fuse-sdl usr/bin
+build-sdl/fuse-sdl.desktop usr/share/applications
+usr/bin/fuse-sdl
