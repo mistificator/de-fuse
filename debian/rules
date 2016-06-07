@@ -6,12 +6,15 @@ CONFIGURE_OPTIONS := --with-roms-dir=/usr/share/spectrum-roms \
 	--with-bash-completion-dir=/usr/share/bash-completion/completions \
 	--enable-desktop-integration
 
+ifeq (,$(filter debug,$(DEB_BUILD_OPTIONS)))
+	CPPFLAGS += -DNDEBUG -DG_DISABLE_CAST_CHECKS
+endif
+
 override_dh_auto_configure:
 
 override_dh_auto_build:
 	rm -f ui/gtk/options.c
-	CFLAGS="$(CFLAGS) -DG_DISABLE_CAST_CHECKS" dh_auto_configure -- \
-		$(CONFIGURE_OPTIONS) --with-x --enable-gtk3
+	dh_auto_configure -- $(CONFIGURE_OPTIONS) --with-x --enable-gtk3
 	dh_auto_build
 	mv fuse fuse-gtk
 	mv ui/gtk/menu_data.ui .

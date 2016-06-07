@@ -21,6 +21,8 @@ fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
       + Enable bash completion in configure.
     - bash-completion.patch:
       + Add bash completion for the fuse-gtk and fuse-sdl binaries.
+  * debian/rules:
+    - Build both binaries with -DNDEBUG -DG_DISABLE_CAST_CHECKS.
   * debian/control:
     - Build depend on libspectrum 1.2.0.
     - Update Standards-Version to 3.9.8 (no changes).
