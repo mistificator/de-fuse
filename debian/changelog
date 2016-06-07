@@ -1,3 +1,9 @@
+fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
+
+  * New upstream release (Closes: #745402).
+
+ -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jun 2016 21:28:36 +0300
+
 fuse-emulator (1.1.1+dfsg1-3) unstable; urgency=medium
 
   * debian/rules:
