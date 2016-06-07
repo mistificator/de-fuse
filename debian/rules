@@ -3,6 +3,7 @@
 	dh $@ --with autoreconf --parallel
 
 CONFIGURE_OPTIONS := --with-roms-dir=/usr/share/spectrum-roms \
+	--with-bash-completion-dir=/usr/share/bash-completion/completions \
 	--enable-desktop-integration
 
 override_dh_auto_configure:

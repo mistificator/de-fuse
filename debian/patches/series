@@ -5,3 +5,4 @@ load-opense-rom.patch
 disable-autoload.patch
 desktop-file.patch
 manpage-errors.patch
+bash-completion.patch
