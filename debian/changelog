@@ -16,6 +16,9 @@ fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
     - disable-autoload.patch
     - desktop-file.patch
     - manpage-errors.patch
+  * debian/control:
+    - Build depend on libspectrum 1.2.0.
+    - Update Standards-Version to 3.9.8 (no changes).
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jun 2016 21:28:36 +0300
 
