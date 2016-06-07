@@ -1,4 +1,4 @@
-fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
+fuse-emulator (1.2.0+dfsg1-1) unstable; urgency=medium
 
   * New upstream release (Closes: #745402).
   * Verify GPG signature of the upstream tarball:
@@ -34,7 +34,7 @@ fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
   * debian/fuse-emulator-common.install:
     - Install hacking/{peripheral_tests.txt,spectranet.txt}.
 
- -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jun 2016 21:28:36 +0300
+ -- Alberto Garcia <berto@igalia.com>  Wed, 08 Jun 2016 01:46:07 +0300
 
 fuse-emulator (1.1.1+dfsg1-3) unstable; urgency=medium
 
