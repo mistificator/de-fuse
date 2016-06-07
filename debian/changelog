@@ -1,6 +1,11 @@
 fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
 
   * New upstream release (Closes: #745402).
+  * Verify GPG signature of the upstream tarball:
+    - debian/upstream/signing-key.asc:
+      + Add key file.
+    - debian/watch:
+      + Add pgpsigurlmangle option.
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jun 2016 21:28:36 +0300
 
