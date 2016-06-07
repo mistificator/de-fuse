@@ -28,6 +28,8 @@ fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
     - Build depend on libspectrum 1.2.0.
     - Update Standards-Version to 3.9.8 (no changes).
     - Update package descriptions with the new features in this release.
+  * debian/copyright:
+    - Update copyright years.
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jun 2016 21:28:36 +0300
 

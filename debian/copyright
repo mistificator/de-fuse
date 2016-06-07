@@ -6,7 +6,7 @@ Comment:
  non-free software. See the README.Debian file for details.
 
 Files: *
-Copyright: 1999-2013 Philip Kendall and others
+Copyright: 1999-2016 Philip Kendall and others
 License: GPL-2+
 Comment:
  See the AUTHORS file for details on other contributors.
@@ -29,7 +29,7 @@ Copyright: 2000-2002 David Olofson
 License: LGPL-2.1+
 
 Files: debian/*
-Copyright: 2010-2013,2015 Alberto Garcia <berto@igalia.com>
+Copyright: 2010-2013,2015-2016 Alberto Garcia <berto@igalia.com>
 License: GPL-2+
 
 License: GPL-2+
