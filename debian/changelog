@@ -6,6 +6,16 @@ fuse-emulator (1.2.0+dfsg1-1) UNRELEASED; urgency=medium
       + Add key file.
     - debian/watch:
       + Add pgpsigurlmangle option.
+  * Drop the following patches:
+    - button-settings.patch
+    - dont-use-sdl-audio.patch
+  * Refresh the following patches:
+    - compile-without-roms.patch
+    - missing-roms-help.patch
+    - load-opense-rom.patch
+    - disable-autoload.patch
+    - desktop-file.patch
+    - manpage-errors.patch
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jun 2016 21:28:36 +0300
 

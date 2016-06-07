@@ -7,13 +7,13 @@ Index: fuse-emulator/data/Makefile.am
 ===================================================================
 --- fuse-emulator.orig/data/Makefile.am
 +++ fuse-emulator/data/Makefile.am
-@@ -28,8 +28,7 @@ if DESKTOP_INTEGRATION
+@@ -27,8 +27,7 @@ if DESKTOP_INTEGRATION
  fusemimedir = $(DESKTOP_DATADIR)/mime/packages
- fusemime_DATA = fuse.xml
+ fusemime_DATA = data/fuse.xml
  
 -appdatadir = $(DESKTOP_DATADIR)/applications
--appdata_DATA = fuse.desktop
-+noinst_DATA = fuse.desktop
+-appdata_DATA = data/fuse.desktop
++noinst_DATA = data/fuse.desktop
  
  iconsdatadir = $(DESKTOP_DATADIR)/icons/hicolor
  icons16dir = $(iconsdatadir)/16x16/apps

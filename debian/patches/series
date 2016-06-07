@@ -3,7 +3,5 @@ missing-roms-help.patch
 rom-search-path.patch
 load-opense-rom.patch
 disable-autoload.patch
-dont-use-sdl-audio.patch
 desktop-file.patch
 manpage-errors.patch
-button-settings.patch
