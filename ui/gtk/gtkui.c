@@ -1,7 +1,7 @@
 /* gtkui.c: GTK+ routines for dealing with the user interface
-   Copyright (c) 2000-2005 Philip Kendall, Russell Marks
+   Copyright (c) 2000-2015 Philip Kendall, Russell Marks, Sergio Baldoví
 
-   $Id: gtkui.c 4968 2013-05-19 16:11:17Z zubzero $
+   $Id: gtkui.c 5510 2016-05-22 08:37:30Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 #include <config.h>
 
+#include <math.h>
 #include <stdio.h>
 
 #include <gdk/gdkkeysyms.h>
@@ -61,6 +62,8 @@ GtkWidget *gtkui_window;
 
 /* The area into which the screen will be drawn */
 GtkWidget *gtkui_drawing_area;
+
+static GtkWidget *menu_bar;
 
 /* The UIManager used to create the menu bar */
 GtkUIManager *ui_manager_menu = NULL;
@@ -100,7 +103,7 @@ static void menu_machine_select_done( GtkWidget *widget, gpointer user_data );
 
 static const GtkTargetEntry drag_types[] =
 {
-    { "text/uri-list", GTK_TARGET_OTHER_APP, 0 }
+    { (gchar *)"text/uri-list", GTK_TARGET_OTHER_APP, 0 }
 };
 
 static void gtkui_drag_data_received( GtkWidget *widget GCC_UNUSED,
@@ -148,7 +151,7 @@ static void gtkui_drag_data_received( GtkWidget *widget GCC_UNUSED,
 int
 ui_init( int *argc, char ***argv )
 {
-  GtkWidget *box, *menu_bar;
+  GtkWidget *box;
   GtkAccelGroup *accel_group;
   GtkSettings *settings;
 
@@ -166,7 +169,6 @@ ui_init( int *argc, char ***argv )
   settings = gtk_widget_get_settings( GTK_WIDGET( gtkui_window ) );
   g_object_set( settings, "gtk-menu-bar-accel", "F1", NULL );
   gtk_window_set_title( GTK_WINDOW(gtkui_window), "Fuse" );
-  gtk_window_set_wmclass( GTK_WINDOW(gtkui_window), fuse_progname, "Fuse" );
 
   g_signal_connect(G_OBJECT(gtkui_window), "delete-event",
 		   G_CALLBACK(gtkui_delete), NULL);
@@ -185,7 +187,7 @@ ui_init( int *argc, char ***argv )
   gtk_drag_dest_set( GTK_WIDGET( gtkui_window ),
                      GTK_DEST_DEFAULT_ALL,
                      drag_types,
-                     G_N_ELEMENTS( drag_types ),
+                     ARRAY_SIZE( drag_types ),
                      GDK_ACTION_COPY | GDK_ACTION_PRIVATE | GDK_ACTION_MOVE );
                      /* GDK_ACTION_PRIVATE alone DNW with ROX-Filer,
                         GDK_ACTION_MOVE allow DnD from KDE */
@@ -294,7 +296,9 @@ gtkui_make_menu(GtkAccelGroup **accel_group,
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 0 );
   ui_menu_activate( UI_MENU_ITEM_RECORDING_ROLLBACK, 0 );
   ui_menu_activate( UI_MENU_ITEM_TAPE_RECORDING, 0 );
-
+#ifdef HAVE_LIB_XML2
+  ui_menu_activate( UI_MENU_ITEM_FILE_SVG_CAPTURE, 0 );
+#endif
   return FALSE;
 }
 
@@ -402,6 +406,10 @@ menu_file_exit( GtkAction *gtk_action GCC_UNUSED, gpointer data GCC_UNUSED )
     /* Stop the paused state to allow us to exit (occurs from main
        emulation loop) */
     if( paused ) menu_machine_pause( NULL, NULL );
+
+    /* Ensure we break out of the main Z80 loop, there could be active
+       breakpoints before the next event */
+    debugger_exit_emulator();
   }
 }
 
@@ -652,10 +660,12 @@ menu_help_keyboard( GtkAction *gtk_action GCC_UNUSED, gpointer data GCC_UNUSED )
 void
 menu_help_about( GtkAction *gtk_action GCC_UNUSED, gpointer data GCC_UNUSED )
 {
+  /* TODO: show Fuse icon */
   gtk_show_about_dialog( GTK_WINDOW( gtkui_window ),
-                         "name", "Fuse",
+                         "program-name", "Fuse",
                          "comments", "The Free Unix Spectrum Emulator",
                          "copyright", FUSE_COPYRIGHT,
+                         "logo-icon-name", NULL,
                          "version", VERSION,
                          "website", PACKAGE_URL,
                          NULL );
@@ -796,18 +806,47 @@ gtkui_free_font( gtkui_font font )
 void
 gtkui_set_font( GtkWidget *widget, gtkui_font font )
 {
-  gtk_widget_modify_font( widget, font );
+  gtk_widget_override_font( widget, font );
+}
+
+void
+gtkui_list_set_cursor( GtkTreeView *list, int row )
+{
+  GtkTreePath *path;
+
+  if( row >= 0 ) {
+    path = gtk_tree_path_new_from_indices( row, -1 );
+    gtk_tree_view_set_cursor( list, path, NULL, FALSE );
+    gtk_tree_path_free( path );
+  }
+}
+
+int
+gtkui_list_get_cursor( GtkTreeView *list )
+{
+  GtkTreePath *path;
+  GtkTreeViewColumn *focus_column;
+  int *indices;
+  int row = -1;
+
+  /* Get selected row */
+  gtk_tree_view_get_cursor( list, &path, &focus_column );
+  if( path ) {
+    indices = gtk_tree_path_get_indices( path );
+    if( indices ) row = indices[0];
+    gtk_tree_path_free( path );
+  }
+
+  return row;
 }
 
 static gboolean
 key_press( GtkTreeView *list, GdkEventKey *event, gpointer user_data )
 {
   GtkAdjustment *adjustment = user_data;
-  GtkTreePath *path;
-  GtkTreeViewColumn *focus_column;
   gdouble base, oldbase, base_limit;
   gdouble page_size, step_increment;
-  int cursor_row = 0;
+  int cursor_row;
   int num_rows;
 
   base = oldbase = gtk_adjustment_get_value( adjustment );
@@ -816,12 +855,7 @@ key_press( GtkTreeView *list, GdkEventKey *event, gpointer user_data )
   num_rows = ( page_size + 1 ) / step_increment;
 
   /* Get selected row */
-  gtk_tree_view_get_cursor( list, &path, &focus_column );
-  if( path ) {
-    int *indices = gtk_tree_path_get_indices( path );
-    if( indices ) cursor_row = indices[0];
-    gtk_tree_path_free( path );
-  }
+  cursor_row = gtkui_list_get_cursor( list );
 
   switch( event->keyval )
   {
@@ -868,9 +902,7 @@ key_press( GtkTreeView *list, GdkEventKey *event, gpointer user_data )
     gtk_adjustment_set_value( adjustment, base );
 
     /* Mark selected row */
-    path = gtk_tree_path_new_from_indices( cursor_row, -1 );
-    gtk_tree_view_set_cursor( list, path, NULL, FALSE );
-    gtk_tree_path_free( path );
+    gtkui_list_set_cursor( list, cursor_row );
     return TRUE;
   }
 
@@ -878,11 +910,11 @@ key_press( GtkTreeView *list, GdkEventKey *event, gpointer user_data )
 }
 
 static gboolean
-wheel_scroll_event( GtkTreeView *list GCC_UNUSED, GdkEvent *event,
-                    gpointer user_data )
+wheel_scroll_event( GtkTreeView *list, GdkEvent *event, gpointer user_data )
 {
   GtkAdjustment *adjustment = user_data;
   gdouble base, oldbase, base_limit;
+  int cursor_row;
 
   base = oldbase = gtk_adjustment_get_value( adjustment );
 
@@ -894,6 +926,29 @@ wheel_scroll_event( GtkTreeView *list GCC_UNUSED, GdkEvent *event,
   case GDK_SCROLL_DOWN:
     base += gtk_adjustment_get_page_increment( adjustment ) / 2;
     break;
+
+#if GTK_CHECK_VERSION( 3, 4, 0 )
+  case GDK_SCROLL_SMOOTH:
+    {
+      static gdouble total_dy = 0;
+      gdouble dx, dy, page_size;
+      int delta;
+
+      if( gdk_event_get_scroll_deltas( event, &dx, &dy ) ) {
+        total_dy += dy;
+        page_size = gtk_adjustment_get_page_size( adjustment );
+        delta = total_dy * pow( page_size, 2.0 / 3.0 );
+
+        /* Is movement significative? */
+        if( delta ) {
+          base += delta;
+          total_dy = 0;
+        }
+      }
+      break;
+    }
+#endif
+
   default:
     return FALSE;
   }
@@ -906,7 +961,11 @@ wheel_scroll_event( GtkTreeView *list GCC_UNUSED, GdkEvent *event,
     if( base > base_limit ) base = base_limit;
   }
 
-  if( base != oldbase ) gtk_adjustment_set_value( adjustment, base );
+  if( base != oldbase ) {
+    cursor_row = gtkui_list_get_cursor( list );
+    gtk_adjustment_set_value( adjustment, base );
+    gtkui_list_set_cursor( list, cursor_row );
+  }
 
   return TRUE;
 }
@@ -918,4 +977,14 @@ gtkui_scroll_connect( GtkTreeView *list, GtkAdjustment *adj )
                     G_CALLBACK( key_press ), adj );
   g_signal_connect( list, "scroll-event",
                     G_CALLBACK( wheel_scroll_event ), adj );
+}
+
+int
+gtkui_menubar_get_height( void )
+{
+  GtkAllocation alloc;
+
+  gtk_widget_get_allocation( menu_bar, &alloc );
+
+  return alloc.height;
 }

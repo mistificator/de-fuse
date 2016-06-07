@@ -1,9 +1,10 @@
 #!/usr/bin/perl -w
 
 # options-resource.pl: generate options dialog boxes
-# $Id: options-resource.pl 4321 2011-03-19 11:33:23Z fredm $
+# $Id: options-resource.pl 5434 2016-05-01 04:22:45Z fredm $
 
 # Copyright (c) 2001-2007 Philip Kendall, Stuart Brady, Marek Januszewski
+# Copyright (c) 2015 Sergio Baldoví
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,8 +79,8 @@ foreach( @dialogs ) {
 
     $y += 5;
 
-    $buffer .= sprintf "  DEFPUSHBUTTON \"OK\",IDOK,45,$y,50,14\n", $optname;
-    $buffer .= sprintf "  PUSHBUTTON \"Cancel\",IDCANCEL,100,$y,50,14\n", $optname;
+    $buffer .= sprintf "  DEFPUSHBUTTON \"OK\",IDOK,45,$y,50,14\n";
+    $buffer .= sprintf "  PUSHBUTTON \"Cancel\",IDCANCEL,100,$y,50,14\n";
 
     $y += 14 + 5; #height of the buttons + 5 margin
    

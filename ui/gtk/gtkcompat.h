@@ -1,7 +1,7 @@
 /* gtkcompat.h: various compatibility bits between GTK+ versions
    Copyright (c) 2012 Philip Kendall
 
-   $Id: gtkcompat.h 4723 2012-07-08 13:26:15Z fredm $
+   $Id: gtkcompat.h 5089 2014-08-03 22:16:55Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ gtk_separator_new( GtkOrientation orientation );
 
 GtkWidget *
 gtk_scrollbar_new( GtkOrientation orientation, GtkAdjustment *adjustment );
+
+#define gtk_widget_override_font( X, Y ) gtk_widget_modify_font( X, Y )
 
 #endif
 

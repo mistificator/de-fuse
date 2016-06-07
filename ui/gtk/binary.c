@@ -1,7 +1,8 @@
 /* binary.c: GTK+ routines to load/save chunks of binary data
-   Copyright (c) 2003-2005 Philip Kendall
+   Copyright (c) 2003-2013 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: binary.c 4962 2013-05-19 05:25:15Z sbaldovi $
+   $Id: binary.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,12 +53,12 @@ struct binary_info {
 };
 
 static void change_load_filename( GtkButton *button, gpointer user_data );
-static void load_data( GtkButton *button, gpointer user_data );
+static void load_data( GtkEntry *entry, gpointer user_data );
 
 static void change_save_filename( GtkButton *button, gpointer user_data );
-static void save_data( GtkButton *button, gpointer user_data );
+static void save_data( GtkEntry *entry, gpointer user_data );
 
-void
+static void
 create_binary_dialog( struct binary_info *info, const char *title )
 {
   GtkWidget *table, *button, *content_area;
@@ -215,7 +216,7 @@ change_load_filename( GtkButton *button GCC_UNUSED, gpointer user_data )
 }
 
 static void
-load_data( GtkButton *button GCC_UNUSED, gpointer user_data )
+load_data( GtkEntry *entry GCC_UNUSED, gpointer user_data )
 {
   struct binary_info *info = user_data;
 
@@ -298,7 +299,7 @@ change_save_filename( GtkButton *button GCC_UNUSED, gpointer user_data )
 }
 
 static void
-save_data( GtkButton *button GCC_UNUSED, gpointer user_data )
+save_data( GtkEntry *entry GCC_UNUSED, gpointer user_data )
 {
   struct binary_info *info = user_data;
 

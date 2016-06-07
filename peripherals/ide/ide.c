@@ -1,7 +1,7 @@
 /* ide.c: Generic routines shared between the various IDE devices
    Copyright (c) 2005 Philip Kendall
 
-   $Id: ide.c 4972 2013-05-19 16:46:43Z zubzero $
+   $Id: ide.c 5392 2016-04-24 13:39:50Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ ide_eject( libspectrum_ide_channel *chn, libspectrum_ide_unit unit,
     }
   }
 
-  free( *setting ); *setting = NULL;
+  libspectrum_free( *setting ); *setting = NULL;
   
   error = libspectrum_ide_eject( chn, unit );
   if( error ) return error;

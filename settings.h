@@ -47,6 +47,8 @@ typedef struct settings_info {
   char *dck_file;
   char *debugger_command;
    int detect_loader;
+   int didaktik80;
+  char *didaktik80disk_file;
    int disciple;
   char *discipledisk_file;
    int disk_ask_merge;
@@ -62,6 +64,8 @@ typedef struct settings_info {
   char *drive_beta128b_type;
   char *drive_beta128c_type;
   char *drive_beta128d_type;
+  char *drive_didaktik80a_type;
+  char *drive_didaktik80b_type;
   char *drive_disciple1_type;
   char *drive_disciple2_type;
   char *drive_opus1_type;
@@ -158,8 +162,9 @@ typedef struct settings_info {
   char *rom_16;
   char *rom_48;
   char *rom_beta128;
+  char *rom_didaktik80;
   char *rom_disciple;
-  char *rom_interface_i;
+  char *rom_interface_1;
   char *rom_opus;
   char *rom_pentagon1024_0;
   char *rom_pentagon1024_1;
@@ -199,6 +204,7 @@ typedef struct settings_info {
   char *rom_tc2068_1;
   char *rom_ts2068_0;
   char *rom_ts2068_1;
+  char *rom_usource;
    int rs232_handshake;
   char *rs232_rx;
   char *rs232_tx;
@@ -230,10 +236,12 @@ typedef struct settings_info {
   char *tape_file;
    int tape_traps;
    int unittests;
+   int usource;
    int volume_ay;
    int volume_beeper;
    int volume_specdrum;
    int writable_roms;
+   int z80_is_cmos;
    int zxatasp_active;
   char *zxatasp_master_file;
   char *zxatasp_slave_file;
@@ -257,7 +265,8 @@ void settings_defaults( settings_info *settings );
 void settings_copy( settings_info *dest, settings_info *src );
 
 #define SETTINGS_ROM_COUNT 30
-char **settings_get_rom_setting( settings_info *settings, size_t which );
+char **settings_get_rom_setting( settings_info *settings, size_t which,
+				 int is_peripheral );
 
 void settings_set_string( char **string_setting, const char *value );
 

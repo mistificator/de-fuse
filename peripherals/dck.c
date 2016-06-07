@@ -1,7 +1,9 @@
 /* dck.c: dock snapshot (Warajevo .DCK) handling routines
    Copyright (c) 2003-2004 Darren Salt, Fredrick Meunier, Philip Kendall
+   Copyright (c) 2015 Sergio Baldoví
+   Copyright (c) 2015 Fredrick Meunier
 
-   $Id: dck.c 4724 2012-07-08 13:38:21Z fredm $
+   $Id: dck.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -71,7 +73,7 @@ dck_eject( void )
     return;
   }
 
-  if( settings_current.dck_file ) free( settings_current.dck_file );
+  if( settings_current.dck_file ) libspectrum_free( settings_current.dck_file );
   settings_current.dck_file = NULL;
 
   dck_active = 0;
@@ -87,13 +89,10 @@ dck_get_memory_page( libspectrum_dck_bank bank, size_t index )
     switch( bank ) {
     case LIBSPECTRUM_DCK_BANK_HOME:
       return timex_home[ index ];
-      break;
     case LIBSPECTRUM_DCK_BANK_DOCK:
       return &timex_dock[ index ];
-      break;
     case LIBSPECTRUM_DCK_BANK_EXROM:
       return &timex_exrom[ index ];
-      break;
     default:
       return NULL;
     }
@@ -204,6 +203,9 @@ dck_reset( void )
   }
 
   dck_active = 1;
+
+  /* Reset contention for pages */
+  scld_set_exrom_dock_contention();
 
   /* Make the menu item to eject the cartridge active */
   ui_menu_activate( UI_MENU_ITEM_MEDIA_CARTRIDGE_DOCK_EJECT, 1 );

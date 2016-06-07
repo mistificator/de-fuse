@@ -1,7 +1,12 @@
 /* menu.c: general menu callbacks
-   Copyright (c) 2004-2005 Philip Kendall
+   Copyright (c) 2004-2013 Philip Kendall
+   Copyright (c) 2013 Alex Badea
+   Copyright (c) 2014-2015 Sergio Baldoví
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2015 Gergely Szasz
+   Copyright (c) 2015 Stefano Bodrato
 
-   $Id: menu.c 4841 2013-01-02 01:55:24Z zubzero $
+   $Id: menu.c 5567 2016-06-01 09:57:10Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +39,7 @@
 #include "machines/specplus3.h"
 #include "peripherals/dck.h"
 #include "peripherals/disk/beta.h"
+#include "peripherals/disk/didaktik.h"
 #include "peripherals/disk/disciple.h"
 #include "peripherals/disk/opus.h"
 #include "peripherals/disk/plusd.h"
@@ -50,11 +56,19 @@
 #include "screenshot.h"
 #include "settings.h"
 #include "snapshot.h"
+#include "svg.h"
 #include "tape.h"
 #include "ui/scaler/scaler.h"
 #include "ui/ui.h"
+#include "ui/uimedia.h"
 #include "utils.h"
 #include "z80/z80.h"
+
+static int menu_select_machine_roms( libspectrum_machine machine, size_t start,
+				     size_t n );
+
+static int menu_select_peripheral_roms( const char *peripheral_name,
+					size_t start, size_t n );
 
 MENU_CALLBACK( menu_file_open )
 {
@@ -159,6 +173,31 @@ MENU_CALLBACK( menu_file_recording_stop )
   if( rzx_playback  ) rzx_stop_playback( 1 );
 }  
 
+MENU_CALLBACK( menu_file_recording_finalise )
+{
+  char *rzx_filename;
+  int error;
+
+  if( rzx_playback || rzx_recording ) return;
+
+  fuse_emulation_pause();
+
+  rzx_filename = ui_get_open_filename( "Fuse - Finalise Recording" );
+  if( !rzx_filename ) { fuse_emulation_unpause(); return; }
+
+  error = rzx_finalise_recording( rzx_filename );
+
+  if( error == LIBSPECTRUM_ERROR_NONE ) {
+    ui_error( UI_ERROR_INFO, "RZX file finalised" );
+  } else {
+    ui_error( UI_ERROR_WARNING, "RZX file cannot be finalised" );
+  }
+
+  libspectrum_free( rzx_filename );
+
+  fuse_emulation_unpause();
+}  
+
 MENU_CALLBACK( menu_file_aylogging_stop )
 {
   if ( !psg_recording ) return;
@@ -199,37 +238,50 @@ MENU_CALLBACK( menu_file_movie_pause )
   movie_pause();
 }
 
-MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_select )
+MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_machine_select )
 {
   switch( action ) {
 
-  case  1: menu_select_roms( LIBSPECTRUM_MACHINE_16,        0, 1 ); return;
-  case  2: menu_select_roms( LIBSPECTRUM_MACHINE_48,        1, 1 ); return;
-  case  3: menu_select_roms( LIBSPECTRUM_MACHINE_128,       2, 2 ); return;
-  case  4: menu_select_roms( LIBSPECTRUM_MACHINE_PLUS2,     4, 2 ); return;
-  case  5: menu_select_roms( LIBSPECTRUM_MACHINE_PLUS2A,    6, 4 ); return;
-  case  6: menu_select_roms( LIBSPECTRUM_MACHINE_PLUS3,    10, 4 ); return;
-  case  7: menu_select_roms( LIBSPECTRUM_MACHINE_PLUS3E,   14, 4 ); return;
-  case  8: menu_select_roms( LIBSPECTRUM_MACHINE_TC2048,   18, 1 ); return;
-  case  9: menu_select_roms( LIBSPECTRUM_MACHINE_TC2068,   19, 2 ); return;
-  case 10: menu_select_roms( LIBSPECTRUM_MACHINE_TS2068,   21, 2 ); return;
-  case 11: menu_select_roms( LIBSPECTRUM_MACHINE_PENT,     23, 3 ); return;
-  case 12: menu_select_roms( LIBSPECTRUM_MACHINE_PENT512,  26, 4 ); return;
-  case 13: menu_select_roms( LIBSPECTRUM_MACHINE_PENT1024, 30, 4 ); return;
-  case 14: menu_select_roms( LIBSPECTRUM_MACHINE_SCORP,    34, 4 ); return;
-  case 15: menu_select_roms( LIBSPECTRUM_MACHINE_SE,       38, 2 ); return;
-
-  case 16: menu_select_roms_with_title( "Interface 1",     40, 1 ); return;
-  case 17: menu_select_roms_with_title( "Beta 128",        41, 1 ); return;
-  case 18: menu_select_roms_with_title( "+D",              42, 1 ); return;
-  case 19: menu_select_roms_with_title( "DISCiPLE",        43, 1 ); return;
-  case 20: menu_select_roms_with_title( "Opus Discovery",  44, 1 ); return;
-  case 21: menu_select_roms_with_title( "SpeccyBoot",      45, 1 ); return;
+  case  1: menu_select_machine_roms( LIBSPECTRUM_MACHINE_16,        0, 1 ); return;
+  case  2: menu_select_machine_roms( LIBSPECTRUM_MACHINE_48,        1, 1 ); return;
+  case  3: menu_select_machine_roms( LIBSPECTRUM_MACHINE_128,       2, 2 ); return;
+  case  4: menu_select_machine_roms( LIBSPECTRUM_MACHINE_PLUS2,     4, 2 ); return;
+  case  5: menu_select_machine_roms( LIBSPECTRUM_MACHINE_PLUS2A,    6, 4 ); return;
+  case  6: menu_select_machine_roms( LIBSPECTRUM_MACHINE_PLUS3,    10, 4 ); return;
+  case  7: menu_select_machine_roms( LIBSPECTRUM_MACHINE_PLUS3E,   14, 4 ); return;
+  case  8: menu_select_machine_roms( LIBSPECTRUM_MACHINE_TC2048,   18, 1 ); return;
+  case  9: menu_select_machine_roms( LIBSPECTRUM_MACHINE_TC2068,   19, 2 ); return;
+  case 10: menu_select_machine_roms( LIBSPECTRUM_MACHINE_TS2068,   21, 2 ); return;
+  case 11: menu_select_machine_roms( LIBSPECTRUM_MACHINE_PENT,     23, 3 ); return;
+  case 12: menu_select_machine_roms( LIBSPECTRUM_MACHINE_PENT512,  26, 4 ); return;
+  case 13: menu_select_machine_roms( LIBSPECTRUM_MACHINE_PENT1024, 30, 4 ); return;
+  case 14: menu_select_machine_roms( LIBSPECTRUM_MACHINE_SCORP,    34, 4 ); return;
+  case 15: menu_select_machine_roms( LIBSPECTRUM_MACHINE_SE,       38, 2 ); return;
 
   }
 
   ui_error( UI_ERROR_ERROR,
-	    "menu_options_selectroms_select: unknown action %d", action );
+	    "menu_options_selectroms_machine_select: unknown action %d", action );
+  fuse_abort();
+}
+
+MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_peripheral_select )
+{
+  switch( action ) {
+
+  case  1: menu_select_peripheral_roms( "Interface 1",     0, 1 ); return;
+  case  2: menu_select_peripheral_roms( "Beta 128",        1, 1 ); return;
+  case  3: menu_select_peripheral_roms( "+D",              2, 1 ); return;
+  case  4: menu_select_peripheral_roms( "Didaktik 80",     3, 1 ); return;
+  case  5: menu_select_peripheral_roms( "DISCiPLE",        4, 1 ); return;
+  case  6: menu_select_peripheral_roms( "Opus Discovery",  5, 1 ); return;
+  case  7: menu_select_peripheral_roms( "SpeccyBoot",      6, 1 ); return;
+  case  8: menu_select_peripheral_roms( "uSource",         7, 1 ); return;
+
+  }
+
+  ui_error( UI_ERROR_ERROR,
+	    "menu_options_selectroms_peripheral_select: unknown action %d", action );
   fuse_abort();
 }
 
@@ -313,7 +365,7 @@ MENU_CALLBACK( menu_media_tape_play )
 MENU_CALLBACK( menu_media_tape_rewind )
 {
   ui_widget_finish();
-  tape_select_block( 0 );
+  tape_rewind();
 }
 
 MENU_CALLBACK( menu_media_tape_clear )
@@ -363,6 +415,7 @@ MENU_CALLBACK_WITH_ACTION( menu_media_if1_rs232 )
 MENU_CALLBACK_WITH_ACTION( menu_media_insert_new )
 {
   int which, type;
+  ui_media_drive_info_t *drive;
   
   ui_widget_finish();
 
@@ -371,23 +424,14 @@ MENU_CALLBACK_WITH_ACTION( menu_media_insert_new )
   type = ( action & 0xf0 ) >> 4;
 
   switch( type ) {
-  case 0:
-    specplus3_disk_insert( which, NULL, 0 );
-    break;
-  case 1:
-    beta_disk_insert( which, NULL, 0 );
-    break;
-  case 2:
-    plusd_disk_insert( which, NULL, 0 );
-    break;
   case 3:
     if1_mdr_insert( which, NULL );
     break;
-  case 4:
-    opus_disk_insert( which, NULL, 0 );
-    break;
-  case 5:
-    disciple_disk_insert( which, NULL, 0 );
+  default:
+    drive = ui_media_drive_find( type, which );
+    if( !drive )
+      return;
+    ui_media_drive_insert( drive, NULL, 0 );
     break;
   }
 }
@@ -397,6 +441,7 @@ MENU_CALLBACK_WITH_ACTION( menu_media_insert )
   char *filename;
   char title[80];
   int which, type;
+  ui_media_drive_info_t *drive = NULL;
   
   action--;
   which = action & 0x0f;
@@ -405,48 +450,25 @@ MENU_CALLBACK_WITH_ACTION( menu_media_insert )
   fuse_emulation_pause();
 
   switch( type ) {
-  case 0:
-    snprintf( title, 80, "Fuse - Insert +3 Disk %c:", 'A' + which );
-    break;
-  case 1:
-    snprintf( title, 80, "Fuse - Insert Beta Disk %c:", 'A' + which );
-    break;
-  case 2:
-    snprintf( title, 80, "Fuse - Insert +D Disk %i", which + 1 );
-    break;
   case 3:
     snprintf( title, 80, "Fuse - Insert Microdrive Cartridge %i", which + 1 );
     break;
-  case 4:
-    snprintf( title, 80, "Fuse - Insert Opus Disk %i", which + 1 );
-    break;
-  case 5:
-    snprintf( title, 80, "Fuse - Insert DISCiPLE Disk %i", which + 1 );
-    break;
   default:
-    return;
+    drive = ui_media_drive_find( type, which );
+    if( !drive )
+      return;
+    snprintf( title, sizeof(title), "Fuse - Insert %s", drive->name );
+    break;
   }
   filename = ui_get_open_filename( title );
   if( !filename ) { fuse_emulation_unpause(); return; }
 
   switch( type ) {
-  case 0:
-    specplus3_disk_insert( which, filename, 0 );
-    break;
-  case 1:
-    beta_disk_insert( which, filename, 0 );
-    break;
-  case 2:
-    plusd_disk_insert( which, filename, 0 );
-    break;
   case 3:
     if1_mdr_insert( which, filename );
     break;
-  case 4:
-    opus_disk_insert( which, filename, 0 );
-    break;
-  case 5:
-    disciple_disk_insert( which, filename, 0 );
+  default:
+    ui_media_drive_insert( drive, filename, 0 );
     break;
   }
 
@@ -466,23 +488,11 @@ MENU_CALLBACK_WITH_ACTION( menu_media_eject )
   type = ( action & 0x0f0 ) >> 4;
 
   switch( type ) {
-  case 0:
-    specplus3_disk_eject( which );
-    break;
-  case 1:
-    beta_disk_eject( which );
-    break;
-  case 2:
-    plusd_disk_eject( which );
-    break;
   case 3:
     if1_mdr_eject( which );
     break;
-  case 4:
-    opus_disk_eject( which );
-    break;
-  case 5:
-    disciple_disk_eject( which );
+  default:
+    ui_media_drive_eject( type, which );
     break;
   }
 }
@@ -499,23 +509,11 @@ MENU_CALLBACK_WITH_ACTION( menu_media_save )
   saveas = ( action & 0xf00 ) >> 8;
 
   switch( type ) {
-  case 0:
-    specplus3_disk_save( which, saveas );
-    break;
-  case 1:
-    beta_disk_save( which, saveas );
-    break;
-  case 2:
-    plusd_disk_save( which, saveas );
-    break;
   case 3:
     if1_mdr_save( which, saveas );
     break;
-  case 4:
-    opus_disk_save( which, saveas );
-    break;
-  case 5:
-    disciple_disk_save( which, saveas );
+  default:
+    ui_media_drive_save( type, which, saveas );
     break;
   }
 }
@@ -532,21 +530,9 @@ MENU_CALLBACK_WITH_ACTION( menu_media_flip )
   flip = !!( action & 0x100 );
 
   switch( type ) {
-  case 0:
-    specplus3_disk_flip( which, flip );
-    break;
-  case 1:
-    beta_disk_flip( which, flip );
-    break;
-  case 2:
-    plusd_disk_flip( which, flip );
-    break;
   /* No flip option for IF1 */
-  case 4:
-    opus_disk_flip( which, flip );
-    break;
-  case 5:
-    disciple_disk_flip( which, flip );
+  default:
+    ui_media_drive_flip( type, which, flip );
     break;
   }
 }
@@ -563,23 +549,11 @@ MENU_CALLBACK_WITH_ACTION( menu_media_writeprotect )
   wrprot = !!( action & 0x100 );
 
   switch( type ) {
-  case 0:
-    specplus3_disk_writeprotect( which, wrprot );
-    break;
-  case 1:
-    beta_disk_writeprotect( which, wrprot );
-    break;
-  case 2:
-    plusd_disk_writeprotect( which, wrprot );
-    break;
   case 3:
     if1_mdr_writeprotect( which, wrprot );
     break;
-  case 4:
-    opus_disk_writeprotect( which, wrprot );
-    break;
-  case 5:
-    disciple_disk_writeprotect( which, wrprot );
+  default:
+    ui_media_drive_writeprotect( type, which, wrprot );
     break;
   }
 
@@ -779,7 +753,65 @@ MENU_CALLBACK( menu_file_savescreenaspng )
 
   fuse_emulation_unpause();
 }
+
 #endif
+
+#ifdef HAVE_LIB_XML2
+
+MENU_CALLBACK( menu_file_scalablevectorgraphics_startcaptureinlinemode )
+{
+  char *filename;
+
+  ui_widget_finish();
+  if( !svg_capture_active ) {
+
+    fuse_emulation_pause();
+
+    filename = ui_get_save_filename( "Fuse - Capture to SVG File" );
+    if( !filename ) { fuse_emulation_unpause(); return; }
+
+    ui_menu_activate( UI_MENU_ITEM_FILE_SVG_CAPTURE, 1 );
+    svg_startcapture( filename, SVG_CAPTURE_LINES );
+
+    fuse_emulation_unpause();
+  }
+}
+
+MENU_CALLBACK( menu_file_scalablevectorgraphics_startcaptureindotmode )
+{
+  char *filename;
+
+  ui_widget_finish();
+  if( !svg_capture_active ) {
+
+    fuse_emulation_pause();
+
+    filename = ui_get_save_filename( "Fuse - Capture to SVG File" );
+    if( !filename ) { fuse_emulation_unpause(); return; }
+    ui_menu_activate( UI_MENU_ITEM_FILE_SVG_CAPTURE, 1 );
+
+    svg_startcapture( filename, SVG_CAPTURE_DOTS );
+
+    fuse_emulation_unpause();
+  }
+}
+
+MENU_CALLBACK( menu_file_scalablevectorgraphics_stopcapture )
+{
+  ui_widget_finish();
+  if( svg_capture_active ) {
+
+    fuse_emulation_pause();
+
+    svg_stopcapture();
+    ui_menu_activate( UI_MENU_ITEM_FILE_SVG_CAPTURE, 0 );
+
+    fuse_emulation_unpause();
+  }
+}
+
+#endif  /* HAVE_LIB_XML2 */
+
 
 MENU_CALLBACK( menu_file_movie_record )
 {
@@ -883,6 +915,29 @@ MENU_CALLBACK( menu_file_recording_recordfromsnapshot )
   fuse_emulation_unpause();
 }
 
+MENU_CALLBACK( menu_file_recording_continuerecording )
+{
+  char *rzx_filename;
+  int error;
+
+  if( rzx_playback || rzx_recording ) return;
+
+  fuse_emulation_pause();
+
+  rzx_filename = ui_get_open_filename( "Fuse - Continue Recording" );
+  if( !rzx_filename ) { fuse_emulation_unpause(); return; }
+
+  error = rzx_continue_recording( rzx_filename );
+
+  if( error != LIBSPECTRUM_ERROR_NONE ) {
+    ui_error( UI_ERROR_WARNING, "RZX file cannot be continued" );
+  }
+
+  libspectrum_free( rzx_filename );
+
+  fuse_emulation_unpause();
+}
+
 MENU_CALLBACK( menu_file_aylogging_record )
 {
   char *psgfile;
@@ -912,40 +967,7 @@ menu_check_media_changed( void )
 
   confirm = tape_close(); if( confirm ) return 1;
 
-  confirm = specplus3_disk_eject( SPECPLUS3_DRIVE_A );
-  if( confirm ) return 1;
-
-  confirm = specplus3_disk_eject( SPECPLUS3_DRIVE_B );
-  if( confirm ) return 1;
-
-  confirm = beta_disk_eject( BETA_DRIVE_A );
-  if( confirm ) return 1;
-
-  confirm = beta_disk_eject( BETA_DRIVE_B );
-  if( confirm ) return 1;
-
-  confirm = beta_disk_eject( BETA_DRIVE_C );
-  if( confirm ) return 1;
-
-  confirm = beta_disk_eject( BETA_DRIVE_D );
-  if( confirm ) return 1;
-
-  confirm = opus_disk_eject( OPUS_DRIVE_1 );
-  if( confirm ) return 1;
-
-  confirm = opus_disk_eject( OPUS_DRIVE_2 );
-  if( confirm ) return 1;
-
-  confirm = plusd_disk_eject( PLUSD_DRIVE_1 );
-  if( confirm ) return 1;
-
-  confirm = plusd_disk_eject( PLUSD_DRIVE_2 );
-  if( confirm ) return 1;
-
-  confirm = disciple_disk_eject( DISCIPLE_DRIVE_1 );
-  if( confirm ) return 1;
-
-  confirm = disciple_disk_eject( DISCIPLE_DRIVE_2 );
+  confirm = ui_media_drive_eject_all();
   if( confirm ) return 1;
 
   for( i = 0; i < 8; i++ ) {
@@ -990,11 +1012,18 @@ menu_check_media_changed( void )
   return 0;
 }
 
-int
-menu_select_roms( libspectrum_machine machine, size_t start, size_t n )
+static int
+menu_select_machine_roms( libspectrum_machine machine, size_t start, size_t n )
 {
   return menu_select_roms_with_title( libspectrum_machine_name( machine ),
-				      start, n );
+				      start, n, 0 );
+}
+
+static int
+menu_select_peripheral_roms( const char *peripheral_name, size_t start, size_t n )
+{
+  return menu_select_roms_with_title( peripheral_name,
+				      start, n, 1 );
 }
 
 const char*
@@ -1036,7 +1065,7 @@ menu_tape_detail( void )
   else return "Stopped";
 }
 
-static const char *disk_detail_str[] = {
+static const char * const disk_detail_str[] = {
   "Inserted",
   "Inserted WP",
   "Inserted UD",
@@ -1136,6 +1165,22 @@ menu_plusd2_detail( void )
 }
 
 const char*
+menu_didaktik_a_detail( void )
+{
+  fdd_t *f = didaktik80_get_fdd( DIDAKTIK80_DRIVE_A );
+
+  return menu_disk_detail( f );
+}
+
+const char*
+menu_didaktik_b_detail( void )
+{
+  fdd_t *f = didaktik80_get_fdd( DIDAKTIK80_DRIVE_B );
+
+  return menu_disk_detail( f );
+}
+
+const char*
 menu_disciple1_detail( void )
 {
   fdd_t *f = disciple_get_fdd( DISCIPLE_DRIVE_1 );
@@ -1149,4 +1194,11 @@ menu_disciple2_detail( void )
   fdd_t *f = disciple_get_fdd( DISCIPLE_DRIVE_2 );
 
   return menu_disk_detail( f );
+}
+
+MENU_CALLBACK( menu_machine_didaktiksnap )
+{
+  ui_widget_finish();
+  didaktik80_snap = 1;
+  event_add( 0, z80_nmi_event );
 }

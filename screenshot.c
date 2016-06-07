@@ -1,7 +1,7 @@
 /* screenshot.c: Routines for handling .png and .scr screenshots
-   Copyright (c) 2002-2003 Philip Kendall, Fredrick Meunier
+   Copyright (c) 2002-2015 Philip Kendall, Fredrick Meunier
 
-   $Id: screenshot.c 4664 2012-02-12 11:51:01Z fredm $
+   $Id: screenshot.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@
 
 #include <png.h>
 #ifdef HAVE_ZLIB_H
+#define ZLIB_CONST
 #include <zlib.h>
 #endif				/* #ifdef HAVE_ZLIB_H */
 

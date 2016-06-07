@@ -1,7 +1,8 @@
 /* ts2068.c: Timex TS2068 specific routines
-   Copyright (c) 1999-2011 Philip Kendall, Fredrick Meunier, Witold Filipczyk, Darren Salt
+   Copyright (c) 1999-2015 Philip Kendall, Fredrick Meunier, Witold Filipczyk,
+                           Darren Salt
 
-   $Id: ts2068.c 4724 2012-07-08 13:38:21Z fredm $
+   $Id: ts2068.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -112,8 +113,7 @@ ts2068_reset( void )
       exrom_page->page_num = i;
     }
 
-  error = tc2068_tc2048_common_reset();
-  if( error ) return error;
+  tc2068_tc2048_common_reset();
 
   error = dck_reset();
   if( error ) {

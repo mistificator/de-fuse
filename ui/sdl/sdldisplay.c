@@ -1,7 +1,8 @@
 /* sdldisplay.c: Routines for dealing with the SDL display
    Copyright (c) 2000-2006 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
+   Copyright (c) 2015 Adrien Destugues
 
-   $Id: sdldisplay.c 4696 2012-05-07 02:05:13Z fredm $
+   $Id: sdldisplay.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -292,9 +293,10 @@ sdldisplay_find_best_fullscreen_scaler( void )
      fullscreen to avoid the "postage stamp" on machines that don't support
      320x240 anymore e.g. Mac notebooks */
   if( settings_current.full_screen ) {
+    int i = 0;
+
     if( searching_fullscreen_scaler ) return;
     searching_fullscreen_scaler = 1;
-    int i = 0;
     while( i < SCALER_NUM &&
            ( image_height*sdldisplay_current_size <= min_fullscreen_height/2 ||
              image_height*sdldisplay_current_size > max_fullscreen_height ) ) {

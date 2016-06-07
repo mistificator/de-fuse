@@ -1,7 +1,7 @@
 /* command.c: Parse a debugger command
-   Copyright (c) 2002-2008 Philip Kendall
+   Copyright (c) 2002-2015 Philip Kendall
 
-   $Id: command.c 4730 2012-09-03 12:50:19Z fredm $
+   $Id: command.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ debugger_command_evaluate( const char *command )
 {
   if( !command ) return;
 
-  if( command_buffer ) free( command_buffer );
+  if( command_buffer ) libspectrum_free( command_buffer );
 
   command_buffer = utils_safe_strdup( command );
 
@@ -122,6 +122,7 @@ debugger_register_hash( const char *name )
     case 0x0065: case 0x8065:	/* E, E' */
     case 0x0068: case 0x8068:	/* H, H' */
     case 0x006c: case 0x806c:	/* L, L' */
+    case 0x0069: case 0x0072:	/* I, R */
     case 0x6166: case 0xe166:	/* AF, AF' */
     case 0x6263: case 0xe263:	/* BC, BC' */
     case 0x6465: case 0xe465:	/* DE, DE' */
@@ -171,6 +172,9 @@ debugger_register_get( int which )
   case 0x8068: return H_;
   case 0x006c: return L;
   case 0x806c: return L_;
+
+  case 0x0069: return I;
+  case 0x0072: return ( R7 & 0x80 ) | ( R & 0x7f );
     
     /* 16-bit registers */
   case 0x6166: return AF;
@@ -222,6 +226,9 @@ debugger_register_set( int which, libspectrum_word value )
     case 0x006c: L = value; break;
     case 0x806c: L_ = value; break;
 
+    case 0x0069: I = value; break;
+    case 0x0072: R = R7 = value; break;
+
     /* 16-bit registers */
     case 0x6166: AF = value; break;
     case 0xe166: AF_ = value; break;
@@ -271,6 +278,9 @@ debugger_register_text( int which )
   case 0x8068: return "H'";
   case 0x006c: return "L";
   case 0x806c: return "L'";
+
+  case 0x0069: return "I";
+  case 0x0072: return "R";
     
     /* 16-bit registers */
   case 0x6166: return "AF";

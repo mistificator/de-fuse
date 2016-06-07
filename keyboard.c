@@ -1,7 +1,7 @@
 /* keyboard.c: Routines for dealing with the Spectrum's keyboard
-   Copyright (c) 1999-2000 Philip Kendall
+   Copyright (c) 1999-2013 Philip Kendall
 
-   $Id: keyboard.c 4696 2012-05-07 02:05:13Z fredm $
+   $Id: keyboard.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ struct key_text_t key_text_table[] = {
 
   { KEYBOARD_JOYSTICK_FIRE, "Joystick Fire" },
 
-  { -1, NULL },		/* End marker */
+  { KEYBOARD_NONE, NULL },		/* End marker */
 
 };
 
@@ -289,7 +289,7 @@ void fuse_keyboard_init(void)
 
   key_text = g_hash_table_new( g_int_hash, g_int_equal );
 
-  for( ptr4 = key_text_table; ptr4->key != -1; ptr4++ )
+  for( ptr4 = key_text_table; ptr4->text != NULL; ptr4++ )
     g_hash_table_insert( key_text, &( ptr4->key ), &( ptr4->text ) );
 
 }

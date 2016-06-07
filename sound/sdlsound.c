@@ -1,8 +1,8 @@
 /* sdlsound.c: SDL sound I/O
-   Copyright (c) 2002-2004 Alexander Yurchenko, Russell Marks, Philip Kendall,
+   Copyright (c) 2002-2015 Alexander Yurchenko, Russell Marks, Philip Kendall,
 			   Fredrick Meunier
 
-   $Id: sdlsound.c 4670 2012-02-20 10:24:22Z fredm $
+   $Id: sdlsound.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,11 +60,12 @@ sound_lowlevel_init( const char *device, int *freqptr, int *stereoptr )
   /* I'd rather just use setenv, but Windows doesn't have it */
   if( device ) {
     const char *environment = "SDL_AUDIODRIVER=";
-    char *command = malloc( strlen( environment ) + strlen( device ) + 1 );
+    char *command = libspectrum_new( char, strlen( environment ) +
+                                           strlen( device ) + 1 );
     strcpy( command, environment );
     strcat( command, device );
     error = putenv( command );
-    free( command );
+    libspectrum_free( command );
     if( error ) { 
       settings_current.sound = 0;
       ui_error( UI_ERROR_ERROR, "Couldn't set SDL_AUDIODRIVER: %s",

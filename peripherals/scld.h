@@ -1,7 +1,8 @@
 /* scld.h: Routines for handling the Timex SCLD
    Copyright (c) 2002-2004 Fredrick Meunier, Witold Filipczyk
+   Copyright (c) 2015 Fredrick Meunier
 
-   $Id: scld.h 4724 2012-07-08 13:38:21Z fredm $
+   $Id: scld.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -138,5 +139,9 @@ libspectrum_byte hires_convert_dec( libspectrum_byte attr );
 
 void scld_home_map_16k( libspectrum_word address, memory_page source[],
                         int page_num );
+
+/* Set contention for SCLD, contended in home, Dock and Exrom in the 0x4000 -
+   0x7FFF range */
+void scld_set_exrom_dock_contention( void );
 
 #endif                  /* #ifndef FUSE_SCLD_H */

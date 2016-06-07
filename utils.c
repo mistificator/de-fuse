@@ -1,7 +1,12 @@
 /* utils.c: some useful helper functions
    Copyright (c) 1999-2012 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2015 Gergely Szasz
+   Copyright (c) 2015 Fredrick Meunier
+   Copyright (c) 2016 BogDan Vatra
+   Copyright (c) 2016 Sergio Baldoví
 
-   $Id: utils.c 4842 2013-01-02 23:03:32Z zubzero $
+   $Id: utils.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +35,6 @@
 #include <libgen.h>
 #endif				/* #ifdef HAVE_LIBGEN_H */
 #include <string.h>
-#include <sys/stat.h>
 #include <ui/ui.h>
 #include <unistd.h>
 
@@ -116,6 +120,11 @@ utils_open_file( const char *filename, int autoload,
     error = specplus3_disk_insert( SPECPLUS3_DRIVE_A, filename, autoload );
     break;
 
+  case LIBSPECTRUM_CLASS_DISK_DIDAKTIK:
+
+    error = didaktik80_disk_insert( DIDAKTIK80_DRIVE_A, filename, autoload );
+    break;
+
   case LIBSPECTRUM_CLASS_DISK_PLUSD:
 
     if( periph_is_active( PERIPH_TYPE_DISCIPLE ) )
@@ -134,10 +143,15 @@ utils_open_file( const char *filename, int autoload,
     if( !( machine_current->capabilities &
 	   LIBSPECTRUM_MACHINE_CAPABILITY_TRDOS_DISK ) &&
         !periph_is_active( PERIPH_TYPE_BETA128 ) ) {
-      error = machine_select( LIBSPECTRUM_MACHINE_PENT ); if( error ) break;
+      error = machine_select( LIBSPECTRUM_MACHINE_SCORP ); if( error ) break;
     }
 
-    error = beta_disk_insert( BETA_DRIVE_A, filename, autoload );
+    /* Check that we actually got a Beta capable machine to insert the disk */
+    if( ( machine_current->capabilities & 
+          LIBSPECTRUM_MACHINE_CAPABILITY_TRDOS_DISK ) ||
+        periph_is_active( PERIPH_TYPE_BETA128 ) ) {
+      error = beta_disk_insert( BETA_DRIVE_A, filename, autoload );
+    }
     break;
 
   case LIBSPECTRUM_CLASS_DISK_GENERIC:
@@ -171,7 +185,11 @@ utils_open_file( const char *filename, int autoload,
 	   LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_DOCK ) ) {
       error = machine_select( LIBSPECTRUM_MACHINE_TC2068 ); if( error ) break;
     }
-    error = dck_insert( filename );
+    /* Check that we actually got a Dock capable machine to insert the cart */
+    if( machine_current->capabilities &
+	   LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_DOCK ) {
+      error = dck_insert( filename );
+    }
     break;
 
   case LIBSPECTRUM_CLASS_HARDDISK:
@@ -264,11 +282,11 @@ utils_find_file_path( const char *filename, char *ret_path,
 		      utils_aux_type type )
 {
   path_context ctx;
-  struct stat stat_info;
 
   /* If given an absolute path, just look there */
   if( compat_is_absolute_path( filename ) ) {
     strncpy( ret_path, filename, PATH_MAX );
+    ret_path[ PATH_MAX - 1 ] = '\0';
     return 0;
   }
 
@@ -283,7 +301,7 @@ utils_find_file_path( const char *filename, char *ret_path,
     snprintf( ret_path, PATH_MAX, "%s" FUSE_DIR_SEP_STR "%s", ctx.path,
               filename );
 #endif
-    if( !stat( ret_path, &stat_info ) ) return 0;
+    if( compat_file_exists(ret_path) ) return 0;
 
   }
 
@@ -327,7 +345,7 @@ utils_read_fd( compat_fd fd, const char *filename, utils_file *file )
   file->length = compat_file_get_length( fd );
   if( file->length == -1 ) return 1;
 
-  file->buffer = libspectrum_malloc( file->length );
+  file->buffer = libspectrum_new( unsigned char, file->length );
 
   if( compat_file_read( fd, file ) ) {
     libspectrum_free( file->buffer );
@@ -465,11 +483,9 @@ utils_safe_strdup( const char *src )
 {
   char *dest = NULL;
   if( src ) {
-    dest = strdup( src );
-    if( !dest ) {
-      ui_error( UI_ERROR_ERROR, "out of memory at %s:%d\n", __FILE__, __LINE__ );
-      fuse_abort();
-    }
+    size_t length = strlen( src ) + 1;
+    dest = libspectrum_new( char, length );
+    memcpy( dest, src, length );
   }
   return dest;
 }

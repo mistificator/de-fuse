@@ -1,7 +1,8 @@
 /* memory.c: the GTK+ memory browser
    Copyright (c) 2004-2005 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: memory.c 4723 2012-07-08 13:26:15Z fredm $
+   $Id: memory.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ scroller( GtkAdjustment *adjustment, gpointer user_data )
   update_display( model, base );
 }
 
-GtkWidget *
+static GtkWidget *
 create_mem_list( void )
 {
   GtkWidget *view;

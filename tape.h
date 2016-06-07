@@ -1,7 +1,8 @@
 /* tape.h: tape handling routines
    Copyright (c) 1999-2004 Philip Kendall
+   Copyright (c) 2015 Sergio Baldoví
 
-   $Id: tape.h 4696 2012-05-07 02:05:13Z fredm $
+   $Id: tape.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ tape_read_buffer( unsigned char *buffer, size_t length, libspectrum_id_t type,
 		  const char *filename, int autoload );
 
 int tape_close( void );
+int tape_rewind( void );
 int tape_select_block( size_t n );
 int tape_select_block_no_update( size_t n );
 int tape_get_current_block( void );

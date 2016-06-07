@@ -1,7 +1,8 @@
 /* spectranet.c: Spectranet emulation
-   Copyright (c) 2011-2013 Philip Kendall
+   Copyright (c) 2011-2015 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
    
-   $Id: spectranet.c 4919 2013-04-20 07:47:56Z sbaldovi $
+   $Id: spectranet.c 5434 2016-05-01 04:22:45Z fredm $
    
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
    
 */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 
@@ -37,6 +38,7 @@
 #include "periph.h"
 #include "peripherals/ula.h"
 #include "settings.h"
+#include "spectranet.h"
 #include "ui/ui.h"
 
 #ifdef BUILD_SPECTRANET
@@ -86,7 +88,7 @@ static int nmi_flipflop = 0;
 static int spectranet_source;
 
 /* Debugger events */
-static const char *event_type_string = "spectranet";
+static const char * const event_type_string = "spectranet";
 static int page_event, unpage_event;
 
 void
@@ -192,7 +194,7 @@ spectranet_memory_map( void )
 {
   if( !spectranet_paged ) return;
 
-  memory_map_romcs( spectranet_current_map );
+  memory_map_romcs_full( spectranet_current_map );
 }
 
 static void
@@ -201,6 +203,8 @@ spectranet_activate( void )
   if( !spectranet_memory_allocated ) {
 
     int i, j;
+    libspectrum_byte *rom;
+    libspectrum_byte *ram;
 
     libspectrum_byte *fake_bank =
       memory_pool_allocate_persistent( 0x1000, 1 );
@@ -220,8 +224,7 @@ spectranet_activate( void )
       }
 
     /* Pages 0x00 to 0x1f are the flash ROM */
-    libspectrum_byte *rom =
-      memory_pool_allocate_persistent( SPECTRANET_ROM_LENGTH, 1 );
+    rom = memory_pool_allocate_persistent( SPECTRANET_ROM_LENGTH, 1 );
     memset( rom, 0xff, SPECTRANET_ROM_LENGTH );
 
     for( i = 0; i < SPECTRANET_ROM_LENGTH / SPECTRANET_PAGE_LENGTH; i++ ) {
@@ -238,8 +241,7 @@ spectranet_activate( void )
        and writebyte() */
 
     /* Pages 0xc0 to 0xff are the RAM */
-    libspectrum_byte *ram =
-      memory_pool_allocate_persistent( SPECTRANET_RAM_LENGTH, 1 );
+    ram = memory_pool_allocate_persistent( SPECTRANET_RAM_LENGTH, 1 );
 
     for( i = 0; i < SPECTRANET_RAM_LENGTH / SPECTRANET_PAGE_LENGTH; i++ ) {
       int base = (SPECTRANET_RAM_BASE + i) * MEMORY_PAGES_IN_4K;
@@ -291,7 +293,7 @@ spectranet_from_snapshot( libspectrum_snap *snap )
 
     if( libspectrum_snap_spectranet_paged( snap ) ) {
       spectranet_page( libspectrum_snap_spectranet_paged_via_io( snap ) );
-      memory_map_romcs( spectranet_current_map );
+      memory_map_romcs_full( spectranet_current_map );
     }
     else
       spectranet_unpage();
@@ -340,21 +342,13 @@ spectranet_to_snapshot( libspectrum_snap *snap )
   libspectrum_snap_set_spectranet_w5100( snap, 0,
     nic_w5100_to_snapshot( w5100 ) );
 
-  snap_buffer = malloc( SPECTRANET_ROM_LENGTH * sizeof( libspectrum_byte ) );
-  if( !snap_buffer ) {
-    ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-    return;
-  }
+  snap_buffer = libspectrum_new( libspectrum_byte, SPECTRANET_ROM_LENGTH );
 
   src = spectranet_full_map[SPECTRANET_ROM_BASE * MEMORY_PAGES_IN_4K].page;
   memcpy( snap_buffer, src, SPECTRANET_ROM_LENGTH );
   libspectrum_snap_set_spectranet_flash( snap, 0, snap_buffer );
 
-  snap_buffer = malloc( SPECTRANET_RAM_LENGTH * sizeof( libspectrum_byte ) );
-  if( !snap_buffer ) {
-    ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-    return;
-  }
+  snap_buffer = libspectrum_new( libspectrum_byte, SPECTRANET_RAM_LENGTH );
 
   src = spectranet_full_map[SPECTRANET_RAM_BASE * MEMORY_PAGES_IN_4K].page;
   memcpy( snap_buffer, src, SPECTRANET_RAM_LENGTH );
@@ -362,31 +356,33 @@ spectranet_to_snapshot( libspectrum_snap *snap )
 }
 
 static module_info_t spectranet_module_info = {
-  spectranet_reset,
-  spectranet_memory_map,
-  spectranet_enabled_snapshot,
-  spectranet_from_snapshot,
-  spectranet_to_snapshot
+
+  /* .reset = */ spectranet_reset,
+  /* .romcs = */ spectranet_memory_map,
+  /* .snapshot_enabled = */ spectranet_enabled_snapshot,
+  /* .snapshot_from = */ spectranet_from_snapshot,
+  /* .snapshot_to = */ spectranet_to_snapshot,
+
 };
 
 static void
 spectranet_page_a( libspectrum_word port, libspectrum_byte data )
 {
   spectranet_map_page( 1, data );
-  memory_map_romcs( spectranet_current_map );
+  memory_map_romcs_full( spectranet_current_map );
 }
 
 static void
 spectranet_page_b( libspectrum_word port, libspectrum_byte data )
 {
   spectranet_map_page( 2, data );
-  memory_map_romcs( spectranet_current_map );
+  memory_map_romcs_full( spectranet_current_map );
 }
 
 static libspectrum_byte
-spectranet_cpld_version( libspectrum_word port, int *attached )
+spectranet_cpld_version( libspectrum_word port, libspectrum_byte *attached )
 {
-  *attached = 1;
+  *attached = 0xff; /* TODO: check this */
   return SPECTRANET_CPLD_VERSION;
 }
 
@@ -404,7 +400,7 @@ spectranet_trap( libspectrum_word port, libspectrum_byte data )
 }
 
 static libspectrum_byte
-spectranet_control_read( libspectrum_word port, int *attached )
+spectranet_control_read( libspectrum_word port, libspectrum_byte *attached )
 {
   libspectrum_byte b = ula_last_byte() & 0x07;
   if( spectranet_programmable_trap_active )
@@ -414,7 +410,7 @@ spectranet_control_read( libspectrum_word port, int *attached )
     machine_current->ram.last_byte & 0x08 )
     b |= 0x10;
 
-  *attached = 1;
+  *attached = 0xff; /* TODO: check this */
 
   return b;
 }
@@ -439,10 +435,10 @@ static const periph_port_t spectranet_ports[] = {
 };
 
 static const periph_t spectranet_periph = {
-  &settings_current.spectranet,
-  spectranet_ports,
-  1,
-  spectranet_activate
+  /* .option = */ &settings_current.spectranet,
+  /* .ports = */ spectranet_ports,
+  /* .hard_reset = */ 1,
+  /* .activate = */ spectranet_activate,
 };
 
 void

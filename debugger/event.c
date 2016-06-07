@@ -1,7 +1,8 @@
 /* event.c: Debugger events
    Copyright (c) 2008 Philip Kendall
+   Copyright (c) 2015 Sergio Baldoví
 
-   $Id: event.c 4635 2012-01-19 23:39:04Z pak21 $
+   $Id: event.c 5539 2016-05-29 10:49:51Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,6 +65,7 @@ event_matches( debugger_event_t *event, const char *type, const char *detail )
 {
   if( strcasecmp( type, event->type ) ) return 0;
   if( strcmp( detail, "*" ) == 0 ) return 1;
+  if( strcmp( event->detail, "*" ) == 0 ) return 1;
   return strcasecmp( detail, event->detail ) == 0;
 }
 
@@ -119,8 +121,8 @@ debugger_event_end( void )
 
   for( i = 0; i < registered_events->len; i++ ) {
     event = g_array_index( registered_events, debugger_event_t, i );
-    free( event.detail );
-    free( event.type );
+    libspectrum_free( event.detail );
+    libspectrum_free( event.type );
   }
 
   g_array_free( registered_events, TRUE );

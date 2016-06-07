@@ -1,7 +1,8 @@
 /* pokefinder.c: The poke finder widget
    Copyright (c) 2004 Darren Salt
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: pokefinder.c 4638 2012-01-21 12:52:14Z fredm $
+   $Id: pokefinder.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ static void update_possible( void );
 static void display_possible( void );
 static void display_value( void );
 
-static const char *title = "Poke finder";
+static const char * const title = "Poke finder";
 
 int
 widget_pokefinder_draw( void *data )

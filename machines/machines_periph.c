@@ -1,7 +1,9 @@
 /* machines_periph.c: various machine-specific peripherals
    Copyright (c) 2011 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2015 Gergely Szasz
 
-   $Id: machines_periph.c 4926 2013-05-05 07:58:18Z sbaldovi $
+   $Id: machines_periph.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -191,6 +193,7 @@ base_peripherals_48_128( void )
   periph_set_present( PERIPH_TYPE_OPUS, PERIPH_PRESENT_OPTIONAL );
   periph_set_present( PERIPH_TYPE_PLUSD, PERIPH_PRESENT_OPTIONAL );
   periph_set_present( PERIPH_TYPE_SPECDRUM, PERIPH_PRESENT_OPTIONAL );
+  periph_set_present( PERIPH_TYPE_USOURCE, PERIPH_PRESENT_OPTIONAL );
 }
 
 /* The set of peripherals available on the 48K and similar machines */
@@ -200,6 +203,7 @@ machines_periph_48( void )
   base_peripherals_48_128();
   periph_set_present( PERIPH_TYPE_FULLER, PERIPH_PRESENT_OPTIONAL );
   periph_set_present( PERIPH_TYPE_ZXPRINTER, PERIPH_PRESENT_OPTIONAL );
+  periph_set_present( PERIPH_TYPE_DIDAKTIK80, PERIPH_PRESENT_OPTIONAL );
   periph_set_present( PERIPH_TYPE_DISCIPLE, PERIPH_PRESENT_OPTIONAL );
 }
 

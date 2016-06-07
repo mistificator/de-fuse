@@ -1,7 +1,9 @@
 /* browse.c: tape browser dialog box
    Copyright (c) 2002-2004 Philip Kendall
+   Copyright (c) 2015 Sergio Baldoví
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: browse.c 4708 2012-05-25 12:14:50Z fredm $
+   $Id: browse.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -88,7 +90,7 @@ menu_media_tape_browse( GtkAction *gtk_action GCC_UNUSED,
   fuse_emulation_unpause();
 }
 
-GtkWidget *
+static GtkWidget *
 create_block_list( void )
 {
   GtkWidget *view;
@@ -269,7 +271,7 @@ select_row( GtkTreeView *treeview GCC_UNUSED, GtkTreePath *path,
   if( current_block != -1 ) {
     path = gtk_tree_path_new_from_indices( current_block, -1 );
 
-    if( gtk_tree_model_get_iter( GTK_TREE_MODEL( model ), &iter, path ) ) {
+    if( !gtk_tree_model_get_iter( GTK_TREE_MODEL( model ), &iter, path ) ) {
       gtk_tree_path_free( path );
       return;
     }

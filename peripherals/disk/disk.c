@@ -1,7 +1,7 @@
 /* disk.c: Routines for handling disk images
-   Copyright (c) 2007-2010 Gergely Szasz
+   Copyright (c) 2007-2015 Gergely Szasz
 
-   $Id: disk.c 4918 2013-04-20 06:39:18Z fredm $
+   $Id: disk.c 5523 2016-05-23 21:50:17Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 /* The ordering of these strings must match the order of the 
  * disk_error_t enumeration in disk.h */
 
-static const char *disk_error[] = {
+static const char * const disk_error[] = {
   "OK",				/* DISK_OK */
   "Feature not implemented",	/* DISK_IMPL */
   "Out of memory",		/* DISK_MEM */
@@ -262,7 +262,7 @@ guess_track_geom( disk_t *d, int head, int track, int *sector_base,
 {
   int r = 0;
   int h, t, s, sl;
-  int del;
+  int del = 0;
   *sector_base = -1;
   *sectors = 0;
   *seclen = -1;
@@ -672,11 +672,11 @@ void
 disk_close( disk_t *d )
 {
   if( d->data != NULL ) {
-    free( d->data );
+    libspectrum_free( d->data );
     d->data = NULL;
   }
   if( d->filename != NULL ) {
-    free( d->filename );
+    libspectrum_free( d->filename );
     d->filename = NULL;
   }
   d->type = DISK_TYPE_NONE;
@@ -719,10 +719,11 @@ disk_alloc( disk_t *d )
 
   if( d->bpt > 0 )
     d->tlen = 4 + d->bpt + 3 * DISK_CLEN( d->bpt );
-  dlen = d->sides * d->cylinders * d->tlen;	/* track len with clock and other marks */
 
-  if( ( d->data = calloc( 1, dlen ) ) == NULL )
-    return d->status = DISK_MEM;
+  dlen = d->sides * d->cylinders * d->tlen;	/* track len with clock and other marks */
+  if( dlen == 0 ) return d->status = DISK_GEOM;
+
+  d->data = libspectrum_new0( libspectrum_byte, dlen );
 
   return d->status = DISK_OK;
 }
@@ -760,7 +761,7 @@ alloc_uncompress_buffer( unsigned char **buffer, int length )
 
   if( *buffer != NULL )				/* return if allocated */
     return 0;
-  b = calloc( length, 1 );
+  b = libspectrum_new0( unsigned char, length );
   if( b == NULL )
     return 1;
   *buffer = b;
@@ -800,13 +801,10 @@ udi_read_compressed( const libspectrum_byte *buffer,
   tmp = NULL;
 
   error = libspectrum_zlib_inflate( buffer, compr_size, &tmp, &olength );
-  if( error ) {
-    if( *data ) free( *data );
-    *data_size = 0;
-    return error;
-  }
+  if( error ) return error;
+
   if( *data_size < uncompr_size ) {
-    *data = libspectrum_realloc( *data, uncompr_size );
+    *data = libspectrum_renew( libspectrum_byte, *data, uncompr_size );
     *data_size = uncompr_size;
   }
   memcpy( *data, tmp, uncompr_size );
@@ -829,7 +827,7 @@ udi_write_compressed( const libspectrum_byte *buffer,
   if( error ) return error;
 
   if( *data_size < *compr_size ) {
-    *data = libspectrum_realloc( *data, *compr_size );
+    *data = libspectrum_renew( libspectrum_byte, *data, *compr_size );
     *data_size = *compr_size;
   }
   memcpy( *data, tmp, *compr_size );
@@ -1148,6 +1146,42 @@ open_img_mgt_opd( buffer_t *buffer, disk_t *d )
 }
 
 static int
+open_d40_d80( buffer_t *buffer, disk_t *d )
+{
+  int i, j, sectors, seclen;
+
+  if( buffavail( buffer ) < 180 )
+    return d->status = DISK_OPEN;
+
+  /* guess geometry of disk */
+  d->sides =     buff[0xb1] & 0x10 ? 2 : 1;
+  d->cylinders = buff[0xb2];
+  sectors =      buff[0xb3];
+
+  if( d->sides < 1 || d->sides > 2 || d->cylinders > 83 || sectors > 127 )
+    return d->status = DISK_GEOM;
+
+  seclen = 512;
+
+  buffer->index = 0;
+
+  /* create a DD disk */
+  d->density = DISK_DD;
+  if( disk_alloc( d ) != DISK_OK )
+    return d->status;
+
+  for( i = 0; i < d->cylinders; i++ ) {
+      for( j = 0; j < d->sides; j++ ) {
+        if( trackgen( d, buffer, j, i, 1, sectors, seclen,
+		      NO_PREINDEX, GAP_MGT_PLUSD, NO_INTERLEAVE, NO_AUTOFILL ) )
+	  return d->status = DISK_GEOM;
+      }
+  }
+
+  return d->status = DISK_OK;
+}
+
+static int
 open_sad( buffer_t *buffer, disk_t *d, int preindex )
 {
   int i, j, sectors, seclen;
@@ -1355,6 +1389,11 @@ open_cpc( buffer_t *buffer, disk_t *d, int preindex )
   buffer->index = 256;
 /* first scan for the longest track */
   for( i = 0; i < d->sides*d->cylinders; i++ ) {
+    /* ignore Sector Offset block */
+    if( buffavail( buffer ) >= 13 && !memcmp( buff, "Offset-Info\r\n", 13 ) ) {
+      buffer->index = buffer->file.length;
+    }
+
       /* sometimes in the header there are more track than in the file */
     if( buffavail( buffer ) == 0 ) {			/* no more data */
       d->cylinders = i / d->sides + i % d->sides;	/* the real cylinder number */
@@ -1725,13 +1764,13 @@ open_td0( buffer_t *buffer, disk_t *d, int preindex )
 	case 0:				/* raw sector data */
 	  if( hdrb[6] + 256 * hdrb[7] - 1 != seclen ) {
 	    if( uncomp_buff )
-	      free( uncomp_buff );
+	      libspectrum_free( uncomp_buff );
 	    return d->status = DISK_OPEN;
 	  }
 	  if( data_add( d, buffer, NULL, hdrb[6] + 256 * hdrb[7] - 1,
 			hdrb[4] & 0x04 ? DDAM : NO_DDAM, gap, CRC_OK, NO_AUTOFILL, NULL ) ) {
 	    if( uncomp_buff )
-	      free( uncomp_buff );
+	      libspectrum_free( uncomp_buff );
 	    return d->status = DISK_OPEN;
 	  }
 	  break;
@@ -1740,12 +1779,12 @@ open_td0( buffer_t *buffer, disk_t *d, int preindex )
 	    return d->status = DISK_MEM;
 	  for( i = 0; i < seclen; ) {			/* fill buffer */
 	    if( buffavail( buffer ) < 13 ) { 		/* check block header is avail. */
-	      free( uncomp_buff );
+	      libspectrum_free( uncomp_buff );
 	      return d->status = DISK_OPEN;
 	    }
 	    if( i + 2 * ( hdrb[9] + 256*hdrb[10] ) > seclen ) {
 						  /* too many data bytes */
-	      free( uncomp_buff );
+	      libspectrum_free( uncomp_buff );
 	      return d->status = DISK_OPEN;
 	    }
 	    /* ab ab ab ab ab ab ab ab ab ab ab ... */
@@ -1755,7 +1794,7 @@ open_td0( buffer_t *buffer, disk_t *d, int preindex )
 	  }
 	  if( data_add( d, NULL, uncomp_buff, hdrb[6] + 256 * hdrb[7] - 1,
 		      hdrb[4] & 0x04 ? DDAM : NO_DDAM, gap, CRC_OK, NO_AUTOFILL, NULL ) ) {
-	    free( uncomp_buff );
+	    libspectrum_free( uncomp_buff );
 	    return d->status = DISK_OPEN;
 	  }
 	  break;
@@ -1764,20 +1803,20 @@ open_td0( buffer_t *buffer, disk_t *d, int preindex )
 	    return d->status = DISK_MEM;
 	  for( i = 0; i < seclen; ) {			/* fill buffer */
 	    if( buffavail( buffer ) < 11 ) {		/* check block header is avail */
-	      free( uncomp_buff );
+	      libspectrum_free( uncomp_buff );
 	      return d->status = DISK_OPEN;
 	    }
 	    if( hdrb[9] == 0 ) {		/* raw bytes */
 	      if( i + hdrb[10] > seclen ||	/* too many data bytes */
 		      buffread( uncomp_buff + i, hdrb[10], buffer ) != 1 ) {
-	        free( uncomp_buff );
+	        libspectrum_free( uncomp_buff );
 	        return d->status = DISK_OPEN;
 	      }
 	      i += hdrb[10];
 	    } else {				/* repeated samples */
 	      if( i + 2 * hdrb[9] * hdrb[10] > seclen || /* too many data bytes */
 		      buffread( uncomp_buff + i, 2 * hdrb[9], buffer ) != 1 ) {
-	        free( uncomp_buff );
+	        libspectrum_free( uncomp_buff );
 	        return d->status = DISK_OPEN;
 	      }
 	      /*
@@ -1794,13 +1833,13 @@ open_td0( buffer_t *buffer, disk_t *d, int preindex )
 	  }
 	  if( data_add( d, NULL, uncomp_buff, hdrb[6] + 256 * hdrb[7] - 1,
 	      hdrb[4] & 0x04 ? DDAM : NO_DDAM, gap, CRC_OK, NO_AUTOFILL, NULL ) ) {
-	    free( uncomp_buff );
+	    libspectrum_free( uncomp_buff );
 	    return d->status = DISK_OPEN;
 	  }
 	  break;
 	default:
 	  if( uncomp_buff )
-	    free( uncomp_buff );
+	    libspectrum_free( uncomp_buff );
 	  return d->status = DISK_OPEN;
 	  break;
 	}
@@ -1810,7 +1849,7 @@ open_td0( buffer_t *buffer, disk_t *d, int preindex )
   }
 
   if( uncomp_buff )
-    free( uncomp_buff );
+    libspectrum_free( uncomp_buff );
   return d->status = DISK_OK;
 }
 
@@ -1896,13 +1935,17 @@ disk_open2( disk_t *d, const char *filename, int preindex )
     d->type = DISK_TD0;
     open_td0( &buffer, d, preindex );
     break;
+  case LIBSPECTRUM_ID_DISK_D80:
+    d->type = DISK_D80;
+    open_d40_d80( &buffer, d );
+    break;
   default:
     utils_close_file( &buffer.file );
     return d->status = DISK_OPEN;
   }
   if( d->status != DISK_OK ) {
     if( d->data != NULL )
-      free( d->data );
+      libspectrum_free( d->data );
     utils_close_file( &buffer.file );
     return d->status;
   }
@@ -2022,14 +2065,10 @@ disk_open( disk_t *d, const char *filename, int preindex, int merge_disks )
   d2.data = NULL; d2.flag = d->flag;
   filename2 = utils_safe_strdup( filename );
   *(filename2 + pos) = c;
-  if( filename2 == NULL ) {
-    fprintf( stderr, "out of memory in merge disk files\n" );
-    return d->status = DISK_OPEN;
-  }
 
   if( settings_current.disk_ask_merge &&
       !ui_query( "Try to merge 'B' side of this disk?" ) ) {
-    free( filename2 );
+    libspectrum_free( filename2 );
     return d->status = disk_open2( d, filename, preindex );
   }
 
@@ -2045,7 +2084,7 @@ disk_open( disk_t *d, const char *filename, int preindex, int merge_disks )
     *d = d1;
   }
 /*  fprintf( stderr, "`%s' and `%s' merged\n", filename, filename2 ); */
-  free( filename2 );
+  libspectrum_free( filename2 );
   return d->status;
 }
 
@@ -2054,7 +2093,7 @@ disk_open( disk_t *d, const char *filename, int preindex, int merge_disks )
 static int
 write_udi( FILE *file, disk_t *d )
 {
-  int i, j;
+  int i, j, error;
   size_t len;
   libspectrum_dword crc;
 
@@ -2118,6 +2157,13 @@ write_udi( FILE *file, disk_t *d )
   head[3] = ( crc >> 24 ) & 0xff;
   if( fwrite( head, 4, 1, file ) != 1 )		/* CRC */
     fclose( file );
+
+#ifdef LIBSPECTRUM_SUPPORTS_ZLIB_COMPRESSION
+  /* Keep tracks uncompressed in memory */
+  error = udi_uncompress_tracks( d );
+  if( error ) return error;
+#endif			/* #ifdef LIBSPECTRUM_SUPPORTS_ZLIB_COMPRESSION */
+
   udi_unpack_tracks( d );
   return d->status = DISK_OK;
 }
@@ -2150,6 +2196,30 @@ write_img_mgt_opd( FILE *file, disk_t *d )
 	    sectors, seclen ) )
 	  return d->status = DISK_GEOM;
       }
+    }
+  }
+  return d->status = DISK_OK;
+}
+
+static int
+write_d40_d80( FILE *file, disk_t *d )
+{
+  int i, j, sbase, sectors, seclen, mfm, cyl;
+
+  if( check_disk_geom( d, &sbase, &sectors, &seclen, &mfm, &cyl ) ||
+      ( sbase != 1 ) )
+    return d->status = DISK_GEOM;
+
+  if( cyl == -1 ) cyl = d->cylinders;
+  if( ( d->type == DISK_D40 && cyl > 43 ) ||
+      ( d->type == DISK_D80 && cyl > 83 ) )
+    return d->status = DISK_GEOM;
+
+  for( i = 0; i < cyl; i++ ) {
+    for( j = 0; j < d->sides; j++ ) {
+      if( savetrack( d, file, j, i, 1,
+	    sectors, seclen ) )
+	  return d->status = DISK_GEOM;
     }
   }
   return d->status = DISK_OK;
@@ -2561,7 +2631,7 @@ disk_write( disk_t *d, const char *filename )
 
   namelen = strlen( filename );
   if( namelen < 4 )
-    ext = NULL;
+    ext = "";
   else
     ext = filename + namelen - 4;
 
@@ -2582,8 +2652,14 @@ disk_write( disk_t *d, const char *filename )
       d->type = DISK_SAD;
     else if( !strcasecmp( ext, ".fdi" ) )		/* ALT */
       d->type = DISK_FDI;
+    else if( !strcasecmp( ext, ".d40" ) )		/* ALT side */
+      d->type = DISK_D40;
+    else if( !strcasecmp( ext, ".d80" ) )		/* ALT side */
+      d->type = DISK_D80;
     else if( !strcasecmp( ext, ".scl" ) )		/* not really a disk image */
       d->type = DISK_SCL;
+    else if( !strcasecmp( ext, ".td0" ) )		/* not supported */
+      d->type = DISK_TD0;
     else if( !strcasecmp( ext, ".log" ) )		/* ALT */
       d->type = DISK_LOG;
     else
@@ -2607,6 +2683,10 @@ disk_write( disk_t *d, const char *filename )
   case DISK_OPD:
     write_img_mgt_opd( file, d );
     break;
+  case DISK_D40:
+  case DISK_D80:
+    write_d40_d80( file, d );
+    break;
   case DISK_TRD:
     write_trd( file, d );
     break;
@@ -2626,7 +2706,7 @@ disk_write( disk_t *d, const char *filename )
     write_log( file, d );
     break;
   default:
-    return d->status = DISK_WRFILE;
+    d->status = DISK_WRFILE;
     break;
   }
 

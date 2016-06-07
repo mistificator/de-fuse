@@ -47,6 +47,10 @@ int option_enumerate_diskoptions_drive_plusd1_type( void );
 
 int option_enumerate_diskoptions_drive_plusd2_type( void );
 
+int option_enumerate_diskoptions_drive_didaktik80a_type( void );
+
+int option_enumerate_diskoptions_drive_didaktik80b_type( void );
+
 int option_enumerate_diskoptions_drive_disciple1_type( void );
 
 int option_enumerate_diskoptions_drive_disciple2_type( void );

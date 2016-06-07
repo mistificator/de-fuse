@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 # options.pl: generate options dialog boxes
-# $Id: options.pl 4962 2013-05-19 05:25:15Z sbaldovi $
+# $Id: options.pl 5434 2016-05-01 04:22:45Z fredm $
 
-# Copyright (c) 2002-2013 Philip Kendall
+# Copyright (c) 2002-2015 Philip Kendall
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,16 +55,16 @@ print Fuse::GPL( 'options.c: options dialog boxes',
 #include "compat.h"
 #include "display.h"
 #include "fuse.h"
-#include "gtkcompat.h"
-#include "gtkinternals.h"
 #include "options.h"
 #include "options_internals.h"
 #include "periph.h"
 #include "settings.h"
+#include "ui/gtk/gtkcompat.h"
+#include "ui/gtk/gtkinternals.h"
 #include "utils.h"
 
 static int
-option_enumerate_combo( const char **options, char *value, guint count,
+option_enumerate_combo( const char * const *options, char *value, guint count,
                         int def )
 {
   guint i;
@@ -104,7 +104,7 @@ foreach( @dialogs ) {
 
 		    print << "CODE";
 
-static const char *$_->{name}_$widget->{value}_combo[] = {
+static const char * const $_->{name}_$widget->{value}_combo[] = {
 CODE
 		    foreach( split( /\|/, $widget->{data1} ) ) {
 			print << "CODE";
@@ -298,7 +298,7 @@ CODE
         } elsif( $widget->{type} eq "Combo" ) {
 
 	    print << "CODE";
-  free( settings_current.$widget->{value} );
+  libspectrum_free( settings_current.$widget->{value} );
   settings_current.$widget->{value} = utils_safe_strdup( $_->{name}_$widget->{value}_combo[
     gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->$widget->{value} ) ) ] );
 

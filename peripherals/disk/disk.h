@@ -1,7 +1,7 @@
 /* disk.h: Routines for handling disk images
-   Copyright (c) 2007-2010 Gergely Szasz
+   Copyright (c) 2007-2015 Gergely Szasz
 
-   $Id: disk.h 4893 2013-02-23 15:49:39Z sbaldovi $
+   $Id: disk.h 5498 2016-05-19 21:52:49Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -53,8 +53,6 @@ typedef enum disk_type_t {
   DISK_FDI,		/* Full Disk Image ALT */
   DISK_TD0,
 
-  DISK_SDF,		/* SAM Disk Format (deprecated) */
-
   /* DISCiPLE / +D / SAM Coupe */
   DISK_MGT,		/* ALT */
   DISK_IMG,		/* OUT-OUT */
@@ -69,6 +67,10 @@ typedef enum disk_type_t {
 
   /* Opus Discovery */
   DISK_OPD,
+
+  /* Didaktik 40/80 */
+  DISK_D40,
+  DISK_D80,
 
   /* Log disk structure (.log) */
   DISK_LOG,
@@ -126,7 +128,7 @@ TRACK_LEN TYPE TRACK......DATA CLOCK..MARKS MF..MARKS WEAK..MARKS
    d->weak   = d->fm     + DISK_CLEN( d->bpt )
 
 #define DISK_SET_TRACK( d, head, cyl ) \
-   DISK_SET_TRACK_IDX( d, d->sides * cyl + head )
+   DISK_SET_TRACK_IDX( (d), (d)->sides * cyl + head )
 
 const char *disk_strerror( int error );
 /* create an unformatted disk sides -> (1/2) cylinders -> track/side,

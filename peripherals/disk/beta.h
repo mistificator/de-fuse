@@ -1,7 +1,8 @@
 /* beta.h: Routines for handling the Beta disk interface
-   Copyright (c) 2003-2011 Fredrick Meunier, Philip Kendall
+   Copyright (c) 2003-2013 Fredrick Meunier, Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: beta.h 4636 2012-01-20 14:07:15Z pak21 $
+   $Id: beta.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,18 +53,18 @@ void beta_unpage( void );
 
 void beta_cr_write( libspectrum_word port, libspectrum_byte b );
 
-libspectrum_byte beta_sr_read( libspectrum_word port, int *attached );
+libspectrum_byte beta_sr_read( libspectrum_word port, libspectrum_byte *attached );
 
-libspectrum_byte beta_tr_read( libspectrum_word port, int *attached );
+libspectrum_byte beta_tr_read( libspectrum_word port, libspectrum_byte *attached );
 void beta_tr_write( libspectrum_word port, libspectrum_byte b );
 
-libspectrum_byte beta_sec_read( libspectrum_word port, int *attached );
+libspectrum_byte beta_sec_read( libspectrum_word port, libspectrum_byte *attached );
 void beta_sec_write( libspectrum_word port, libspectrum_byte b );
 
-libspectrum_byte beta_dr_read( libspectrum_word port, int *attached );
+libspectrum_byte beta_dr_read( libspectrum_word port, libspectrum_byte *attached );
 void beta_dr_write( libspectrum_word port, libspectrum_byte b );
 
-libspectrum_byte beta_sp_read( libspectrum_word port, int *attached );
+libspectrum_byte beta_sp_read( libspectrum_word port, libspectrum_byte *attached );
 void beta_sp_write( libspectrum_word port, libspectrum_byte b );
 
 typedef enum beta_drive_number {
@@ -71,6 +72,7 @@ typedef enum beta_drive_number {
   BETA_DRIVE_B,
   BETA_DRIVE_C,
   BETA_DRIVE_D,
+  BETA_NUM_DRIVES,
 } beta_drive_number;
 
 int beta_disk_insert( beta_drive_number which, const char *filename,

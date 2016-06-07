@@ -1,7 +1,7 @@
 /* melodik.h: Routines for handling the Melodik interface
    Copyright (c) 2009-2011 Fredrick Meunier, Philip Kendall
 
-   $Id: melodik.h 4640 2012-01-21 13:26:35Z pak21 $
+   $Id: melodik.h 5228 2015-05-05 21:29:49Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

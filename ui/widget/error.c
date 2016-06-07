@@ -1,7 +1,7 @@
 /* error.c: The error reporting widget
    Copyright (c) 2002-2005 Philip Kendall
 
-   $Id: error.c 4103 2009-11-21 10:16:36Z fredm $
+   $Id: error.c 5178 2015-03-19 12:01:08Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ ui_error_specific( ui_error_level severity, const char *message )
   error_info.message  = message;
 
   fuse_emulation_pause();
-  widget_do( WIDGET_TYPE_ERROR, &error_info );
+  widget_do_error( &error_info );
   fuse_emulation_unpause();
 
   return 0;

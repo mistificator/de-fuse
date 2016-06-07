@@ -1,7 +1,8 @@
 /* query.c: The query widgets
    Copyright (c) 2004-2008 Darren Salt, Fredrick Meunier
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: query.c 4968 2013-05-19 16:11:17Z zubzero $
+   $Id: query.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@
 
 widget_query_t widget_query;
 
-static const char *title = "Fuse - Confirm";
+static const char * const title = "Fuse - Confirm";
 
 struct widget_query_entry;
 
@@ -214,7 +215,7 @@ widget_query_save_draw( void *data )
   return internal_query_draw( query_save, 1, (const char *) data );
 }
 
-void
+static void
 widget_query_generic_keyhandler( widget_query_entry *query, int num_entries,
                                  input_key key )
 {
@@ -264,7 +265,6 @@ widget_query_generic_keyhandler( widget_query_entry *query, int num_entries,
     widget_end_all( WIDGET_FINISHED_OK );
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
@@ -302,7 +302,7 @@ void
 widget_query_keyhandler( input_key key )
 {
   widget_query_generic_keyhandler( query_confirm,
-                                   sizeof(query_confirm)/sizeof(widget_query_entry),
+                                   ARRAY_SIZE(query_confirm),
                                    key );
 }
 
@@ -310,7 +310,7 @@ void
 widget_query_save_keyhandler( input_key key )
 {
   widget_query_generic_keyhandler( query_save,
-                                   sizeof(query_save)/sizeof(widget_query_entry),
+                                   ARRAY_SIZE(query_save),
                                    key );
 }
 

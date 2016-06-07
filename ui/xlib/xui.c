@@ -1,7 +1,7 @@
 /* xui.c: Routines for dealing with the Xlib user interface
-   Copyright (c) 2000-2003 Philip Kendall
+   Copyright (c) 2000-2015 Philip Kendall
 
-   $Id: xui.c 4667 2012-02-14 11:44:42Z fredm $
+   $Id: xui.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ ui_init( int *argc, char ***argv )
   XWMHints *wmHints;
   XSizeHints *sizeHints;
   XClassHint *classHint;
-  char *windowNameList="Fuse",*iconNameList="Fuse";
+  char *windowNameList=(char *)"Fuse",*iconNameList=(char *)"Fuse";
   XTextProperty windowName, iconName;
   unsigned long windowFlags;
   XSetWindowAttributes windowAttributes;
@@ -141,8 +141,8 @@ ui_init( int *argc, char ***argv )
   wmHints->initial_state=NormalState;
   wmHints->input=True;
 
-  classHint->res_name=fuse_progname;
-  classHint->res_class="Fuse";
+  classHint->res_name=(char *)fuse_progname;
+  classHint->res_class=(char *)"Fuse";
 
   XSetWMProperties(display, xui_mainWindow, &windowName, &iconName,
 		   *argv, *argc, sizeHints, wmHints, classHint);

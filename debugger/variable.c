@@ -1,7 +1,8 @@
 /* variable.c: Debugger variables
    Copyright (c) 2008 Philip Kendall
+   Copyright (c) 2015 Sergio Baldoví
 
-   $Id: variable.c 4696 2012-05-07 02:05:13Z fredm $
+   $Id: variable.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ void
 debugger_variable_init( void )
 {
   debugger_variables = g_hash_table_new_full( g_str_hash, g_str_equal,
-                                              free, NULL );
+                                              libspectrum_free, NULL );
 }
 
 void

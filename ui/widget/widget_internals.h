@@ -1,7 +1,8 @@
 /* widget_internals.h: Functions internal to the widget code
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: widget_internals.h 4968 2013-05-19 16:11:17Z zubzero $
+   $Id: widget_internals.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -162,7 +163,7 @@ scaler_type widget_select_scaler( int (*selector)( scaler_type ) );
 typedef struct widget_select_t {
 
   const char *title;	/* Dialog title */
-  const char **options;	/* The available options */
+  const char * const *options;	/* The available options */
   size_t count;		/* The number of options */
   size_t current;	/* Which option starts active? */
 
@@ -239,6 +240,7 @@ typedef struct widget_roms_info {
 
   const char *title;
   size_t start, count;
+  int is_peripheral;
 
 } widget_roms_info;
 

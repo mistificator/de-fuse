@@ -32,7 +32,7 @@
 #include "keyboard.h"
 
 #include <gdk/gdkkeysyms.h>
-#include <gtkcompat.h>
+#include <ui/gtk/gtkcompat.h>
 
 keysyms_map_t keysyms_map[] = {
 

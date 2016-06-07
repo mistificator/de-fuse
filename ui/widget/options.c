@@ -51,14 +51,14 @@ typedef struct widget_option_entry {
   int index;
   input_key key;		/* Which key to activate this option */
   const char *suffix;
-  const char **options;
+  const char * const *options;
 
   widget_option_click_fn click;
   widget_option_draw_fn draw;
 } widget_option_entry;
 
 static void
-widget_combo_click( const char *title, const char **options, char **current, int def )
+widget_combo_click( const char *title, const char * const *options, char **current, int def )
 {
   int error, i;
   widget_select_t sel;
@@ -73,7 +73,7 @@ widget_combo_click( const char *title, const char **options, char **current, int
   }
   sel.count = i;
 
-  error = widget_do( WIDGET_TYPE_SELECT, &sel );
+  error = widget_do_select( &sel );
 
   if( !error && sel.result >= 0 ) {
     if( *current ) free( *current );
@@ -82,7 +82,7 @@ widget_combo_click( const char *title, const char **options, char **current, int
 }
 
 static int
-option_enumerate_combo( const char **options, char *value, int def ) {
+option_enumerate_combo( const char * const *options, char *value, int def ) {
   int i;
   if( value != NULL ) {
     for( i = 0; options[i] != NULL; i++) {
@@ -93,7 +93,7 @@ option_enumerate_combo( const char **options, char *value, int def ) {
   return def;
 }
 
-static const char *widget_stereo_ay_combo[] = {
+static const char * const widget_stereo_ay_combo[] = {
   "None",
   "ACB",
   "ABC",
@@ -107,7 +107,7 @@ option_enumerate_sound_stereo_ay( void ) {
 				 0 );
 }
 
-static const char *widget_speaker_type_combo[] = {
+static const char * const widget_speaker_type_combo[] = {
   "TV speaker",
   "Beeper",
   "Unfiltered",
@@ -121,7 +121,7 @@ option_enumerate_sound_speaker_type( void ) {
 				 0 );
 }
 
-static const char *widget_drive_plus3a_type_combo[] = {
+static const char * const widget_drive_plus3a_type_combo[] = {
   "Single-sided 40 track",
   "Double-sided 40 track",
   "Single-sided 80 track",
@@ -136,7 +136,7 @@ option_enumerate_diskoptions_drive_plus3a_type( void ) {
 				 0 );
 }
 
-static const char *widget_drive_plus3b_type_combo[] = {
+static const char * const widget_drive_plus3b_type_combo[] = {
   "Disabled",
   "Single-sided 40 track",
   "Double-sided 40 track",
@@ -206,6 +206,24 @@ option_enumerate_diskoptions_drive_plusd2_type( void ) {
 				 4 );
 }
 
+#define widget_drive_didaktik80a_type_combo widget_drive_plus3a_type_combo
+
+int
+option_enumerate_diskoptions_drive_didaktik80a_type( void ) {
+  return option_enumerate_combo( widget_drive_didaktik80a_type_combo,
+				 settings_current.drive_didaktik80a_type,
+				 3 );
+}
+
+#define widget_drive_didaktik80b_type_combo widget_drive_plus3b_type_combo
+
+int
+option_enumerate_diskoptions_drive_didaktik80b_type( void ) {
+  return option_enumerate_combo( widget_drive_didaktik80b_type_combo,
+				 settings_current.drive_didaktik80b_type,
+				 4 );
+}
+
 #define widget_drive_disciple1_type_combo widget_drive_plus3a_type_combo
 
 int
@@ -242,7 +260,7 @@ option_enumerate_diskoptions_drive_opus2_type( void ) {
 				 1 );
 }
 
-static const char *widget_disk_try_merge_combo[] = {
+static const char * const widget_disk_try_merge_combo[] = {
   "Never",
   "With single-sided drives",
   "Always",
@@ -256,7 +274,7 @@ option_enumerate_diskoptions_disk_try_merge( void ) {
 				 1 );
 }
 
-static const char *widget_movie_compr_combo[] = {
+static const char * const widget_movie_compr_combo[] = {
   "None",
   "Lossless",
   "High",
@@ -277,40 +295,43 @@ static void widget_frame_rate_click( void );
 static void widget_option_frame_rate_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_issue2_click( void );
 static void widget_option_issue2_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_tape_traps_click( void );
-static void widget_option_tape_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_fastload_click( void );
-static void widget_option_fastload_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_detect_loader_click( void );
-static void widget_option_detect_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_accelerate_loader_click( void );
-static void widget_option_accelerate_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_auto_load_click( void );
-static void widget_option_auto_load_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_slt_traps_click( void );
-static void widget_option_slt_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_writable_roms_click( void );
 static void widget_option_writable_roms_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_autosave_settings_click( void );
-static void widget_option_autosave_settings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_mdr_len_click( void );
-static void widget_option_mdr_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_mdr_random_len_click( void );
-static void widget_option_mdr_random_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_late_timings_click( void );
+static void widget_option_late_timings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_z80_is_cmos_click( void );
+static void widget_option_z80_is_cmos_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_rs232_handshake_click( void );
 static void widget_option_rs232_handshake_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_bw_tv_click( void );
 static void widget_option_bw_tv_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_pal_tv2x_click( void );
 static void widget_option_pal_tv2x_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_confirm_actions_click( void );
-static void widget_option_confirm_actions_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_statusbar_click( void );
 static void widget_option_statusbar_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_joy_prompt_click( void );
 static void widget_option_joy_prompt_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_late_timings_click( void );
-static void widget_option_late_timings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_confirm_actions_click( void );
+static void widget_option_confirm_actions_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_autosave_settings_click( void );
+static void widget_option_autosave_settings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static int  widget_media_running = 0;
+static void widget_auto_load_click( void );
+static void widget_option_auto_load_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_detect_loader_click( void );
+static void widget_option_detect_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_fastload_click( void );
+static void widget_option_fastload_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_tape_traps_click( void );
+static void widget_option_tape_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_accelerate_loader_click( void );
+static void widget_option_accelerate_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_slt_traps_click( void );
+static void widget_option_slt_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_mdr_len_click( void );
+static void widget_option_mdr_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_mdr_random_len_click( void );
+static void widget_option_mdr_random_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static int  widget_peripherals_general_running = 0;
 static void widget_joy_kempston_click( void );
 static void widget_option_joy_kempston_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
@@ -338,6 +359,8 @@ static void widget_spectranet_click( void );
 static void widget_option_spectranet_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_spectranet_disable_click( void );
 static void widget_option_spectranet_disable_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_usource_click( void );
+static void widget_option_usource_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static int  widget_peripherals_disk_running = 0;
 static void widget_simpleide_active_click( void );
 static void widget_option_simpleide_active_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
@@ -357,6 +380,8 @@ static void widget_divide_wp_click( void );
 static void widget_option_divide_wp_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_plusd_click( void );
 static void widget_option_plusd_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_didaktik80_click( void );
+static void widget_option_didaktik80_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_disciple_click( void );
 static void widget_option_disciple_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_beta128_click( void );
@@ -412,6 +437,10 @@ static void widget_drive_plusd1_type_click( void );
 static void widget_option_drive_plusd1_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_drive_plusd2_type_click( void );
 static void widget_option_drive_plusd2_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_drive_didaktik80a_type_click( void );
+static void widget_option_drive_didaktik80a_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_drive_didaktik80b_type_click( void );
+static void widget_option_drive_didaktik80b_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_drive_disciple1_type_click( void );
 static void widget_option_drive_disciple1_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_drive_disciple2_type_click( void );
@@ -435,23 +464,29 @@ static widget_option_entry options_general[] = {
   { "\012E\001mulation speed", 0, INPUT_KEY_e, "%", NULL, widget_emulation_speed_click, widget_option_emulation_speed_draw },
   { "F\012r\001ame rate (1:n)", 1, INPUT_KEY_r, "frames", NULL, widget_frame_rate_click, widget_option_frame_rate_draw },
   { "Issue \0122\001 keyboard", 2, INPUT_KEY_2, NULL, NULL, widget_issue2_click, widget_option_issue2_draw },
+  { "Allow \012w\001rites to ROM", 3, INPUT_KEY_w, NULL, NULL, widget_writable_roms_click, widget_option_writable_roms_draw },
+  { "Late t\012i\001mings", 4, INPUT_KEY_i, NULL, NULL, widget_late_timings_click, widget_option_late_timings_draw },
+  { "\012Z\00180 is CMOS", 5, INPUT_KEY_z, NULL, NULL, widget_z80_is_cmos_click, widget_option_z80_is_cmos_draw },
+  { "RS-232 \012h\001andshake", 6, INPUT_KEY_h, NULL, NULL, widget_rs232_handshake_click, widget_option_rs232_handshake_draw },
+  { "Black and white T\012V\001", 7, INPUT_KEY_v, NULL, NULL, widget_bw_tv_click, widget_option_bw_tv_draw },
+  { "\012P\001AL-TV use TV2x effect", 8, INPUT_KEY_p, NULL, NULL, widget_pal_tv2x_click, widget_option_pal_tv2x_draw },
+  { "Show status\012b\001ar", 9, INPUT_KEY_b, NULL, NULL, widget_statusbar_click, widget_option_statusbar_draw },
+  { "Snap \012j\001oystick prompt", 10, INPUT_KEY_j, NULL, NULL, widget_joy_prompt_click, widget_option_joy_prompt_draw },
+  { "\012C\001onfirm actions", 11, INPUT_KEY_c, NULL, NULL, widget_confirm_actions_click, widget_option_confirm_actions_draw },
+  { "A\012u\001to-save settings", 12, INPUT_KEY_u, NULL, NULL, widget_autosave_settings_click, widget_option_autosave_settings_draw },
+  { NULL }
+};
+
+static widget_option_entry options_media[] = {
+  { "Media Options" },
+  { "\012A\001uto-load media", 0, INPUT_KEY_a, NULL, NULL, widget_auto_load_click, widget_option_auto_load_draw },
+  { "\012D\001etect loaders", 1, INPUT_KEY_d, NULL, NULL, widget_detect_loader_click, widget_option_detect_loader_draw },
+  { "\012F\001astloading", 2, INPUT_KEY_f, NULL, NULL, widget_fastload_click, widget_option_fastload_draw },
   { "Use \012t\001ape traps", 3, INPUT_KEY_t, NULL, NULL, widget_tape_traps_click, widget_option_tape_traps_draw },
-  { "\012F\001astloading", 4, INPUT_KEY_f, NULL, NULL, widget_fastload_click, widget_option_fastload_draw },
-  { "\012D\001etect loaders", 5, INPUT_KEY_d, NULL, NULL, widget_detect_loader_click, widget_option_detect_loader_draw },
-  { "Accelerate l\012o\001aders", 6, INPUT_KEY_o, NULL, NULL, widget_accelerate_loader_click, widget_option_accelerate_loader_draw },
-  { "\012A\001uto-load media", 7, INPUT_KEY_a, NULL, NULL, widget_auto_load_click, widget_option_auto_load_draw },
-  { "Use .s\012l\001t traps", 8, INPUT_KEY_l, NULL, NULL, widget_slt_traps_click, widget_option_slt_traps_draw },
-  { "Allow \012w\001rites to ROM", 9, INPUT_KEY_w, NULL, NULL, widget_writable_roms_click, widget_option_writable_roms_draw },
-  { "A\012u\001to-save settings", 10, INPUT_KEY_u, NULL, NULL, widget_autosave_settings_click, widget_option_autosave_settings_draw },
-  { "\012M\001DR cartridge len", 11, INPUT_KEY_m, "blocks", NULL, widget_mdr_len_click, widget_option_mdr_len_draw },
-  { "Random len\012g\001th MDR cartridge", 12, INPUT_KEY_g, NULL, NULL, widget_mdr_random_len_click, widget_option_mdr_random_len_draw },
-  { "RS-232 \012h\001andshake", 13, INPUT_KEY_h, NULL, NULL, widget_rs232_handshake_click, widget_option_rs232_handshake_draw },
-  { "Black and white T\012V\001", 14, INPUT_KEY_v, NULL, NULL, widget_bw_tv_click, widget_option_bw_tv_draw },
-  { "\012P\001AL-TV use TV2x effect", 15, INPUT_KEY_p, NULL, NULL, widget_pal_tv2x_click, widget_option_pal_tv2x_draw },
-  { "\012C\001onfirm actions", 16, INPUT_KEY_c, NULL, NULL, widget_confirm_actions_click, widget_option_confirm_actions_draw },
-  { "Show status\012b\001ar", 17, INPUT_KEY_b, NULL, NULL, widget_statusbar_click, widget_option_statusbar_draw },
-  { "Snap \012j\001oystick prompt", 18, INPUT_KEY_j, NULL, NULL, widget_joy_prompt_click, widget_option_joy_prompt_draw },
-  { "Late t\012i\001mings", 19, INPUT_KEY_i, NULL, NULL, widget_late_timings_click, widget_option_late_timings_draw },
+  { "Accelerate l\012o\001aders", 4, INPUT_KEY_o, NULL, NULL, widget_accelerate_loader_click, widget_option_accelerate_loader_draw },
+  { "Use .s\012l\001t traps", 5, INPUT_KEY_l, NULL, NULL, widget_slt_traps_click, widget_option_slt_traps_draw },
+  { "\012M\001DR cartridge len", 6, INPUT_KEY_m, "blocks", NULL, widget_mdr_len_click, widget_option_mdr_len_draw },
+  { "Random len\012g\001th MDR cartridge", 7, INPUT_KEY_g, NULL, NULL, widget_mdr_random_len_click, widget_option_mdr_random_len_draw },
   { NULL }
 };
 
@@ -470,6 +505,7 @@ static widget_option_entry options_peripherals_general[] = {
   { "Spec\012D\001rum interface", 10, INPUT_KEY_d, NULL, NULL, widget_specdrum_click, widget_option_specdrum_draw },
   { "Spectra\012n\001et", 11, INPUT_KEY_n, NULL, NULL, widget_spectranet_click, widget_option_spectranet_draw },
   { "Spe\012c\001tranet disable", 12, INPUT_KEY_c, NULL, NULL, widget_spectranet_disable_click, widget_option_spectranet_disable_draw },
+  { "uSo\012u\001rce", 13, INPUT_KEY_u, NULL, NULL, widget_usource_click, widget_option_usource_draw },
   { NULL }
 };
 
@@ -484,10 +520,11 @@ static widget_option_entry options_peripherals_disk[] = {
   { "Div\012I\001DE interface", 6, INPUT_KEY_i, NULL, NULL, widget_divide_enabled_click, widget_option_divide_enabled_draw },
   { "DivIDE \012w\001rite protect", 7, INPUT_KEY_w, NULL, NULL, widget_divide_wp_click, widget_option_divide_wp_draw },
   { "+\012D\001 interface", 8, INPUT_KEY_d, NULL, NULL, widget_plusd_click, widget_option_plusd_draw },
-  { "DISCi\012P\001LE interf(a)ce", 9, INPUT_KEY_p, NULL, NULL, widget_disciple_click, widget_option_disciple_draw },
-  { "\012B\001eta 128 interface", 10, INPUT_KEY_b, NULL, NULL, widget_beta128_click, widget_option_beta128_draw },
-  { "Beta 128 \012a\001uto-boot in 48K machines", 11, INPUT_KEY_a, NULL, NULL, widget_beta128_48boot_click, widget_option_beta128_48boot_draw },
-  { "\012O\001pus Discovery interface", 12, INPUT_KEY_o, NULL, NULL, widget_opus_click, widget_option_opus_draw },
+  { "Dida\012k\001tik 80 interface", 9, INPUT_KEY_k, NULL, NULL, widget_didaktik80_click, widget_option_didaktik80_draw },
+  { "DISCi\012P\001LE interf(a)ce", 10, INPUT_KEY_p, NULL, NULL, widget_disciple_click, widget_option_disciple_draw },
+  { "\012B\001eta 128 interface", 11, INPUT_KEY_b, NULL, NULL, widget_beta128_click, widget_option_beta128_draw },
+  { "Beta 128 \012a\001uto-boot in 48K machines", 12, INPUT_KEY_a, NULL, NULL, widget_beta128_48boot_click, widget_option_beta128_48boot_draw },
+  { "\012O\001pus Discovery interface", 13, INPUT_KEY_o, NULL, NULL, widget_opus_click, widget_option_opus_draw },
   { NULL }
 };
 
@@ -525,12 +562,14 @@ static widget_option_entry options_diskoptions[] = {
   { "Beta 128 Drive \012D\001", 6, INPUT_KEY_d, NULL, widget_drive_beta128d_type_combo, widget_drive_beta128d_type_click, widget_option_drive_beta128d_type_draw },
   { "+D Drive \0121\001", 7, INPUT_KEY_1, NULL, widget_drive_plusd1_type_combo, widget_drive_plusd1_type_click, widget_option_drive_plusd1_type_draw },
   { "+D Drive \0122\001", 8, INPUT_KEY_2, NULL, widget_drive_plusd2_type_combo, widget_drive_plusd2_type_click, widget_option_drive_plusd2_type_draw },
-  { "DISCiPLE Drive \0121\001", 9, INPUT_KEY_1, NULL, widget_drive_disciple1_type_combo, widget_drive_disciple1_type_click, widget_option_drive_disciple1_type_draw },
-  { "DISCiPLE Drive \0122\001", 10, INPUT_KEY_2, NULL, widget_drive_disciple2_type_combo, widget_drive_disciple2_type_click, widget_option_drive_disciple2_type_draw },
-  { "\012O\001pus Drive 1", 11, INPUT_KEY_o, NULL, widget_drive_opus1_type_combo, widget_drive_opus1_type_click, widget_option_drive_opus1_type_draw },
-  { "O\012p\001us Drive 2", 12, INPUT_KEY_p, NULL, widget_drive_opus2_type_combo, widget_drive_opus2_type_click, widget_option_drive_opus2_type_draw },
-  { "\012T\001ry merge 'B' side of disks", 13, INPUT_KEY_t, NULL, widget_disk_try_merge_combo, widget_disk_try_merge_click, widget_option_disk_try_merge_draw },
-  { "Con\012f\001irm merge disk sides", 14, INPUT_KEY_f, NULL, NULL, widget_disk_ask_merge_click, widget_option_disk_ask_merge_draw },
+  { "Didaktik \0128\0010 Drive A", 9, INPUT_KEY_0, NULL, widget_drive_didaktik80a_type_combo, widget_drive_didaktik80a_type_click, widget_option_drive_didaktik80a_type_draw },
+  { "Didaktik 8\0120\001 Drive B", 10, INPUT_KEY_4, NULL, widget_drive_didaktik80b_type_combo, widget_drive_didaktik80b_type_click, widget_option_drive_didaktik80b_type_draw },
+  { "DISCiPLE Drive \0121\001", 11, INPUT_KEY_1, NULL, widget_drive_disciple1_type_combo, widget_drive_disciple1_type_click, widget_option_drive_disciple1_type_draw },
+  { "DISCiPLE Drive \0122\001", 12, INPUT_KEY_2, NULL, widget_drive_disciple2_type_combo, widget_drive_disciple2_type_click, widget_option_drive_disciple2_type_draw },
+  { "\012O\001pus Drive 1", 13, INPUT_KEY_o, NULL, widget_drive_opus1_type_combo, widget_drive_opus1_type_click, widget_option_drive_opus1_type_draw },
+  { "O\012p\001us Drive 2", 14, INPUT_KEY_p, NULL, widget_drive_opus2_type_combo, widget_drive_opus2_type_click, widget_option_drive_opus2_type_draw },
+  { "\012T\001ry merge 'B' side of disks", 15, INPUT_KEY_t, NULL, widget_disk_try_merge_combo, widget_disk_try_merge_click, widget_option_disk_try_merge_draw },
+  { "Con\012f\001irm merge disk sides", 16, INPUT_KEY_f, NULL, NULL, widget_disk_ask_merge_click, widget_option_disk_ask_merge_draw },
   { NULL }
 };
 
@@ -550,7 +589,7 @@ int widget_options_print_value( int left_edge, int width, int number, int value 
 int widget_options_print_entry( int left_edge, int width, int number, const char *prefix, int value,
 				const char *suffix );
 int widget_options_print_combo( int left_edge, int width, int number, const char *prefix,
-				const char **options, const char *value, int def );
+				const char * const *options, const char *value, int def );
 
 static int widget_options_print_label( int left_edge, int width, int number, const char *string );
 static int widget_options_print_data( int left_edge, int menu_width, int number, const char *string, int tcolor );
@@ -659,7 +698,7 @@ widget_options_print_entry( int left_edge, int width, int number, const char *pr
 
 int
 widget_options_print_combo( int left_edge, int width, int number, const char *prefix,
-			    const char **option, const char *value, int def )
+			    const char * const *option, const char *value, int def )
 {
   int i = 0;
   const char *c;
@@ -682,6 +721,7 @@ int
 widget_options_finish( widget_finish_state finished )
 {
   int error;
+  int needs_hard_reset;
 
   /* If we exited normally, actually set the options */
   if( finished == WIDGET_FINISHED_OK ) {
@@ -693,11 +733,10 @@ widget_options_finish( widget_finish_state finished )
     /* Apply new options */
     settings_copy( &settings_current, &widget_options_settings );
 
-    int needs_hard_reset = periph_postcheck();
+    needs_hard_reset = periph_postcheck();
 
     if( needs_hard_reset ) {
-      error = widget_do( WIDGET_TYPE_QUERY,
-                         "Some options need to reset the machine. Reset?" );
+      error = widget_do_query( "Some options need to reset the machine. Reset?" );
       if( !error && !widget_query.confirm )
         settings_copy( &settings_current, &original_settings );
       else
@@ -741,7 +780,7 @@ widget_calculate_option_width(widget_option_entry *menu)
     if( ptr->suffix ) total_width += widget_stringwidth(ptr->suffix)+4*8;
     if( ptr->options ) {
       int combo_width = 0;
-      const char **options = ptr->options;
+      const char * const *options = ptr->options;
       while( *options != NULL ) {
         if( combo_width < widget_stringwidth( *options ) )
           combo_width = widget_stringwidth( *options );
@@ -785,7 +824,7 @@ widget_emulation_speed_click( void )
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.emulation_speed );
-  widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do_text( &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.emulation_speed = atoi( widget_text_text );
@@ -808,7 +847,7 @@ widget_frame_rate_click( void )
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.frame_rate );
-  widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do_text( &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.frame_rate = atoi( widget_text_text );
@@ -835,78 +874,6 @@ widget_option_issue2_draw( int left_edge, int width, struct widget_option_entry 
 }
 
 static void
-widget_tape_traps_click( void )
-{
-  widget_options_settings.tape_traps = ! widget_options_settings.tape_traps;
-}
-
-static void
-widget_option_tape_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->tape_traps );
-}
-
-static void
-widget_fastload_click( void )
-{
-  widget_options_settings.fastload = ! widget_options_settings.fastload;
-}
-
-static void
-widget_option_fastload_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->fastload );
-}
-
-static void
-widget_detect_loader_click( void )
-{
-  widget_options_settings.detect_loader = ! widget_options_settings.detect_loader;
-}
-
-static void
-widget_option_detect_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->detect_loader );
-}
-
-static void
-widget_accelerate_loader_click( void )
-{
-  widget_options_settings.accelerate_loader = ! widget_options_settings.accelerate_loader;
-}
-
-static void
-widget_option_accelerate_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->accelerate_loader );
-}
-
-static void
-widget_auto_load_click( void )
-{
-  widget_options_settings.auto_load = ! widget_options_settings.auto_load;
-}
-
-static void
-widget_option_auto_load_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->auto_load );
-}
-
-static void
-widget_slt_traps_click( void )
-{
-  widget_options_settings.slt_traps = ! widget_options_settings.slt_traps;
-}
-
-static void
-widget_option_slt_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->slt_traps );
-}
-
-static void
 widget_writable_roms_click( void )
 {
   widget_options_settings.writable_roms = ! widget_options_settings.writable_roms;
@@ -919,50 +886,27 @@ widget_option_writable_roms_draw( int left_edge, int width, struct widget_option
 }
 
 static void
-widget_autosave_settings_click( void )
+widget_late_timings_click( void )
 {
-  widget_options_settings.autosave_settings = ! widget_options_settings.autosave_settings;
+  widget_options_settings.late_timings = ! widget_options_settings.late_timings;
 }
 
 static void
-widget_option_autosave_settings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+widget_option_late_timings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->autosave_settings );
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->late_timings );
 }
 
 static void
-widget_mdr_len_click( void )
+widget_z80_is_cmos_click( void )
 {
-  widget_text_t text_data;
-
-  text_data.title = "MDR cartridge len";
-  text_data.allow = WIDGET_INPUT_DIGIT;
-  snprintf( text_data.text, 40, "%d",
-            widget_options_settings.mdr_len );
-  widget_do( WIDGET_TYPE_TEXT, &text_data );
-
-  if( widget_text_text ) {
-    widget_options_settings.mdr_len = atoi( widget_text_text );
-  }
+  widget_options_settings.z80_is_cmos = ! widget_options_settings.z80_is_cmos;
 }
 
 static void
-widget_option_mdr_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+widget_option_z80_is_cmos_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
-  widget_options_print_entry( left_edge, width, menu->index, menu->text, show->mdr_len,
-                              menu->suffix );
-}
-
-static void
-widget_mdr_random_len_click( void )
-{
-  widget_options_settings.mdr_random_len = ! widget_options_settings.mdr_random_len;
-}
-
-static void
-widget_option_mdr_random_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->mdr_random_len );
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->z80_is_cmos );
 }
 
 static void
@@ -1002,18 +946,6 @@ widget_option_pal_tv2x_draw( int left_edge, int width, struct widget_option_entr
 }
 
 static void
-widget_confirm_actions_click( void )
-{
-  widget_options_settings.confirm_actions = ! widget_options_settings.confirm_actions;
-}
-
-static void
-widget_option_confirm_actions_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->confirm_actions );
-}
-
-static void
 widget_statusbar_click( void )
 {
   widget_options_settings.statusbar = ! widget_options_settings.statusbar;
@@ -1038,15 +970,27 @@ widget_option_joy_prompt_draw( int left_edge, int width, struct widget_option_en
 }
 
 static void
-widget_late_timings_click( void )
+widget_confirm_actions_click( void )
 {
-  widget_options_settings.late_timings = ! widget_options_settings.late_timings;
+  widget_options_settings.confirm_actions = ! widget_options_settings.confirm_actions;
 }
 
 static void
-widget_option_late_timings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+widget_option_confirm_actions_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->late_timings );
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->confirm_actions );
+}
+
+static void
+widget_autosave_settings_click( void )
+{
+  widget_options_settings.autosave_settings = ! widget_options_settings.autosave_settings;
+}
+
+static void
+widget_option_autosave_settings_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->autosave_settings );
 }
 
 void
@@ -1065,7 +1009,7 @@ widget_general_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 20 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 13 );
     widget_general_show_all( &widget_options_settings );
     break;
 #endif
@@ -1088,7 +1032,7 @@ widget_general_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 20 ) {
+    if ( highlight_line + 1 < 13 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1102,8 +1046,8 @@ widget_general_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 20 ) {
-      new_highlight_line = 20 - 1;
+    if ( highlight_line + 2 < 13 ) {
+      new_highlight_line = 13 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -1114,7 +1058,6 @@ widget_general_keyhandler( input_key key )
     options_general[highlight_line+1].click();
     options_general[highlight_line+1].draw( menu_left_edge_x, menu_width, options_general + highlight_line + 1, &widget_options_settings );
     return;
-    break;
 
   case INPUT_KEY_Return:
   case INPUT_KEY_KP_Enter:
@@ -1123,7 +1066,6 @@ widget_general_keyhandler( input_key key )
     widget_general_running = 0;
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
@@ -1144,6 +1086,230 @@ widget_general_keyhandler( input_key key )
       ptr->click();
       highlight_line = ptr->index;
       options_general[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_general + old_highlight_line + 1, &widget_options_settings );
+      ptr->draw( menu_left_edge_x, menu_width, ptr, &widget_options_settings );
+      break;
+    }
+  }
+}
+
+int
+widget_media_draw( void *data GCC_UNUSED )
+{
+  int error;
+
+  if( !widget_media_running ) {		/* we want to copy settings, only when start up */
+    highlight_line = 0;
+    /* Get a copy of the current settings */
+    settings_copy( &widget_options_settings, &settings_current );
+    widget_media_running = 1;
+  }
+
+  error = widget_options_show_all( options_media, &widget_options_settings );
+  if( error ) { settings_free( &widget_options_settings ); return error; }
+
+  return 0;
+}
+
+static void
+widget_auto_load_click( void )
+{
+  widget_options_settings.auto_load = ! widget_options_settings.auto_load;
+}
+
+static void
+widget_option_auto_load_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->auto_load );
+}
+
+static void
+widget_detect_loader_click( void )
+{
+  widget_options_settings.detect_loader = ! widget_options_settings.detect_loader;
+}
+
+static void
+widget_option_detect_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->detect_loader );
+}
+
+static void
+widget_fastload_click( void )
+{
+  widget_options_settings.fastload = ! widget_options_settings.fastload;
+}
+
+static void
+widget_option_fastload_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->fastload );
+}
+
+static void
+widget_tape_traps_click( void )
+{
+  widget_options_settings.tape_traps = ! widget_options_settings.tape_traps;
+}
+
+static void
+widget_option_tape_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->tape_traps );
+}
+
+static void
+widget_accelerate_loader_click( void )
+{
+  widget_options_settings.accelerate_loader = ! widget_options_settings.accelerate_loader;
+}
+
+static void
+widget_option_accelerate_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->accelerate_loader );
+}
+
+static void
+widget_slt_traps_click( void )
+{
+  widget_options_settings.slt_traps = ! widget_options_settings.slt_traps;
+}
+
+static void
+widget_option_slt_traps_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->slt_traps );
+}
+
+static void
+widget_mdr_len_click( void )
+{
+  widget_text_t text_data;
+
+  text_data.title = "MDR cartridge len";
+  text_data.allow = WIDGET_INPUT_DIGIT;
+  snprintf( text_data.text, 40, "%d",
+            widget_options_settings.mdr_len );
+  widget_do_text( &text_data );
+
+  if( widget_text_text ) {
+    widget_options_settings.mdr_len = atoi( widget_text_text );
+  }
+}
+
+static void
+widget_option_mdr_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_entry( left_edge, width, menu->index, menu->text, show->mdr_len,
+                              menu->suffix );
+}
+
+static void
+widget_mdr_random_len_click( void )
+{
+  widget_options_settings.mdr_random_len = ! widget_options_settings.mdr_random_len;
+}
+
+static void
+widget_option_mdr_random_len_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->mdr_random_len );
+}
+
+void
+widget_media_keyhandler( input_key key )
+{
+  widget_text_t text_data;
+  int new_highlight_line = 0;
+  int cursor_pressed = 0;
+  widget_option_entry *ptr;
+  int menu_width = widget_calculate_option_width(options_media);
+  int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
+
+  text_data = text_data;	/* Keep gcc happy */
+
+  switch( key ) {
+
+#if 0
+  case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
+    widget_dialog_with_border( 1, 2, 30, 2 + 8 );
+    widget_media_show_all( &widget_options_settings );
+    break;
+#endif
+    
+  case INPUT_KEY_Escape:
+  case INPUT_JOYSTICK_FIRE_2:
+    widget_end_widget( WIDGET_FINISHED_CANCEL );
+    widget_media_running = 0;
+    break;
+
+  case INPUT_KEY_Up:
+  case INPUT_KEY_7:
+  case INPUT_JOYSTICK_UP:
+    if ( highlight_line ) {
+      new_highlight_line = highlight_line - 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_Down:
+  case INPUT_KEY_6:
+  case INPUT_JOYSTICK_DOWN:
+    if ( highlight_line + 1 < 8 ) {
+      new_highlight_line = highlight_line + 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_Home:
+    if ( highlight_line ) {
+      new_highlight_line = 0;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_End:
+    if ( highlight_line + 2 < 8 ) {
+      new_highlight_line = 8 - 1;
+      cursor_pressed = 1;
+    }
+    break;
+
+  case INPUT_KEY_space:
+  case INPUT_KEY_0:
+  case INPUT_JOYSTICK_RIGHT:
+    options_media[highlight_line+1].click();
+    options_media[highlight_line+1].draw( menu_left_edge_x, menu_width, options_media + highlight_line + 1, &widget_options_settings );
+    return;
+
+  case INPUT_KEY_Return:
+  case INPUT_KEY_KP_Enter:
+  case INPUT_JOYSTICK_FIRE_1:
+    widget_end_all( WIDGET_FINISHED_OK );
+    widget_media_running = 0;
+    display_refresh_all();
+    return;
+
+  default:	/* Keep gcc happy */
+    break;
+
+  }
+
+  if( cursor_pressed ) {
+    int old_highlight_line = highlight_line;
+    highlight_line = new_highlight_line;
+    options_media[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_media + old_highlight_line + 1, &widget_options_settings );
+    options_media[highlight_line+1].draw( menu_left_edge_x, menu_width, options_media + highlight_line + 1, &widget_options_settings );
+    return;
+  }
+
+  for( ptr=&options_media[1]; ptr->text != NULL; ptr++ ) {
+    if( key == ptr->key ) {
+      int old_highlight_line = highlight_line;
+      ptr->click();
+      highlight_line = ptr->index;
+      options_media[old_highlight_line+1].draw( menu_left_edge_x, menu_width, options_media + old_highlight_line + 1, &widget_options_settings );
       ptr->draw( menu_left_edge_x, menu_width, ptr, &widget_options_settings );
       break;
     }
@@ -1324,6 +1490,18 @@ widget_option_spectranet_disable_draw( int left_edge, int width, struct widget_o
   widget_options_print_option( left_edge, width, menu->index, menu->text, show->spectranet_disable );
 }
 
+static void
+widget_usource_click( void )
+{
+  widget_options_settings.usource = ! widget_options_settings.usource;
+}
+
+static void
+widget_option_usource_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->usource );
+}
+
 void
 widget_peripherals_general_keyhandler( input_key key )
 {
@@ -1340,7 +1518,7 @@ widget_peripherals_general_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 13 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 14 );
     widget_peripherals_general_show_all( &widget_options_settings );
     break;
 #endif
@@ -1363,7 +1541,7 @@ widget_peripherals_general_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 13 ) {
+    if ( highlight_line + 1 < 14 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1377,8 +1555,8 @@ widget_peripherals_general_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 13 ) {
-      new_highlight_line = 13 - 1;
+    if ( highlight_line + 2 < 14 ) {
+      new_highlight_line = 14 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -1389,7 +1567,6 @@ widget_peripherals_general_keyhandler( input_key key )
     options_peripherals_general[highlight_line+1].click();
     options_peripherals_general[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_general + highlight_line + 1, &widget_options_settings );
     return;
-    break;
 
   case INPUT_KEY_Return:
   case INPUT_KEY_KP_Enter:
@@ -1398,7 +1575,6 @@ widget_peripherals_general_keyhandler( input_key key )
     widget_peripherals_general_running = 0;
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
@@ -1552,6 +1728,18 @@ widget_option_plusd_draw( int left_edge, int width, struct widget_option_entry *
 }
 
 static void
+widget_didaktik80_click( void )
+{
+  widget_options_settings.didaktik80 = ! widget_options_settings.didaktik80;
+}
+
+static void
+widget_option_didaktik80_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->didaktik80 );
+}
+
+static void
 widget_disciple_click( void )
 {
   widget_options_settings.disciple = ! widget_options_settings.disciple;
@@ -1615,7 +1803,7 @@ widget_peripherals_disk_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 13 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 14 );
     widget_peripherals_disk_show_all( &widget_options_settings );
     break;
 #endif
@@ -1638,7 +1826,7 @@ widget_peripherals_disk_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 13 ) {
+    if ( highlight_line + 1 < 14 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1652,8 +1840,8 @@ widget_peripherals_disk_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 13 ) {
-      new_highlight_line = 13 - 1;
+    if ( highlight_line + 2 < 14 ) {
+      new_highlight_line = 14 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -1664,7 +1852,6 @@ widget_peripherals_disk_keyhandler( input_key key )
     options_peripherals_disk[highlight_line+1].click();
     options_peripherals_disk[highlight_line+1].draw( menu_left_edge_x, menu_width, options_peripherals_disk + highlight_line + 1, &widget_options_settings );
     return;
-    break;
 
   case INPUT_KEY_Return:
   case INPUT_KEY_KP_Enter:
@@ -1673,7 +1860,6 @@ widget_peripherals_disk_keyhandler( input_key key )
     widget_peripherals_disk_running = 0;
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
@@ -1763,7 +1949,7 @@ widget_competition_code_click( void )
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.competition_code );
-  widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do_text( &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.competition_code = atoi( widget_text_text );
@@ -1854,7 +2040,6 @@ widget_rzx_keyhandler( input_key key )
     options_rzx[highlight_line+1].click();
     options_rzx[highlight_line+1].draw( menu_left_edge_x, menu_width, options_rzx + highlight_line + 1, &widget_options_settings );
     return;
-    break;
 
   case INPUT_KEY_Return:
   case INPUT_KEY_KP_Enter:
@@ -1863,7 +2048,6 @@ widget_rzx_keyhandler( input_key key )
     widget_rzx_running = 0;
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
@@ -1983,7 +2167,7 @@ widget_volume_ay_click( void )
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_ay );
-  widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do_text( &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.volume_ay = atoi( widget_text_text );
@@ -2006,7 +2190,7 @@ widget_volume_beeper_click( void )
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_beeper );
-  widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do_text( &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.volume_beeper = atoi( widget_text_text );
@@ -2029,7 +2213,7 @@ widget_volume_specdrum_click( void )
   text_data.allow = WIDGET_INPUT_DIGIT;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_specdrum );
-  widget_do( WIDGET_TYPE_TEXT, &text_data );
+  widget_do_text( &text_data );
 
   if( widget_text_text ) {
     widget_options_settings.volume_specdrum = atoi( widget_text_text );
@@ -2108,7 +2292,6 @@ widget_sound_keyhandler( input_key key )
     options_sound[highlight_line+1].click();
     options_sound[highlight_line+1].draw( menu_left_edge_x, menu_width, options_sound + highlight_line + 1, &widget_options_settings );
     return;
-    break;
 
   case INPUT_KEY_Return:
   case INPUT_KEY_KP_Enter:
@@ -2117,7 +2300,6 @@ widget_sound_keyhandler( input_key key )
     widget_sound_running = 0;
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
@@ -2295,6 +2477,36 @@ widget_option_drive_plusd2_type_draw( int left_edge, int width, struct widget_op
 }
 
 static void
+widget_drive_didaktik80a_type_click( void )
+{
+  widget_combo_click( "Didaktik 80 Drive A", widget_drive_didaktik80a_type_combo,
+				&widget_options_settings.drive_didaktik80a_type,
+				3 );
+}
+
+static void
+widget_option_drive_didaktik80a_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_combo( left_edge, width, menu->index, menu->text, menu->options,
+			      show->drive_didaktik80a_type, 3 );
+}
+
+static void
+widget_drive_didaktik80b_type_click( void )
+{
+  widget_combo_click( "Didaktik 80 Drive B", widget_drive_didaktik80b_type_combo,
+				&widget_options_settings.drive_didaktik80b_type,
+				4 );
+}
+
+static void
+widget_option_drive_didaktik80b_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_combo( left_edge, width, menu->index, menu->text, menu->options,
+			      show->drive_didaktik80b_type, 4 );
+}
+
+static void
 widget_drive_disciple1_type_click( void )
 {
   widget_combo_click( "DISCiPLE Drive 1", widget_drive_disciple1_type_combo,
@@ -2397,7 +2609,7 @@ widget_diskoptions_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 15 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 17 );
     widget_diskoptions_show_all( &widget_options_settings );
     break;
 #endif
@@ -2420,7 +2632,7 @@ widget_diskoptions_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 15 ) {
+    if ( highlight_line + 1 < 17 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -2434,8 +2646,8 @@ widget_diskoptions_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 15 ) {
-      new_highlight_line = 15 - 1;
+    if ( highlight_line + 2 < 17 ) {
+      new_highlight_line = 17 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -2446,7 +2658,6 @@ widget_diskoptions_keyhandler( input_key key )
     options_diskoptions[highlight_line+1].click();
     options_diskoptions[highlight_line+1].draw( menu_left_edge_x, menu_width, options_diskoptions + highlight_line + 1, &widget_options_settings );
     return;
-    break;
 
   case INPUT_KEY_Return:
   case INPUT_KEY_KP_Enter:
@@ -2455,7 +2666,6 @@ widget_diskoptions_keyhandler( input_key key )
     widget_diskoptions_running = 0;
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
@@ -2592,7 +2802,6 @@ widget_movie_keyhandler( input_key key )
     options_movie[highlight_line+1].click();
     options_movie[highlight_line+1].draw( menu_left_edge_x, menu_width, options_movie + highlight_line + 1, &widget_options_settings );
     return;
-    break;
 
   case INPUT_KEY_Return:
   case INPUT_KEY_KP_Enter:
@@ -2601,7 +2810,6 @@ widget_movie_keyhandler( input_key key )
     widget_movie_running = 0;
     display_refresh_all();
     return;
-    break;
 
   default:	/* Keep gcc happy */
     break;
