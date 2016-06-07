@@ -22,14 +22,16 @@ override_dh_auto_build:
 	dh_auto_build -B$(BUILD_DIR_GTK) -- EXEEXT=-gtk
 	cat $(BUILD_DIR_GTK)/data/fuse.desktop | \
 		sed -e 's,Exec=.*,Exec=/usr/bin/fuse-gtk %f,' \
-		    -e 's,Name=\(.*\),Name=\1 (GTK+ version),' > \
+		    -e 's,Name=\(.*\),Name=\1 (GTK+ version),' \
+		    -e 's/^$$/Keywords=emulator;sinclair;spectrum;/' > \
 		$(BUILD_DIR_GTK)/fuse-gtk.desktop
 
 	dh_auto_build -B$(BUILD_DIR_SDL) -- EXEEXT=-sdl
 	cat $(BUILD_DIR_SDL)/data/fuse.desktop | \
 		sed -e 's,Exec=.*,Exec=/usr/bin/fuse-sdl %f,' \
 		    -e 's,Name=\(.*\),Name=\1 (SDL version),' \
-		    -e 's,GNOME;GTK;,,' > \
+		    -e 's,GNOME;GTK;,,' \
+		    -e 's/^$$/Keywords=emulator;sinclair;spectrum;/' > \
 		$(BUILD_DIR_SDL)/fuse-sdl.desktop
 
 override_dh_auto_install:
