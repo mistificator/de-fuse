@@ -1,7 +1,7 @@
 /* fuller.h: Routines for handling the Fuller Box
    Copyright (c) 2007-2011 Stuart Brady, Fredrick Meunier, Philip Kendall
 
-   $Id: fuller.h 4640 2012-01-21 13:26:35Z pak21 $
+   $Id: fuller.h 5228 2015-05-05 21:29:49Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

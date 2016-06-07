@@ -1,7 +1,7 @@
 /* debugger.h: Fuse's monitor/debugger
-   Copyright (c) 2002-2008 Philip Kendall
+   Copyright (c) 2002-2013 Philip Kendall
 
-   $Id: debugger.h 4635 2012-01-19 23:39:04Z pak21 $
+   $Id: debugger.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -65,6 +65,10 @@ int debugger_run( void ); /* Set debugger_mode so that emulation will occur */
 void debugger_disassemble( char *buffer, size_t buflen, size_t *length,
 			   libspectrum_word address );
 
+/* Get an instruction relative to a specific address */
+libspectrum_word debugger_search_instruction( libspectrum_word address,
+                                              int delta );
+
 /* Evaluate a debugger command */
 void debugger_command_evaluate( const char *command );
 
@@ -77,5 +81,8 @@ int debugger_event_register( const char *type, const char *detail );
 
 /* Fire off a debugger event */
 void debugger_event( int event_code );
+
+/* Exit the emulator */
+void debugger_exit_emulator( void );
 
 #endif				/* #ifndef FUSE_DEBUGGER_H */

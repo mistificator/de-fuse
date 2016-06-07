@@ -4,7 +4,7 @@
 #                (ASCII representation of a .psf (console font) file)
 # Copyright (c) 2004 Darren Salt
 
-# $Id: mkfusefont.pl 2889 2007-05-26 17:45:08Z zubzero $
+# $Id: mkfusefont.pl 5228 2015-05-05 21:29:49Z sbaldovi $
 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free

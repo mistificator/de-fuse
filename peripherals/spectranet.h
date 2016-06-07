@@ -1,7 +1,7 @@
 /* spectranet.h: Spectranet emulation
-   Copyright (c) 2011-2013 Philip Kendall
+   Copyright (c) 2011-2015 Philip Kendall
 
-   $Id: spectranet.h 4905 2013-03-08 20:21:40Z pak21 $
+   $Id: spectranet.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,6 +43,6 @@ extern int spectranet_available;
 extern int spectranet_paged;
 extern int spectranet_w5100_paged_a, spectranet_w5100_paged_b;
 extern int spectranet_programmable_trap_active;
-extern int spectranet_programmable_trap;
+extern libspectrum_word spectranet_programmable_trap;
 
 #endif /* #ifndef FUSE_SPECTRANET_H */

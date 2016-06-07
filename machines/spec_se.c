@@ -1,7 +1,7 @@
 /* spec_se.c: ZX Spectrum SE specific routines
-   Copyright (c) 1999-2011 Fredrick Meunier, Philip Kendall, Darren Salt
+   Copyright (c) 1999-2015 Fredrick Meunier, Philip Kendall, Darren Salt
 
-   $Id: spec_se.c 4862 2013-01-27 11:00:36Z fredm $
+   $Id: spec_se.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -155,6 +155,8 @@ spec_se_reset( void )
       timex_exrom[page_num].source = memory_source_exrom;
     }
   }
+
+  scld_set_exrom_dock_contention();
 
   /* The dock and exrom aren't cleared by the reset routine, so do
      so manually (only really necessary to keep snapshot sizes down) */

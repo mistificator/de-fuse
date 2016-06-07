@@ -1,7 +1,7 @@
 /* debugger_internals.h: The internals of Fuse's monitor/debugger
    Copyright (c) 2002-2011 Philip Kendall
 
-   $Id: debugger_internals.h 4696 2012-05-07 02:05:13Z fredm $
+   $Id: debugger_internals.h 5518 2016-05-23 19:12:31Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,6 +75,9 @@ typedef enum debugger_token {
 
   DEBUGGER_TOKEN_LESS_THAN_OR_EQUAL_TO = 0x2264,
   DEBUGGER_TOKEN_GREATER_THAN_OR_EQUAL_TO = 0x2265,
+
+  /* No real significance to this value */
+  DEBUGGER_TOKEN_DEREFERENCE = 0x1000,
 
 } debugger_token;
 

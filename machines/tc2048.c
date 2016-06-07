@@ -1,7 +1,7 @@
 /* tc2048.c: Timex TC2048 specific routines
-   Copyright (c) 1999-2011 Philip Kendall, Fredrick Meunier
+   Copyright (c) 1999-2015 Philip Kendall, Fredrick Meunier
 
-   $Id: tc2048.c 4724 2012-07-08 13:38:21Z fredm $
+   $Id: tc2048.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -134,5 +134,7 @@ tc2048_reset( void )
       exrom_page->page_num = i;
     }
 
-  return tc2068_tc2048_common_reset();
+  tc2068_tc2048_common_reset();
+
+  return 0;
 }

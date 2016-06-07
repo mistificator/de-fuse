@@ -1,7 +1,7 @@
 /* spectrum.c: Generic Spectrum routines
-   Copyright (c) 1999-2004 Philip Kendall, Darren Salt
+   Copyright (c) 1999-2013 Philip Kendall, Darren Salt
 
-   $Id: spectrum.c 4882 2013-02-15 23:47:37Z sbaldovi $
+   $Id: spectrum.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -100,6 +100,7 @@ spectrum_frame( void )
 			      : machine_current->timings.tstates_per_frame;
 
   event_frame( frame_length );
+  debugger_breakpoint_reduce_tstates( frame_length );
   tstates -= frame_length;
   if( z80.interrupts_enabled_at >= 0 )
     z80.interrupts_enabled_at -= frame_length;

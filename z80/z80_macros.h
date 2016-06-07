@@ -1,7 +1,8 @@
 /* z80_macros.h: Some commonly used z80 things as macros
    Copyright (c) 1999-2011 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: z80_macros.h 4624 2012-01-09 20:59:35Z pak21 $
+   $Id: z80_macros.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -84,6 +85,8 @@
 #define IM   z80.im
 
 #define IR ( ( z80.i ) << 8 | ( z80.r7 & 0x80 ) | ( z80.r & 0x7f ) )
+
+#define IS_CMOS settings_current.z80_is_cmos
 
 /* The flags */
 

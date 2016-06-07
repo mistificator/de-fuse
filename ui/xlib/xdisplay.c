@@ -1,7 +1,9 @@
 /* xdisplay.c: Routines for dealing with drawing the Speccy's screen via Xlib
    Copyright (c) 2000-2005 Philip Kendall, Darren Salt, Gergely Szász
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2015 Sergio Baldoví
 
-   $Id: xdisplay.c 4707 2012-05-25 11:35:23Z fredm $
+   $Id: xdisplay.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -159,8 +161,8 @@ static xdisplay_putpixel_t xdisplay_putpixel_15;
 static xdisplay_putpixel_t xdisplay_putpixel_16;
 static xdisplay_putpixel_t xdisplay_putpixel_24;
 
-#include "xpixmaps.c"
-void xstatusbar_overlay();
+#include "ui/xlib/xpixmaps.c"
+void xstatusbar_overlay( void );
 
 static libspectrum_word pal_colour[16] = {
   0x0000, 0x0017, 0xb800, 0xb817, 0x05e0, 0x05f7, 0xbde0, 0xbdf7,

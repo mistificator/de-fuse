@@ -1,7 +1,9 @@
 /* widget.c: Simple dialog boxes for all user interfaces.
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall, Russell Marks
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2015 Sergio Baldoví
 
-   $Id: widget.c 4968 2013-05-19 16:11:17Z zubzero $
+   $Id: widget.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,14 +45,14 @@
 #include "ui/uidisplay.h"
 #include "keyboard.h"
 #include "menu.h"
-#include "options_internals.h"
 #include "periph.h"
 #include "peripherals/joystick.h"
 #include "pokefinder/pokefinder.h"
 #include "screenshot.h"
 #include "timer/timer.h"
+#include "ui/widget/options_internals.h"
+#include "ui/widget/widget_internals.h"
 #include "utils.h"
-#include "widget_internals.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -165,14 +167,6 @@ widget_char( int pp )
   if( !widget_font[pp >> 8] || !widget_font[pp >> 8][pp & 255].defined )
     return &default_unknown;
   return &widget_font[ pp >> 8 ][ pp & 255 ];
-}
-
-size_t
-widget_left_one_char( const char *s, size_t index )
-{
-  if( index == -1 ) index = strlen( s );
-  if( !index ) return 0;
-  return index - 1;
 }
 
 static int
@@ -471,7 +465,9 @@ int widget_init( void )
   ui_menu_activate( UI_MENU_ITEM_RECORDING, 0 );
   ui_menu_activate( UI_MENU_ITEM_RECORDING_ROLLBACK, 0 );
   ui_menu_activate( UI_MENU_ITEM_TAPE_RECORDING, 0 );
-
+#ifdef HAVE_LIB_XML2
+  ui_menu_activate( UI_MENU_ITEM_FILE_SVG_CAPTURE, 0 );
+#endif
   return 0;
 }
 
@@ -596,7 +592,7 @@ int widget_dialog( int x, int y, int width, int height )
   return 0;
 }
 
-void
+static void
 widget_draw_speccy_rainbow_bar(int x, int y)
 {
   int i = 0;
@@ -679,6 +675,7 @@ widget_t widget_data[] = {
   { widget_picture_draw,  NULL,                  widget_picture_keyhandler  },
   { widget_menu_draw,	  NULL,			 widget_menu_keyhandler     },
   { widget_select_draw,   widget_select_finish,  widget_select_keyhandler   },
+  { widget_media_draw,	  widget_options_finish, widget_media_keyhandler    },
   { widget_sound_draw,	  widget_options_finish, widget_sound_keyhandler    },
   { widget_error_draw,	  NULL,			 widget_error_keyhandler    },
   { widget_rzx_draw,      widget_options_finish, widget_rzx_keyhandler      },
@@ -729,7 +726,7 @@ ui_confirm_save_specific( const char *message )
 {
   if( !settings_current.confirm_actions ) return UI_CONFIRM_SAVE_DONTSAVE;
 
-  if( widget_do( WIDGET_TYPE_QUERY_SAVE, (void *) message ) )
+  if( widget_do_query_save( message ) )
     return UI_CONFIRM_SAVE_CANCEL;
   return widget_query.confirm;
 }
@@ -737,7 +734,7 @@ ui_confirm_save_specific( const char *message )
 int
 ui_query( const char *message )
 {
-  widget_do( WIDGET_TYPE_QUERY, (void *) message );
+  widget_do_query( message );
   return widget_query.save;
 }
 
@@ -766,7 +763,7 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type, int inputs )
   info.current = UI_CONFIRM_JOYSTICK_NONE;
   info.finish_all = 1;
 
-  error = widget_do( WIDGET_TYPE_SELECT, &info );
+  error = widget_do_select( &info );
   if( error ) return UI_CONFIRM_JOYSTICK_NONE;
 
   return (ui_confirm_joystick_t)info.result;
@@ -785,7 +782,7 @@ ui_popup_menu( int native_key )
   switch( native_key ) {
   case INPUT_KEY_F1:
     fuse_emulation_pause();
-    widget_do( WIDGET_TYPE_MENU, &widget_menu );
+    widget_do_menu( widget_menu );
     fuse_emulation_unpause();
     break;
   case INPUT_KEY_F2:

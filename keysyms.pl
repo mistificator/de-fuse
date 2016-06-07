@@ -1,10 +1,11 @@
 #!/usr/bin/perl -w
 
 # keysyms.pl: generate keysyms.c from keysyms.dat
-# Copyright (c) 2000-2007 Philip Kendall, Matan Ziv-Av, Russell Marks,
+# Copyright (c) 2000-2013 Philip Kendall, Matan Ziv-Av, Russell Marks,
 #			  Fredrick Meunier, Catalin Mihaila, Stuart Brady
+# Copyright (c) 2015 Sergio Baldoví
 
-# $Id: keysyms.pl 4882 2013-02-15 23:47:37Z sbaldovi $
+# $Id: keysyms.pl 5434 2016-05-01 04:22:45Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -135,7 +136,7 @@ my %ui_data = (
 	    },
 
     wii => { headers => [ 'ui/wii/wiikeysyms.h' ],
-	      # max_length not used
+	      max_length => 24,
 	      skips => { map { $_ => 1 } ( 'numbersign',
 					   'Shift_L', 'Shift_R',
 					   'Control_L', 'Control_R',
@@ -148,7 +149,7 @@ my %ui_data = (
 	      function => \&wii_keysym
 	    },
 
-    gtk  => { headers => [ 'gdk/gdkkeysyms.h', 'gtkcompat.h' ],
+    gtk  => { headers => [ 'gdk/gdkkeysyms.h', 'ui/gtk/gtkcompat.h' ],
 	      max_length => 16,
 	      skips => { },
 	      translations => { },

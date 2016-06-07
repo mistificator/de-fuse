@@ -1,7 +1,8 @@
 /* divide.c: DivIDE interface routines
-   Copyright (c) 2005-2008 Matthew Westcott, Philip Kendall
+   Copyright (c) 2005-2015 Matthew Westcott, Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: divide.c 4972 2013-05-19 16:46:43Z zubzero $
+   $Id: divide.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@
 
 /* Private function prototypes */
 
-static libspectrum_byte divide_ide_read( libspectrum_word port, int *attached );
+static libspectrum_byte divide_ide_read( libspectrum_word port, libspectrum_byte *attached );
 static void divide_ide_write( libspectrum_word port, libspectrum_byte data );
 static void divide_control_write( libspectrum_word port, libspectrum_byte data );
 static void divide_control_write_internal( libspectrum_byte data );
@@ -59,10 +60,10 @@ static const periph_port_t divide_ports[] = {
 };
 
 static const periph_t divide_periph = {
-  &settings_current.divide_enabled,
-  divide_ports,
-  1,
-  divide_activate
+  /* .option = */ &settings_current.divide_enabled,
+  /* .ports = */ divide_ports,
+  /* .hard_reset = */ 1,
+  /* .activate = */ divide_activate,
 };
 
 static const libspectrum_byte DIVIDE_CONTROL_CONMEM = 0x80;
@@ -98,16 +99,16 @@ static void divide_to_snapshot( libspectrum_snap *snap );
 
 static module_info_t divide_module_info = {
 
-  divide_reset,
-  divide_memory_map,
-  divide_enabled_snapshot,
-  divide_from_snapshot,
-  divide_to_snapshot,
+  /* .reset = */ divide_reset,
+  /* .romcs = */ divide_memory_map,
+  /* .snapshot_enabled = */ divide_enabled_snapshot,
+  /* .snapshot_from = */ divide_from_snapshot,
+  /* .snapshot_to = */ divide_to_snapshot,
 
 };
 
 /* Debugger events */
-static const char *event_type_string = "divide";
+static const char * const event_type_string = "divide";
 static int page_event, unpage_event;
 
 /* Housekeeping functions */
@@ -279,11 +280,11 @@ port_to_ide_register( libspectrum_byte port )
 }
 
 libspectrum_byte
-divide_ide_read( libspectrum_word port, int *attached )
+divide_ide_read( libspectrum_word port, libspectrum_byte *attached )
 {
   int ide_register;
 
-  *attached = 1;
+  *attached = 0xff; /* TODO: check this */
   ide_register = port_to_ide_register( port );
 
   return libspectrum_ide_read( divide_idechn0, ide_register );
@@ -453,11 +454,7 @@ divide_to_snapshot( libspectrum_snap *snap )
   libspectrum_snap_set_divide_paged( snap, divide_active );
   libspectrum_snap_set_divide_control( snap, divide_control );
 
-  buffer = malloc( DIVIDE_PAGE_LENGTH * sizeof( libspectrum_byte ) );
-  if( !buffer ) {
-    ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-    return;
-  }
+  buffer = libspectrum_new( libspectrum_byte, DIVIDE_PAGE_LENGTH );
 
   memcpy( buffer, divide_eprom, DIVIDE_PAGE_LENGTH );
   libspectrum_snap_set_divide_eprom( snap, 0, buffer );
@@ -466,11 +463,7 @@ divide_to_snapshot( libspectrum_snap *snap )
 
   for( i = 0; i < DIVIDE_PAGES; i++ ) {
 
-    buffer = malloc( DIVIDE_PAGE_LENGTH * sizeof( libspectrum_byte ) );
-    if( !buffer ) {
-      ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-      return;
-    }
+    buffer = libspectrum_new( libspectrum_byte, DIVIDE_PAGE_LENGTH );
 
     memcpy( buffer, divide_ram[ i ], DIVIDE_PAGE_LENGTH );
     libspectrum_snap_set_divide_ram( snap, i, buffer );

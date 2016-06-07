@@ -1,7 +1,9 @@
 /* compat.h: various compatibility bits
    Copyright (c) 2003-2012 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2015 Sergio Baldoví
 
-   $Id: compat.h 4738 2012-10-03 13:15:31Z fredm $
+   $Id: compat.h 5525 2016-05-23 21:53:48Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,6 +52,32 @@
 
 #endif				/* #ifdef __GNUC__ */
 
+#if defined(__GNUC__) && defined(__GNUC_MINOR__)
+  #define GNUC_VERSION \
+    (__GNUC__ << 16) + __GNUC_MINOR__
+  #define GNUC_PREREQ(maj, min) \
+    (GNUC_VERSION >= ((maj) << 16) + (min))
+#else
+  #define GNUC_PREREQ(maj, min) 0
+#endif
+
+#define BUILD_BUG_ON_ZERO(e) \
+  (sizeof(struct { int:-!!(e) * 1234; }))
+
+#if !GNUC_PREREQ(3, 1) || defined( __STRICT_ANSI__ )
+  #define MUST_BE_ARRAY(a) \
+    BUILD_BUG_ON_ZERO(sizeof(a) % sizeof(*a))
+#else
+  #define SAME_TYPE(a, b) \
+    __builtin_types_compatible_p(typeof(a), typeof(b))
+  #define MUST_BE_ARRAY(a) \
+    BUILD_BUG_ON_ZERO(SAME_TYPE((a), &(*a)))
+#endif
+
+#define ARRAY_SIZE(a) ( \
+  (sizeof(a) / sizeof(*a)) \
+   + MUST_BE_ARRAY(a))
+
 #ifndef HAVE_DIRNAME
 char *dirname( char *path );
 #endif				/* #ifndef HAVE_DIRNAME */
@@ -69,6 +97,13 @@ int mkstemp( char *templ );
 #else
 #define FUSE_DIR_SEP_CHR '/'
 #define FUSE_DIR_SEP_STR "/"
+#endif
+
+/* End of line for text files */
+#ifdef WIN32
+#define FUSE_EOL "\r\n"
+#else
+#define FUSE_EOL "\n"
 #endif
 
 #ifndef PATH_MAX

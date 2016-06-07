@@ -1,7 +1,8 @@
 /* if1.h: Interface 1 handling routines
    Copyright (c) 2004-2011 Gergely Szasz, Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: if1.h 4835 2012-12-31 15:35:45Z zubzero $
+   $Id: if1.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,9 +39,6 @@ libspectrum_error if1_end( void );
 void if1_page( void );
 void if1_unpage( void );
 void if1_memory_map( void );
-
-void if1_port_out( libspectrum_word port, libspectrum_byte val );
-libspectrum_byte if1_port_in( libspectrum_word port, int *attached );
 
 int if1_mdr_insert( int drive, const char *filename );
 int if1_mdr_write( int drive, const char *filename );

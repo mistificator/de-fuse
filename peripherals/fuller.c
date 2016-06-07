@@ -1,7 +1,7 @@
 /* fuller.c: Routines for handling the Fuller Box
    Copyright (c) 2007-2011 Stuart Brady, Fredrick Meunier, Philip Kendall
 
-   $Id: fuller.c 4926 2013-05-05 07:58:18Z sbaldovi $
+   $Id: fuller.c 5251 2015-05-11 17:34:37Z zubzero $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@ static void fuller_to_snapshot( libspectrum_snap *snap );
 
 static module_info_t fuller_module_info = {
 
-  NULL,
-  NULL,
-  fuller_enabled_snapshot,
-  fuller_from_snapshot,
-  fuller_to_snapshot,
+  /* .reset = */ NULL,
+  /* .romcs = */ NULL,
+  /* .snapshot_enabled = */ fuller_enabled_snapshot,
+  /* .snapshot_from = */ fuller_from_snapshot,
+  /* .snapshot_to = */ fuller_to_snapshot,
 
 };
 
@@ -57,10 +57,10 @@ static const periph_port_t fuller_ports[] = {
 };
 
 static const periph_t fuller_periph = {
-  &settings_current.fuller,
-  fuller_ports,
-  1,
-  NULL
+  /* .option = */ &settings_current.fuller,
+  /* .ports = */ fuller_ports,
+  /* .hard_reset = */ 1,
+  /* .activate = */ NULL,
 };
 
 static void

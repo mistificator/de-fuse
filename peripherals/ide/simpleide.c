@@ -2,8 +2,10 @@
    Copyright (c) 2003-2004 Garry Lancaster,
 		 2004 Philip Kendall,
 		 2008 Fredrick Meunier
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2016 Sergio Baldoví
 
-   $Id: simpleide.c 4972 2013-05-19 16:46:43Z zubzero $
+   $Id: simpleide.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +40,7 @@
 
 /* Private function prototypes */
 
-static libspectrum_byte simpleide_read( libspectrum_word port, int *attached );
+static libspectrum_byte simpleide_read( libspectrum_word port, libspectrum_byte *attached );
 static void simpleide_write( libspectrum_word port, libspectrum_byte data );
 
 /* Data */
@@ -49,24 +51,24 @@ static const periph_port_t simpleide_ports[] = {
 };
 
 static const periph_t simpleide_periph = {
-  &settings_current.simpleide_active,
-  simpleide_ports,
-  1,
-  NULL
+  /* .option = */ &settings_current.simpleide_active,
+  /* .ports = */ simpleide_ports,
+  /* .hard_reset = */ 1,
+  /* .activate = */ NULL,
 };
 
 static libspectrum_ide_channel *simpleide_idechn;
 
-static void simpleide_from_snapshot( libspectrum_snap *snap );
+static void simpleide_snapshot_enabled( libspectrum_snap *snap );
 static void simpleide_to_snapshot( libspectrum_snap *snap );
 
 static module_info_t simpleide_module_info = {
 
-  simpleide_reset,
-  NULL,
-  NULL,
-  simpleide_from_snapshot,
-  simpleide_to_snapshot,
+  /* .reset = */ simpleide_reset,
+  /* .romcs = */ NULL,
+  /* .snapshot_enabled = */ simpleide_snapshot_enabled,
+  /* .snapshot_from = */ NULL,
+  /* .snapshot_to = */ simpleide_to_snapshot,
 
 };
 
@@ -175,11 +177,11 @@ simpleide_eject( libspectrum_ide_unit unit )
 /* Port read/writes */
 
 static libspectrum_byte
-simpleide_read( libspectrum_word port, int *attached )
+simpleide_read( libspectrum_word port, libspectrum_byte *attached )
 {
   libspectrum_ide_register idereg;
   
-  *attached = 1;
+  *attached = 0xff; /* TODO: check this */
   
   idereg = ( ( port >> 8 ) & 0x01 ) | ( ( port >> 11 ) & 0x06 );
   
@@ -197,10 +199,10 @@ simpleide_write( libspectrum_word port, libspectrum_byte data )
 }
 
 static void
-simpleide_from_snapshot( libspectrum_snap *snap )
+simpleide_snapshot_enabled( libspectrum_snap *snap )
 {
-  settings_current.simpleide_active =
-    libspectrum_snap_simpleide_active( snap );
+  if( libspectrum_snap_simpleide_active( snap ) )
+    settings_current.simpleide_active = 1;
 }
 
 static void

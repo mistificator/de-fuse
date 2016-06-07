@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 # z80.pl: generate C code for Z80 opcodes
-# $Id: z80.pl 4905 2013-03-08 20:21:40Z pak21 $
+# $Id: z80.pl 5434 2016-05-01 04:22:45Z fredm $
 
-# Copyright (c) 1999-2013 Philip Kendall
+# Copyright (c) 1999-2015 Philip Kendall
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -719,25 +719,27 @@ sub opcode_LD (@) {
 
 	if( length $src == 1 or $src =~ /^REGISTER[HL]$/ ) {
 
+	    if( $dest eq 'R' or $src eq 'R' or $dest eq 'I' or $src eq 'I') {
+		print "      contend_read_no_mreq( IR, 1 );\n"
+	    }
+
 	    if( $dest eq 'R' and $src eq 'A' ) {
 		print << "LD";
-      contend_read_no_mreq( IR, 1 );
       /* Keep the RZX instruction counter right */
       rzx_instructions_offset += ( R - A );
       R=R7=A;
 LD
             } elsif( $dest eq 'A' and $src eq 'R' ) {
-		print << "LD";
-      contend_read_no_mreq( IR, 1 );
-      A=(R&0x7f) | (R7&0x80);
-      F = ( F & FLAG_C ) | sz53_table[A] | ( IFF2 ? FLAG_V : 0 );
-LD
+		print "      A=(R&0x7f) | (R7&0x80);\n";
 	    } else {
-		print "      contend_read_no_mreq( IR, 1 );\n" if $src eq 'I' or $dest eq 'I';
 		print "      $dest=$src;\n" if $dest ne $src;
-		if( $dest eq 'A' and $src eq 'I' ) {
-		    print "      F = ( F & FLAG_C ) | sz53_table[A] | ( IFF2 ? FLAG_V : 0 );\n";
-		}
+	    }
+            if( $dest eq 'A' and ( $src eq 'I' or $src eq 'R' ) ) {
+		print << "LD";
+      F = ( F & FLAG_C ) | sz53_table[A] | ( IFF2 ? FLAG_V : 0 );
+      z80.iff2_read = 1;
+      event_add( tstates, z80_nmos_iff2_event );
+LD
 	    }
 	} elsif( $src eq 'nn' ) {
 	    print "      $dest = readbyte( PC++ );\n";
@@ -897,7 +899,11 @@ sub opcode_OUT (@) {
       }
 OUT
     } elsif( $port eq '(C)' and length $register == 1 ) {
-	print "      writeport( BC, $register );\n";
+	if ( $register eq '0' ) {
+	    print "      writeport( BC, IS_CMOS ? 0xff : 0 );\n";
+	} else {
+	    print "      writeport( BC, $register );\n";
+	}
     }
 }
 

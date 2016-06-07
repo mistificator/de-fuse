@@ -1,7 +1,8 @@
 /* melodik.c: Routines for handling the Melodik interface
    Copyright (c) 2009-2011 Fredrick Meunier, Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: melodik.c 4926 2013-05-05 07:58:18Z sbaldovi $
+   $Id: melodik.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,11 +41,11 @@ static void melodik_to_snapshot( libspectrum_snap *snap );
 
 static module_info_t melodik_module_info = {
 
-  NULL,
-  NULL,
-  melodik_enabled_snapshot,
-  melodik_from_snapshot,
-  melodik_to_snapshot,
+  /* .reset = */ NULL,
+  /* .romcs = */ NULL,
+  /* .snapshot_enabled = */ melodik_enabled_snapshot,
+  /* .snapshot_from = */ melodik_from_snapshot,
+  /* .snapshot_to = */ melodik_to_snapshot,
 
 };
 
@@ -55,10 +56,10 @@ static const periph_port_t melodik_ports[] = {
 };
 
 static const periph_t melodik_periph = {
-  &settings_current.melodik,
-  melodik_ports,
-  1,
-  NULL
+  /* .option = */ &settings_current.melodik,
+  /* .ports = */ melodik_ports,
+  /* .hard_reset = */ 1,
+  /* .activate = */ NULL,
 };
 
 static void

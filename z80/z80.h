@@ -1,7 +1,7 @@
 /* z80.h: z80 emulation core
-   Copyright (c) 1999-2013 Philip Kendall
+   Copyright (c) 1999-2015 Philip Kendall
 
-   $Id: z80.h 4905 2013-03-08 20:21:40Z pak21 $
+   $Id: z80.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ typedef struct {
 			   so it can also act as an RZX instruction counter */
   libspectrum_byte r7;	/* The high bit of the R register */
   regpair sp,pc;
+  int iff2_read;
   libspectrum_byte iff1, iff2, im;
   int halted;
 
@@ -74,6 +75,8 @@ extern libspectrum_byte sz53_table[];
 extern libspectrum_byte sz53p_table[];
 extern libspectrum_byte parity_table[];
 
-extern int z80_interrupt_event, z80_nmi_event;
+extern int z80_interrupt_event;
+extern int z80_nmi_event;
+extern int z80_nmos_iff2_event;
 
 #endif			/* #ifndef FUSE_Z80_H */

@@ -1,7 +1,7 @@
 /* specdrum.h: Routines for handling the Specdrum Drum Kit
    Copyright (c) 2011 Jon Mitchell
 
-   $Id: specdrum.h 4924 2013-05-05 07:40:02Z sbaldovi $
+   $Id: specdrum.h 5300 2015-06-13 10:30:38Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 #include <libspectrum.h>
 
 typedef struct specdrum_info {
-  int specdrum_present;  /* SpecDrum present */
   libspectrum_signed_byte specdrum_dac; /* Current byte in the SpecDrum 8bit DAC */
 } specdrum_info;
 

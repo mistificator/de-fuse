@@ -1,7 +1,7 @@
 /* socket.c: Socket-related compatibility routines
-   Copyright (c) 2011-2012 Philip Kendall
+   Copyright (c) 2011-2015 Philip Kendall
 
-   $Id: socket.c 4828 2012-12-30 19:43:37Z pak21 $
+   $Id: socket.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,11 +75,8 @@ compat_socket_selfpipe_t* compat_socket_selfpipe_alloc( void )
   int error;
   int pipefd[2];
 
-  compat_socket_selfpipe_t *self = malloc( sizeof( *self ) );
-  if( !self ) {
-    ui_error( UI_ERROR_ERROR, "%s: %d: out of memory", __FILE__, __LINE__ );
-    fuse_abort();
-  }
+  compat_socket_selfpipe_t *self =
+    libspectrum_new( compat_socket_selfpipe_t, 1 );
 
   error = pipe( pipefd );
   if( error ) {
@@ -97,7 +94,7 @@ void compat_socket_selfpipe_free( compat_socket_selfpipe_t *self )
 {
   close( self->read_fd );
   close( self->write_fd );
-  free( self );
+  libspectrum_free( self );
 }
 
 compat_socket_t compat_socket_selfpipe_get_read_fd( compat_socket_selfpipe_t *self )

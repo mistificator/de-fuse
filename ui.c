@@ -1,7 +1,8 @@
 /* ui.c: User interface routines, but those which are independent of any UI
-   Copyright (c) 2002 Philip Kendall
+   Copyright (c) 2002-2015 Philip Kendall
+   Copyright (c) 2016 Sergio Baldoví
 
-   $Id: ui.c 4835 2012-12-31 15:35:45Z zubzero $
+   $Id: ui.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@
 #include "settings.h"
 #include "tape.h"
 #include "ui/ui.h"
+#include "ui/uimedia.h"
 #include "ui/widget/widget.h"
 
 #define MESSAGE_MAX_LENGTH 256
@@ -48,8 +50,10 @@ int ui_widget_level = -1;
 static char last_message[ MESSAGE_MAX_LENGTH ] = "";
 static size_t frames_since_last_message = 0;
 
+#ifndef UI_WIN32
 static int
 print_error_to_stderr( ui_error_level severity, const char *message );
+#endif			/* #ifndef UI_WIN32 */
 
 int
 ui_error( ui_error_level severity, const char *format, ... )
@@ -79,6 +83,7 @@ ui_verror( ui_error_level severity, const char *format, va_list ap )
 
   /* And store the 'last message' */
   strncpy( last_message, message, MESSAGE_MAX_LENGTH );
+  last_message[ MESSAGE_MAX_LENGTH - 1 ] = '\0';
 
 #ifndef UI_WIN32
   print_error_to_stderr( severity, message );
@@ -163,9 +168,9 @@ static int mouse_grab_suspended = 0;
 void
 ui_mouse_button( int button, int down )
 {
-  if( !ui_mouse_grabbed && !mouse_grab_suspended ) button = 2;
-
   int kempston_button = !settings_current.mouse_swap_buttons;
+
+  if( !ui_mouse_grabbed && !mouse_grab_suspended ) button = 2;
 
   /* Possibly we'll end up handling _more_ than one mouse interface... */
   switch( button ) {
@@ -217,6 +222,12 @@ struct menu_item_entries {
 
 static const struct menu_item_entries menu_item_lookup[] = {
 
+  { UI_MENU_ITEM_FILE_SVG_CAPTURE,
+    "/File/Scalable Vector Graphics/Stop capture",
+    "/File/Scalable Vector Graphics/Start capture in dot mode...", 1,
+    "/File/Scalable Vector Graphics/Start capture in line mode...", 1
+  },
+
   { UI_MENU_ITEM_FILE_MOVIE_RECORDING, "/File/Movie/Stop",
     "/File/Movie/Pause", 0,
     "/File/Movie/Continue", 0,
@@ -231,6 +242,8 @@ static const struct menu_item_entries menu_item_lookup[] = {
   { UI_MENU_ITEM_MACHINE_PROFILER, "/Machine/Profiler/Stop",
     "/Machine/Profiler/Start", 1 },
   
+  { UI_MENU_ITEM_MACHINE_DIDAKTIK80_SNAP, "/Machine/Didaktik SNAP" },
+
   { UI_MENU_ITEM_MEDIA_CARTRIDGE, "/Media/Cartridge" },
 
   { UI_MENU_ITEM_MEDIA_CARTRIDGE_DOCK, "/Media/Cartridge/Timex Dock" },
@@ -476,6 +489,42 @@ static const struct menu_item_entries menu_item_lookup[] = {
     "/Media/Disk/+D/Drive 2/Write protect/Enable",
     "/Media/Disk/+D/Drive 2/Write protect/Disable", 1 },
 
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK, "/Media/Disk/Didaktik 80" },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A, "/Media/Disk/Didaktik 80/Drive A" },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A_EJECT,
+    "/Media/Disk/Didaktik 80/Drive A/Eject",
+    "/Media/Disk/Didaktik 80/Drive A/Save As...", 0,
+    "/Media/Disk/Didaktik 80/Drive A/Save", 0,
+    "/Media/Disk/Didaktik 80/Drive A/Flip disk", 0,
+    "/Media/Disk/Didaktik 80/Drive A/Write protect", 0 },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A_FLIP_SET,
+    "/Media/Disk/Didaktik 80/Drive A/Flip disk/Turn upside down",
+    "/Media/Disk/Didaktik 80/Drive A/Flip disk/Turn back", 1 },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A_WP_SET,
+    "/Media/Disk/Didaktik 80/Drive A/Write protect/Enable",
+    "/Media/Disk/Didaktik 80/Drive A/Write protect/Disable", 1 },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B, "/Media/Disk/Didaktik 80/Drive B" },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B_EJECT,
+    "/Media/Disk/Didaktik 80/Drive B/Eject",
+    "/Media/Disk/Didaktik 80/Drive B/Save As...", 0,
+    "/Media/Disk/Didaktik 80/Drive B/Save", 0,
+    "/Media/Disk/Didaktik 80/Drive B/Flip disk", 0,
+    "/Media/Disk/Didaktik 80/Drive B/Write protect", 0 },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B_FLIP_SET,
+    "/Media/Disk/Didaktik 80/Drive B/Flip disk/Turn upside down",
+    "/Media/Disk/Didaktik 80/Drive B/Flip disk/Turn back", 1 },
+
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B_WP_SET,
+    "/Media/Disk/Didaktik 80/Drive B/Write protect/Enable",
+    "/Media/Disk/Didaktik 80/Drive B/Write protect/Disable", 1 },
+
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE, "/Media/Disk/DISCiPLE" },
 
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_1, "/Media/Disk/DISCiPLE/Drive 1" },
@@ -590,7 +639,9 @@ static const struct menu_item_entries menu_item_lookup[] = {
     "/File/Recording/Stop", 
     "/File/Recording/Record...", 1,
     "/File/Recording/Record from snapshot...", 1,
-    "/File/Recording/Play...", 1 },
+    "/File/Recording/Continue recording...", 1,
+    "/File/Recording/Play...", 1,
+    "/File/Recording/Finalise...", 1 },
 
   { UI_MENU_ITEM_RECORDING_ROLLBACK,
     "/File/Recording/Insert snapshot",
@@ -653,19 +704,13 @@ ui_menu_activate( ui_menu_item item, int active )
 void
 ui_menu_disk_update( void )
 {
-  int plus3, beta, plusd, opus, disciple;
-  int capabilities;
+  int drives_avail;
 
-  capabilities = machine_current->capabilities;
+  drives_avail = ui_media_drive_any_available();
 
   /* Set the disk menu items and statusbar appropriately */
-  plus3 = capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_DISK;
-  beta = beta_available;
-  opus = opus_available;
-  plusd = plusd_available;
-  disciple = disciple_available;
 
-  if( plus3 || beta || opus || plusd || disciple ) {
+  if( drives_avail ) {
     ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK, 1 );
     ui_statusbar_update( UI_STATUSBAR_ITEM_DISK, UI_STATUSBAR_STATE_INACTIVE );
   } else {
@@ -674,11 +719,7 @@ ui_menu_disk_update( void )
                          UI_STATUSBAR_STATE_NOT_AVAILABLE );
   }
 
-  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUS3, plus3 );
-  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_BETA, beta );
-  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_OPUS, opus );
-  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_PLUSD, plusd );
-  ui_menu_activate( UI_MENU_ITEM_MEDIA_DISK_DISCIPLE, disciple );
+  ui_media_drive_update_parent_menus();
 }
 
 int
@@ -698,157 +739,6 @@ ui_tape_write( void )
   fuse_emulation_unpause();
 
   return 0;
-}
-
-int
-ui_plus3_disk_write( specplus3_drive_number which, int saveas )
-{
-  int err;
-  char drive, *filename = NULL, title[80];
-
-  switch( which ) {
-    case SPECPLUS3_DRIVE_A: drive = 'A'; break;
-    case SPECPLUS3_DRIVE_B: drive = 'B'; break;
-    default: drive = '?'; break;
-  }
-
-  fuse_emulation_pause();
-
-  snprintf( title, 80, "Fuse - Write +3 Disk %c:", drive );
-
-  if( saveas ) {
-    filename = ui_get_save_filename( title );
-    if( !filename ) { fuse_emulation_unpause(); return 1; }
-  }
-  err = specplus3_disk_write( which, filename );
-
-  if( saveas ) libspectrum_free( filename );
-
-  fuse_emulation_unpause();
-
-  return err;
-}
-
-int
-ui_beta_disk_write( beta_drive_number which, int saveas )
-{
-  int err;
-  char drive, *filename = NULL, title[80];
-
-  switch( which ) {
-    case BETA_DRIVE_A: drive = 'A'; break;
-    case BETA_DRIVE_B: drive = 'B'; break;
-    case BETA_DRIVE_C: drive = 'C'; break;
-    case BETA_DRIVE_D: drive = 'D'; break;
-    default: drive = '?'; break;
-  }
-
-  fuse_emulation_pause();
-
-  snprintf( title, 80, "Fuse - Write Beta Disk %c:", drive );
-
-  if( saveas ) {
-    filename = ui_get_save_filename( title );
-    if( !filename ) { fuse_emulation_unpause(); return 1; }
-  }
-
-  err = beta_disk_write( which, filename );
-
-  if( saveas ) libspectrum_free( filename );
-
-  fuse_emulation_unpause();
-
-  return err;
-}
-
-int
-ui_opus_disk_write( opus_drive_number which, int saveas )
-{
-  int err;
-  char drive, *filename = NULL, title[80];
-
-  switch( which ) {
-    case OPUS_DRIVE_1: drive = '1'; break;
-    case OPUS_DRIVE_2: drive = '2'; break;
-    default: drive = '?'; break;
-  }
-
-  fuse_emulation_pause();
-
-  snprintf( title, 80, "Fuse - Write Opus Disk %c", drive );
-
-  if( saveas ) {
-    filename = ui_get_save_filename( title );
-    if( !filename ) { fuse_emulation_unpause(); return 1; }
-  }
-
-  err = opus_disk_write( which, filename );
-
-  if( saveas ) libspectrum_free( filename );
-
-  fuse_emulation_unpause();
-
-  return err;
-}
-
-int
-ui_plusd_disk_write( plusd_drive_number which, int saveas )
-{
-  int err;
-  char drive, *filename = NULL, title[80];
-
-  switch( which ) {
-    case PLUSD_DRIVE_1: drive = '1'; break;
-    case PLUSD_DRIVE_2: drive = '2'; break;
-    default: drive = '?'; break;
-  }
-
-  fuse_emulation_pause();
-
-  snprintf( title, 80, "Fuse - Write +D Disk %c", drive );
-
-  if( saveas ) {
-    filename = ui_get_save_filename( title );
-    if( !filename ) { fuse_emulation_unpause(); return 1; }
-  }
-
-  err = plusd_disk_write( which, filename );
-
-  if( saveas ) libspectrum_free( filename );
-
-  fuse_emulation_unpause();
-
-  return err;
-}
-
-int
-ui_disciple_disk_write( disciple_drive_number which, int saveas )
-{
-  int err;
-  char drive, *filename = NULL, title[80];
-
-  switch( which ) {
-    case PLUSD_DRIVE_1: drive = '1'; break;
-    case PLUSD_DRIVE_2: drive = '2'; break;
-    default: drive = '?'; break;
-  }
-
-  fuse_emulation_pause();
-
-  snprintf( title, 80, "Fuse - Write DISCiPLE Disk %c", drive );
-
-  if( saveas ) {
-    filename = ui_get_save_filename( title );
-    if( !filename ) { fuse_emulation_unpause(); return 1; }
-  }
-
-  err = disciple_disk_write( which, filename );
-
-  if( saveas ) libspectrum_free( filename );
-
-  fuse_emulation_unpause();
-
-  return err;
 }
 
 int

@@ -1,7 +1,8 @@
 /* specplus3.h: Spectrum +2A/+3 specific routines
-   Copyright (c) 1999-2004 Philip Kendall
+   Copyright (c) 1999-2013 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: specplus3.h 4353 2011-04-06 00:28:47Z zubzero $
+   $Id: specplus3.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,8 +48,8 @@ int specplus3_shutdown( void );
 void specplus3_memoryport_write( libspectrum_word port, libspectrum_byte b );
 void specplus3_memoryport2_write( libspectrum_word port, libspectrum_byte b );
 
-libspectrum_byte specplus3_fdc_status( libspectrum_word port, int *attached );
-libspectrum_byte specplus3_fdc_read( libspectrum_word port, int *attached );
+libspectrum_byte specplus3_fdc_status( libspectrum_word port, libspectrum_byte *attached );
+libspectrum_byte specplus3_fdc_read( libspectrum_word port, libspectrum_byte *attached );
 void specplus3_fdc_write( libspectrum_word port, libspectrum_byte data );
 
 int specplus3_memory_map( void );
@@ -56,6 +57,7 @@ int specplus3_memory_map( void );
 typedef enum specplus3_drive_number {
   SPECPLUS3_DRIVE_A = 0,	/* First drive must be number zero */
   SPECPLUS3_DRIVE_B,
+  SPECPLUS3_NUM_DRIVES,
 } specplus3_drive_number;
 
 int specplus3_disk_insert( specplus3_drive_number which, const char *filename,

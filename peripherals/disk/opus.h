@@ -1,7 +1,7 @@
 /* opus.h: Routines for handling the Opus Discovery interface
-   Copyright (c) 2005-2009 Stuart Brady, Fredrick Meunier
+   Copyright (c) 2005-2013 Stuart Brady, Fredrick Meunier
 
-   $Id: opus.h 4924 2013-05-05 07:40:02Z sbaldovi $
+   $Id: opus.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 typedef enum opus_drive_number {
   OPUS_DRIVE_1 = 0,
   OPUS_DRIVE_2,
+  OPUS_NUM_DRIVES,
 } opus_drive_number;
 
 extern int opus_available;  /* Is the Opus available for use? */
@@ -50,8 +51,6 @@ void opus_unpage( void );
 
 libspectrum_byte opus_read( libspectrum_word address );
 void opus_write( libspectrum_word address, libspectrum_byte b );
-
-libspectrum_byte opus_joy_read( libspectrum_word port, int *attached );
 
 int opus_disk_insert( opus_drive_number which, const char *filename,
 		       int autoload );

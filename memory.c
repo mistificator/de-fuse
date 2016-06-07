@@ -1,7 +1,9 @@
 /* memory.c: Routines for accessing memory
-   Copyright (c) 1999-2012 Philip Kendall
+   Copyright (c) 1999-2015 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2016 Fredrick Meunier
 
-   $Id: memory.c 4857 2013-01-23 12:00:08Z fredm $
+   $Id: memory.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -213,9 +215,9 @@ memory_pool_allocate_persistent( size_t length, int persistent )
   memory_pool_entry_t *entry;
   libspectrum_byte *memory;
 
-  memory = libspectrum_malloc( length * sizeof( *memory ) );
+  memory = libspectrum_new( libspectrum_byte, length );
 
-  entry = libspectrum_malloc( sizeof( *entry ) );
+  entry = libspectrum_new( memory_pool_entry_t, 1 );
 
   entry->persistent = persistent;
   entry->memory = memory;
@@ -291,9 +293,9 @@ memory_map_page( memory_page *source[], int page_num )
     *source[ page_num ];
 }
 
-/* Page in from /ROMCS */
+/* Page in 16k from /ROMCS */
 void
-memory_map_romcs( memory_page source[] )
+memory_map_romcs_full( memory_page source[] )
 {
   int i;
 
@@ -320,6 +322,17 @@ memory_map_romcs_4k( libspectrum_word address, memory_page source[] )
 
   start = address >> MEMORY_PAGE_SIZE_LOGARITHM;
   for( i = 0; i < MEMORY_PAGES_IN_4K; i++ )
+    memory_map_read[ start + i ] = memory_map_write[ start + i ] = source[ i ];
+}
+
+/* Page in 2K from /ROMCS */
+void
+memory_map_romcs_2k( libspectrum_word address, memory_page source[] )
+{
+  int i, start;
+
+  start = address >> MEMORY_PAGE_SIZE_LOGARITHM;
+  for( i = 0; i < MEMORY_PAGES_IN_2K; i++ )
     memory_map_read[ start + i ] = memory_map_write[ start + i ] = source[ i ];
 }
 
@@ -379,7 +392,7 @@ memory_display_dirty_pentagon_16_col( libspectrum_word address,
   libspectrum_word offset = address & MEMORY_PAGE_SIZE_MASK;
   libspectrum_byte *memory = mapping->page;
 
-  /* The offset into the 16Kb RAM page (as opposed to the 8Kb chunk) */
+  /* The offset into the 16Kb RAM page (as opposed to the 2Kb chunk) */
   libspectrum_word offset2 = offset + mapping->offset;
 
   /* If this is a write to the current screen areas (and it actually changes
@@ -406,7 +419,7 @@ memory_display_dirty_sinclair( libspectrum_word address, libspectrum_byte b ) \
   libspectrum_word offset = address & MEMORY_PAGE_SIZE_MASK;
   libspectrum_byte *memory = mapping->page;
 
-  /* The offset into the 16Kb RAM page (as opposed to the 8Kb chunk) */
+  /* The offset into the 16Kb RAM page (as opposed to the 2Kb chunk) */
   libspectrum_word offset2 = offset + mapping->offset;
 
   /* If this is a write to the current screen (and it actually changes
@@ -574,14 +587,14 @@ memory_rom_to_snapshot( libspectrum_snap *snap )
 
         /* Start a new ROM image */
         rom_length = MEMORY_PAGE_SIZE;
-        current_rom = libspectrum_malloc( rom_length );
+        current_rom = libspectrum_new( libspectrum_byte, rom_length );
 
         memcpy( current_rom, memory_map_rom[ i ].page, MEMORY_PAGE_SIZE );
         current_page_num = memory_map_rom[ i ].page_num;
       } else {
         /* Extend the current ROM image */
-        current_rom = libspectrum_realloc( current_rom,
-                                           rom_length + MEMORY_PAGE_SIZE );
+        current_rom = libspectrum_renew( libspectrum_byte, current_rom,
+                                         rom_length + MEMORY_PAGE_SIZE );
 
         memcpy( current_rom + rom_length, memory_map_rom[ i ].page,
                 MEMORY_PAGE_SIZE );
@@ -610,7 +623,7 @@ memory_to_snapshot( libspectrum_snap *snap )
   for( i = 0; i < 64; i++ ) {
     if( RAM[i] != NULL ) {
 
-      buffer = libspectrum_malloc( 0x4000 * sizeof( libspectrum_byte ) );
+      buffer = libspectrum_new( libspectrum_byte, 0x4000 );
 
       memcpy( buffer, RAM[i], 0x4000 );
       libspectrum_snap_set_pages( snap, i, buffer );
@@ -618,4 +631,74 @@ memory_to_snapshot( libspectrum_snap *snap )
   }
 
   memory_rom_to_snapshot( snap );
+}
+
+/* Check whether we're actually in the right ROM when a tape or other traps
+   hit */
+int
+trap_check_rom( trap_type type )
+{
+  if( plusd_available && plusd_active )
+    return 0;		/* +D must not be active */
+
+  if( disciple_available && disciple_active )
+    return 0;		/* DISCiPLE must not be active */
+
+  if( opus_available && opus_active )
+    return 0;		/* Opus must not be active */
+
+  switch( machine_current->machine ) {
+  case LIBSPECTRUM_MACHINE_16:
+  case LIBSPECTRUM_MACHINE_48:
+  case LIBSPECTRUM_MACHINE_48_NTSC:
+  case LIBSPECTRUM_MACHINE_SE:
+  case LIBSPECTRUM_MACHINE_TC2048:
+    return 1;		/* Always OK here */
+
+  case LIBSPECTRUM_MACHINE_TC2068:
+  case LIBSPECTRUM_MACHINE_TS2068:
+    if( type == CHECK_TAPE_ROM )
+      /* OK if we're in the EXROM (location of the tape routines) */
+      return( memory_map_read[0].source == memory_source_exrom );
+    else
+      /* OK if we're in the min TS2068 ROM */
+      return( machine_current->ram.current_rom == 0 );
+
+  case LIBSPECTRUM_MACHINE_128:
+  case LIBSPECTRUM_MACHINE_PLUS2:
+    /* OK if we're in ROM 1 */
+    return( machine_current->ram.current_rom == 1 );
+
+  case LIBSPECTRUM_MACHINE_PLUS2A:
+  case LIBSPECTRUM_MACHINE_PLUS3:
+  case LIBSPECTRUM_MACHINE_PLUS3E:
+    /* OK if we're not in a 64Kb RAM configuration and we're in
+       ROM 3 */
+    return( ! machine_current->ram.special &&
+            machine_current->ram.current_rom == 3 );
+
+  case LIBSPECTRUM_MACHINE_128E:
+    /* OK if we're not in a 64Kb RAM configuration and we're in
+       either ROM 1 or ROM 3 (which are the same) */
+    return( ! machine_current->ram.special &&
+            ( machine_current->ram.current_rom == 1 ||
+              machine_current->ram.current_rom == 3    ));
+
+  case LIBSPECTRUM_MACHINE_PENT:
+  case LIBSPECTRUM_MACHINE_PENT512:
+  case LIBSPECTRUM_MACHINE_PENT1024:
+  case LIBSPECTRUM_MACHINE_SCORP:
+    /* OK if we're in ROM 1 and the Beta disk interface is not active */
+    return( machine_current->ram.current_rom == 1 && !beta_active );
+
+  case LIBSPECTRUM_MACHINE_UNKNOWN:	/* should never happen */
+    ui_error( UI_ERROR_ERROR,
+              "trap_check_rom: machine type is LIBSPECTRUM_MACHINE_UNKNOWN" );
+    fuse_abort();
+
+  }
+
+  ui_error( UI_ERROR_ERROR, "trap_check_rom: unknown machine type %d",
+            machine_current->machine );
+  fuse_abort();
 }

@@ -1,7 +1,8 @@
 /* disassemble.c: Fuse's disassembler
-   Copyright (c) 2002-2003 Darren Salt, Philip Kendall
+   Copyright (c) 2002-2015 Darren Salt, Philip Kendall
+   Copyright (c) 2016 BogDan Vatra
 
-   $Id: disassemble.c 4547 2011-09-27 11:50:15Z fredm $
+   $Id: disassemble.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -343,7 +344,7 @@ disassemble_11xxx001( libspectrum_byte b, char *buffer, size_t buflen,
   case 0x03: snprintf( buffer, buflen, "EXX" ); *length = 1; break;
 
   case 0x05: 
-    snprintf( buffer, buflen, "JP %s", hl_ix_iy( use_hl ) ); *length = 1;
+    snprintf( buffer, buflen, "JP (%s)", hl_ix_iy( use_hl ) ); *length = 1;
     break;
 
   case 0x06: snprintf( buffer, buflen, "POP AF" ); *length = 1; break;
@@ -561,7 +562,7 @@ disassemble_ed( libspectrum_word address, char *buffer, size_t buflen,
 
     }
   } else if( b < 0xa0 ) {
-    snprintf( buffer, buflen, "NOPD" ); *length = 1; *length = 1;
+    snprintf( buffer, buflen, "NOPD" ); *length = 1;
   } else {
     /* Note: 0xbc to 0xbf already removed */
     snprintf( buffer, buflen, "%s", opcode_101xxxxx[ b & 0x1f ] ); *length = 1;
@@ -779,4 +780,37 @@ static int
 bit_op_bit( libspectrum_byte b )
 {
   return ( b >> 3 ) & 0x07;
+}
+
+/* Get an instruction relative to a specific address */
+libspectrum_word
+debugger_search_instruction( libspectrum_word address, int delta )
+{
+  size_t j, length, longest;
+  int i;
+
+  if( !delta ) return address;
+
+  if( delta > 0 ) {
+
+    for( i = 0; i < delta; i++ ) {
+      debugger_disassemble( NULL, 0, &length, address );
+      address += length;
+    }
+
+  } else {
+
+    for( i = 0; i > delta; i-- ) {
+      /* Look for _longest_ opcode which produces the current top in second
+         place */
+      for( longest = 1, j = 1; j <= 8; j++ ) {
+        debugger_disassemble( NULL, 0, &length, address - j );
+        if( length == j ) longest = j;
+      }
+      address -= longest;
+    }
+
+  }
+
+  return address;
 }

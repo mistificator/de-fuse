@@ -1,7 +1,7 @@
 /* statusbar.c: routines for updating the status bar
    Copyright (c) 2003-2004 Philip Kendall
 
-   $Id: statusbar.c 4723 2012-07-08 13:26:15Z fredm $
+   $Id: statusbar.c 5510 2016-05-22 08:37:30Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -118,8 +118,20 @@ gtkstatusbar_create( GtkBox *parent )
 }
 
 int
+gtkstatusbar_get_height( void )
+{
+  GtkAllocation alloc;
+
+  gtk_widget_get_allocation( status_bar, &alloc );
+
+  return alloc.height + 6;        /* status bar + vbox padding */
+}
+
+int
 gtkstatusbar_set_visibility( int visible )
 {
+  gtkdisplay_update_geometry();
+
   if( visible ) {
     gtk_widget_show( status_bar );
   } else {

@@ -1,8 +1,9 @@
 /* joystick.h: Joystick emulation support
    Copyright (c) 2001-2004 Russell Marks, Philip Kendall
    Copyright (c) 2003 Darren Salt
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: joystick.h 4288 2011-02-03 21:06:22Z pak21 $
+   $Id: joystick.h 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -75,10 +76,10 @@ int joystick_press( int which, joystick_button button, int press );
 
 /* Interface-specific read functions */
 libspectrum_byte joystick_kempston_read ( libspectrum_word port,
-					  int *attached );
+					  libspectrum_byte *attached );
 libspectrum_byte joystick_timex_read ( libspectrum_word port,
 				       libspectrum_byte which );
 libspectrum_byte joystick_fuller_read ( libspectrum_word port,
-					int *attached );
+					libspectrum_byte *attached );
 
 #endif			/* #ifndef FUSE_JOYSTICK_H */

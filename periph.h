@@ -1,7 +1,9 @@
 /* periph.h: code for handling peripherals
-   Copyright (c) 2004-2011 Philip Kendall
+   Copyright (c) 2004-2016 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2015 Gergely Szasz
 
-   $Id: periph.h 4962 2013-05-19 05:25:15Z sbaldovi $
+   $Id: periph.h 5489 2016-05-17 20:34:24Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,6 +45,7 @@ typedef enum periph_type {
   PERIPH_TYPE_BETA128_PENTAGON_LATE, /* Beta128 disk interface as found on later Pentagons */
   PERIPH_TYPE_DIVIDE,         /* DivIDE interface */
   PERIPH_TYPE_PLUSD,          /* +D disk interface */
+  PERIPH_TYPE_DIDAKTIK80,     /* Didaktik 40/80 disk interface */
   PERIPH_TYPE_DISCIPLE,       /* DISCiPLE disk interface */
   PERIPH_TYPE_FULLER,         /* Fuller box */
   PERIPH_TYPE_INTERFACE1,     /* Interface 1 */
@@ -68,6 +71,7 @@ typedef enum periph_type {
   PERIPH_TYPE_ULA,            /* Standard ULA */
   PERIPH_TYPE_ULA_FULL_DECODE,/* Standard ULA responding only to 0xfe */
   PERIPH_TYPE_UPD765,         /* +3 uPD765 FDC */
+  PERIPH_TYPE_USOURCE,        /* Currah uSource interface */
   PERIPH_TYPE_ZXATASP,        /* ZXATASP IDE interface */
   PERIPH_TYPE_ZXCF,           /* ZXCF IDE interface */
   PERIPH_TYPE_ZXPRINTER,      /* ZX Printer */
@@ -86,7 +90,7 @@ typedef enum periph_present {
 } periph_present;
 
 typedef libspectrum_byte (*periph_port_read_function)( libspectrum_word port,
-						       int *attached );
+						       libspectrum_byte *attached );
 typedef void (*periph_port_write_function)( libspectrum_word port,
 					    libspectrum_byte data );
 
@@ -159,5 +163,9 @@ int periph_postcheck( void );
 /* Register debugger page/unpage events for a peripheral */
 void periph_register_paging_events( const char *type_string, int *page_event,
 				    int *unpage_event );
+
+libspectrum_byte periph_merge_floating_bus( libspectrum_byte value,
+                                            libspectrum_byte attached,
+                                            libspectrum_byte floating_bus );
 
 #endif				/* #ifndef FUSE_PERIPH_H */

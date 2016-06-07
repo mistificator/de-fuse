@@ -1,7 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 2002-2011 Philip Kendall
+## Copyright (c) 2015 Sergio Baldoví
 
-## $Id: Makefile.am 4980 2013-05-21 12:37:51Z fredm $
+## $Id: Makefile.am 5434 2016-05-01 04:22:45Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -21,17 +22,17 @@
 ##
 ## E-mail: philip-fuse@shadowmagic.org.uk
 
-AUTOMAKE_OPTIONS = foreign
-
-EXTRA_DIST = \
-	coding_style.txt \
-	cvs-tags \
-	implementation_notes.txt \
-	input.txt \
-	peripheral_tests.txt \
-	sound.txt \
-	spectranet.txt \
-	tc2048_tech_notes.txt \
-	timer.txt \
-	ui.txt \
-	valgrind.supp
+EXTRA_DIST += \
+              hacking/code_beautifiers.txt \
+              hacking/coding_style.txt \
+              hacking/cvs-tags \
+              hacking/implementation_notes.txt \
+              hacking/input.txt \
+              hacking/peripheral_tests.txt \
+              hacking/sound.txt \
+              hacking/spectranet.txt \
+              hacking/tc2048_tech_notes.txt \
+              hacking/timer.txt \
+              hacking/ui.txt \
+              hacking/uncrustify.cfg \
+              hacking/valgrind.supp

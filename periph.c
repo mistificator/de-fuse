@@ -1,7 +1,8 @@
 /* periph.c: code for handling peripherals
-   Copyright (c) 2005-2011 Philip Kendall
+   Copyright (c) 2005-2016 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: periph.c 4962 2013-05-19 05:25:15Z sbaldovi $
+   $Id: periph.c 5489 2016-05-17 20:34:24Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -65,8 +66,8 @@ typedef struct periph_port_private_t {
 static GSList *ports = NULL;
 
 /* The strings used for debugger events */
-static const char *page_event_string = "page",
-  *unpage_event_string = "unpage";
+static const char * const page_event_string = "page",
+  * const unpage_event_string = "unpage";
 
 /* Place one port response in the list of currently active ones */
 static void
@@ -74,7 +75,7 @@ port_register( periph_type type, const periph_port_t *port )
 {
   periph_port_private_t *private;
 
-  private = libspectrum_malloc( sizeof( *private ) );
+  private = libspectrum_new( periph_port_private_t, 1 );
 
   private->type = type;
   private->port = *port;
@@ -86,10 +87,12 @@ port_register( periph_type type, const periph_port_t *port )
 void
 periph_register( periph_type type, const periph_t *periph )
 {
+  periph_private_t *private;
+
   if( !peripherals )
     peripherals = g_hash_table_new_full( NULL, NULL, NULL, libspectrum_free );
 
-  periph_private_t *private = libspectrum_malloc( sizeof( *private ) );
+  private = libspectrum_new( periph_private_t, 1 );
 
   private->present = PERIPH_PRESENT_NEVER;
   private->active = 0;
@@ -246,7 +249,7 @@ struct peripheral_data_t {
 
   libspectrum_word port;
 
-  int attached;
+  libspectrum_byte attached;
   libspectrum_byte value;
 };
 
@@ -278,13 +281,16 @@ read_peripheral( gpointer data, gpointer user_data )
 {
   periph_port_private_t *private = data;
   struct peripheral_data_t *callback_info = user_data;
+  libspectrum_byte last_attached;
 
   periph_port_t *port = &( private->port );
 
   if( port->read &&
       ( ( callback_info->port & port->mask ) == port->value ) ) {
-    callback_info->value &= port->read( callback_info->port,
-					&( callback_info->attached ) );
+    last_attached = callback_info->attached;
+    callback_info->value &= (   port->read( callback_info->port,
+					    &( callback_info->attached ) )
+			      | last_attached );
   }
 }
 
@@ -319,18 +325,29 @@ readport_internal( libspectrum_word port )
 
   /* If we're not doing RZX playback, get the byte normally */
   callback_info.port = port;
-  callback_info.attached = 0;
+  callback_info.attached = 0x00;
   callback_info.value = 0xff;
 
   g_slist_foreach( ports, read_peripheral, &callback_info );
 
-  if( !callback_info.attached )
-    callback_info.value = machine_current->unattached_port();
+  if( callback_info.attached != 0xff )
+    callback_info.value =
+      periph_merge_floating_bus( callback_info.value, callback_info.attached,
+                                 machine_current->unattached_port() );
 
   /* If we're RZX recording, store this byte */
   if( rzx_recording ) rzx_store_byte( callback_info.value );
 
   return callback_info.value;
+}
+
+/* Merge the read value with the floating bus. Deliberately doesn't take
+   a callback_info structure to enable it to be unit tested */
+libspectrum_byte
+periph_merge_floating_bus( libspectrum_byte value, libspectrum_byte attached,
+			   libspectrum_byte floating_bus )
+{
+  return value & (floating_bus | attached);
 }
 
 /* Write a byte to a port, taking the appropriate time */

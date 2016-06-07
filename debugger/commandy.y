@@ -1,7 +1,8 @@
 /* commandy.y: Parse a debugger command
-   Copyright (c) 2002-2011 Philip Kendall
+   Copyright (c) 2002-2015 Philip Kendall
+   Copyright (c) 2015 Sergio Baldoví
 
-   $Id: commandy.y 4415 2011-05-01 22:51:43Z pak21 $
+   $Id: commandy.y 5539 2016-05-29 10:49:51Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,8 +32,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "debugger.h"
-#include "debugger_internals.h"
+#include "debugger/debugger.h"
+#include "debugger/debugger_internals.h"
 #include "mempool.h"
 #include "ui/ui.h"
 #include "z80/z80.h"
@@ -71,7 +72,6 @@
 %token <token>	 COMPARISON	/* < > <= >= */
 %token <token>   EQUALITY	/* == != */
 %token <token>   NEGATE		/* ! ~ */
-%token <token>	 TIMES_DIVIDE	/* * / */
 
 %token		 BASE
 %token		 BREAK
@@ -137,7 +137,7 @@
 %left EQUALITY
 %left COMPARISON
 %left '+' '-'
-%left TIMES_DIVIDE
+%left '*' '/'
 %right NEGATE		/* Unary minus, unary plus, !, ~ */
 
 /* High precedence */
@@ -167,6 +167,10 @@ command:   BASE number { debugger_output_base = $2; }
 	 | breakpointlife EVENT STRING ':' STRING optionalcondition {
 	     debugger_breakpoint_add_event( DEBUGGER_BREAKPOINT_TYPE_EVENT,
 					    $3, $5, 0, $1, $6 );
+	   }
+	 | breakpointlife EVENT STRING ':' '*' optionalcondition {
+	     debugger_breakpoint_add_event( DEBUGGER_BREAKPOINT_TYPE_EVENT,
+					    $3, "*", 0, $1, $6 );
 	   }
 	 | CLEAR numberorpc { debugger_breakpoint_clear( $2 ); }
 	 | COMMANDS number '\n' debuggercommands DEBUGGER_END { debugger_breakpoint_set_commands( $2, $4 ); }
@@ -246,6 +250,10 @@ expression:   NUMBER { $$ = debugger_expression_new_number( $1, debugger_memory_
 			 if( !$$ ) YYABORT;
 		       }
 	    | '(' expression ')' { $$ = $2; }
+            | '[' expression ']' {
+                $$ = debugger_expression_new_unaryop( DEBUGGER_TOKEN_DEREFERENCE, $2, debugger_memory_pool );
+                if( !$$ ) YYABORT;
+              }
 	    | '+' expression %prec NEGATE { $$ = $2; }
 	    | '-' expression %prec NEGATE {
 	        $$ = debugger_expression_new_unaryop( '-', $2, debugger_memory_pool );
@@ -263,8 +271,12 @@ expression:   NUMBER { $$ = debugger_expression_new_number( $1, debugger_memory_
 	        $$ = debugger_expression_new_binaryop( '-', $1, $3, debugger_memory_pool );
 		if( !$$ ) YYABORT;
 	      }
-	    | expression TIMES_DIVIDE expression {
-	        $$ = debugger_expression_new_binaryop( $2, $1, $3, debugger_memory_pool );
+	    | expression '*' expression {
+	        $$ = debugger_expression_new_binaryop( '*', $1, $3, debugger_memory_pool );
+		if( !$$ ) YYABORT;
+	      }
+	    | expression '/' expression {
+	        $$ = debugger_expression_new_binaryop( '/', $1, $3, debugger_memory_pool );
 		if( !$$ ) YYABORT;
 	      }
 	    | expression EQUALITY expression {
@@ -303,7 +315,7 @@ expression:   NUMBER { $$ = debugger_expression_new_number( $1, debugger_memory_
 
 debuggercommands:   debuggercommand { $$ = $1; }
                   | debuggercommands debuggercommand {
-                      $$ = mempool_alloc( debugger_memory_pool, strlen( $1 ) + strlen( $2 ) + 2 );
+                      $$ = mempool_new( debugger_memory_pool, char, strlen( $1 ) + strlen( $2 ) + 2 );
                       sprintf( $$, "%s\n%s", $1, $2 );
                     }
 

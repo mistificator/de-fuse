@@ -1,7 +1,7 @@
 /* fuse.c: The Free Unix Spectrum Emulator
-   Copyright (c) 1999-2012 Philip Kendall and others
+   Copyright (c) 1999-2015 Philip Kendall and others
 
-   $Id: fuse.c 4846 2013-01-03 09:14:29Z zubzero $
+   $Id: fuse.c 5568 2016-06-01 10:40:13Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,6 +51,10 @@
 #include <fat.h>
 #endif				/* #ifdef GEKKO */
 
+#ifdef HAVE_LIB_XML2
+#include <libxml/encoding.h>
+#endif
+
 #include "debugger/debugger.h"
 #include "display.h"
 #include "event.h"
@@ -65,6 +69,7 @@
 #include "peripherals/ay.h"
 #include "peripherals/dck.h"
 #include "peripherals/disk/beta.h"
+#include "peripherals/disk/didaktik.h"
 #include "peripherals/disk/fdd.h"
 #include "peripherals/fuller.h"
 #include "peripherals/ide/divide.h"
@@ -81,6 +86,7 @@
 #include "peripherals/speccyboot.h"
 #include "peripherals/spectranet.h"
 #include "peripherals/ula.h"
+#include "peripherals/usource.h"
 #include "pokefinder/pokemem.h"
 #include "profile.h"
 #include "psg.h"
@@ -94,13 +100,14 @@
 #include "timer/timer.h"
 #include "ui/scaler/scaler.h"
 #include "ui/ui.h"
+#include "ui/uimedia.h"
 #include "unittests/unittests.h"
 #include "utils.h"
 
 #include "z80/z80.h"
 
 /* What name were we called under? */
-char *fuse_progname;
+const char *fuse_progname;
 
 /* A flag to say when we want to exit the emulator */
 int fuse_exiting;
@@ -112,7 +119,7 @@ int fuse_emulation_paused;
 libspectrum_creator *fuse_creator;
 
 /* The earliest version of libspectrum we need */
-static const char *LIBSPECTRUM_MIN_VERSION = "0.5.0";
+static const char * const LIBSPECTRUM_MIN_VERSION = "0.5.0";
 
 /* The various types of file we may want to run on startup */
 typedef struct start_files_t {
@@ -121,6 +128,7 @@ typedef struct start_files_t {
   const char *disk_opus;
   const char *disk_plusd;
   const char *disk_beta;
+  const char *disk_didaktik80;
   const char *disk_disciple;
   const char *dock;
   const char *if2;
@@ -261,11 +269,21 @@ static int fuse_init(int argc, char **argv)
 
 #ifdef HAVE_GETEUID
   /* Drop root privs if we have them */
-  if( !geteuid() ) { setuid( getuid() ); }
+  if( !geteuid() ) {
+    error = setuid( getuid() );
+    if( error ) {
+      ui_error( UI_ERROR_ERROR, "Could not drop root privileges" );
+      return 1;
+    }
+  }
 #endif				/* #ifdef HAVE_GETEUID */
 
   mempool_init();
   memory_init();
+
+#ifdef HAVE_LIB_XML2
+LIBXML_TEST_VERSION
+#endif
 
   debugger_init();
 
@@ -276,6 +294,7 @@ static int fuse_init(int argc, char **argv)
   beta_init();
   opus_init();
   plusd_init();
+  didaktik80_init();
   disciple_init();
   fdd_init_events();
   if( simpleide_init() ) return 1;
@@ -295,6 +314,7 @@ static int fuse_init(int argc, char **argv)
   speccyboot_init();
   specdrum_init();
   spectranet_init();
+  usource_init();
   machines_periph_init();
 
   z80_init();
@@ -362,7 +382,7 @@ int creator_init( void )
 					 version[2] * 0x100 + version[3] );
   if( error ) { libspectrum_creator_free( fuse_creator ); return error; }
 
-  custom = libspectrum_malloc( CUSTOM_SIZE );
+  custom = libspectrum_new( char, CUSTOM_SIZE );
 
   gcrypt_version = libspectrum_gcrypt_version();
   if( !gcrypt_version ) gcrypt_version = "not available";
@@ -412,13 +432,10 @@ static void fuse_show_help( void )
    "\nAvailable command-line options:\n\n"
    "Boolean options (use `--no-<option>' to turn off):\n\n"
    "--auto-load            Automatically load tape files when opened.\n"
-   "--beeper-stereo        Add fake stereo to beeper emulation.\n"
    "--compress-rzx         Write RZX files out compressed.\n"
-   "--double-screen        Write screenshots out as double size.\n"
    "--issue2               Emulate an Issue 2 Spectrum.\n"
    "--kempston             Emulate the Kempston joystick on QAOP<space>.\n"
    "--loading-sound        Emulate the sound of tapes loading.\n"
-   "--separation           Use ACB stereo for the AY-3-8912 sound chip.\n"
    "--sound                Produce sound.\n"
    "--sound-force-8bit     Generate 8-bit sound even if 16-bit is available.\n"
    "--slt                  Turn SLT traps on.\n"
@@ -428,11 +445,16 @@ static void fuse_show_help( void )
    "--machine <type>       Which machine should be emulated?\n"
    "--playback <filename>  Play back RZX file <filename>.\n"
    "--record <filename>    Record to RZX file <filename>.\n"
+   "--separation <type>    Use ACB/ABC stereo for the AY-3-8912 sound chip.\n"
    "--snapshot <filename>  Load snapshot <filename>.\n"
    "--speed <percentage>   How fast should emulation run?\n"
    "--fb-mode <mode>       Which mode should be used for FB?\n"
    "--tape <filename>      Open tape file <filename>.\n"
-   "--version              Print version number and exit.\n\n" );
+   "--version              Print version number and exit.\n"
+   "\n"
+   "For help, please mail <fuse-emulator-devel@lists.sf.net> or use\n"
+   "the forums at <http://sourceforge.net/p/fuse-emulator/discussion/>.\n"
+   "For complete documentation, see the manual page of Fuse.\n\n" );
 }
 
 /* Stop all activities associated with actual Spectrum emulation */
@@ -481,6 +503,7 @@ setup_start_files( start_files_t *start_files )
   start_files->disk_plus3 = settings_current.plus3disk_file;
   start_files->disk_opus = settings_current.opusdisk_file;
   start_files->disk_plusd = settings_current.plusddisk_file;
+  start_files->disk_didaktik80 = settings_current.didaktik80disk_file;
   start_files->disk_disciple = settings_current.discipledisk_file;
   start_files->disk_beta = settings_current.betadisk_file;
   start_files->dock = settings_current.dck_file;
@@ -580,6 +603,9 @@ parse_nonoption_args( int argc, char **argv, int first_arg,
     case LIBSPECTRUM_CLASS_DISK_OPUS:
       start_files->disk_opus = filename; break;
 
+    case LIBSPECTRUM_CLASS_DISK_DIDAKTIK:
+      start_files->disk_didaktik80 = filename; break;
+
     case LIBSPECTRUM_CLASS_DISK_PLUSD:
       if( periph_is_active( PERIPH_TYPE_DISCIPLE ) )
         start_files->disk_disciple = filename;
@@ -591,19 +617,19 @@ parse_nonoption_args( int argc, char **argv, int first_arg,
       start_files->disk_beta = filename; break;
 
     case LIBSPECTRUM_CLASS_DISK_GENERIC:
-      if( machine_current->machine == LIBSPECTRUM_MACHINE_PLUS3 ||
-          machine_current->machine == LIBSPECTRUM_MACHINE_PLUS2A )
+      if( machine_current->capabilities &
+                 LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_DISK )
         start_files->disk_plus3 = filename;
-      else if( machine_current->machine == LIBSPECTRUM_MACHINE_PENT ||
-          machine_current->machine == LIBSPECTRUM_MACHINE_PENT512 ||
-          machine_current->machine == LIBSPECTRUM_MACHINE_PENT1024 ||
-          machine_current->machine == LIBSPECTRUM_MACHINE_SCORP )
+      else if( machine_current->capabilities &
+                 LIBSPECTRUM_MACHINE_CAPABILITY_TRDOS_DISK )
         start_files->disk_beta = filename; 
       else {
         if( periph_is_active( PERIPH_TYPE_BETA128 ) )
           start_files->disk_beta = filename; 
         else if( periph_is_active( PERIPH_TYPE_PLUSD ) )
           start_files->disk_plusd = filename;
+        else if( periph_is_active( PERIPH_TYPE_DIDAKTIK80 ) )
+          start_files->disk_didaktik80 = filename;
         else if( periph_is_active( PERIPH_TYPE_DISCIPLE ) )
           start_files->disk_disciple = filename;
         else if( periph_is_active( PERIPH_TYPE_OPUS ) )
@@ -712,6 +738,11 @@ do_start_files( start_files_t *start_files )
 
   if( start_files->disk_plusd ) {
     error = utils_open_file( start_files->disk_plusd, autoload, NULL );
+    if( error ) return error;
+  }
+
+  if( start_files->disk_didaktik80 ) {
+    error = utils_open_file( start_files->disk_didaktik80, autoload, NULL );
     if( error ) return error;
   }
 
@@ -844,9 +875,11 @@ static int fuse_end(void)
   beta_end();
   opus_end();
   plusd_end();
+  didaktik80_end();
   disciple_end();
   spectranet_end();
   speccyboot_end();
+  usource_end();
 
   machine_end();
 
@@ -858,10 +891,13 @@ static int fuse_end(void)
   fuse_keyboard_end();
   fuse_joystick_end();
   ui_end();
+  ui_media_drive_end();
   memory_end();
   mempool_end();
   module_end();
   pokemem_end();
+
+  svg_capture_end();
 
   libspectrum_creator_free( fuse_creator );
   libspectrum_end();

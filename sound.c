@@ -1,8 +1,8 @@
 /* sound.c: Sound support
-   Copyright (c) 2000-2012 Russell Marks, Matan Ziv-Av, Philip Kendall,
+   Copyright (c) 2000-2016 Russell Marks, Matan Ziv-Av, Philip Kendall,
                            Fredrick Meunier, Patrik Rak
 
-   $Id: sound.c 4921 2013-05-01 12:37:07Z fredm $
+   $Id: sound.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -289,9 +289,7 @@ sound_init( const char *device )
   sound_framesiz = ( float )settings_current.sound_freq / hz;
   sound_framesiz++;
 
-  samples =
-    (blip_sample_t *)libspectrum_calloc( sound_framesiz * sound_channels,
-                                         sizeof(blip_sample_t) );
+  samples = libspectrum_new0( blip_sample_t, sound_framesiz * sound_channels );
   /* initialize movie settings... */
   movie_init_sound( settings_current.sound_freq, sound_stereo_ay );
 
@@ -357,22 +355,8 @@ ay_do_tone( int level, unsigned int tone_count, int *var, int chan )
     if( ay_tone_high[ chan ] )
       *var = level;
     else {
-      *var = -level;
+      *var = 0;
     }
-  }
-
-  /* The AY output goes from 0 to the maximum volume, so there
-   * is a DC component that is half the maxmum volume.
-   * Robocop uses a high frequency square wave with a tone
-   * period of one to average out to being like a DC offset at
-   * around half the maximum volume. This is used as a base for
-   * the sample playback.
-   * This seems to intefere with our attempt to remove the
-   * returned DC offset, so for now we just ignore the high
-   * frequency wave and hope it's a sample
-   */
-  if( ay_tone_period[ chan ] == 1 ) {
-      *var = -level;
   }
 }
 
@@ -674,7 +658,7 @@ sound_frame( void )
 }
 
 void
-sound_beeper( int on )
+sound_beeper( libspectrum_dword at_tstates, int on )
 {
   static int beeper_ampl[] = { 0, AMPL_TAPE, AMPL_BEEPER,
                                AMPL_BEEPER+AMPL_TAPE };
@@ -691,9 +675,9 @@ sound_beeper( int on )
     if( on == 1 ) on = 0;
   }
 
-  val = -beeper_ampl[3] + beeper_ampl[on]*2;
+  val = beeper_ampl[on];
 
-  blip_synth_update( left_beeper_synth, tstates, val );
+  blip_synth_update( left_beeper_synth, at_tstates, val );
   if( sound_stereo_ay != SOUND_STEREO_AY_NONE )
-    blip_synth_update( right_beeper_synth, tstates, val );
+    blip_synth_update( right_beeper_synth, at_tstates, val );
 }

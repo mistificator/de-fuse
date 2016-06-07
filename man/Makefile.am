@@ -1,7 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2002 Philip Kendall
+## Copyright (c) 2015 Sergio Baldoví
 
-## $Id: Makefile.am 2889 2007-05-26 17:45:08Z zubzero $
+## $Id: Makefile.am 5434 2016-05-01 04:22:45Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -21,8 +22,6 @@
 ##
 ## E-mail: philip-fuse@shadowmagic.org.uk
 
-AUTOMAKE_OPTIONS = foreign
+man_MANS = man/fuse.1
 
-man_MANS = fuse.1
-
-EXTRA_DIST = $(man_MANS)
+EXTRA_DIST += $(man_MANS)

@@ -1,7 +1,8 @@
 /* text.c: simple text entry widget
    Copyright (c) 2002-2005 Philip Kendall
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: text.c 4713 2012-06-07 03:19:57Z fredm $
+   $Id: text.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -164,7 +165,7 @@ widget_text_finish( widget_finish_state finished )
   if( finished == WIDGET_FINISHED_OK ) {
 
     widget_text_text =
-      libspectrum_realloc( widget_text_text, strlen( text ) + 1 );
+      libspectrum_renew( char, widget_text_text, strlen( text ) + 1 );
 
     strcpy( widget_text_text, text );
   } else {

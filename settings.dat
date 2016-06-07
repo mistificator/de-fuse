@@ -1,7 +1,7 @@
 # settings.dat: configuration options for Fuse
-# Copyright (c) 2002-2009 Philip Kendall
+# Copyright (c) 2002-2015 Philip Kendall
 
-# $Id: settings.dat 4915 2013-04-07 05:32:09Z fredm $
+# $Id: settings.dat 5434 2016-05-01 04:22:45Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,9 +69,11 @@ movie_compr, string, NULL
 movie_start, string, NULL
 movie_stop_after_rzx, boolean, 1
 plusd, boolean, 0
+didaktik80, boolean, 0
 disciple, boolean, 0
 beta128, boolean, 0
 beta128_48boot, boolean, 1
+z80_is_cmos, boolean, 0,, cmos-z80
 late_timings, boolean, 0
 unittests, boolean, 0
 fuller, boolean, 0
@@ -80,6 +82,7 @@ speccyboot, boolean, 0
 specdrum, boolean, 0
 spectranet, boolean, 0
 spectranet_disable, boolean, 0
+usource, boolean, 0
 zxprinter, boolean, 1
 
 sound_device, string, NULL, 'd'
@@ -148,6 +151,7 @@ opusdisk_file, string, NULL,, opusdisk
 playback_file, string, NULL, 'p', playback, playbackfile
 plus3disk_file, string, NULL,, plus3disk
 plusddisk_file, string, NULL,, plusddisk
+didaktik80disk_file, string, NULL,, didaktik80disk
 discipledisk_file, string, NULL,, discipledisk
 betadisk_file, string, NULL,, betadisk
 dck_file, string, NULL,, dock
@@ -230,12 +234,14 @@ rom_scorpion_2, string, "256s-2.rom",
 rom_scorpion_3, string, "256s-3.rom",
 rom_spec_se_0, string, "se-0.rom",
 rom_spec_se_1, string, "se-1.rom",
-rom_interface_i, string, "if1-2.rom",
+rom_interface_1, string, "if1-2.rom",,, rominterfacei
 rom_beta128, string, "trdos.rom",
 rom_plusd, string, "plusd.rom",
+rom_didaktik80, string, "didaktik80.rom",
 rom_disciple, string, "disciple.rom",
 rom_opus, string, "opus.rom",
 rom_speccyboot, string, "speccyboot-1.4.rom",
+rom_usource, string, "usource.rom",
 
 drive_plus3a_type, string, NULL
 drive_plus3b_type, string, NULL
@@ -246,6 +252,8 @@ drive_beta128c_type, string, NULL
 drive_beta128d_type, string, NULL
 drive_plusd1_type, string, NULL
 drive_plusd2_type, string, NULL
+drive_didaktik80a_type, string, NULL
+drive_didaktik80b_type, string, NULL
 drive_disciple1_type, string, NULL
 drive_disciple2_type, string, NULL
 drive_opus1_type, string, NULL

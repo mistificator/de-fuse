@@ -1,7 +1,7 @@
 /* machine.c: Routines for handling the various machine types
-   Copyright (c) 1999-2011 Philip Kendall
+   Copyright (c) 1999-2015 Philip Kendall
 
-   $Id: machine.c 4728 2012-07-16 13:21:53Z fredm $
+   $Id: machine.c 5514 2016-05-23 11:48:32Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -114,15 +114,9 @@ static int machine_add_machine( int (*init_function)( fuse_machine_info *machine
   machine_count++;
 
   machine_types =
-    libspectrum_realloc( machine_types,
-                         machine_count * sizeof( fuse_machine_info* ) );
+    libspectrum_renew( fuse_machine_info *, machine_types, machine_count );
 
-  machine_types[ machine_count - 1 ] = malloc( sizeof( fuse_machine_info ) );
-  if( !machine_types[ machine_count - 1 ] ) {
-    ui_error( UI_ERROR_ERROR, "out of memory at %s:%d", __FILE__, __LINE__ );
-    return 1;
-  }
-
+  machine_types[ machine_count - 1 ] = libspectrum_new( fuse_machine_info, 1 );
   machine = machine_types[ machine_count - 1 ];
 
   error = init_function( machine ); if( error ) return error;
@@ -315,7 +309,7 @@ machine_load_rom_bank( memory_page* bank_map, int page_num,
 
   retval = machine_load_rom_bank_from_file( bank_map, page_num, filename,
     expected_length, custom );
-  if( retval && fallback )
+  if( retval && fallback && custom )
     retval = machine_load_rom_bank_from_file( bank_map, page_num, fallback,
       expected_length, 0 );
   return retval;
@@ -334,6 +328,9 @@ machine_reset( int hard_reset )
 {
   size_t i;
   int error;
+
+  /* Clear poke list (undoes effects of active pokes on Spectrum memory) */
+  pokemem_clear();
 
   sound_ay_reset();
 
@@ -365,9 +362,6 @@ machine_reset( int hard_reset )
 
   /* clear out old display image ready for new one */
   display_refresh_all();
-
-  /* Clear poke list */
-  pokemem_clear();
 
   return 0;
 }

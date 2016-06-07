@@ -1,7 +1,9 @@
 /* pokefinder.c: Win32 interface to the poke finder
    Copyright (c) 2004 Marek Januszwski
+   Copyright (c) 2015 Sergio Baldoví
+   Copyright (c) 2015 Stuart Brady
 
-   $Id: pokefinder.c 4638 2012-01-21 12:52:14Z fredm $
+   $Id: pokefinder.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -249,12 +251,12 @@ menu_machine_pokefinder( int action GCC_UNUSED )
     lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT ;
     lvc.fmt = LVCFMT_LEFT;
     lvc.cx = cx;
-    lvc.pszText = TEXT( "Page" );
+    lvc.pszText = (LPTSTR) TEXT( "Page" );
     SendDlgItemMessage( fuse_hPFWnd, IDC_PF_LIST, LVM_INSERTCOLUMN, 0,
                         ( LPARAM ) &lvc );
     lvc.mask |= LVCF_SUBITEM;
     lvc.cx = cx;
-    lvc.pszText = TEXT( "Offset" );
+    lvc.pszText = (LPTSTR) TEXT( "Offset" );
     SendDlgItemMessage( fuse_hPFWnd, IDC_PF_LIST, LVM_INSERTCOLUMN, 1,
                         ( LPARAM ) &lvc );
 
@@ -268,21 +270,21 @@ menu_machine_pokefinder( int action GCC_UNUSED )
 }
 
 static void
-win32ui_pokefinder_incremented()
+win32ui_pokefinder_incremented( void )
 {
   pokefinder_incremented();
   update_pokefinder();
 }
 
 static void
-win32ui_pokefinder_decremented()
+win32ui_pokefinder_decremented( void )
 {
   pokefinder_decremented();
   update_pokefinder();
 }
 
 static void
-win32ui_pokefinder_search()
+win32ui_pokefinder_search( void )
 {
   long value;
   TCHAR *buffer;
@@ -318,14 +320,14 @@ win32ui_pokefinder_search()
 }
 
 static void
-win32ui_pokefinder_reset()
+win32ui_pokefinder_reset( void )
 {
   pokefinder_clear();
   update_pokefinder();
 }
 
 static void
-win32ui_pokefinder_close()
+win32ui_pokefinder_close( void )
 {
   DestroyWindow( fuse_hPFWnd );
   fuse_hPFWnd = NULL;

@@ -1,7 +1,9 @@
 /* ula.c: ULA routines
    Copyright (c) 1999-2011 Philip Kendall, Darren Salt
+   Copyright (c) 2015 Stuart Brady
+   Copyright (c) 2016 Fredrick Meunier
 
-   $Id: ula.c 4926 2013-05-05 07:58:18Z sbaldovi $
+   $Id: ula.c 5434 2016-05-01 04:22:45Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,16 +53,16 @@ libspectrum_byte ula_default_value;
 
 static void ula_from_snapshot( libspectrum_snap *snap );
 static void ula_to_snapshot( libspectrum_snap *snap );
-static libspectrum_byte ula_read( libspectrum_word port, int *attached );
+static libspectrum_byte ula_read( libspectrum_word port, libspectrum_byte *attached );
 static void ula_write( libspectrum_word port, libspectrum_byte b );
 
 static module_info_t ula_module_info = {
 
-  NULL,
-  NULL,
-  NULL,
-  ula_from_snapshot,
-  ula_to_snapshot,
+  /* .reset = */ NULL,
+  /* .romcs = */ NULL,
+  /* .snapshot_enabled = */ NULL,
+  /* .snapshot_from = */ ula_from_snapshot,
+  /* .snapshot_to = */ ula_to_snapshot,
 
 };
 
@@ -70,10 +72,10 @@ static const periph_port_t ula_ports[] = {
 };
 
 static const periph_t ula_periph = {
-  NULL,
-  ula_ports,
-  0,
-  NULL
+  /* .option = */ NULL,
+  /* .ports = */ ula_ports,
+  /* .hard_reset = */ 0,
+  /* .activate = */ NULL,
 };
 
 static const periph_port_t ula_ports_full_decode[] = {
@@ -82,10 +84,10 @@ static const periph_port_t ula_ports_full_decode[] = {
 };
 
 static const periph_t ula_periph_full_decode = {
-  NULL,
-  ula_ports_full_decode,
-  0,
-  NULL
+  /* .option = */ NULL,
+  /* .ports = */ ula_ports_full_decode,
+  /* .hard_reset = */ 0,
+  /* .activate = */ NULL,
 };
 
 void
@@ -100,11 +102,11 @@ ula_init( void )
 }
 
 static libspectrum_byte
-ula_read( libspectrum_word port, int *attached )
+ula_read( libspectrum_word port, libspectrum_byte *attached )
 {
   libspectrum_byte r = ula_default_value;
 
-  *attached = 1;
+  *attached = 0xff;
 
   loader_detect_loader();
 
@@ -121,7 +123,8 @@ ula_write( libspectrum_word port GCC_UNUSED, libspectrum_byte b )
   last_byte = b;
 
   display_set_lores_border( b & 0x07 );
-  sound_beeper( (!!(b & 0x10) << 1) + ( (!(b & 0x8)) | tape_microphone ) );
+  sound_beeper( tstates,
+                (!!(b & 0x10) << 1) + ( (!(b & 0x8)) | tape_microphone ) );
 
   /* FIXME: shouldn't really be using the memory capabilities here */
 

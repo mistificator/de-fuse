@@ -1,7 +1,7 @@
 /* if2.c: Interface 2 cartridge handling routines
-   Copyright (c) 2003-2011 Darren Salt, Fredrick Meunier, Philip Kendall
+   Copyright (c) 2003-2015 Darren Salt, Fredrick Meunier, Philip Kendall
 
-   $Id: if2.c 4926 2013-05-05 07:58:18Z sbaldovi $
+   $Id: if2.c 5504 2016-05-21 07:06:21Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,19 +55,19 @@ static void if2_to_snapshot( libspectrum_snap *snap );
 
 static module_info_t if2_module_info = {
 
-  if2_reset,
-  if2_memory_map,
-  NULL,
-  if2_from_snapshot,
-  if2_to_snapshot,
+  /* .reset = */ if2_reset,
+  /* .romcs = */ if2_memory_map,
+  /* .snapshot_enabled = */ NULL,
+  /* .snapshot_from = */ if2_from_snapshot,
+  /* .snapshot_to = */ if2_to_snapshot,
 
 };
 
 static const periph_t if2_periph = {
-  &settings_current.interface2,
-  NULL,
-  0,
-  NULL
+  /* .option = */ &settings_current.interface2,
+  /* .ports = */ NULL,
+  /* .hard_reset = */ 0,
+  /* .activate = */ NULL,
 };
 
 void
@@ -110,7 +110,7 @@ if2_eject( void )
     return;
   }
 
-  if( settings_current.if2_file ) free( settings_current.if2_file );
+  if( settings_current.if2_file ) libspectrum_free( settings_current.if2_file );
   settings_current.if2_file = NULL;
 
   machine_current->ram.romcs = 0;
@@ -150,7 +150,7 @@ if2_memory_map( void )
 {
   if( !if2_active ) return;
 
-  memory_map_romcs( if2_memory_map_romcs );
+  memory_map_romcs_full( if2_memory_map_romcs );
 }
 
 static void
@@ -161,26 +161,13 @@ if2_from_snapshot( libspectrum_snap *snap )
   if2_active = 1;
   machine_current->ram.romcs = 1;
 
-  if( libspectrum_snap_interface2_rom( snap, 0 ) ) {
-
-    if2_memory_map_romcs[0].offset = 0;
-    if2_memory_map_romcs[0].page_num = 0;
-    if2_memory_map_romcs[0].page =
-      memory_pool_allocate( 2 * MEMORY_PAGE_SIZE *
-			    sizeof( libspectrum_byte ) );
-    if( !if2_memory_map_romcs[0].page ) {
-      ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-      return;
-    }
-
-    memcpy( if2_memory_map_romcs[0].page,
-	    libspectrum_snap_interface2_rom( snap, 0 ), 2 * MEMORY_PAGE_SIZE );
-
-    if2_memory_map_romcs[1].offset = MEMORY_PAGE_SIZE;
-    if2_memory_map_romcs[1].page_num = 0;
-    if2_memory_map_romcs[1].page =
-      if2_memory_map_romcs[0].page + MEMORY_PAGE_SIZE;
-  }
+  if( libspectrum_snap_interface2_rom( snap, 0 ) &&
+      machine_load_rom_bank_from_buffer(
+                             if2_memory_map_romcs, 0,
+                             libspectrum_snap_interface2_rom( snap, 0 ),
+                             0x4000,
+                             1 ) )
+    return;
 
   ui_menu_activate( UI_MENU_ITEM_MEDIA_CARTRIDGE_IF2_EJECT, 1 );
 
@@ -191,20 +178,17 @@ static void
 if2_to_snapshot( libspectrum_snap *snap )
 {
   libspectrum_byte *buffer;
+  int i;
 
   if( !if2_active ) return;
 
   libspectrum_snap_set_interface2_active( snap, 1 );
 
-  buffer = malloc( 0x4000 * sizeof( libspectrum_byte ) );
-  if( !buffer ) {
-    ui_error( UI_ERROR_ERROR, "Out of memory at %s:%d", __FILE__, __LINE__ );
-    return;
-  }
+  buffer = libspectrum_new( libspectrum_byte, 0x4000 );
 
-  memcpy( buffer, if2_memory_map_romcs[0].page, MEMORY_PAGE_SIZE );
-  memcpy( buffer + MEMORY_PAGE_SIZE, if2_memory_map_romcs[1].page,
-	  MEMORY_PAGE_SIZE );
+  for( i = 0; i < MEMORY_PAGES_IN_16K; i++ )
+    memcpy( buffer + i * MEMORY_PAGE_SIZE,
+            if2_memory_map_romcs[ i ].page, MEMORY_PAGE_SIZE );
   libspectrum_snap_set_interface2_rom( snap, 0, buffer );
 }
 
