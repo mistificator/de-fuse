@@ -1,4 +1,4 @@
-fuse-emulator (1.2.1+dfsg1-1) UNRELEASED; urgency=medium
+fuse-emulator (1.2.1+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
   * Refresh the following patches:
@@ -12,7 +12,7 @@ fuse-emulator (1.2.1+dfsg1-1) UNRELEASED; urgency=medium
   * debian/copyright:
     - Remove reference to missing mkstemp.c file.
 
- -- Alberto Garcia <berto@igalia.com>  Thu, 21 Jul 2016 01:37:15 +0200
+ -- Alberto Garcia <berto@igalia.com>  Sat, 23 Jul 2016 01:21:48 +0200
 
 fuse-emulator (1.2.0+dfsg1-1) unstable; urgency=medium
 
