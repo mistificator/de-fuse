@@ -1,7 +1,7 @@
 /* if2.h: Interface 2 cartridge handling routines
-   Copyright (c) 2004 Fredrick Meunier
+   Copyright (c) 2004-2016 Fredrick Meunier, Philip Kendall
 
-   $Id: if2.h 4835 2012-12-31 15:35:45Z zubzero $
+   $Id: if2.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 /* IF2 cart inserted? */
 extern int if2_active;
 
-void if2_init( void );
+void if2_register_startup( void );
 int if2_insert( const char *filename );
 void if2_eject( void );
 

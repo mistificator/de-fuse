@@ -2,7 +2,7 @@
    Copyright (c) 2008-2016 Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: unittests.c 5489 2016-05-17 20:34:24Z pak21 $
+   $Id: unittests.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 #include "mempool.h"
 #include "periph.h"
 #include "peripherals/disk/beta.h"
+#include "peripherals/disk/didaktik.h"
 #include "peripherals/disk/disciple.h"
 #include "peripherals/disk/opus.h"
 #include "peripherals/disk/plusd.h"
@@ -758,6 +759,7 @@ paging_test( void )
     r += usource_unittest();
 
     r += beta_unittest();
+    r += didaktik80_unittest();
     r += disciple_unittest();
     r += opus_unittest();
     r += plusd_unittest();

@@ -1,7 +1,7 @@
 /* coretest.c: Test program for Fuse's Z80 core
    Copyright (c) 2003-2015 Philip Kendall
 
-   $Id: coretest.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: coretest.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@
 #include "tape.h"
 
 #include "event.h"
+#include "infrastructure/startup_manager.h"
 #include "module.h"
 #include "spectrum.h"
 #include "ui/ui.h"
@@ -93,7 +94,7 @@ main( int argc, char **argv )
   if( init_dummies() ) return 1;
 
   /* Initialise the tables used by the Z80 core */
-  z80_init();
+  z80_init( NULL );
 
   f = fopen( testsfile, "r" );
   if( !f ) {
@@ -424,6 +425,13 @@ debugger_check( debugger_breakpoint_type type GCC_UNUSED, libspectrum_dword valu
   abort();
 }
 
+void debugger_system_variable_register(
+  const char *type, const char *detail,
+  debugger_get_system_variable_fn_t get,
+  debugger_set_system_variable_fn_t set )
+{
+}
+
 int
 debugger_trap( void )
 {
@@ -567,6 +575,14 @@ spectranet_nmi_flipflop( void )
   return 0;
 }
 
+void
+startup_manager_register( startup_manager_module module,
+  startup_manager_module *dependencies, size_t dependency_count,
+  startup_manager_init_fn init_fn, void *init_context,
+  startup_manager_end_fn end_fn )
+{
+}
+
 int svg_capture_active = 0;     /* SVG capture enabled? */
 
 void
@@ -598,6 +614,11 @@ int
 module_register( module_info_t *module GCC_UNUSED )
 {
   return 0;
+}
+
+void
+z80_debugger_variables_init( void )
+{
 }
 
 fuse_machine_info *machine_current;

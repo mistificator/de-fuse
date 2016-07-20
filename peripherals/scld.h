@@ -2,7 +2,7 @@
    Copyright (c) 2002-2004 Fredrick Meunier, Witold Filipczyk
    Copyright (c) 2015 Fredrick Meunier
 
-   $Id: scld.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: scld.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ extern memory_page * timex_home[MEMORY_PAGES_IN_64K];
 extern memory_page timex_exrom[MEMORY_PAGES_IN_64K];
 extern memory_page timex_dock[MEMORY_PAGES_IN_64K];
 
-void scld_init( void );
+void scld_register_startup( void );
 
 void scld_dec_write( libspectrum_word port, libspectrum_byte b );
 void scld_hsr_write( libspectrum_word port, libspectrum_byte b );

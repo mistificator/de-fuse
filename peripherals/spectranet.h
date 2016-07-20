@@ -1,7 +1,7 @@
 /* spectranet.h: Spectranet emulation
-   Copyright (c) 2011-2015 Philip Kendall
+   Copyright (c) 2011-2016 Philip Kendall
 
-   $Id: spectranet.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: spectranet.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@
 #ifndef FUSE_SPECTRANET_H
 #define FUSE_SPECTRANET_H
 
-void spectranet_init( void );
-void spectranet_end( void );
+void spectranet_register_startup( void );
 void spectranet_page( int via_io );
 void spectranet_nmi( void );
 void spectranet_unpage( void );

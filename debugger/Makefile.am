@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
-## Copyright (c) 2001-2008 Philip Kendall
+## Copyright (c) 2001-2016 Philip Kendall
 ## Copyright (c) 2015 Sergio Baldoví
 
-## $Id: Makefile.am 5434 2016-05-01 04:22:45Z fredm $
+## $Id: Makefile.am 5677 2016-07-09 13:58:02Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ fuse_SOURCES += \
                 debugger/disassemble.c \
                 debugger/event.c \
                 debugger/expression.c \
+                debugger/system_variable.c \
                 debugger/variable.c
 
 debugger/commandl.c: debugger/commandy.c

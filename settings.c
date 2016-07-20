@@ -50,6 +50,7 @@
 #endif				/* #ifdef HAVE_LIB_XML2 */
 
 #include "fuse.h"
+#include "infrastructure/startup_manager.h"
 #include "machine.h"
 #include "settings.h"
 #include "spectrum.h"
@@ -286,7 +287,7 @@ settings_info settings_default = {
   /* zxcf_pri_file */ (char *)NULL,
   /* zxcf_upload */ 0,
   /* zxprinter */ 1,
-#line 123"./settings.pl"
+#line 124"./settings.pl"
   /* show_help */ 0,
   /* show_version */ 0,
 };
@@ -2020,7 +2021,7 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
-#line 259"./settings.pl"
+#line 260"./settings.pl"
     if( !strcmp( (const char*)node->name, "text" ) ) {
       /* Do nothing */
     } else {
@@ -2425,7 +2426,7 @@ settings_write_config( settings_info *settings )
     xmlNewTextChild( root, NULL, (const xmlChar*)"zxcfcffile", (const xmlChar*)settings->zxcf_pri_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"zxcfupload", (const xmlChar*)(settings->zxcf_upload ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"zxprinter", (const xmlChar*)(settings->zxprinter ? "1" : "0") );
-#line 316"./settings.pl"
+#line 317"./settings.pl"
 
   xmlSaveFormatFile( path, doc, 1 );
 
@@ -3436,7 +3437,7 @@ parse_ini( utils_file *file, settings_info *settings )
     while( ( cpos < ( file->buffer + file->length ) ) &&
            ( *cpos == '\r' || *cpos == '\n' ) ) cpos++;
 
-#line 461"./settings.pl"
+#line 462"./settings.pl"
   }
 
   return 0;
@@ -4146,7 +4147,7 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "zxprinter",
                               settings->zxprinter ) )
     goto error;
-#line 553"./settings.pl"
+#line 554"./settings.pl"
 
   compat_file_close( doc );
 
@@ -4452,7 +4453,7 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-zxcf-upload", 0, &(settings->zxcf_upload), 0 },
     {    "zxprinter", 0, &(settings->zxprinter), 1 },
     { "no-zxprinter", 0, &(settings->zxprinter), 0 },
-#line 608"./settings.pl"
+#line 609"./settings.pl"
 
     { "help", 0, NULL, 'h' },
     { "version", 0, NULL, 'V' },
@@ -4635,7 +4636,7 @@ settings_command_line( settings_info *settings, int *first_arg,
     case 402: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
     case 403: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
     case 404: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
-#line 658"./settings.pl"
+#line 659"./settings.pl"
 
     case 'h': settings->show_help = 1; break;
     case 'V': settings->show_version = 1; break;
@@ -5203,7 +5204,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   }
   dest->zxcf_upload = src->zxcf_upload;
   dest->zxprinter = src->zxprinter;
-#line 705"./settings.pl"
+#line 706"./settings.pl"
 }
 
 /* Copy one settings object to another */
@@ -5397,12 +5398,12 @@ settings_free( settings_info *settings )
   if( settings->zxatasp_master_file ) libspectrum_free( settings->zxatasp_master_file );
   if( settings->zxatasp_slave_file ) libspectrum_free( settings->zxatasp_slave_file );
   if( settings->zxcf_pri_file ) libspectrum_free( settings->zxcf_pri_file );
-#line 800"./settings.pl"
+#line 801"./settings.pl"
 
   return 0;
 }
 
-int
+static void
 settings_end( void )
 {
   if( settings_current.autosave_settings )
@@ -5413,6 +5414,21 @@ settings_end( void )
 #ifdef HAVE_LIB_XML2
   xmlCleanupParser();
 #endif				/* #ifdef HAVE_LIB_XML2 */
-
-  return 0;
 }
+
+void
+settings_register_startup( void )
+{
+  /* settings_init not yet managed by the startup manager */
+
+  startup_manager_module dependencies[] = {
+  /* Fuse for OS X requires that settings_end is called before memory is
+     deallocated as settings need to look up machine names etc */
+    /* STARTUP_MANAGER_MODULE_MEMORY, */
+    STARTUP_MANAGER_MODULE_SETUID,
+  };
+  startup_manager_register( STARTUP_MANAGER_MODULE_SETTINGS_END, dependencies,
+                            ARRAY_SIZE( dependencies ), NULL, NULL,
+                            settings_end );
+}
+

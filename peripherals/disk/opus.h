@@ -1,7 +1,7 @@
 /* opus.h: Routines for handling the Opus Discovery interface
    Copyright (c) 2005-2013 Stuart Brady, Fredrick Meunier
 
-   $Id: opus.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: opus.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,8 +43,7 @@ typedef enum opus_drive_number {
 extern int opus_available;  /* Is the Opus available for use? */
 extern int opus_active;     /* Opus enabled? */
 
-void opus_init( void );
-void opus_end( void );
+void opus_register_startup( void );
 
 void opus_page( void );
 void opus_unpage( void );

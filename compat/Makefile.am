@@ -2,7 +2,7 @@
 ## Copyright (c) 2003-2013 Philip Kendall
 ## Copyright (c) 2015 Sergio Baldoví
 
-## $Id: Makefile.am 5434 2016-05-01 04:22:45Z fredm $
+## $Id: Makefile.am 5677 2016-07-09 13:58:02Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@ endif
 
 if COMPAT_GETOPT
 fuse_SOURCES += compat/getopt.c compat/getopt1.c
-endif
-
-if COMPAT_MKSTEMP
-fuse_SOURCES += compat/mkstemp.c
 endif
 
 ## Amiga routines

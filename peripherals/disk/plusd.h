@@ -1,7 +1,7 @@
 /* plusd.h: Routines for handling the +D interface
-   Copyright (c) 2005-2015 Stuart Brady
+   Copyright (c) 2005-2016 Stuart Brady, Philip Kendall
 
-   $Id: plusd.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: plusd.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,8 +43,7 @@ typedef enum plusd_drive_number {
 extern int plusd_available;  /* Is the +D available for use? */
 extern int plusd_active;     /* +D enabled? */
 
-void plusd_init( void );
-void plusd_end( void );
+void plusd_register_startup( void );
 
 void plusd_page( void );
 void plusd_unpage( void );

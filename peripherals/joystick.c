@@ -2,7 +2,7 @@
    Copyright (c) 2001-2011 Russell Marks, Darren Salt, Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: joystick.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: joystick.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -280,7 +280,7 @@ joystick_from_snapshot( libspectrum_snap *snap )
       ui_error( UI_ERROR_INFO, "Ignoring unsupported joystick in snapshot %s", 
         libspectrum_joystick_name( libspectrum_snap_joystick_list( snap, i ) ));
       continue;
-    };
+    }
 
     if( settings_current.joystick_keyboard_output != fuse_type &&
         settings_current.joystick_1_output != fuse_type &&

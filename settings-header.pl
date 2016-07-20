@@ -4,7 +4,7 @@
 # Copyright (c) 2002-2003 Philip Kendall
 # Copyright (c) 2015 Stuart Brady
 
-# $Id: settings-header.pl 5434 2016-05-01 04:22:45Z fredm $
+# $Id: settings-header.pl 5677 2016-07-09 13:58:02Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ int settings_free( settings_info *settings );
 
 int settings_write_config( settings_info *settings );
 
-int settings_end( void );
+void settings_register_startup( void );
 
 #endif				/* #ifndef FUSE_SETTINGS_H */
 CODE

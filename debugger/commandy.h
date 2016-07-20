@@ -128,7 +128,6 @@ typedef union YYSTYPE
 
 
   int token;
-  int reg;
 
   libspectrum_dword integer;
   char *string;
@@ -143,7 +142,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 147 "debugger/commandy.h"
+#line 146 "debugger/commandy.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

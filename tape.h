@@ -1,8 +1,8 @@
 /* tape.h: tape handling routines
-   Copyright (c) 1999-2004 Philip Kendall
+   Copyright (c) 1999-2016 Philip Kendall
    Copyright (c) 2015 Sergio Baldoví
 
-   $Id: tape.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: tape.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
 
 #include <libspectrum.h>
 
-void tape_init( void );
-void tape_end( void );
+void tape_register_startup( void );
 
 int tape_open( const char *filename, int autoload );
 

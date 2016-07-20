@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Copyright (c) 1999-2015 Philip Kendall
 
-## $Id: Makefile.am 5537 2016-05-29 06:17:00Z sbaldovi $
+## $Id: Makefile.am 5677 2016-07-09 13:58:02Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -170,6 +170,7 @@ include compat/Makefile.am
 include data/Makefile.am
 include debugger/Makefile.am
 include hacking/Makefile.am
+include infrastructure/Makefile.am
 include lib/Makefile.am
 include machines/Makefile.am
 include man/Makefile.am

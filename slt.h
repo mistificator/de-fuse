@@ -1,7 +1,7 @@
 /* slt.h: SLT data handling routines
-   Copyright (c) 2004 Philip Kendall
+   Copyright (c) 2004-2016 Philip Kendall
 
-   $Id: slt.h 4640 2012-01-21 13:26:35Z pak21 $
+   $Id: slt.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 #include <libspectrum.h>
 
-void slt_init( void );
+void slt_register_startup( void );
 
 int slt_trap( libspectrum_word address, libspectrum_byte level );
 

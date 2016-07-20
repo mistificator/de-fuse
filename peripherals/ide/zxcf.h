@@ -2,7 +2,7 @@
    Copyright (c) 2003-2004 Garry Lancaster,
 		 2004 Philip Kendall
 
-   $Id: zxcf.h 5392 2016-04-24 13:39:50Z fredm $
+   $Id: zxcf.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@
 
 #include <libspectrum.h>
 
-int zxcf_init( void );
-int zxcf_end( void );
+void zxcf_register_startup( void );
 int zxcf_insert( const char *filename );
 int zxcf_commit( void );
 int zxcf_eject( void );

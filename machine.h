@@ -1,7 +1,7 @@
 /* machine.h: Routines for handling the various machine types
    Copyright (c) 1999-2011 Philip Kendall
 
-   $Id: machine.h 4624 2012-01-09 20:59:35Z pak21 $
+   $Id: machine.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ extern int machine_count;		/* of which there are this many */
 
 extern fuse_machine_info *machine_current;	/* The currently selected machine */
 
-int machine_init_machines( void );
+void machine_register_startup( void );
 
 int machine_select( libspectrum_machine type );
 int machine_select_id( const char *id );
@@ -106,6 +106,5 @@ int machine_load_rom( int page_num, const char *filename, const char *fallback,
   size_t expected_length );
 
 int machine_reset( int hard_reset );
-int machine_end( void );
 
 #endif			/* #ifndef FUSE_MACHINE_H */

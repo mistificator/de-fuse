@@ -1,7 +1,7 @@
 /* disciple.h: Routines for handling the DISCiPLE interface
    Copyright (c) 2005-2015 Stuart Brady
 
-   $Id: disciple.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: disciple.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,8 +43,7 @@ typedef enum disciple_drive_number {
 extern int disciple_available;  /* Is the DISCiPLE available for use? */
 extern int disciple_active;     /* DISCiPLE enabled? */
 
-void disciple_init( void );
-void disciple_end( void );
+void disciple_register_startup( void );
 
 void disciple_page( void );
 void disciple_unpage( void );

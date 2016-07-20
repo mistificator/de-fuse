@@ -2,7 +2,7 @@
    Copyright (c) 1999-2016 Stuart Brady, Fredrick Meunier, Philip Kendall,
    Dmitry Sanarin, Darren Salt, Michael D Wynne, Gergely Szasz
 
-   $Id: opus.c 5504 2016-05-21 07:06:21Z fredm $
+   $Id: opus.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@
 #include <string.h>
 
 #include "compat.h"
+#include "debugger/debugger.h"
+#include "infrastructure/startup_manager.h"
 #include "machine.h"
 #include "module.h"
 #include "opus.h"
@@ -93,12 +95,17 @@ static const periph_t opus_periph = {
   /* .activate = */ NULL,
 };
 
+/* Debugger events */
+static const char * const event_type_string = "opus";
+static int page_event, unpage_event;
+
 void
 opus_page( void )
 {
   opus_active = 1;
   machine_current->ram.romcs = 1;
   machine_current->memory_map();
+  debugger_event( page_event );
 }
 
 void
@@ -107,6 +114,7 @@ opus_unpage( void )
   opus_active = 0;
   machine_current->ram.romcs = 0;
   machine_current->memory_map();
+  debugger_event( unpage_event );
 }
 
 static void
@@ -125,8 +133,8 @@ opus_set_datarq( struct wd_fdc *f )
   event_add( 0, z80_nmi_event );
 }
 
-void
-opus_init( void )
+static int
+opus_init( void *context )
 {
   int i;
   fdd_t *d;
@@ -161,6 +169,31 @@ opus_init( void )
     opus_ui_drives[ i ].fdd = &opus_drives[ i ];
     ui_media_drive_register( &opus_ui_drives[ i ] );
   }
+
+  periph_register_paging_events( event_type_string, &page_event,
+                                 &unpage_event );
+
+  return 0;
+}
+
+static void
+opus_end( void )
+{
+  opus_available = 0;
+  libspectrum_free( opus_fdc );
+}
+
+void
+opus_register_startup( void )
+{
+  startup_manager_module dependencies[] = {
+    STARTUP_MANAGER_MODULE_DEBUGGER,
+    STARTUP_MANAGER_MODULE_MEMORY,
+    STARTUP_MANAGER_MODULE_SETUID,
+  };
+  startup_manager_register( STARTUP_MANAGER_MODULE_OPUS, dependencies,
+                            ARRAY_SIZE( dependencies ), opus_init, NULL,
+                            opus_end );
 }
 
 static void
@@ -217,13 +250,6 @@ opus_reset( int hard_reset )
   opus_fdc->current_drive = &opus_drives[ 0 ];
   fdd_select( &opus_drives[ 0 ], 1 );
   machine_current->memory_map();
-}
-
-void
-opus_end( void )
-{
-  opus_available = 0;
-  libspectrum_free( opus_fdc );
 }
 
 /*
@@ -464,7 +490,6 @@ opus_to_snapshot( libspectrum_snap *snap )
     memcpy( buffer + i * MEMORY_PAGE_SIZE,
             opus_memory_map_romcs_rom[ i ].page, MEMORY_PAGE_SIZE );
 
-  if( !buffer ) return;
   libspectrum_snap_set_opus_rom( snap, 0, buffer );
 
   if( opus_memory_map_romcs_rom[0].save_to_snapshot )
@@ -472,7 +497,6 @@ opus_to_snapshot( libspectrum_snap *snap )
 
   buffer = libspectrum_new( libspectrum_byte, OPUS_RAM_SIZE );
   memcpy( buffer, opus_ram, OPUS_RAM_SIZE );
-  if( !buffer ) return;
   libspectrum_snap_set_opus_ram( snap, 0, buffer );
 
   drive_count++; /* Drive 1 is not removable */
