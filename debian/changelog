@@ -1,3 +1,9 @@
+fuse-emulator (1.2.1+dfsg1-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Alberto Garcia <berto@igalia.com>  Thu, 21 Jul 2016 01:37:15 +0200
+
 fuse-emulator (1.2.0+dfsg1-1) unstable; urgency=medium
 
   * New upstream release (Closes: #745402).
