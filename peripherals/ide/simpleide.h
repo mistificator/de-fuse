@@ -1,7 +1,7 @@
 /* simpleide.h: Simple 8-bit IDE interface routines
-   Copyright (c) 2003-2004 Garry Lancaster
+   Copyright (c) 2003-2016 Garry Lancaster, Philip Kendall
 
-   $Id: simpleide.h 5392 2016-04-24 13:39:50Z fredm $
+   $Id: simpleide.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@
 
 #include <libspectrum.h>
 
-int simpleide_init( void );
-int simpleide_end( void );
+void simpleide_register_startup( void );
 void simpleide_reset( int hard_reset );
 int simpleide_insert( const char *filename, libspectrum_ide_unit unit );
 int simpleide_commit( libspectrum_ide_unit unit );

@@ -2,7 +2,7 @@
    Copyright (c) 2000-2016 Russell Marks, Matan Ziv-Av, Philip Kendall,
                            Fredrick Meunier, Patrik Rak
 
-   $Id: sound.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: sound.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include <config.h>
 
 #include "fuse.h"
+#include "infrastructure/startup_manager.h"
 #include "machine.h"
 #include "movie.h"
 #include "options.h"
@@ -337,6 +338,14 @@ sound_end( void )
     libspectrum_free( samples );
     sound_enabled = 0;
   }
+}
+
+void
+sound_register_startup( void )
+{
+  startup_manager_module dependencies[] = { STARTUP_MANAGER_MODULE_SETUID };
+  startup_manager_register( STARTUP_MANAGER_MODULE_SOUND, dependencies,
+                            ARRAY_SIZE( dependencies ), NULL, NULL, sound_end );
 }
 
 static inline void

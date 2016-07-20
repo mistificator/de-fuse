@@ -4,7 +4,7 @@
 # Copyright (c) 2002-2015 Philip Kendall
 # Copyright (c) 2016 BogDan Vatra
 
-# $Id: settings.pl 5525 2016-05-23 21:53:48Z sbaldovi $
+# $Id: settings.pl 5677 2016-07-09 13:58:02Z fredm $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,6 +90,7 @@ print hashline( __LINE__ ), << 'CODE';
 #endif				/* #ifdef HAVE_LIB_XML2 */
 
 #include "fuse.h"
+#include "infrastructure/startup_manager.h"
 #include "machine.h"
 #include "settings.h"
 #include "spectrum.h"
@@ -801,7 +802,7 @@ print hashline( __LINE__ ), << 'CODE';
   return 0;
 }
 
-int
+static void
 settings_end( void )
 {
   if( settings_current.autosave_settings )
@@ -812,7 +813,22 @@ settings_end( void )
 #ifdef HAVE_LIB_XML2
   xmlCleanupParser();
 #endif				/* #ifdef HAVE_LIB_XML2 */
-
-  return 0;
 }
+
+void
+settings_register_startup( void )
+{
+  /* settings_init not yet managed by the startup manager */
+
+  startup_manager_module dependencies[] = {
+  /* Fuse for OS X requires that settings_end is called before memory is
+     deallocated as settings need to look up machine names etc */
+    /* STARTUP_MANAGER_MODULE_MEMORY, */
+    STARTUP_MANAGER_MODULE_SETUID,
+  };
+  startup_manager_register( STARTUP_MANAGER_MODULE_SETTINGS_END, dependencies,
+                            ARRAY_SIZE( dependencies ), NULL, NULL,
+                            settings_end );
+}
+
 CODE

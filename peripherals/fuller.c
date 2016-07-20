@@ -1,7 +1,7 @@
 /* fuller.c: Routines for handling the Fuller Box
-   Copyright (c) 2007-2011 Stuart Brady, Fredrick Meunier, Philip Kendall
+   Copyright (c) 2007-2016 Stuart Brady, Fredrick Meunier, Philip Kendall
 
-   $Id: fuller.c 5251 2015-05-11 17:34:37Z zubzero $
+   $Id: fuller.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include "ay.h"
 #include "compat.h"
 #include "fuller.h"
+#include "infrastructure/startup_manager.h"
 #include "joystick.h"
 #include "module.h"
 #include "periph.h"
@@ -84,9 +85,20 @@ fuller_to_snapshot( libspectrum_snap *snap )
   libspectrum_snap_set_fuller_box_active( snap, active );
 }
 
-void
-fuller_init( void )
+static int
+fuller_init( void *context )
 {
   module_register( &fuller_module_info );
   periph_register( PERIPH_TYPE_FULLER, &fuller_periph );
+
+  return 0;
+}
+
+void
+fuller_register_startup( void )
+{
+  startup_manager_module dependencies[] = { STARTUP_MANAGER_MODULE_SETUID };
+  startup_manager_register( STARTUP_MANAGER_MODULE_FULLER, dependencies,
+                            ARRAY_SIZE( dependencies ), fuller_init, NULL, 
+                            NULL );
 }

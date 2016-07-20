@@ -2,7 +2,7 @@
    Copyright (c) 1999-2015 Philip Kendall, Thomas Harte, Witold Filipczyk
                            and Fredrick Meunier
 
-   $Id: display.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: display.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@
 #include <string.h>
 
 #include "display.h"
-#include "event.h"
 #include "fuse.h"
+#include "infrastructure/startup_manager.h"
 #include "machine.h"
 #include "movie.h"
 #include "peripherals/scld.h"
@@ -205,6 +205,26 @@ display_init( int *argc, char ***argv )
                             display_hires_border : display_lores_border;
 
   return 0;
+}
+
+static int
+display_init_wrapper( void *context )
+{
+  display_startup_context *typed_context =
+    (display_startup_context*) context;
+
+  return display_init( typed_context->argc, typed_context->argv );
+}
+
+void
+display_register_startup( display_startup_context *context )
+{
+  /* The Wii has an explicit call to display_init for now */
+#ifndef GEKKO
+  startup_manager_register_no_dependencies( STARTUP_MANAGER_MODULE_DISPLAY,
+                                            display_init_wrapper, context,
+                                            NULL );
+#endif                          /* #ifndef GEKKO */
 }
 
 /* Mark as 'dirty' the pixels which have been changed by a write to

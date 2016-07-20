@@ -1,8 +1,8 @@
 /* if1.h: Interface 1 handling routines
-   Copyright (c) 2004-2011 Gergely Szasz, Philip Kendall
+   Copyright (c) 2004-2016 Gergely Szasz, Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: if1.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: if1.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,8 +33,7 @@
 extern int if1_active;
 extern int if1_available;
 
-void if1_init( void );
-libspectrum_error if1_end( void );
+void if1_register_startup( void );
 
 void if1_page( void );
 void if1_unpage( void );

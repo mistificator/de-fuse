@@ -2,7 +2,7 @@
    Copyright (c) 2000-2004 Russell Marks, Matan Ziv-Av, Philip Kendall
    Copyright (c) 2016 Fredrick Meunier
 
-   $Id: sound.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: sound.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 #define FUSE_SOUND_H
 
 #include <libspectrum.h>
+
+void sound_register_startup( void );
 
 void sound_init( const char *device );
 void sound_pause( void );

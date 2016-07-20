@@ -1,7 +1,7 @@
 /* event.c: Routines needed for dealing with the event list
    Copyright (c) 2000-2015 Philip Kendall
 
-   $Id: event.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: event.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <libspectrum.h>
 
 #include "event.h"
+#include "infrastructure/startup_manager.h"
 #include "fuse.h"
 #include "ui/ui.h"
 #include "utils.h"
@@ -56,14 +57,16 @@ typedef struct event_descriptor_t {
 
 static GArray *registered_events;
 
-void
-event_init( void )
+static int
+event_init( void *context )
 {
   registered_events = g_array_new( FALSE, FALSE, sizeof( event_descriptor_t ) );
 
   event_type_null = event_register( NULL, "[Deleted event]" );
 
   event_next_event = event_no_events;
+
+  return 0;
 }
 
 int
@@ -272,9 +275,18 @@ registered_events_free( void )
 }
 
 /* Tidy-up function called at end of emulation */
-void
+static void
 event_end( void )
 {
   event_reset();
   registered_events_free();
+}
+
+void
+event_register_startup( void )
+{
+  startup_manager_module dependencies[] = { STARTUP_MANAGER_MODULE_SETUID };
+  startup_manager_register( STARTUP_MANAGER_MODULE_EVENT, dependencies,
+                            ARRAY_SIZE( dependencies ), event_init, NULL,
+                            event_end );
 }

@@ -274,6 +274,6 @@ int settings_free( settings_info *settings );
 
 int settings_write_config( settings_info *settings );
 
-int settings_end( void );
+void settings_register_startup( void );
 
 #endif				/* #ifndef FUSE_SETTINGS_H */

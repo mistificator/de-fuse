@@ -2,7 +2,7 @@
    Copyright (c) 2004-2008 Darren Salt, Fredrick Meunier
    Copyright (c) 2015 Stuart Brady
 
-   $Id: query.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: query.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -322,6 +322,8 @@ widget_query_finish( widget_finish_state finished )
     free( message_lines[i] );
   }
   free( message_lines );
+  message_lines = NULL;
+  num_message_lines = 0;
 
   return 0;
 }

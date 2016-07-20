@@ -2,7 +2,7 @@
 ## Copyright (c) 2001-2003 Philip Kendall
 ## Copyright (c) 2015-2016 Sergio Baldoví
 
-## $Id: Makefile.am 5589 2016-06-05 22:14:19Z sbaldovi $
+## $Id: Makefile.am 5677 2016-07-09 13:58:02Z fredm $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 fuse_SOURCES += \
                 z80/z80.c \
+                z80/z80_debugger_variables.c \
                 z80/z80_ops.c
 
 BUILT_SOURCES += \
@@ -56,6 +57,7 @@ z80/z80_ed.c: $(srcdir)/z80/z80.pl $(srcdir)/z80/opcodes_ed.dat
 noinst_HEADERS += \
                   z80/z80.h \
                   z80/z80_checks.h \
+                  z80/z80_internals.h \
                   z80/z80_macros.h
 
 EXTRA_DIST += \

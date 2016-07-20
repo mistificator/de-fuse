@@ -1,8 +1,8 @@
 /* memory.h: memory access routines
-   Copyright (c) 2003-2011 Philip Kendall
+   Copyright (c) 2003-2016 Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: memory.h 5466 2016-05-08 09:46:20Z fredm $
+   $Id: memory.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -117,8 +117,7 @@ extern int memory_current_screen;
 /* Which bits to look at when working out where the screen is */
 extern libspectrum_word memory_screen_mask;
 
-void memory_init( void );
-void memory_end( void );
+void memory_register_startup( void );
 libspectrum_byte *memory_pool_allocate( size_t length );
 libspectrum_byte *memory_pool_allocate_persistent( size_t length,
                                                    int persistent );

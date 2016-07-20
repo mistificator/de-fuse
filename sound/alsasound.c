@@ -1,7 +1,7 @@
 /* alsasound.c: ALSA (Linux) sound I/O
    Copyright (c) 2006 Gergely Szasz
 
-   $Id: alsasound.c 4031 2009-06-08 00:33:53Z fredm $
+   $Id: alsasound.c 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,9 @@
 
 /* This is necessary to prevent warnings from the calls to
    snd_pcm_[hs]w_params_alloca() */
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 
 #include <stdio.h>
 #include <string.h>

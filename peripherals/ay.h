@@ -1,8 +1,8 @@
 /* ay.h: AY-8-3912 routines
-   Copyright (c) 1999-2009 Philip Kendall
+   Copyright (c) 1999-2016 Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: ay.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: ay.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ typedef struct ayinfo {
   libspectrum_byte registers[ AY_REGISTERS ];
 } ayinfo;
 
-void ay_init( void );
+void ay_register_startup( void );
 
 libspectrum_byte ay_registerport_read( libspectrum_word port, libspectrum_byte *attached );
 void ay_registerport_write( libspectrum_word port, libspectrum_byte b );

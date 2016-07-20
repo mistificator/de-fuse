@@ -1,7 +1,7 @@
 /* z80.h: z80 emulation core
    Copyright (c) 1999-2015 Philip Kendall
 
-   $Id: z80.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: z80.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -56,7 +56,8 @@ typedef struct {
 
 } processor;
 
-void z80_init( void );
+void z80_register_startup( void );
+int z80_init( void *context );
 void z80_reset( int hard_reset );
 
 int z80_interrupt( void );

@@ -1,8 +1,8 @@
 /* beta.h: Routines for handling the Beta disk interface
-   Copyright (c) 2003-2013 Fredrick Meunier, Philip Kendall
+   Copyright (c) 2003-2016 Fredrick Meunier, Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: beta.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: beta.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,9 +44,7 @@ extern memory_page beta_memory_map_romcs[MEMORY_PAGES_IN_16K];
 extern libspectrum_word beta_pc_mask; /* Bits to mask in PC for enable check */
 extern libspectrum_word beta_pc_value; /* Value to compare masked PC against */
 
-void beta_init( void );
-
-void beta_end( void );
+void beta_register_startup( void );
 
 void beta_page( void );
 void beta_unpage( void );

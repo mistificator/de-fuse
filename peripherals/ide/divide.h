@@ -1,7 +1,7 @@
 /* divide.h: DivIDE interface routines
-   Copyright (c) 2005 Matthew Westcott
+   Copyright (c) 2005-2016 Matthew Westcott, Philip Kendall
 
-   $Id: divide.h 5392 2016-04-24 13:39:50Z fredm $
+   $Id: divide.h 5677 2016-07-09 13:58:02Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,8 +41,7 @@ void divide_set_automap( int state );
    re-evaluate whether paging will actually happen */
 void divide_refresh_page_state( void );
 
-int divide_init( void );
-int divide_end( void );
+void divide_register_startup( void );
 int divide_insert( const char *filename, libspectrum_ide_unit unit );
 int divide_commit( libspectrum_ide_unit unit );
 int divide_eject( libspectrum_ide_unit unit );
