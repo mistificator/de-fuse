@@ -1,6 +1,12 @@
 fuse-emulator (1.2.1+dfsg1-1) UNRELEASED; urgency=medium
 
   * New upstream release.
+  * Refresh the following patches:
+    - compile-without-roms.patch
+    - disable-autoload.patch
+    - load-opense-rom.patch
+    - manpage-errors.patch
+    - missing-roms-help.patch
 
  -- Alberto Garcia <berto@igalia.com>  Thu, 21 Jul 2016 01:37:15 +0200
 

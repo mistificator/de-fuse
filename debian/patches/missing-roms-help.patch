@@ -8,7 +8,7 @@ Index: fuse-emulator/machine.c
 ===================================================================
 --- fuse-emulator.orig/machine.c
 +++ fuse-emulator/machine.c
-@@ -276,7 +276,7 @@ machine_load_rom_bank_from_file( memory_
+@@ -278,7 +278,7 @@ machine_load_rom_bank_from_file( memory_
  
    error = utils_read_auxiliary_file( filename, &rom, UTILS_AUXILIARY_ROM );
    if( error == -1 ) {

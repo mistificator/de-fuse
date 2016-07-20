@@ -14,7 +14,7 @@ Index: fuse-emulator/man/fuse.1
  for further explanation.
  .br
  .IP \[bu]
-@@ -3013,7 +3013,7 @@ Spectrum's power off, and then turning i
+@@ -3023,7 +3023,7 @@ Spectrum's power off, and then turning i
  .RS
  Choose a type of Spectrum to emulate. An brief overview of the
  Sinclair, Amstrad and Timex can be found at
@@ -23,7 +23,7 @@ Index: fuse-emulator/man/fuse.1
  while more technical information can be found at
  .IR "http://www.worldofspectrum.org/faq/reference/reference.htm" ,
  and
-@@ -4895,7 +4895,7 @@ Didaktik 80 and Didaktik 40 file formats
+@@ -5007,7 +5007,7 @@ Didaktik 80 and Didaktik 40 file formats
  .I .TRD
  .RS
  TR-DOS disk image; for detailed information please see
