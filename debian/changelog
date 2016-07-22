@@ -9,6 +9,8 @@ fuse-emulator (1.2.1+dfsg1-1) UNRELEASED; urgency=medium
     - missing-roms-help.patch
   * debian/rules:
     - Update sed rules for the new desktop file.
+  * debian/copyright:
+    - Remove reference to missing mkstemp.c file.
 
  -- Alberto Garcia <berto@igalia.com>  Thu, 21 Jul 2016 01:37:15 +0200
 
