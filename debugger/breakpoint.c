@@ -4,7 +4,7 @@
    Copyright (c) 2015 Tom Seddon
    Copyright (c) 2016 BogDan Vatra
 
-   $Id: breakpoint.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: breakpoint.c 5735 2016-08-14 13:02:21Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -136,8 +136,8 @@ debugger_breakpoint_add_port( debugger_breakpoint_type type,
 
 int
 debugger_breakpoint_add_time( debugger_breakpoint_type type,
-			      libspectrum_dword tstates, size_t ignore,
-			      debugger_breakpoint_life life,
+			      libspectrum_dword breakpoint_tstates,
+                              size_t ignore, debugger_breakpoint_life life,
 			      debugger_expression *condition )
 {
   debugger_breakpoint_value value;
@@ -153,8 +153,8 @@ debugger_breakpoint_add_time( debugger_breakpoint_type type,
   }
 
   value.time.triggered = 0;
-  value.time.tstates = tstates;
-  value.time.initial_tstates = tstates;
+  value.time.tstates = breakpoint_tstates;
+  value.time.initial_tstates = breakpoint_tstates;
 
   return breakpoint_add( type, value, ignore, life, condition );
 }
