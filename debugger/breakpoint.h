@@ -2,7 +2,7 @@
    Copyright (c) 2002-2011 Philip Kendall
    Copyright (c) 2013 Sergio Baldoví
 
-   $Id: breakpoint.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: breakpoint.h 5735 2016-08-14 13:02:21Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ debugger_breakpoint_add_port(
 
 int
 debugger_breakpoint_add_time(
-  debugger_breakpoint_type type, libspectrum_dword tstates,
+  debugger_breakpoint_type type, libspectrum_dword breakpoint_tstates,
   size_t ignore, debugger_breakpoint_life life, debugger_expression *condition
 );
 

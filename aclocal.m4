@@ -9680,6 +9680,5 @@ AC_SUBST([am__untar])
 
 m4_include([m4/ax_pthread.m4])
 m4_include([m4/gtk-2.0.m4])
-m4_include([m4/libxml.m4])
 m4_include([m4/pkg.m4])
 m4_include([m4/sdl.m4])

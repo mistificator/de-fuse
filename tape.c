@@ -3,7 +3,7 @@
    Copyright (c) 2015 UB880D
    Copyright (c) 2016 Fredrick Meunier
 
-   $Id: tape.c 5677 2016-07-09 13:58:02Z fredm $
+   $Id: tape.c 5735 2016-08-14 13:02:21Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -823,6 +823,7 @@ tape_next_edge( libspectrum_dword last_tstates, int type, void *user_data )
 
   /* Invert the microphone state */
   if( edge_tstates ||
+      !( flags & LIBSPECTRUM_TAPE_FLAGS_NO_EDGE ) ||
       ( flags & ( LIBSPECTRUM_TAPE_FLAGS_STOP |
                   LIBSPECTRUM_TAPE_FLAGS_LEVEL_LOW |
                   LIBSPECTRUM_TAPE_FLAGS_LEVEL_HIGH ) ) ) {
