@@ -5,7 +5,7 @@ Index: fuse-emulator/man/fuse.1
 ===================================================================
 --- fuse-emulator.orig/man/fuse.1
 +++ fuse-emulator/man/fuse.1
-@@ -1482,7 +1482,7 @@ selects the ALSA device used, it can be
+@@ -1484,7 +1484,7 @@ selects the ALSA device used, it can be
  device name. e.g.:
  .IR default " or " hw:0 " or " tee:plughw:0,\(aq/tmp/out.raw\(aq,raw .
  See the alsa-lib pcm api reference at
@@ -14,7 +14,7 @@ Index: fuse-emulator/man/fuse.1
  for further explanation.
  .br
  .IP \[bu]
-@@ -3023,7 +3023,7 @@ Spectrum's power off, and then turning i
+@@ -3025,7 +3025,7 @@ Spectrum's power off, and then turning i
  .RS
  Choose a type of Spectrum to emulate. An brief overview of the
  Sinclair, Amstrad and Timex can be found at
@@ -23,10 +23,10 @@ Index: fuse-emulator/man/fuse.1
  while more technical information can be found at
  .IR "http://www.worldofspectrum.org/faq/reference/reference.htm" ,
  and
-@@ -5007,7 +5007,7 @@ Didaktik 80 and Didaktik 40 file formats
- .I .TRD
- .RS
- TR-DOS disk image; for detailed information please see
+@@ -5011,7 +5011,7 @@ Didaktik 80 and Didaktik 40 file formats
+ TR-DOS disk image. TRD and SCL sectors are loaded interleaved, therefore
+ you might experience problems with TR\-DOS ROMs that use the turbo
+ format (sequential sectors); for detailed information please see
 -.I http://web.archive.org/web/20070808150548/http://www.ramsoft.bbk.org/tech/tr\-info.zip
 +.I http\:://web.archive.org/web/20070808150548/http://www.ramsoft.bbk.org\:/tech/tr\-info.zip
  .RE
