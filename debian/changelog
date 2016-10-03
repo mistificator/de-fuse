@@ -1,3 +1,13 @@
+fuse-emulator (1.3.0+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Refresh these patches:
+    - bash-completion.patch
+    - load-opense-rom.patch
+    - manpage-errors.patch
+
+ -- Alberto Garcia <berto@igalia.com>  Mon, 03 Oct 2016 10:06:34 +0300
+
 fuse-emulator (1.2.2+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.

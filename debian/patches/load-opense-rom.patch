@@ -88,7 +88,7 @@ Index: fuse-emulator/settings.c
  
  /* The default settings of options, etc */
  settings_info settings_default = {
-@@ -361,6 +362,8 @@ read_config_file( settings_info *setting
+@@ -362,6 +363,8 @@ read_config_file( settings_info *setting
  
    xmlFreeDoc( doc );
  
