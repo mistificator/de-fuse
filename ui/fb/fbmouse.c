@@ -1,7 +1,7 @@
 /* fbmouse.c: Linux mouse handling code (requires kernel input layer)
    Copyright (c) 2004 Darren Salt
 
-   $Id: fbmouse.c 5442 2016-05-01 16:48:04Z sbaldovi $
+   $Id: fbmouse.c 5441 2016-05-01 16:46:14Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free

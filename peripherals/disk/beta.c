@@ -1,7 +1,7 @@
 /* beta.c: Routines for handling the Beta disk interface
    Copyright (c) 2004-2016 Stuart Brady, Philip Kendall, Gergely Szasz
 
-   $Id: beta.c 5677 2016-07-09 13:58:02Z fredm $
+   $Id: beta.c 5802 2016-09-19 22:33:34Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -392,9 +392,17 @@ beta_disk_insert( beta_drive_number which, const char *filename,
 static int
 ui_drive_autoload( void )
 {
-  PC = 0;
-  machine_current->ram.last_byte |= 0x10;   /* Select ROM 1 */
-  beta_page();
+  /* Clear AY registers (and more) from current machine */
+  machine_reset(1);
+
+  if( ( machine_current->capabilities &
+        LIBSPECTRUM_MACHINE_CAPABILITY_128_MEMORY ) ||
+      !settings_current.beta128_48boot ) {
+    PC = 0;
+    machine_current->ram.last_byte |= 0x10;   /* Select ROM 1 */
+    beta_page();
+  }
+
   return 0;
 }
 

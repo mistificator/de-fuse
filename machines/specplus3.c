@@ -2,7 +2,7 @@
    Copyright (c) 1999-2015 Philip Kendall, Darren Salt, Gergely Szasz
    Copyright (c) 2016 Gergely Szasz
 
-   $Id: specplus3.c 5735 2016-08-14 13:02:21Z fredm $
+   $Id: specplus3.c 5720 2016-08-07 21:51:53Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

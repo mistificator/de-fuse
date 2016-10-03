@@ -3,7 +3,7 @@
    Copyright (c) 2015 Stuart Brady
    Copyright (c) 2015 Gergely Szasz
 
-   $Id: periph.h 5489 2016-05-17 20:34:24Z pak21 $
+   $Id: periph.h 5488 2016-05-17 20:30:33Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

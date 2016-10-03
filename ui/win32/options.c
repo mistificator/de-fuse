@@ -62,11 +62,15 @@ menu_options_general_init( HWND hwndDlg )
   buffer[0] = '\0';
   if( buffer[i] ) {};          /* Shut gcc up */
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_EMULATION_SPEED, EM_LIMITTEXT,
+                      5, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.emulation_speed );
   SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_EMULATION_SPEED, WM_SETTEXT,
                       0, (LPARAM) buffer );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_FRAME_RATE, EM_LIMITTEXT,
+                      1, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.frame_rate );
   SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_FRAME_RATE, WM_SETTEXT,
@@ -74,6 +78,9 @@ menu_options_general_init( HWND hwndDlg )
 
   SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_ISSUE2, BM_SETCHECK,
     settings_current.issue2 ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+  SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_RECREATED_SPECTRUM, BM_SETCHECK,
+    settings_current.recreated_spectrum ? BST_CHECKED : BST_UNCHECKED, 0 );
 
   SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_WRITABLE_ROMS, BM_SETCHECK,
     settings_current.writable_roms ? BST_CHECKED : BST_UNCHECKED, 0 );
@@ -127,6 +134,9 @@ menu_options_general_done( HWND hwndDlg )
 
   settings_current.issue2 =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_ISSUE2 );
+
+  settings_current.recreated_spectrum =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_RECREATED_SPECTRUM );
 
   settings_current.writable_roms =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_WRITABLE_ROMS );
@@ -243,6 +253,8 @@ menu_options_media_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_SLT_TRAPS, BM_SETCHECK,
     settings_current.slt_traps ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_MDR_LEN, EM_LIMITTEXT,
+                      3, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.mdr_len );
   SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_MDR_LEN, WM_SETTEXT,
@@ -735,6 +747,8 @@ menu_options_rzx_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_COMPETITION_MODE, BM_SETCHECK,
     settings_current.competition_mode ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_COMPETITION_CODE, EM_LIMITTEXT,
+                      8, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.competition_code );
   SendDlgItemMessage( hwndDlg, IDC_OPT_RZX_COMPETITION_CODE, WM_SETTEXT,
@@ -912,16 +926,22 @@ menu_options_sound_init( HWND hwndDlg )
       }
     }
   }
+  SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_AY, EM_LIMITTEXT,
+                      3, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.volume_ay );
   SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_AY, WM_SETTEXT,
                       0, (LPARAM) buffer );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_BEEPER, EM_LIMITTEXT,
+                      3, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.volume_beeper );
   SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_BEEPER, WM_SETTEXT,
                       0, (LPARAM) buffer );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_SPECDRUM, EM_LIMITTEXT,
+                      3, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.volume_specdrum );
   SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_SPECDRUM, WM_SETTEXT,

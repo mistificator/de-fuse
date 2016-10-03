@@ -2,7 +2,7 @@
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: widget_internals.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: widget_internals.h 5772 2016-08-22 21:55:54Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -194,6 +194,7 @@ typedef enum widget_text_input_allow {
 typedef struct widget_text_t {
   const char *title;
   widget_text_input_allow allow; 
+  unsigned int max_length;
   char text[40];
 } widget_text_t;
 
@@ -231,6 +232,11 @@ void widget_pokefinder_keyhandler( input_key key );
 
 int widget_memory_draw( void *data );
 void widget_memory_keyhandler( input_key key );
+
+/* The about fuse widget */
+
+int widget_about_draw( void *data );
+void widget_about_keyhandler( input_key key );
 
 /* The ROM selector widget */
 

@@ -3,7 +3,7 @@
 # options.pl: generate options dialog boxes
 # Copyright (c) 2001-2015 Philip Kendall, Fredrick Meunier
 
-# $Id: options.pl 5434 2016-05-01 04:22:45Z fredm $
+# $Id: options.pl 5772 2016-08-22 21:55:54Z sbaldovi $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -493,6 +493,7 @@ widget_$widget->{value}_click( void )
 
   text_data.title = "$title";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = $widget->{data1};
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.$widget->{value} );
   widget_do_text( &text_data );
@@ -567,14 +568,11 @@ CODE
 void
 widget_$_->{name}_keyhandler( input_key key )
 \{
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_$_->{name});
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) \{
 

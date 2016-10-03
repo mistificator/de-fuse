@@ -277,19 +277,19 @@ am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	ui/sdl/keysyms.c ui/svga/keysyms.c ui/svga/svgadisplay.c \
 	ui/svga/svgadisplay.h ui/svga/svgajoystick.c \
 	ui/svga/svgakeyboard.c ui/svga/svgakeyboard.h ui/svga/svgaui.c \
-	ui/widget/browse.c ui/widget/debugger.c ui/widget/error.c \
-	ui/widget/filesel.c ui/widget/memory.c ui/widget/menu.c \
-	ui/widget/menu_data.c ui/widget/options.c ui/widget/picture.c \
-	ui/widget/pokefinder.c ui/widget/pokemem.c ui/widget/query.c \
-	ui/widget/roms.c ui/widget/select.c ui/widget/text.c \
-	ui/widget/widget_internals.h ui/widget/widget.c \
-	ui/widget/widget.h ui/wii/keysyms.c ui/wii/wiidisplay.c \
-	ui/wii/wiidisplay.h ui/wii/wiijoystick.c ui/wii/wiikeyboard.c \
-	ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h ui/wii/wiimouse.c \
-	ui/wii/wiimouse.h ui/wii/wiiui.c ui/win32/about.c \
-	ui/win32/about.h ui/win32/binary.c ui/win32/binary.h \
-	ui/win32/browse.c ui/win32/browse.h ui/win32/confirm.c \
-	ui/win32/debugger.c ui/win32/debugger.h \
+	ui/widget/about.c ui/widget/browse.c ui/widget/debugger.c \
+	ui/widget/error.c ui/widget/filesel.c ui/widget/memory.c \
+	ui/widget/menu.c ui/widget/menu_data.c ui/widget/options.c \
+	ui/widget/picture.c ui/widget/pokefinder.c ui/widget/pokemem.c \
+	ui/widget/query.c ui/widget/roms.c ui/widget/select.c \
+	ui/widget/text.c ui/widget/widget_internals.h \
+	ui/widget/widget.c ui/widget/widget.h ui/wii/keysyms.c \
+	ui/wii/wiidisplay.c ui/wii/wiidisplay.h ui/wii/wiijoystick.c \
+	ui/wii/wiikeyboard.c ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h \
+	ui/wii/wiimouse.c ui/wii/wiimouse.h ui/wii/wiiui.c \
+	ui/win32/about.c ui/win32/about.h ui/win32/binary.c \
+	ui/win32/binary.h ui/win32/browse.c ui/win32/browse.h \
+	ui/win32/confirm.c ui/win32/debugger.c ui/win32/debugger.h \
 	ui/win32/fileselector.c ui/win32/hyperlinks.c \
 	ui/win32/hyperlinks.h ui/win32/keysyms.c \
 	ui/win32/memorybrowser.c ui/win32/memorybrowser.h \
@@ -377,7 +377,7 @@ am__objects_23 = ui/svga/keysyms.$(OBJEXT) \
 	ui/svga/svgadisplay.$(OBJEXT) ui/svga/svgajoystick.$(OBJEXT) \
 	ui/svga/svgakeyboard.$(OBJEXT) ui/svga/svgaui.$(OBJEXT)
 @UI_SVGA_TRUE@am__objects_24 = $(am__objects_23)
-am__objects_25 = ui/widget/browse.$(OBJEXT) \
+am__objects_25 = ui/widget/about.$(OBJEXT) ui/widget/browse.$(OBJEXT) \
 	ui/widget/debugger.$(OBJEXT) ui/widget/error.$(OBJEXT) \
 	ui/widget/filesel.$(OBJEXT) ui/widget/memory.$(OBJEXT) \
 	ui/widget/menu.$(OBJEXT) ui/widget/menu_data.$(OBJEXT) \
@@ -1125,6 +1125,7 @@ ui_svga_files = \
 
 ui_svga_built = ui/svga/keysyms.c
 ui_widget_files = \
+                  ui/widget/about.c \
                   ui/widget/browse.c \
                   ui/widget/debugger.c \
                   ui/widget/error.c \
@@ -1768,6 +1769,8 @@ ui/widget/$(am__dirstamp):
 ui/widget/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ui/widget/$(DEPDIR)
 	@: > ui/widget/$(DEPDIR)/$(am__dirstamp)
+ui/widget/about.$(OBJEXT): ui/widget/$(am__dirstamp) \
+	ui/widget/$(DEPDIR)/$(am__dirstamp)
 ui/widget/browse.$(OBJEXT): ui/widget/$(am__dirstamp) \
 	ui/widget/$(DEPDIR)/$(am__dirstamp)
 ui/widget/debugger.$(OBJEXT): ui/widget/$(am__dirstamp) \
@@ -2153,6 +2156,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/svga/$(DEPDIR)/svgajoystick.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/svga/$(DEPDIR)/svgakeyboard.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/svga/$(DEPDIR)/svgaui.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/widget/$(DEPDIR)/about.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/widget/$(DEPDIR)/browse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/widget/$(DEPDIR)/debugger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/widget/$(DEPDIR)/error.Po@am__quote@

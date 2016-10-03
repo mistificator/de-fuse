@@ -193,6 +193,7 @@ settings_info settings_default = {
   /* printer_text_filename */ (char *)"printout.txt",
   /* raw_s_net */ 0,
   /* record_file */ (char *)NULL,
+  /* recreated_spectrum */ 0,
   /* rom_128_0 */ (char *)"128-0.rom",
   /* rom_128_1 */ (char *)"128-1.rom",
   /* rom_16 */ (char *)"48.rom",
@@ -1295,6 +1296,13 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "recreatedspectrum" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->recreated_spectrum = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "rom1280" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
@@ -2263,6 +2271,7 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"rawsnet", (const xmlChar*)(settings->raw_s_net ? "1" : "0") );
   if( settings->record_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"recordfile", (const xmlChar*)settings->record_file );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"recreatedspectrum", (const xmlChar*)(settings->recreated_spectrum ? "1" : "0") );
   if( settings->rom_128_0 )
     xmlNewTextChild( root, NULL, (const xmlChar*)"rom1280", (const xmlChar*)settings->rom_128_0 );
   if( settings->rom_128_1 )
@@ -3008,6 +3017,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 10 && !strncmp( (const char *)name, "recordfile", n ) ) {
     *val_char = &settings->record_file;
+    return 0;
+  }
+  if( n == 17 && !strncmp( (const char *)name, "recreatedspectrum", n ) ) {
+    *val_int = &settings->recreated_spectrum;
     return 0;
   }
   if( n == 7 && !strncmp( (const char *)name, "rom1280", n ) ) {
@@ -3865,6 +3878,9 @@ settings_write_config( settings_info *settings )
   if( settings_string_write( doc, "recordfile",
                              settings->record_file ) )
     goto error;
+  if( settings_boolean_write( doc, "recreatedspectrum",
+                              settings->recreated_spectrum ) )
+    goto error;
   if( settings_string_write( doc, "rom1280",
                              settings->rom_128_0 ) )
     goto error;
@@ -4334,6 +4350,8 @@ settings_command_line( settings_info *settings, int *first_arg,
     {    "raw-s-net", 0, &(settings->raw_s_net), 1 },
     { "no-raw-s-net", 0, &(settings->raw_s_net), 0 },
     { "record", 1, NULL, 'r' },
+    {    "recreated-spectrum", 0, &(settings->recreated_spectrum), 1 },
+    { "no-recreated-spectrum", 0, &(settings->recreated_spectrum), 0 },
     { "rom-128-0", 1, NULL, 341 },
     { "rom-128-1", 1, NULL, 342 },
     { "rom-16", 1, NULL, 343 },
@@ -4915,6 +4933,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   if( src->record_file ) {
     dest->record_file = utils_safe_strdup( src->record_file );
   }
+  dest->recreated_spectrum = src->recreated_spectrum;
   dest->rom_128_0 = NULL;
   if( src->rom_128_0 ) {
     dest->rom_128_0 = utils_safe_strdup( src->rom_128_0 );

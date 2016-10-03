@@ -2,7 +2,7 @@
    Copyright (c) 2001-2011 Russell Marks, Darren Salt, Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: joystick.c 5677 2016-07-09 13:58:02Z fredm $
+   $Id: joystick.c 5672 2016-07-09 11:00:08Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

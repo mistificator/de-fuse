@@ -1,7 +1,7 @@
 /* plusd.h: Routines for handling the +D interface
    Copyright (c) 2005-2016 Stuart Brady, Philip Kendall
 
-   $Id: plusd.h 5677 2016-07-09 13:58:02Z fredm $
+   $Id: plusd.h 5670 2016-07-08 21:33:08Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

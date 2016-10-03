@@ -2,7 +2,7 @@
    Copyright (c) 2001-2004 Matan Ziv-Av, Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: widget.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: widget.h 5771 2016-08-22 21:01:40Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ typedef enum widget_type {
   WIDGET_TYPE_FILESELECTOR_SAVE,/* File selector (save) */
   WIDGET_TYPE_GENERAL,		/* General options */
   WIDGET_TYPE_PICTURE,		/* Keyboard picture */
+  WIDGET_TYPE_ABOUT,		/* About info */
   WIDGET_TYPE_MENU,		/* General menu */
   WIDGET_TYPE_SELECT,		/* Select machine */
   WIDGET_TYPE_MEDIA,		/* Media options */
@@ -146,6 +147,12 @@ static inline int widget_do_general( void )
 static inline int widget_do_picture( widget_picture_data *data )
 {
   return widget_do( WIDGET_TYPE_PICTURE, data );
+}
+
+/* About fuse widget */
+static inline int widget_do_about( void )
+{
+  return widget_do( WIDGET_TYPE_ABOUT, NULL );
 }
 
 /* General menu */

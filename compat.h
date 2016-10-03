@@ -3,7 +3,7 @@
    Copyright (c) 2015 Stuart Brady
    Copyright (c) 2015 Sergio Baldoví
 
-   $Id: compat.h 5525 2016-05-23 21:53:48Z sbaldovi $
+   $Id: compat.h 5524 2016-05-23 21:52:49Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

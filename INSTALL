@@ -161,4 +161,4 @@ Note: you need `libspectrum-8.dll' and the `roms' directory and the `lib'
   respectively. That will make a temporary subdirectory (fuse-VERSION-win32)
   in the build directory and then will create a package.
 
-$Id: INSTALL 5407 2016-04-25 21:59:53Z sbaldovi $
+$Id: INSTALL 5406 2016-04-25 21:52:03Z sbaldovi $

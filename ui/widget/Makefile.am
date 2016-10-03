@@ -2,7 +2,7 @@
 ## Copyright (c) 2001,2002 Philip Kendall
 ## Copyright (c) 2015 Sergio Baldoví
 
-## $Id: Makefile.am 5589 2016-06-05 22:14:19Z sbaldovi $
+## $Id: Makefile.am 5771 2016-08-22 21:01:40Z sbaldovi $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ endif
 CLEANFILES += $(ui_widget_built)
 
 ui_widget_files = \
+                  ui/widget/about.c \
                   ui/widget/browse.c \
                   ui/widget/debugger.c \
                   ui/widget/error.c \

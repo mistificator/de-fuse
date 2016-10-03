@@ -1,7 +1,7 @@
 /* statusbar.c: routines for updating the status bar
    Copyright (c) 2003-2004 Philip Kendall
 
-   $Id: statusbar.c 5510 2016-05-22 08:37:30Z sbaldovi $
+   $Id: statusbar.c 5509 2016-05-22 08:35:46Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

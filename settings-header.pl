@@ -4,7 +4,7 @@
 # Copyright (c) 2002-2003 Philip Kendall
 # Copyright (c) 2015 Stuart Brady
 
-# $Id: settings-header.pl 5677 2016-07-09 13:58:02Z fredm $
+# $Id: settings-header.pl 5670 2016-07-08 21:33:08Z pak21 $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

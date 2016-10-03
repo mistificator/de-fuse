@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # options.pl: generate options dialog boxes
-# $Id: options.pl 5434 2016-05-01 04:22:45Z fredm $
+# $Id: options.pl 5773 2016-08-22 22:03:36Z sbaldovi $
 
 # Copyright (c) 2001-2015 Philip Kendall, Marek Januszewski, Stuart Brady
 
@@ -158,6 +158,8 @@ CODE
 	} elsif( $widget->{type} eq "Entry" ) {
 	    my $idcname = uc( "$widget->{value}" );
         print << "CODE";
+  SendDlgItemMessage( hwndDlg, IDC_${optname}_${idcname}, EM_LIMITTEXT,
+                      $widget->{data1}, 0 );
   /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
   snprintf( buffer, 80, "%d", settings_current.$widget->{value} );
   SendDlgItemMessage( hwndDlg, IDC_${optname}_${idcname}, WM_SETTEXT,

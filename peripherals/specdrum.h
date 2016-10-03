@@ -1,7 +1,7 @@
 /* specdrum.h: Routines for handling the Specdrum Drum Kit
    Copyright (c) 2011-2016 Jon Mitchell, Philip Kendall
 
-   $Id: specdrum.h 5677 2016-07-09 13:58:02Z fredm $
+   $Id: specdrum.h 5670 2016-07-08 21:33:08Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

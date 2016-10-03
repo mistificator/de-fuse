@@ -3,7 +3,7 @@
 ## Copyright (c) 2015 Stuart Brady
 ## Copyright (c) 2015 Sergio Baldoví
 
-## $Id: Makefile.am 5755 2016-08-17 12:10:38Z fredm $
+## $Id: Makefile.am 5746 2016-08-16 21:55:53Z sbaldovi $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

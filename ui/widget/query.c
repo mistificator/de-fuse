@@ -2,7 +2,7 @@
    Copyright (c) 2004-2008 Darren Salt, Fredrick Meunier
    Copyright (c) 2015 Stuart Brady
 
-   $Id: query.c 5677 2016-07-09 13:58:02Z fredm $
+   $Id: query.c 5656 2016-06-26 21:37:39Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

@@ -2,7 +2,7 @@
    Copyright (c) 2000-2015 Philip Kendall
    Copyright (c) 2016 BogDan Vatra
 
-   $Id: ui.h 5560 2016-05-31 11:15:34Z fredm $
+   $Id: ui.h 5578 2016-06-04 13:26:37Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

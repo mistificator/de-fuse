@@ -157,6 +157,7 @@ typedef struct settings_info {
   char *printer_text_filename;
    int raw_s_net;
   char *record_file;
+   int recreated_spectrum;
   char *rom_128_0;
   char *rom_128_1;
   char *rom_16;

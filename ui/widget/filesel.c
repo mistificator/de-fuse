@@ -3,7 +3,7 @@
 			   Marek Januszewski
    Copyright (c) 2015 Sergio Baldoví
 
-   $Id: filesel.c 5464 2016-05-08 09:17:10Z sbaldovi $
+   $Id: filesel.c 5772 2016-08-22 21:55:54Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -900,6 +900,7 @@ widget_filesel_keyhandler( input_key key )
       widget_text_t text_data;
       text_data.title = title;
       text_data.allow = WIDGET_INPUT_ASCII;
+      text_data.max_length = 30;
       text_data.text[0] = 0;
       if( widget_do_text( &text_data ) ||
 	  !widget_text_text || !*widget_text_text      )

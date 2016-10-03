@@ -1,7 +1,7 @@
 /* zxatasp.h: ZXATASP interface routines
    Copyright (c) 2003-2016 Garry Lancaster, Philip Kendall
 
-   $Id: zxatasp.h 5735 2016-08-14 13:02:21Z fredm $
+   $Id: zxatasp.h 5769 2016-08-22 11:29:49Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
