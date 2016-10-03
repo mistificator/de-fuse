@@ -1,7 +1,7 @@
 /* menu.h: general menu callbacks
    Copyright (c) 2004-2015 Philip Kendall
 
-   $Id: menu.h 5434 2016-05-01 04:22:45Z fredm $
+   $Id: menu.h 5432 2016-05-01 04:16:09Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

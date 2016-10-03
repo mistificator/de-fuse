@@ -3,7 +3,7 @@
    Copyright (c) 2015 UB880D
    Copyright (c) 2016 Fredrick Meunier
 
-   $Id: tape.c 5735 2016-08-14 13:02:21Z fredm $
+   $Id: tape.c 5730 2016-08-12 12:00:44Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

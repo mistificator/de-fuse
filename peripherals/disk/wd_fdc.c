@@ -3,7 +3,7 @@
                            Dmitry Sanarin, Gergely Szasz
    Copyright (c) 2016 Sergio Baldoví
 
-   $Id: wd_fdc.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: wd_fdc.c 5432 2016-05-01 04:16:09Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

@@ -3,7 +3,7 @@
    Copyright (c) 2014 Stefano Bodrato
    Portions taken from svgwrite.c, (c) J.J. Green 2005
 
-   $Id: svg.h 5559 2016-05-31 11:14:00Z fredm $
+   $Id: svg.h 5577 2016-06-04 13:23:48Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /* ula.h: ULA routines
    Copyright (c) 1999-2016 Philip Kendall, Darren Salt
 
-   $Id: ula.h 5677 2016-07-09 13:58:02Z fredm $
+   $Id: ula.h 5670 2016-07-08 21:33:08Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

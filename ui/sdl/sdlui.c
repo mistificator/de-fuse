@@ -2,7 +2,7 @@
    Copyright (c) 2000-2002 Philip Kendall, Matan Ziv-Av, Fredrick Meunier
    Copyright (c) 2015 Stuart Brady
 
-   $Id: sdlui.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: sdlui.c 5432 2016-05-01 04:16:09Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

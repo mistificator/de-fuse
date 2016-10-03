@@ -1,7 +1,7 @@
 /* disk.c: Routines for handling disk images
    Copyright (c) 2007-2015 Gergely Szasz
 
-   $Id: disk.c 5755 2016-08-17 12:10:38Z fredm $
+   $Id: disk.c 5783 2016-08-28 11:17:25Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ buffseek( buffer_t *buffer, long offset, int whence )
   return 0;
 }
 
-void
+static void
 position_context_save( const disk_t *d, disk_position_context_t *c )
 {
   c->track  = d->track;
@@ -144,7 +144,7 @@ position_context_save( const disk_t *d, disk_position_context_t *c )
   c->i      = d->i;
 }
 
-void
+static void
 position_context_restore( disk_t *d, const disk_position_context_t *c )
 {
   d->track  = c->track;

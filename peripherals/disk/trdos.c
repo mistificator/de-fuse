@@ -1,7 +1,7 @@
 /* trdos.c: Routines for handling the TR-DOS filesystem
    Copyright (c) 2016 Sergio Baldoví
 
-   $Id: trdos.c 5755 2016-08-17 12:10:38Z fredm $
+   $Id: trdos.c 5746 2016-08-16 21:55:53Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

@@ -3,7 +3,7 @@
    Copyright (c) 2015 Stuart Brady
    Copyright (c) 2016 BogDan Vatra
 
-   $Id: debugger.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: debugger.c 5772 2016-08-22 21:55:54Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -218,6 +218,7 @@ void widget_debugger_keyhandler( input_key key )
 
       text_data.title = "Debugger command";
       text_data.allow = WIDGET_INPUT_ASCII;
+      text_data.max_length = 63;
       text_data.text[0] = 0;
       if( !widget_do_text( &text_data ) )
 	debugger_command_evaluate( widget_text_text );

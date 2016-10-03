@@ -2,7 +2,7 @@
    Copyright (c) 1999-2016 Stuart Brady, Fredrick Meunier, Philip Kendall,
    Dmitry Sanarin, Darren Salt, Gergely Szasz
 
-   $Id: disciple.c 5677 2016-07-09 13:58:02Z fredm $
+   $Id: disciple.c 5671 2016-07-08 22:30:55Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

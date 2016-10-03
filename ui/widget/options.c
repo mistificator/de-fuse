@@ -295,6 +295,8 @@ static void widget_frame_rate_click( void );
 static void widget_option_frame_rate_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_issue2_click( void );
 static void widget_option_issue2_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_recreated_spectrum_click( void );
+static void widget_option_recreated_spectrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_writable_roms_click( void );
 static void widget_option_writable_roms_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_late_timings_click( void );
@@ -464,16 +466,17 @@ static widget_option_entry options_general[] = {
   { "\012E\001mulation speed", 0, INPUT_KEY_e, "%", NULL, widget_emulation_speed_click, widget_option_emulation_speed_draw },
   { "F\012r\001ame rate (1:n)", 1, INPUT_KEY_r, "frames", NULL, widget_frame_rate_click, widget_option_frame_rate_draw },
   { "Issue \0122\001 keyboard", 2, INPUT_KEY_2, NULL, NULL, widget_issue2_click, widget_option_issue2_draw },
-  { "Allow \012w\001rites to ROM", 3, INPUT_KEY_w, NULL, NULL, widget_writable_roms_click, widget_option_writable_roms_draw },
-  { "Late t\012i\001mings", 4, INPUT_KEY_i, NULL, NULL, widget_late_timings_click, widget_option_late_timings_draw },
-  { "\012Z\00180 is CMOS", 5, INPUT_KEY_z, NULL, NULL, widget_z80_is_cmos_click, widget_option_z80_is_cmos_draw },
-  { "RS-232 \012h\001andshake", 6, INPUT_KEY_h, NULL, NULL, widget_rs232_handshake_click, widget_option_rs232_handshake_draw },
-  { "Black and white T\012V\001", 7, INPUT_KEY_v, NULL, NULL, widget_bw_tv_click, widget_option_bw_tv_draw },
-  { "\012P\001AL-TV use TV2x effect", 8, INPUT_KEY_p, NULL, NULL, widget_pal_tv2x_click, widget_option_pal_tv2x_draw },
-  { "Show status\012b\001ar", 9, INPUT_KEY_b, NULL, NULL, widget_statusbar_click, widget_option_statusbar_draw },
-  { "Snap \012j\001oystick prompt", 10, INPUT_KEY_j, NULL, NULL, widget_joy_prompt_click, widget_option_joy_prompt_draw },
-  { "\012C\001onfirm actions", 11, INPUT_KEY_c, NULL, NULL, widget_confirm_actions_click, widget_option_confirm_actions_draw },
-  { "A\012u\001to-save settings", 12, INPUT_KEY_u, NULL, NULL, widget_autosave_settings_click, widget_option_autosave_settings_draw },
+  { "Recrea\012t\001ed ZX Spectrum", 3, INPUT_KEY_t, NULL, NULL, widget_recreated_spectrum_click, widget_option_recreated_spectrum_draw },
+  { "Allow \012w\001rites to ROM", 4, INPUT_KEY_w, NULL, NULL, widget_writable_roms_click, widget_option_writable_roms_draw },
+  { "Late t\012i\001mings", 5, INPUT_KEY_i, NULL, NULL, widget_late_timings_click, widget_option_late_timings_draw },
+  { "\012Z\00180 is CMOS", 6, INPUT_KEY_z, NULL, NULL, widget_z80_is_cmos_click, widget_option_z80_is_cmos_draw },
+  { "RS-232 \012h\001andshake", 7, INPUT_KEY_h, NULL, NULL, widget_rs232_handshake_click, widget_option_rs232_handshake_draw },
+  { "Black and white T\012V\001", 8, INPUT_KEY_v, NULL, NULL, widget_bw_tv_click, widget_option_bw_tv_draw },
+  { "\012P\001AL-TV use TV2x effect", 9, INPUT_KEY_p, NULL, NULL, widget_pal_tv2x_click, widget_option_pal_tv2x_draw },
+  { "Show status\012b\001ar", 10, INPUT_KEY_b, NULL, NULL, widget_statusbar_click, widget_option_statusbar_draw },
+  { "Snap \012j\001oystick prompt", 11, INPUT_KEY_j, NULL, NULL, widget_joy_prompt_click, widget_option_joy_prompt_draw },
+  { "\012C\001onfirm actions", 12, INPUT_KEY_c, NULL, NULL, widget_confirm_actions_click, widget_option_confirm_actions_draw },
+  { "A\012u\001to-save settings", 13, INPUT_KEY_u, NULL, NULL, widget_autosave_settings_click, widget_option_autosave_settings_draw },
   { NULL }
 };
 
@@ -822,6 +825,7 @@ widget_emulation_speed_click( void )
 
   text_data.title = "Emulation speed";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 5;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.emulation_speed );
   widget_do_text( &text_data );
@@ -845,6 +849,7 @@ widget_frame_rate_click( void )
 
   text_data.title = "Frame rate (1:n)";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 1;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.frame_rate );
   widget_do_text( &text_data );
@@ -871,6 +876,18 @@ static void
 widget_option_issue2_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
 {
   widget_options_print_option( left_edge, width, menu->index, menu->text, show->issue2 );
+}
+
+static void
+widget_recreated_spectrum_click( void )
+{
+  widget_options_settings.recreated_spectrum = ! widget_options_settings.recreated_spectrum;
+}
+
+static void
+widget_option_recreated_spectrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->recreated_spectrum );
 }
 
 static void
@@ -996,20 +1013,17 @@ widget_option_autosave_settings_draw( int left_edge, int width, struct widget_op
 void
 widget_general_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_general);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
 
-  text_data = text_data;	/* Keep gcc happy */
-
   switch( key ) {
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 13 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 14 );
     widget_general_show_all( &widget_options_settings );
     break;
 #endif
@@ -1032,7 +1046,7 @@ widget_general_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 13 ) {
+    if ( highlight_line + 1 < 14 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1046,8 +1060,8 @@ widget_general_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 13 ) {
-      new_highlight_line = 13 - 1;
+    if ( highlight_line + 2 < 14 ) {
+      new_highlight_line = 14 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -1189,6 +1203,7 @@ widget_mdr_len_click( void )
 
   text_data.title = "MDR cartridge len";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 3;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.mdr_len );
   widget_do_text( &text_data );
@@ -1220,14 +1235,11 @@ widget_option_mdr_random_len_draw( int left_edge, int width, struct widget_optio
 void
 widget_media_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_media);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) {
 
@@ -1505,14 +1517,11 @@ widget_option_usource_draw( int left_edge, int width, struct widget_option_entry
 void
 widget_peripherals_general_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_peripherals_general);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) {
 
@@ -1790,14 +1799,11 @@ widget_option_opus_draw( int left_edge, int width, struct widget_option_entry *m
 void
 widget_peripherals_disk_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_peripherals_disk);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) {
 
@@ -1947,6 +1953,7 @@ widget_competition_code_click( void )
 
   text_data.title = "Competition code";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 8;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.competition_code );
   widget_do_text( &text_data );
@@ -1978,14 +1985,11 @@ widget_option_embed_snapshot_draw( int left_edge, int width, struct widget_optio
 void
 widget_rzx_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_rzx);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) {
 
@@ -2165,6 +2169,7 @@ widget_volume_ay_click( void )
 
   text_data.title = "AY volume";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 3;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_ay );
   widget_do_text( &text_data );
@@ -2188,6 +2193,7 @@ widget_volume_beeper_click( void )
 
   text_data.title = "Beeper volume";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 3;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_beeper );
   widget_do_text( &text_data );
@@ -2211,6 +2217,7 @@ widget_volume_specdrum_click( void )
 
   text_data.title = "SpecDrum volume";
   text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 3;
   snprintf( text_data.text, 40, "%d",
             widget_options_settings.volume_specdrum );
   widget_do_text( &text_data );
@@ -2230,14 +2237,11 @@ widget_option_volume_specdrum_draw( int left_edge, int width, struct widget_opti
 void
 widget_sound_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_sound);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) {
 
@@ -2596,14 +2600,11 @@ widget_option_disk_ask_merge_draw( int left_edge, int width, struct widget_optio
 void
 widget_diskoptions_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_diskoptions);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) {
 
@@ -2740,14 +2741,11 @@ widget_option_movie_stop_after_rzx_draw( int left_edge, int width, struct widget
 void
 widget_movie_keyhandler( input_key key )
 {
-  widget_text_t text_data;
   int new_highlight_line = 0;
   int cursor_pressed = 0;
   widget_option_entry *ptr;
   int menu_width = widget_calculate_option_width(options_movie);
   int menu_left_edge_x = DISPLAY_WIDTH_COLS/2-menu_width/2;
-
-  text_data = text_data;	/* Keep gcc happy */
 
   switch( key ) {
 

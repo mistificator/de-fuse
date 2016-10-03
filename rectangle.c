@@ -3,7 +3,7 @@
    Copyright (c) 1999-2015 Philip Kendall, Thomas Harte, Witold Filipczyk
                            and Fredrick Meunier
 
-   $Id: rectangle.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: rectangle.c 5432 2016-05-01 04:16:09Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

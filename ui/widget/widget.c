@@ -3,7 +3,7 @@
    Copyright (c) 2015 Stuart Brady
    Copyright (c) 2015 Sergio Baldoví
 
-   $Id: widget.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: widget.c 5771 2016-08-22 21:01:40Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -673,6 +673,7 @@ widget_t widget_data[] = {
   { widget_filesel_save_draw, widget_filesel_finish, widget_filesel_keyhandler  },
   { widget_general_draw,  widget_options_finish, widget_general_keyhandler  },
   { widget_picture_draw,  NULL,                  widget_picture_keyhandler  },
+  { widget_about_draw,    NULL,                  widget_about_keyhandler    },
   { widget_menu_draw,	  NULL,			 widget_menu_keyhandler     },
   { widget_select_draw,   widget_select_finish,  widget_select_keyhandler   },
   { widget_media_draw,	  widget_options_finish, widget_media_keyhandler    },

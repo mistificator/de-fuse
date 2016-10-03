@@ -1,7 +1,7 @@
 /* input.h: generalised input events layer for Fuse
    Copyright (c) 2004 Philip Kendall
 
-   $Id: input.h 4915 2013-04-07 05:32:09Z fredm $
+   $Id: input.h 5798 2016-09-10 15:22:31Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,10 +50,11 @@ typedef enum input_key {
 
   INPUT_KEY_space = 0x20,
   INPUT_KEY_exclam,
-
-  INPUT_KEY_numbersign = 0x23,
+  INPUT_KEY_quotedbl,
+  INPUT_KEY_numbersign,
   INPUT_KEY_dollar,
-  INPUT_KEY_ampersand = 0x26,
+  INPUT_KEY_percent,
+  INPUT_KEY_ampersand,
   INPUT_KEY_apostrophe,
   INPUT_KEY_parenleft,
   INPUT_KEY_parenright,
@@ -80,6 +81,8 @@ typedef enum input_key {
   INPUT_KEY_less,
   INPUT_KEY_equal,
   INPUT_KEY_greater,
+  INPUT_KEY_question,
+  INPUT_KEY_at,
 
   INPUT_KEY_A = 0x41,
   INPUT_KEY_B,
@@ -107,9 +110,12 @@ typedef enum input_key {
   INPUT_KEY_X,
   INPUT_KEY_Y,
   INPUT_KEY_Z,
-
+  INPUT_KEY_bracketleft,
+  INPUT_KEY_backslash,
+  INPUT_KEY_bracketright,
   INPUT_KEY_asciicircum = 0x5e,
   INPUT_KEY_dead_circumflex = 0x5e,
+  INPUT_KEY_underscore = 0x5f,
 
   INPUT_KEY_a = 0x61,
   INPUT_KEY_b,
@@ -137,8 +143,10 @@ typedef enum input_key {
   INPUT_KEY_x,
   INPUT_KEY_y,
   INPUT_KEY_z,
-
-  INPUT_KEY_bar = 0x7c,
+  INPUT_KEY_braceleft,
+  INPUT_KEY_bar,
+  INPUT_KEY_braceright,
+  INPUT_KEY_asciitilde,
   INPUT_KEY_BackSpace = 0x7f,
 
   INPUT_KEY_KP_Enter = 0x8d,

@@ -6,7 +6,7 @@
    Copyright (c) 2015 Gergely Szasz
    Copyright (c) 2015 Stefano Bodrato
 
-   $Id: menu.c 5567 2016-06-01 09:57:10Z fredm $
+   $Id: menu.c 5582 2016-06-04 13:37:21Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

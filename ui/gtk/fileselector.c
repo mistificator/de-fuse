@@ -2,7 +2,7 @@
    Copyright (c) 2000-2007 Philip Kendall
    Copyright (c) 2015-2016 Sergio Baldoví
 
-   $Id: fileselector.c 5754 2016-08-16 22:59:14Z sbaldovi $
+   $Id: fileselector.c 5753 2016-08-16 22:56:31Z sbaldovi $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

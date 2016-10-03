@@ -712,7 +712,7 @@ char *yytext;
    Copyright (c) 2002-2016 Philip Kendall
    Copyright (c) 2015 Sergio Baldoví
 
-   $Id: commandl.l 5677 2016-07-09 13:58:02Z fredm $
+   $Id: commandl.l 5661 2016-07-01 19:00:28Z pak21 $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

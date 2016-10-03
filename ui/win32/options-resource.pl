@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # options-resource.pl: generate options dialog boxes
-# $Id: options-resource.pl 5434 2016-05-01 04:22:45Z fredm $
+# $Id: options-resource.pl 5782 2016-08-28 07:30:34Z sbaldovi $
 
 # Copyright (c) 2001-2007 Philip Kendall, Stuart Brady, Marek Januszewski
 # Copyright (c) 2015 Sergio Baldoví
@@ -59,9 +59,9 @@ foreach( @dialogs ) {
 	} elsif( $widget->{type} eq "Entry" ) {
 	    $y_label = $y + 2;
 	    $buffer .= sprintf "  LTEXT \"%s\",IDC_%s_LABEL_%s,5,$y_label,90,9\n",
-		$text, $optname, uc( $widget->{value} );
-	    $buffer .= sprintf "  EDITTEXT IDC_%s_%s,100,$y,85,13\n",
-		$optname, uc( $widget->{value} );
+	        $text, $optname, uc( $widget->{value} );
+	    $buffer .= sprintf "  EDITTEXT IDC_%s_%s,100,$y,85,13,ES_NUMBER\n",
+	        $optname, uc( $widget->{value} );
 	    $y += 14;
 	} elsif( $widget->{type} eq "Combo" ) {
 	    $y_label = $y + 2;

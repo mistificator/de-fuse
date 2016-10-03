@@ -128,6 +128,12 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
                                 settings_current.issue2 );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.issue2 );
 
+  dialog.recreated_spectrum =
+    gtk_check_button_new_with_label( "Recreated ZX Spectrum" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.recreated_spectrum ),
+                                settings_current.recreated_spectrum );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.recreated_spectrum );
+
   dialog.writable_roms =
     gtk_check_button_new_with_label( "Allow writes to ROM" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.writable_roms ),
@@ -217,6 +223,9 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.issue2 =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->issue2 ) );
+
+  settings_current.recreated_spectrum =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->recreated_spectrum ) );
 
   settings_current.writable_roms =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->writable_roms ) );

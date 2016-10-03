@@ -2,7 +2,7 @@
    Copyright (c) 2004,2013 Gergely Szasz, Philip Kendall
    Copyright (c) 2015 Sergio Baldoví
 
-   $Id: aosound.c 5434 2016-05-01 04:22:45Z fredm $
+   $Id: aosound.c 5432 2016-05-01 04:16:09Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

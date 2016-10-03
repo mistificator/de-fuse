@@ -2,7 +2,7 @@
 ## Copyright (c) 2001-2003 Philip Kendall
 ## Copyright (c) 2015-2016 Sergio Baldoví
 
-## $Id: Makefile.am 5677 2016-07-09 13:58:02Z fredm $
+## $Id: Makefile.am 5661 2016-07-01 19:00:28Z pak21 $
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /* utils.h: some useful helper functions
    Copyright (c) 1999-2012 Philip Kendall
 
-   $Id: utils.h 5677 2016-07-09 13:58:02Z fredm $
+   $Id: utils.h 5621 2016-06-09 10:29:12Z fredm $
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
