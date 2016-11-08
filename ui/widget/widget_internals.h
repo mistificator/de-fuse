@@ -2,8 +2,6 @@
    Copyright (c) 2001-2005 Matan Ziv-Av, Philip Kendall
    Copyright (c) 2015 Stuart Brady
 
-   $Id: widget_internals.h 5772 2016-08-22 21:55:54Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

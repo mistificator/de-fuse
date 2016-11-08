@@ -1,8 +1,6 @@
 /* disk.h: Routines for handling disk images
    Copyright (c) 2007-2015 Gergely Szasz
 
-   $Id: disk.h 5746 2016-08-16 21:55:53Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

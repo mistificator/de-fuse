@@ -1,8 +1,6 @@
 /* memory.c: memory browser widget
    Copyright (c) 2004 Darren Salt
 
-   $Id: memory.c 4103 2009-11-21 10:16:36Z fredm $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

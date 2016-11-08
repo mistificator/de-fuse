@@ -712,8 +712,6 @@ char *yytext;
    Copyright (c) 2002-2016 Philip Kendall
    Copyright (c) 2015 Sergio Baldoví
 
-   $Id: commandl.l 5661 2016-07-01 19:00:28Z pak21 $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -733,7 +731,7 @@ char *yytext;
    E-mail: philip-fuse@shadowmagic.org.uk
 
 */
-#line 28 "debugger/commandl.l"
+#line 26 "debugger/commandl.l"
 
 #include <config.h>
 
@@ -756,7 +754,7 @@ char *yytext;
 
 
 
-#line 760 "debugger/commandl.c"
+#line 758 "debugger/commandl.c"
 
 #define INITIAL 0
 #define COMMANDSTATE1 1
@@ -940,10 +938,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 57 "debugger/commandl.l"
+#line 55 "debugger/commandl.l"
 
 
-#line 947 "debugger/commandl.c"
+#line 945 "debugger/commandl.c"
 
 	if ( !(yy_init) )
 		{
@@ -1028,267 +1026,267 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 59 "debugger/commandl.l"
+#line 57 "debugger/commandl.l"
 { return BASE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 60 "debugger/commandl.l"
+#line 58 "debugger/commandl.l"
 { return BREAK;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 61 "debugger/commandl.l"
+#line 59 "debugger/commandl.l"
 { return CONTINUE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 62 "debugger/commandl.l"
+#line 60 "debugger/commandl.l"
 { BEGIN(COMMANDSTATE1); return COMMANDS; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 63 "debugger/commandl.l"
+#line 61 "debugger/commandl.l"
 { return CONDITION; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 64 "debugger/commandl.l"
+#line 62 "debugger/commandl.l"
 { return CLEAR; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 65 "debugger/commandl.l"
+#line 63 "debugger/commandl.l"
 { return DEBUGGER_DELETE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 66 "debugger/commandl.l"
+#line 64 "debugger/commandl.l"
 {
 	                                                  return DISASSEMBLE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 68 "debugger/commandl.l"
+#line 66 "debugger/commandl.l"
 { return EVENT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 69 "debugger/commandl.l"
+#line 67 "debugger/commandl.l"
 { return EXIT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 70 "debugger/commandl.l"
+#line 68 "debugger/commandl.l"
 { return FINISH; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 71 "debugger/commandl.l"
+#line 69 "debugger/commandl.l"
 { return IF; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 72 "debugger/commandl.l"
+#line 70 "debugger/commandl.l"
 { return DEBUGGER_IGNORE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 73 "debugger/commandl.l"
+#line 71 "debugger/commandl.l"
 { return NEXT; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 74 "debugger/commandl.l"
+#line 72 "debugger/commandl.l"
 { return DEBUGGER_OUT; }	/* Different name to avoid clashing
 					   with OUT from z80/z80_macros.h */
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 76 "debugger/commandl.l"
+#line 74 "debugger/commandl.l"
 { return PORT; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 77 "debugger/commandl.l"
+#line 75 "debugger/commandl.l"
 { return DEBUGGER_PRINT; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 78 "debugger/commandl.l"
+#line 76 "debugger/commandl.l"
 { return READ; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 79 "debugger/commandl.l"
+#line 77 "debugger/commandl.l"
 { return SET; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 80 "debugger/commandl.l"
+#line 78 "debugger/commandl.l"
 { return STEP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 81 "debugger/commandl.l"
+#line 79 "debugger/commandl.l"
 {
 							       return TBREAK; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 83 "debugger/commandl.l"
+#line 81 "debugger/commandl.l"
 { return TIME; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 84 "debugger/commandl.l"
+#line 82 "debugger/commandl.l"
 { return WRITE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 86 "debugger/commandl.l"
+#line 84 "debugger/commandl.l"
 {
   yylval.string = mempool_strdup( debugger_memory_pool, yytext );
   return DEBUGGER_REGISTER; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 90 "debugger/commandl.l"
+#line 88 "debugger/commandl.l"
 { return '('; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 91 "debugger/commandl.l"
+#line 89 "debugger/commandl.l"
 { return ')'; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 93 "debugger/commandl.l"
+#line 91 "debugger/commandl.l"
 { return '['; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 94 "debugger/commandl.l"
+#line 92 "debugger/commandl.l"
 { return ']'; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 96 "debugger/commandl.l"
+#line 94 "debugger/commandl.l"
 { yylval.token = '!'; return NEGATE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 97 "debugger/commandl.l"
+#line 95 "debugger/commandl.l"
 { yylval.token = '~'; return NEGATE; }
 	YY_BREAK
 /* The hex constants used here are the appropriate Unicode characters */
 case 31:
 YY_RULE_SETUP
-#line 101 "debugger/commandl.l"
+#line 99 "debugger/commandl.l"
 { yylval.token = DEBUGGER_TOKEN_EQUAL_TO; return EQUALITY; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 102 "debugger/commandl.l"
+#line 100 "debugger/commandl.l"
 { yylval.token = DEBUGGER_TOKEN_NOT_EQUAL_TO;
 		  return EQUALITY; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 105 "debugger/commandl.l"
+#line 103 "debugger/commandl.l"
 { yylval.token = '<'; return COMPARISON; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 106 "debugger/commandl.l"
+#line 104 "debugger/commandl.l"
 { yylval.token = '>'; return COMPARISON; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 107 "debugger/commandl.l"
+#line 105 "debugger/commandl.l"
 { yylval.token = DEBUGGER_TOKEN_LESS_THAN_OR_EQUAL_TO;
 		  return COMPARISON; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 109 "debugger/commandl.l"
+#line 107 "debugger/commandl.l"
 { yylval.token = DEBUGGER_TOKEN_GREATER_THAN_OR_EQUAL_TO;
 		  return COMPARISON; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 112 "debugger/commandl.l"
+#line 110 "debugger/commandl.l"
 { return '+'; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 113 "debugger/commandl.l"
+#line 111 "debugger/commandl.l"
 { return '-'; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 114 "debugger/commandl.l"
+#line 112 "debugger/commandl.l"
 { return '*'; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 115 "debugger/commandl.l"
+#line 113 "debugger/commandl.l"
 { return '/'; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 117 "debugger/commandl.l"
+#line 115 "debugger/commandl.l"
 { return '&'; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 118 "debugger/commandl.l"
+#line 116 "debugger/commandl.l"
 { return '^'; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 119 "debugger/commandl.l"
+#line 117 "debugger/commandl.l"
 { return '|'; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 121 "debugger/commandl.l"
+#line 119 "debugger/commandl.l"
 { return LOGICAL_AND; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 122 "debugger/commandl.l"
+#line 120 "debugger/commandl.l"
 { return LOGICAL_OR; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 124 "debugger/commandl.l"
+#line 122 "debugger/commandl.l"
 { return ':'; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 126 "debugger/commandl.l"
+#line 124 "debugger/commandl.l"
 { yylval.integer = strtol( yytext+1, NULL, 16 );
 		  if( YY_START == COMMANDSTATE1 ) BEGIN( COMMANDSTATE2 );
 		  return NUMBER; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 129 "debugger/commandl.l"
+#line 127 "debugger/commandl.l"
 { yylval.integer = strtol( yytext+2, NULL, 16 );
 		  if( YY_START == COMMANDSTATE1 ) BEGIN( COMMANDSTATE2 );
 	          return NUMBER; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 132 "debugger/commandl.l"
+#line 130 "debugger/commandl.l"
 { yylval.integer = atoi( yytext );
 		  if( YY_START == COMMANDSTATE1 ) BEGIN( COMMANDSTATE2 );
 		  return NUMBER; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 136 "debugger/commandl.l"
+#line 134 "debugger/commandl.l"
 { char *dest, *source;
   yylval.string = mempool_malloc( debugger_memory_pool, strlen( yytext ) + 1 );
   /* remove escape characters */
@@ -1305,23 +1303,23 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 150 "debugger/commandl.l"
+#line 148 "debugger/commandl.l"
 { yylval.string = mempool_strdup( debugger_memory_pool, yytext + 1 ); return VARIABLE; }
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 152 "debugger/commandl.l"
+#line 150 "debugger/commandl.l"
 { return '\n'; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 154 "debugger/commandl.l"
+#line 152 "debugger/commandl.l"
 /* Swallow whitespace */
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 156 "debugger/commandl.l"
+#line 154 "debugger/commandl.l"
 { if( 0 ) unput( '\0' ); /* Prevent warning about yyunput
 					    being defined and not used */
 		  return DEBUGGER_ERROR; }
@@ -1330,27 +1328,27 @@ YY_RULE_SETUP
 
 case 55:
 YY_RULE_SETUP
-#line 164 "debugger/commandl.l"
+#line 162 "debugger/commandl.l"
 { BEGIN(INITIAL); return DEBUGGER_END; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 166 "debugger/commandl.l"
+#line 164 "debugger/commandl.l"
 { yylval.string = mempool_strdup( debugger_memory_pool, yytext ); return STRING; }
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 167 "debugger/commandl.l"
+#line 165 "debugger/commandl.l"
 { return '\n'; }
 	YY_BREAK
 
 case 58:
 YY_RULE_SETUP
-#line 170 "debugger/commandl.l"
+#line 168 "debugger/commandl.l"
 ECHO;
 	YY_BREAK
-#line 1354 "debugger/commandl.c"
+#line 1352 "debugger/commandl.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMANDSTATE1):
 case YY_STATE_EOF(COMMANDSTATE2):
@@ -2346,4 +2344,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 170 "debugger/commandl.l"
+#line 168 "debugger/commandl.l"

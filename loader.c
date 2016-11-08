@@ -1,8 +1,6 @@
 /* loader.c: loader detection
    Copyright (c) 2006 Philip Kendall
 
-   $Id: loader.c 3941 2009-01-09 22:38:21Z pak21 $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

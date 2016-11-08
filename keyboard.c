@@ -1,8 +1,6 @@
 /* keyboard.c: Routines for dealing with the Spectrum's keyboard
    Copyright (c) 1999-2013 Philip Kendall
 
-   $Id: keyboard.c 5799 2016-09-11 06:08:22Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

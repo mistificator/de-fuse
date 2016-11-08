@@ -2,8 +2,6 @@
    Copyright (c) 2013 Alex Badea
    Copyright (c) 2015 Gergely Szasz
 
-   $Id: uimedia.c 5469 2016-05-08 18:06:09Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

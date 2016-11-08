@@ -1,8 +1,6 @@
 /* scorpion.c: Scorpion 256K specific routines
    Copyright (c) 1999-2011 Philip Kendall, Fredrick Meunier and Stuart Brady
 
-   $Id: scorpion.c 4638 2012-01-21 12:52:14Z fredm $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

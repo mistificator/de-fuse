@@ -1,8 +1,6 @@
 /* input.h: generalised input events layer for Fuse
    Copyright (c) 2004 Philip Kendall
 
-   $Id: input.h 5798 2016-09-10 15:22:31Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

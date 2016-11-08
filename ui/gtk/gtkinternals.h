@@ -1,8 +1,6 @@
 /* gtkinternals.h: stuff internal to the GTK+ UI
    Copyright (c) 2003-2015 Philip Kendall
 
-   $Id: gtkinternals.h 5509 2016-05-22 08:35:46Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

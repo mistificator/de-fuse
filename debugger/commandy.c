@@ -63,7 +63,7 @@
 
 /* Copy the first part of user declarations.  */
 /* Line 371 of yacc.c  */
-#line 27 "debugger/commandy.y"
+#line 25 "debugger/commandy.y"
 
 
 #include <config.h>
@@ -198,7 +198,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 387 of yacc.c  */
-#line 47 "debugger/commandy.y"
+#line 45 "debugger/commandy.y"
 
 
   int token;
@@ -564,14 +564,14 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   146,   146,   147,   148,   149,   152,   153,   157,   162,
-     166,   170,   174,   175,   176,   179,   180,   181,   182,   183,
-     184,   185,   188,   189,   190,   191,   192,   193,   194,   197,
-     198,   201,   202,   205,   206,   207,   210,   211,   214,   215,
-     227,   228,   231,   232,   235,   236,   239,   240,   243,   246,
-     249,   252,   257,   260,   263,   264,   268,   269,   273,   277,
-     281,   285,   289,   293,   297,   301,   305,   309,   313,   319,
-     327,   328,   333
+       0,   144,   144,   145,   146,   147,   150,   151,   155,   160,
+     164,   168,   172,   173,   174,   177,   178,   179,   180,   181,
+     182,   183,   186,   187,   188,   189,   190,   191,   192,   195,
+     196,   199,   200,   203,   204,   205,   208,   209,   212,   213,
+     225,   226,   229,   230,   233,   234,   237,   238,   241,   244,
+     247,   250,   255,   258,   261,   262,   266,   267,   271,   275,
+     279,   283,   287,   291,   295,   299,   303,   307,   311,   317,
+     325,   326,   331
 };
 #endif
 
@@ -1581,13 +1581,13 @@ yyreduce:
     {
         case 6:
 /* Line 1792 of yacc.c  */
-#line 152 "debugger/commandy.y"
+#line 150 "debugger/commandy.y"
     { debugger_output_base = (yyvsp[(2) - (2)].integer); }
     break;
 
   case 7:
 /* Line 1792 of yacc.c  */
-#line 153 "debugger/commandy.y"
+#line 151 "debugger/commandy.y"
     {
              debugger_breakpoint_add_address( (yyvsp[(2) - (4)].bptype), (yyvsp[(3) - (4)].location).source, (yyvsp[(3) - (4)].location).page, (yyvsp[(3) - (4)].location).offset,
                                               0, (yyvsp[(1) - (4)].bplife), (yyvsp[(4) - (4)].exp) );
@@ -1596,7 +1596,7 @@ yyreduce:
 
   case 8:
 /* Line 1792 of yacc.c  */
-#line 157 "debugger/commandy.y"
+#line 155 "debugger/commandy.y"
     {
 	     int mask = (yyvsp[(4) - (5)].port).mask;
 	     if( mask == 0 ) mask = ( (yyvsp[(4) - (5)].port).value < 0x100 ? 0x00ff : 0xffff );
@@ -1606,7 +1606,7 @@ yyreduce:
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 162 "debugger/commandy.y"
+#line 160 "debugger/commandy.y"
     {
 	     debugger_breakpoint_add_time( DEBUGGER_BREAKPOINT_TYPE_TIME,
 					   (yyvsp[(3) - (4)].integer), 0, (yyvsp[(1) - (4)].bplife), (yyvsp[(4) - (4)].exp) );
@@ -1615,7 +1615,7 @@ yyreduce:
 
   case 10:
 /* Line 1792 of yacc.c  */
-#line 166 "debugger/commandy.y"
+#line 164 "debugger/commandy.y"
     {
 	     debugger_breakpoint_add_event( DEBUGGER_BREAKPOINT_TYPE_EVENT,
 					    (yyvsp[(3) - (6)].string), (yyvsp[(5) - (6)].string), 0, (yyvsp[(1) - (6)].bplife), (yyvsp[(6) - (6)].exp) );
@@ -1624,7 +1624,7 @@ yyreduce:
 
   case 11:
 /* Line 1792 of yacc.c  */
-#line 170 "debugger/commandy.y"
+#line 168 "debugger/commandy.y"
     {
 	     debugger_breakpoint_add_event( DEBUGGER_BREAKPOINT_TYPE_EVENT,
 					    (yyvsp[(3) - (6)].string), "*", 0, (yyvsp[(1) - (6)].bplife), (yyvsp[(6) - (6)].exp) );
@@ -1633,19 +1633,19 @@ yyreduce:
 
   case 12:
 /* Line 1792 of yacc.c  */
-#line 174 "debugger/commandy.y"
+#line 172 "debugger/commandy.y"
     { debugger_breakpoint_clear( (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 13:
 /* Line 1792 of yacc.c  */
-#line 175 "debugger/commandy.y"
+#line 173 "debugger/commandy.y"
     { debugger_breakpoint_set_commands( (yyvsp[(2) - (5)].integer), (yyvsp[(4) - (5)].string) ); }
     break;
 
   case 14:
 /* Line 1792 of yacc.c  */
-#line 176 "debugger/commandy.y"
+#line 174 "debugger/commandy.y"
     {
 	     debugger_breakpoint_set_condition( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].exp) );
            }
@@ -1653,43 +1653,43 @@ yyreduce:
 
   case 15:
 /* Line 1792 of yacc.c  */
-#line 179 "debugger/commandy.y"
+#line 177 "debugger/commandy.y"
     { debugger_run(); }
     break;
 
   case 16:
 /* Line 1792 of yacc.c  */
-#line 180 "debugger/commandy.y"
+#line 178 "debugger/commandy.y"
     { debugger_breakpoint_remove_all(); }
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
-#line 181 "debugger/commandy.y"
+#line 179 "debugger/commandy.y"
     { debugger_breakpoint_remove( (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 18:
 /* Line 1792 of yacc.c  */
-#line 182 "debugger/commandy.y"
+#line 180 "debugger/commandy.y"
     { ui_debugger_disassemble( (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
-#line 183 "debugger/commandy.y"
+#line 181 "debugger/commandy.y"
     { debugger_exit_emulator(); }
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
-#line 184 "debugger/commandy.y"
+#line 182 "debugger/commandy.y"
     { debugger_breakpoint_exit(); }
     break;
 
   case 21:
 /* Line 1792 of yacc.c  */
-#line 185 "debugger/commandy.y"
+#line 183 "debugger/commandy.y"
     {
 	     debugger_breakpoint_ignore( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].integer) );
 	   }
@@ -1697,109 +1697,109 @@ yyreduce:
 
   case 22:
 /* Line 1792 of yacc.c  */
-#line 188 "debugger/commandy.y"
+#line 186 "debugger/commandy.y"
     { debugger_next(); }
     break;
 
   case 23:
 /* Line 1792 of yacc.c  */
-#line 189 "debugger/commandy.y"
+#line 187 "debugger/commandy.y"
     { debugger_port_write( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 24:
 /* Line 1792 of yacc.c  */
-#line 190 "debugger/commandy.y"
+#line 188 "debugger/commandy.y"
     { printf( "0x%x\n", (yyvsp[(2) - (2)].integer) ); }
     break;
 
   case 25:
 /* Line 1792 of yacc.c  */
-#line 191 "debugger/commandy.y"
+#line 189 "debugger/commandy.y"
     { debugger_poke( (yyvsp[(2) - (3)].integer), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 26:
 /* Line 1792 of yacc.c  */
-#line 192 "debugger/commandy.y"
+#line 190 "debugger/commandy.y"
     { debugger_register_set( (yyvsp[(2) - (3)].string), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 27:
 /* Line 1792 of yacc.c  */
-#line 193 "debugger/commandy.y"
+#line 191 "debugger/commandy.y"
     { debugger_variable_set( (yyvsp[(2) - (3)].string), (yyvsp[(3) - (3)].integer) ); }
     break;
 
   case 28:
 /* Line 1792 of yacc.c  */
-#line 194 "debugger/commandy.y"
+#line 192 "debugger/commandy.y"
     { debugger_system_variable_set( (yyvsp[(2) - (5)].string), (yyvsp[(4) - (5)].string), (yyvsp[(5) - (5)].integer) ); }
     break;
 
   case 29:
 /* Line 1792 of yacc.c  */
-#line 197 "debugger/commandy.y"
+#line 195 "debugger/commandy.y"
     { debugger_system_variable_set( (yyvsp[(2) - (5)].string), (yyvsp[(4) - (5)].string), (yyvsp[(5) - (5)].integer) ); }
     break;
 
   case 30:
 /* Line 1792 of yacc.c  */
-#line 198 "debugger/commandy.y"
+#line 196 "debugger/commandy.y"
     { debugger_step(); }
     break;
 
   case 31:
 /* Line 1792 of yacc.c  */
-#line 201 "debugger/commandy.y"
+#line 199 "debugger/commandy.y"
     { (yyval.bplife) = DEBUGGER_BREAKPOINT_LIFE_PERMANENT; }
     break;
 
   case 32:
 /* Line 1792 of yacc.c  */
-#line 202 "debugger/commandy.y"
+#line 200 "debugger/commandy.y"
     { (yyval.bplife) = DEBUGGER_BREAKPOINT_LIFE_ONESHOT; }
     break;
 
   case 33:
 /* Line 1792 of yacc.c  */
-#line 205 "debugger/commandy.y"
+#line 203 "debugger/commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_EXECUTE; }
     break;
 
   case 34:
 /* Line 1792 of yacc.c  */
-#line 206 "debugger/commandy.y"
+#line 204 "debugger/commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_READ; }
     break;
 
   case 35:
 /* Line 1792 of yacc.c  */
-#line 207 "debugger/commandy.y"
+#line 205 "debugger/commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_WRITE; }
     break;
 
   case 36:
 /* Line 1792 of yacc.c  */
-#line 210 "debugger/commandy.y"
+#line 208 "debugger/commandy.y"
     { (yyval.port).mask = 0; (yyval.port).value = (yyvsp[(1) - (1)].integer); }
     break;
 
   case 37:
 /* Line 1792 of yacc.c  */
-#line 211 "debugger/commandy.y"
+#line 209 "debugger/commandy.y"
     { (yyval.port).mask = (yyvsp[(1) - (3)].integer); (yyval.port).value = (yyvsp[(3) - (3)].integer); }
     break;
 
   case 38:
 /* Line 1792 of yacc.c  */
-#line 214 "debugger/commandy.y"
+#line 212 "debugger/commandy.y"
     { (yyval.location).source = memory_source_any; (yyval.location).offset = (yyvsp[(1) - (1)].integer); }
     break;
 
   case 39:
 /* Line 1792 of yacc.c  */
-#line 215 "debugger/commandy.y"
+#line 213 "debugger/commandy.y"
     {
                         (yyval.location).source = memory_source_find( (yyvsp[(1) - (5)].string) );
                         if( (yyval.location).source == -1 ) {
@@ -1815,61 +1815,61 @@ yyreduce:
 
   case 40:
 /* Line 1792 of yacc.c  */
-#line 227 "debugger/commandy.y"
+#line 225 "debugger/commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_PORT_READ; }
     break;
 
   case 41:
 /* Line 1792 of yacc.c  */
-#line 228 "debugger/commandy.y"
+#line 226 "debugger/commandy.y"
     { (yyval.bptype) = DEBUGGER_BREAKPOINT_TYPE_PORT_WRITE; }
     break;
 
   case 42:
 /* Line 1792 of yacc.c  */
-#line 231 "debugger/commandy.y"
+#line 229 "debugger/commandy.y"
     { (yyval.exp) = NULL; }
     break;
 
   case 43:
 /* Line 1792 of yacc.c  */
-#line 232 "debugger/commandy.y"
+#line 230 "debugger/commandy.y"
     { (yyval.exp) = (yyvsp[(2) - (2)].exp); }
     break;
 
   case 44:
 /* Line 1792 of yacc.c  */
-#line 235 "debugger/commandy.y"
+#line 233 "debugger/commandy.y"
     { (yyval.integer) = PC; }
     break;
 
   case 45:
 /* Line 1792 of yacc.c  */
-#line 236 "debugger/commandy.y"
+#line 234 "debugger/commandy.y"
     { (yyval.integer) = (yyvsp[(1) - (1)].integer); }
     break;
 
   case 46:
 /* Line 1792 of yacc.c  */
-#line 239 "debugger/commandy.y"
+#line 237 "debugger/commandy.y"
     { (yyval.exp) = NULL; }
     break;
 
   case 47:
 /* Line 1792 of yacc.c  */
-#line 240 "debugger/commandy.y"
+#line 238 "debugger/commandy.y"
     { (yyval.exp) = (yyvsp[(1) - (1)].exp); }
     break;
 
   case 48:
 /* Line 1792 of yacc.c  */
-#line 243 "debugger/commandy.y"
+#line 241 "debugger/commandy.y"
     { (yyval.integer) = debugger_expression_evaluate( (yyvsp[(1) - (1)].exp) ); }
     break;
 
   case 49:
 /* Line 1792 of yacc.c  */
-#line 246 "debugger/commandy.y"
+#line 244 "debugger/commandy.y"
     { (yyval.exp) = debugger_expression_new_number( (yyvsp[(1) - (1)].integer), debugger_memory_pool );
 		       if( !(yyval.exp) ) YYABORT;
 		     }
@@ -1877,7 +1877,7 @@ yyreduce:
 
   case 50:
 /* Line 1792 of yacc.c  */
-#line 249 "debugger/commandy.y"
+#line 247 "debugger/commandy.y"
     { (yyval.exp) = debugger_expression_new_register( (yyvsp[(1) - (1)].string), debugger_memory_pool );
 			 if( !(yyval.exp) ) YYABORT;
 		       }
@@ -1885,7 +1885,7 @@ yyreduce:
 
   case 51:
 /* Line 1792 of yacc.c  */
-#line 252 "debugger/commandy.y"
+#line 250 "debugger/commandy.y"
     { (yyval.exp) = debugger_expression_new_system_variable( (yyvsp[(1) - (3)].string), (yyvsp[(3) - (3)].string), debugger_memory_pool );
                                   if( !(yyval.exp) ) YYABORT;
                                 }
@@ -1893,7 +1893,7 @@ yyreduce:
 
   case 52:
 /* Line 1792 of yacc.c  */
-#line 257 "debugger/commandy.y"
+#line 255 "debugger/commandy.y"
     { (yyval.exp) = debugger_expression_new_system_variable( (yyvsp[(1) - (3)].string), (yyvsp[(3) - (3)].string), debugger_memory_pool );
                                              if( !(yyval.exp) ) YYABORT;
                                            }
@@ -1901,7 +1901,7 @@ yyreduce:
 
   case 53:
 /* Line 1792 of yacc.c  */
-#line 260 "debugger/commandy.y"
+#line 258 "debugger/commandy.y"
     { (yyval.exp) = debugger_expression_new_variable( (yyvsp[(1) - (1)].string), debugger_memory_pool );
 			 if( !(yyval.exp) ) YYABORT;
 		       }
@@ -1909,13 +1909,13 @@ yyreduce:
 
   case 54:
 /* Line 1792 of yacc.c  */
-#line 263 "debugger/commandy.y"
+#line 261 "debugger/commandy.y"
     { (yyval.exp) = (yyvsp[(2) - (3)].exp); }
     break;
 
   case 55:
 /* Line 1792 of yacc.c  */
-#line 264 "debugger/commandy.y"
+#line 262 "debugger/commandy.y"
     {
                 (yyval.exp) = debugger_expression_new_unaryop( DEBUGGER_TOKEN_DEREFERENCE, (yyvsp[(2) - (3)].exp), debugger_memory_pool );
                 if( !(yyval.exp) ) YYABORT;
@@ -1924,13 +1924,13 @@ yyreduce:
 
   case 56:
 /* Line 1792 of yacc.c  */
-#line 268 "debugger/commandy.y"
+#line 266 "debugger/commandy.y"
     { (yyval.exp) = (yyvsp[(2) - (2)].exp); }
     break;
 
   case 57:
 /* Line 1792 of yacc.c  */
-#line 269 "debugger/commandy.y"
+#line 267 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_unaryop( '-', (yyvsp[(2) - (2)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -1939,7 +1939,7 @@ yyreduce:
 
   case 58:
 /* Line 1792 of yacc.c  */
-#line 273 "debugger/commandy.y"
+#line 271 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_unaryop( (yyvsp[(1) - (2)].token), (yyvsp[(2) - (2)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -1948,7 +1948,7 @@ yyreduce:
 
   case 59:
 /* Line 1792 of yacc.c  */
-#line 277 "debugger/commandy.y"
+#line 275 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '+', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -1957,7 +1957,7 @@ yyreduce:
 
   case 60:
 /* Line 1792 of yacc.c  */
-#line 281 "debugger/commandy.y"
+#line 279 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '-', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -1966,7 +1966,7 @@ yyreduce:
 
   case 61:
 /* Line 1792 of yacc.c  */
-#line 285 "debugger/commandy.y"
+#line 283 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '*', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -1975,7 +1975,7 @@ yyreduce:
 
   case 62:
 /* Line 1792 of yacc.c  */
-#line 289 "debugger/commandy.y"
+#line 287 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '/', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -1984,7 +1984,7 @@ yyreduce:
 
   case 63:
 /* Line 1792 of yacc.c  */
-#line 293 "debugger/commandy.y"
+#line 291 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( (yyvsp[(2) - (3)].token), (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -1993,7 +1993,7 @@ yyreduce:
 
   case 64:
 /* Line 1792 of yacc.c  */
-#line 297 "debugger/commandy.y"
+#line 295 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( (yyvsp[(2) - (3)].token), (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -2002,7 +2002,7 @@ yyreduce:
 
   case 65:
 /* Line 1792 of yacc.c  */
-#line 301 "debugger/commandy.y"
+#line 299 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '&', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -2011,7 +2011,7 @@ yyreduce:
 
   case 66:
 /* Line 1792 of yacc.c  */
-#line 305 "debugger/commandy.y"
+#line 303 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '^', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -2020,7 +2020,7 @@ yyreduce:
 
   case 67:
 /* Line 1792 of yacc.c  */
-#line 309 "debugger/commandy.y"
+#line 307 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop( '|', (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool );
 		if( !(yyval.exp) ) YYABORT;
@@ -2029,7 +2029,7 @@ yyreduce:
 
   case 68:
 /* Line 1792 of yacc.c  */
-#line 313 "debugger/commandy.y"
+#line 311 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop(
 		  DEBUGGER_TOKEN_LOGICAL_AND, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool
@@ -2040,7 +2040,7 @@ yyreduce:
 
   case 69:
 /* Line 1792 of yacc.c  */
-#line 319 "debugger/commandy.y"
+#line 317 "debugger/commandy.y"
     {
 	        (yyval.exp) = debugger_expression_new_binaryop(
 		  DEBUGGER_TOKEN_LOGICAL_OR, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), debugger_memory_pool
@@ -2051,13 +2051,13 @@ yyreduce:
 
   case 70:
 /* Line 1792 of yacc.c  */
-#line 327 "debugger/commandy.y"
+#line 325 "debugger/commandy.y"
     { (yyval.string) = (yyvsp[(1) - (1)].string); }
     break;
 
   case 71:
 /* Line 1792 of yacc.c  */
-#line 328 "debugger/commandy.y"
+#line 326 "debugger/commandy.y"
     {
                       (yyval.string) = mempool_new( debugger_memory_pool, char, strlen( (yyvsp[(1) - (2)].string) ) + strlen( (yyvsp[(2) - (2)].string) ) + 2 );
                       sprintf( (yyval.string), "%s\n%s", (yyvsp[(1) - (2)].string), (yyvsp[(2) - (2)].string) );
@@ -2298,5 +2298,5 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 335 "debugger/commandy.y"
+#line 333 "debugger/commandy.y"
 

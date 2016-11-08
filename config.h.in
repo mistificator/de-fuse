@@ -188,7 +188,7 @@
 /* Exclude rarely used stuff from Windows headers <windows.h> */
 #undef WIN32_LEAN_AND_MEAN
 
-/* Minimal supported version of Windows is 95 or NT4 */
+/* Minimal supported version of Windows is 2000 */
 #undef WINVER
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
@@ -210,7 +210,7 @@
    `char[]'. */
 #undef YYTEXT_POINTER
 
-/* Internet Explorer is 4.0 or higher is required */
+/* Internet Explorer 5.01 or higher is required */
 #undef _WIN32_IE
 
 /* Define to empty if `const' does not conform to ANSI C. */

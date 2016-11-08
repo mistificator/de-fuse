@@ -1,8 +1,6 @@
 /* beta.c: Routines for handling the Beta disk interface
    Copyright (c) 2004-2016 Stuart Brady, Philip Kendall, Gergely Szasz
 
-   $Id: beta.c 5802 2016-09-19 22:33:34Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
