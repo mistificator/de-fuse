@@ -5,7 +5,7 @@ Index: fuse-emulator/tape.c
 ===================================================================
 --- fuse-emulator.orig/tape.c
 +++ fuse-emulator/tape.c
-@@ -166,6 +166,7 @@ tape_read_buffer( unsigned char *buffer,
+@@ -164,6 +164,7 @@ tape_read_buffer( unsigned char *buffer,
  		  const char *filename, int autoload )
  {
    int error;
@@ -13,7 +13,7 @@ Index: fuse-emulator/tape.c
  
    if( libspectrum_tape_present( tape ) ) {
      error = tape_close(); if( error ) return error;
-@@ -177,7 +178,7 @@ tape_read_buffer( unsigned char *buffer,
+@@ -175,7 +176,7 @@ tape_read_buffer( unsigned char *buffer,
    tape_modified = 0;
    ui_tape_browser_update( UI_TAPE_BROWSER_NEW_TAPE, NULL );
  

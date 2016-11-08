@@ -6,7 +6,7 @@ Index: fuse-emulator/Makefile.am
 ===================================================================
 --- fuse-emulator.orig/Makefile.am
 +++ fuse-emulator/Makefile.am
-@@ -175,7 +175,6 @@ include man/Makefile.am
+@@ -173,7 +173,6 @@ include man/Makefile.am
  include peripherals/Makefile.am
  include perl/Makefile.am
  include pokefinder/Makefile.am

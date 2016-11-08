@@ -9,7 +9,7 @@ Index: fuse-emulator/compat/linux/paths.c
 ===================================================================
 --- fuse-emulator.orig/compat/linux/paths.c
 +++ fuse-emulator/compat/linux/paths.c
-@@ -107,8 +107,16 @@ compat_get_next_path( path_context *ctx
+@@ -105,8 +105,16 @@ compat_get_next_path( path_context *ctx
                path_segment );
      return 1;
  
@@ -27,7 +27,7 @@ Index: fuse-emulator/compat/linux/paths.c
  
  #ifndef ROMSDIR
      path2 = FUSEDATADIR;
-@@ -118,7 +126,7 @@ compat_get_next_path( path_context *ctx
+@@ -116,7 +124,7 @@ compat_get_next_path( path_context *ctx
      strncpy( ctx->path, path2, PATH_MAX ); buffer[ PATH_MAX - 1 ] = '\0';
      return 1;
  
@@ -40,7 +40,7 @@ Index: fuse-emulator/compat/unix/paths.c
 ===================================================================
 --- fuse-emulator.orig/compat/unix/paths.c
 +++ fuse-emulator/compat/unix/paths.c
-@@ -107,8 +107,16 @@ compat_get_next_path( path_context *ctx
+@@ -105,8 +105,16 @@ compat_get_next_path( path_context *ctx
                path_segment );
      return 1;
  
@@ -58,7 +58,7 @@ Index: fuse-emulator/compat/unix/paths.c
  
  #ifndef ROMSDIR
      path2 = FUSEDATADIR;
-@@ -118,7 +126,7 @@ compat_get_next_path( path_context *ctx
+@@ -116,7 +124,7 @@ compat_get_next_path( path_context *ctx
      strncpy( ctx->path, path2, PATH_MAX ); buffer[ PATH_MAX - 1 ] = '\0';
      return 1;
  
