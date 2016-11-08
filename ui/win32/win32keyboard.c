@@ -1,8 +1,6 @@
 /* win32keyboard.c: routines for dealing with the Win32 keyboard
    Copyright (c) 2003 Marek Januszewski, Philip Kendall
 
-   $Id: win32keyboard.c 5799 2016-09-11 06:08:22Z sbaldovi $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
@@ -28,6 +26,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+
+#ifdef HAVE_LIB_GLIB
+#include <glib.h>
+#endif				/* #ifdef HAVE_LIB_GLIB */
+
+#include <libspectrum.h>
 
 #include "display.h"
 #include "fuse.h"

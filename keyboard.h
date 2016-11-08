@@ -1,8 +1,6 @@
 /* keyboard.h: Routines for dealing with the Spectrum's keyboard
    Copyright (c) 1999-2003 Philip Kendall
 
-   $Id: keyboard.h 4696 2012-05-07 02:05:13Z fredm $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

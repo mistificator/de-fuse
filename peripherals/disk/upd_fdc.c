@@ -2,8 +2,6 @@
    Copyright (c) 2007-2015 Gergely Szasz
    Copyright (c) 2015 Stuart Brady
 
-   $Id: upd_fdc.c 5776 2016-08-23 18:26:26Z pak21 $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

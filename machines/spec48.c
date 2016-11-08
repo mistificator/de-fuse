@@ -1,8 +1,6 @@
 /* spec48.c: Spectrum 48K specific routines
    Copyright (c) 1999-2011 Philip Kendall
 
-   $Id: spec48.c 4638 2012-01-21 12:52:14Z fredm $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

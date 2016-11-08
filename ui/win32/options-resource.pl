@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 
 # options-resource.pl: generate options dialog boxes
-# $Id: options-resource.pl 5782 2016-08-28 07:30:34Z sbaldovi $
 
 # Copyright (c) 2001-2007 Philip Kendall, Stuart Brady, Marek Januszewski
 # Copyright (c) 2015 Sergio Baldoví

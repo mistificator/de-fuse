@@ -27,13 +27,6 @@
 
 #include <config.h>
 
-#if ! (_WIN32_WINNT >= 0x0500)
-#define VK_OEM_PLUS     0xBB
-#define VK_OEM_COMMA    0xBC
-#define VK_OEM_MINUS    0xBD
-#define VK_OEM_PERIOD   0xBE
-#endif
-
 
 #include "input.h"
 #include "keyboard.h"

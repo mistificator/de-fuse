@@ -1,8 +1,6 @@
 /* mempool.c: pooled system memory
    Copyright (c) 2008-2016 Philip Kendall
 
-   $Id: mempool.c 5670 2016-07-08 21:33:08Z pak21 $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

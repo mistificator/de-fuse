@@ -2,8 +2,6 @@
 ## Copyright (c) 2001-2004 Philip Kendall
 ## Copyright (c) 2015 Sergio Baldoví
 
-## $Id: Makefile.am 5588 2016-06-05 22:11:42Z sbaldovi $
-
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2 of the License, or

@@ -1,8 +1,6 @@
 /* screenshot.h: Routines for saving .png screenshots
    Copyright (c) 2002 Philip Kendall
 
-   $Id: screenshot.h 4664 2012-02-12 11:51:01Z fredm $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or

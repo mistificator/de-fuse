@@ -1,8 +1,6 @@
 /* gtkcompat.c: various compatibility bits between GTK+ versions
    Copyright (c) 2012-2014 Philip Kendall
 
-   $Id: gtkcompat.c 5432 2016-05-01 04:16:09Z fredm $
-
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
