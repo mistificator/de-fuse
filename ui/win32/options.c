@@ -82,6 +82,9 @@ menu_options_general_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_RECREATED_SPECTRUM, BM_SETCHECK,
     settings_current.recreated_spectrum ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_KEYBOARD_ARROWS_SHIFTED, BM_SETCHECK,
+    settings_current.keyboard_arrows_shifted ? BST_CHECKED : BST_UNCHECKED, 0 );
+
   SendDlgItemMessage( hwndDlg, IDC_OPT_GENERAL_WRITABLE_ROMS, BM_SETCHECK,
     settings_current.writable_roms ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -137,6 +140,9 @@ menu_options_general_done( HWND hwndDlg )
 
   settings_current.recreated_spectrum =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_RECREATED_SPECTRUM );
+
+  settings_current.keyboard_arrows_shifted =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_KEYBOARD_ARROWS_SHIFTED );
 
   settings_current.writable_roms =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_GENERAL_WRITABLE_ROMS );

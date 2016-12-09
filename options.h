@@ -1,5 +1,5 @@
 /* options.h: options dialog boxes public declarations
-   Copyright (c) 2001-2002 Philip Kendall
+   Copyright (c) 2001-2002,2004 Philip Kendall
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by

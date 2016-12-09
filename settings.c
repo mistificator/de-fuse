@@ -164,6 +164,7 @@ settings_info settings_default = {
   /* joystick_keyboard_right */ 112,
   /* joystick_keyboard_up */ 113,
   /* kempston_mouse */ 0,
+  /* keyboard_arrows_shifted */ 1,
   /* late_timings */ 0,
   /* mdr_file */ (char *)NULL,
   /* mdr_file2 */ (char *)NULL,
@@ -1070,6 +1071,13 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
         settings->kempston_mouse = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "keyboardarrowsshifted" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->keyboard_arrows_shifted = atoi( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -2224,6 +2232,7 @@ settings_write_config( settings_info *settings )
   snprintf( buffer, 80, "%d", settings->joystick_keyboard_up );
   xmlNewTextChild( root, NULL, (const xmlChar*)"joystickkeyboardup", (const xmlChar*)buffer );
   xmlNewTextChild( root, NULL, (const xmlChar*)"kempstonmouse", (const xmlChar*)(settings->kempston_mouse ? "1" : "0") );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"keyboardarrowsshifted", (const xmlChar*)(settings->keyboard_arrows_shifted ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"latetimings", (const xmlChar*)(settings->late_timings ? "1" : "0") );
   if( settings->mdr_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"microdrivefile", (const xmlChar*)settings->mdr_file );
@@ -2897,6 +2906,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 13 && !strncmp( (const char *)name, "kempstonmouse", n ) ) {
     *val_int = &settings->kempston_mouse;
+    return 0;
+  }
+  if( n == 21 && !strncmp( (const char *)name, "keyboardarrowsshifted", n ) ) {
+    *val_int = &settings->keyboard_arrows_shifted;
     return 0;
   }
   if( n == 11 && !strncmp( (const char *)name, "latetimings", n ) ) {
@@ -3791,6 +3804,9 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "kempstonmouse",
                               settings->kempston_mouse ) )
     goto error;
+  if( settings_boolean_write( doc, "keyboardarrowsshifted",
+                              settings->keyboard_arrows_shifted ) )
+    goto error;
   if( settings_boolean_write( doc, "latetimings",
                               settings->late_timings ) )
     goto error;
@@ -4310,6 +4326,8 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "joystick-keyboard-up", 1, NULL, 323 },
     {    "kempston-mouse", 0, &(settings->kempston_mouse), 1 },
     { "no-kempston-mouse", 0, &(settings->kempston_mouse), 0 },
+    {    "keyboard-arrows-shifted", 0, &(settings->keyboard_arrows_shifted), 1 },
+    { "no-keyboard-arrows-shifted", 0, &(settings->keyboard_arrows_shifted), 0 },
     {    "late-timings", 0, &(settings->late_timings), 1 },
     { "no-late-timings", 0, &(settings->late_timings), 0 },
     { "microdrive-file", 1, NULL, 324 },
@@ -4853,6 +4871,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->joystick_keyboard_right = src->joystick_keyboard_right;
   dest->joystick_keyboard_up = src->joystick_keyboard_up;
   dest->kempston_mouse = src->kempston_mouse;
+  dest->keyboard_arrows_shifted = src->keyboard_arrows_shifted;
   dest->late_timings = src->late_timings;
   dest->mdr_file = NULL;
   if( src->mdr_file ) {

@@ -27,8 +27,6 @@
 #ifndef FUSE_SETTINGS_H
 #define FUSE_SETTINGS_H
 
-#include <config.h>
-
 #include <sys/types.h>
 
 typedef struct settings_info {
@@ -128,6 +126,7 @@ typedef struct settings_info {
    int joystick_keyboard_right;
    int joystick_keyboard_up;
    int kempston_mouse;
+   int keyboard_arrows_shifted;
    int late_timings;
   char *mdr_file;
   char *mdr_file2;
