@@ -1,3 +1,12 @@
+fuse-emulator (1.3.2+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Refresh these patches:
+    - debian/patches/load-opense-rom.patch
+    - debian/patches/manpage-errors.patch
+
+ -- Alberto Garcia <berto@igalia.com>  Fri, 09 Dec 2016 10:56:36 +0200
+
 fuse-emulator (1.3.1+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
