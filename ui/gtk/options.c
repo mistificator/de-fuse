@@ -134,6 +134,12 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
                                 settings_current.recreated_spectrum );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.recreated_spectrum );
 
+  dialog.keyboard_arrows_shifted =
+    gtk_check_button_new_with_label( "Use shift with arrow keys" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.keyboard_arrows_shifted ),
+                                settings_current.keyboard_arrows_shifted );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.keyboard_arrows_shifted );
+
   dialog.writable_roms =
     gtk_check_button_new_with_label( "Allow writes to ROM" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.writable_roms ),
@@ -226,6 +232,9 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.recreated_spectrum =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->recreated_spectrum ) );
+
+  settings_current.keyboard_arrows_shifted =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->keyboard_arrows_shifted ) );
 
   settings_current.writable_roms =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->writable_roms ) );

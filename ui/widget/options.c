@@ -297,6 +297,8 @@ static void widget_issue2_click( void );
 static void widget_option_issue2_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_recreated_spectrum_click( void );
 static void widget_option_recreated_spectrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_keyboard_arrows_shifted_click( void );
+static void widget_option_keyboard_arrows_shifted_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_writable_roms_click( void );
 static void widget_option_writable_roms_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_late_timings_click( void );
@@ -467,16 +469,17 @@ static widget_option_entry options_general[] = {
   { "F\012r\001ame rate (1:n)", 1, INPUT_KEY_r, "frames", NULL, widget_frame_rate_click, widget_option_frame_rate_draw },
   { "Issue \0122\001 keyboard", 2, INPUT_KEY_2, NULL, NULL, widget_issue2_click, widget_option_issue2_draw },
   { "Recrea\012t\001ed ZX Spectrum", 3, INPUT_KEY_t, NULL, NULL, widget_recreated_spectrum_click, widget_option_recreated_spectrum_draw },
-  { "Allow \012w\001rites to ROM", 4, INPUT_KEY_w, NULL, NULL, widget_writable_roms_click, widget_option_writable_roms_draw },
-  { "Late t\012i\001mings", 5, INPUT_KEY_i, NULL, NULL, widget_late_timings_click, widget_option_late_timings_draw },
-  { "\012Z\00180 is CMOS", 6, INPUT_KEY_z, NULL, NULL, widget_z80_is_cmos_click, widget_option_z80_is_cmos_draw },
-  { "RS-232 \012h\001andshake", 7, INPUT_KEY_h, NULL, NULL, widget_rs232_handshake_click, widget_option_rs232_handshake_draw },
-  { "Black and white T\012V\001", 8, INPUT_KEY_v, NULL, NULL, widget_bw_tv_click, widget_option_bw_tv_draw },
-  { "\012P\001AL-TV use TV2x effect", 9, INPUT_KEY_p, NULL, NULL, widget_pal_tv2x_click, widget_option_pal_tv2x_draw },
-  { "Show status\012b\001ar", 10, INPUT_KEY_b, NULL, NULL, widget_statusbar_click, widget_option_statusbar_draw },
-  { "Snap \012j\001oystick prompt", 11, INPUT_KEY_j, NULL, NULL, widget_joy_prompt_click, widget_option_joy_prompt_draw },
-  { "\012C\001onfirm actions", 12, INPUT_KEY_c, NULL, NULL, widget_confirm_actions_click, widget_option_confirm_actions_draw },
-  { "A\012u\001to-save settings", 13, INPUT_KEY_u, NULL, NULL, widget_autosave_settings_click, widget_option_autosave_settings_draw },
+  { "Use shift with \012a\001rrow keys", 4, INPUT_KEY_a, NULL, NULL, widget_keyboard_arrows_shifted_click, widget_option_keyboard_arrows_shifted_draw },
+  { "Allow \012w\001rites to ROM", 5, INPUT_KEY_w, NULL, NULL, widget_writable_roms_click, widget_option_writable_roms_draw },
+  { "Late t\012i\001mings", 6, INPUT_KEY_i, NULL, NULL, widget_late_timings_click, widget_option_late_timings_draw },
+  { "\012Z\00180 is CMOS", 7, INPUT_KEY_z, NULL, NULL, widget_z80_is_cmos_click, widget_option_z80_is_cmos_draw },
+  { "RS-232 \012h\001andshake", 8, INPUT_KEY_h, NULL, NULL, widget_rs232_handshake_click, widget_option_rs232_handshake_draw },
+  { "Black and white T\012V\001", 9, INPUT_KEY_v, NULL, NULL, widget_bw_tv_click, widget_option_bw_tv_draw },
+  { "\012P\001AL-TV use TV2x effect", 10, INPUT_KEY_p, NULL, NULL, widget_pal_tv2x_click, widget_option_pal_tv2x_draw },
+  { "Show status\012b\001ar", 11, INPUT_KEY_b, NULL, NULL, widget_statusbar_click, widget_option_statusbar_draw },
+  { "Snap \012j\001oystick prompt", 12, INPUT_KEY_j, NULL, NULL, widget_joy_prompt_click, widget_option_joy_prompt_draw },
+  { "\012C\001onfirm actions", 13, INPUT_KEY_c, NULL, NULL, widget_confirm_actions_click, widget_option_confirm_actions_draw },
+  { "A\012u\001to-save settings", 14, INPUT_KEY_u, NULL, NULL, widget_autosave_settings_click, widget_option_autosave_settings_draw },
   { NULL }
 };
 
@@ -891,6 +894,18 @@ widget_option_recreated_spectrum_draw( int left_edge, int width, struct widget_o
 }
 
 static void
+widget_keyboard_arrows_shifted_click( void )
+{
+  widget_options_settings.keyboard_arrows_shifted = ! widget_options_settings.keyboard_arrows_shifted;
+}
+
+static void
+widget_option_keyboard_arrows_shifted_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->keyboard_arrows_shifted );
+}
+
+static void
 widget_writable_roms_click( void )
 {
   widget_options_settings.writable_roms = ! widget_options_settings.writable_roms;
@@ -1023,7 +1038,7 @@ widget_general_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 14 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 15 );
     widget_general_show_all( &widget_options_settings );
     break;
 #endif
@@ -1046,7 +1061,7 @@ widget_general_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 14 ) {
+    if ( highlight_line + 1 < 15 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1060,8 +1075,8 @@ widget_general_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 14 ) {
-      new_highlight_line = 14 - 1;
+    if ( highlight_line + 2 < 15 ) {
+      new_highlight_line = 15 - 1;
       cursor_pressed = 1;
     }
     break;
