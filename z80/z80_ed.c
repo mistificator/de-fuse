@@ -29,6 +29,7 @@
       break;
     case 0x41:		/* OUT (C),B */
       writeport( BC, B );
+      z80.memptr.w = BC + 1;
       break;
     case 0x42:		/* SBC HL,BC */
       contend_read_no_mreq( IR, 1 );
@@ -84,6 +85,7 @@
       break;
     case 0x49:		/* OUT (C),C */
       writeport( BC, C );
+      z80.memptr.w = BC + 1;
       break;
     case 0x4a:		/* ADC HL,BC */
       contend_read_no_mreq( IR, 1 );
@@ -109,6 +111,7 @@
       break;
     case 0x51:		/* OUT (C),D */
       writeport( BC, D );
+      z80.memptr.w = BC + 1;
       break;
     case 0x52:		/* SBC HL,DE */
       contend_read_no_mreq( IR, 1 );
@@ -139,6 +142,7 @@
       break;
     case 0x59:		/* OUT (C),E */
       writeport( BC, E );
+      z80.memptr.w = BC + 1;
       break;
     case 0x5a:		/* ADC HL,DE */
       contend_read_no_mreq( IR, 1 );
@@ -169,6 +173,7 @@
       break;
     case 0x61:		/* OUT (C),H */
       writeport( BC, H );
+      z80.memptr.w = BC + 1;
       break;
     case 0x62:		/* SBC HL,HL */
       contend_read_no_mreq( IR, 1 );
@@ -191,6 +196,7 @@
 	writebyte(HL,  ( A << 4 ) | ( bytetemp >> 4 ) );
 	A = ( A & 0xf0 ) | ( bytetemp & 0x0f );
 	F = ( F & FLAG_C ) | sz53p_table[A];
+	z80.memptr.w=HL+1;
       }
       break;
     case 0x68:		/* IN L,(C) */
@@ -198,6 +204,7 @@
       break;
     case 0x69:		/* OUT (C),L */
       writeport( BC, L );
+      z80.memptr.w = BC + 1;
       break;
     case 0x6a:		/* ADC HL,HL */
       contend_read_no_mreq( IR, 1 );
@@ -220,6 +227,7 @@
 	writebyte(HL, (bytetemp << 4 ) | ( A & 0x0f ) );
 	A = ( A & 0xf0 ) | ( bytetemp >> 4 );
 	F = ( F & FLAG_C ) | sz53p_table[A];
+	z80.memptr.w=HL+1;
       }
       break;
     case 0x70:		/* IN F,(C) */
@@ -230,6 +238,7 @@
       break;
     case 0x71:		/* OUT (C),0 */
       writeport( BC, IS_CMOS ? 0xff : 0 );
+      z80.memptr.w = BC + 1;
       break;
     case 0x72:		/* SBC HL,SP */
       contend_read_no_mreq( IR, 1 );
@@ -249,6 +258,7 @@
       break;
     case 0x79:		/* OUT (C),A */
       writeport( BC, A );
+      z80.memptr.w = BC + 1;
       break;
     case 0x7a:		/* ADC HL,SP */
       contend_read_no_mreq( IR, 1 );
@@ -290,6 +300,7 @@
 	  ( bytetemp & FLAG_S );
 	if(F & FLAG_H) bytetemp--;
 	F |= ( bytetemp & FLAG_3 ) | ( (bytetemp&0x02) ? FLAG_5 : 0 );
+	z80.memptr.w++;
       }
       break;
     case 0xa2:		/* INI */
@@ -300,6 +311,7 @@
 	initemp = readport( BC );
 	writebyte( HL, initemp );
 
+	z80.memptr.w=BC + 1;
         B--; HL++;
         initemp2 = initemp + C + 1;
 	F = ( initemp & 0x80 ? FLAG_N : 0 ) |
@@ -315,6 +327,7 @@
 	contend_read_no_mreq( IR, 1 );
 	outitemp = readbyte( HL );
 	B--;	/* This does happen first, despite what the specs say */
+	z80.memptr.w = BC + 1;
 	writeport(BC,outitemp);
 
 	HL++;
@@ -352,6 +365,7 @@
 	  ( bytetemp & FLAG_S );
 	if(F & FLAG_H) bytetemp--;
 	F |= ( bytetemp & FLAG_3 ) | ( (bytetemp&0x02) ? FLAG_5 : 0 );
+	z80.memptr.w--;
       }
       break;
     case 0xaa:		/* IND */
@@ -362,6 +376,7 @@
 	initemp = readport( BC );
 	writebyte( HL, initemp );
 
+	z80.memptr.w=BC - 1;
         B--; HL--;
         initemp2 = initemp + C - 1;
 	F = ( initemp & 0x80 ? FLAG_N : 0 ) |
@@ -377,6 +392,7 @@
 	contend_read_no_mreq( IR, 1 );
 	outitemp = readbyte( HL );
 	B--;	/* This does happen first, despite what the specs say */
+	z80.memptr.w = BC - 1;
 	writeport(BC,outitemp);
 
 	HL--;
@@ -401,6 +417,7 @@
 	  contend_write_no_mreq( DE, 1 ); contend_write_no_mreq( DE, 1 );
 	  contend_write_no_mreq( DE, 1 );
 	  PC-=2;
+	  z80.memptr.w = PC+1;
 	}
         HL++; DE++;
       }
@@ -425,6 +442,9 @@
 	  contend_read_no_mreq( HL, 1 ); contend_read_no_mreq( HL, 1 );
 	  contend_read_no_mreq( HL, 1 );
 	  PC-=2;
+	  z80.memptr.w = PC+1;
+	} else {
+	  z80.memptr.w++;
 	}
 	HL++;
       }
@@ -437,6 +457,7 @@
 	initemp = readport( BC );
 	writebyte( HL, initemp );
 
+	z80.memptr.w=BC + 1;
 	B--;
         initemp2 = initemp + C + 1;
 	F = ( initemp & 0x80 ? FLAG_N : 0 ) |
@@ -460,6 +481,7 @@
 	contend_read_no_mreq( IR, 1 );
 	outitemp = readbyte( HL );
 	B--;	/* This does happen first, despite what the specs say */
+	z80.memptr.w = BC + 1;
 	writeport(BC,outitemp);
 
 	HL++;
@@ -491,6 +513,7 @@
 	  contend_write_no_mreq( DE, 1 ); contend_write_no_mreq( DE, 1 );
 	  contend_write_no_mreq( DE, 1 );
 	  PC-=2;
+	  z80.memptr.w = PC+1;
 	}
         HL--; DE--;
       }
@@ -515,6 +538,9 @@
 	  contend_read_no_mreq( HL, 1 ); contend_read_no_mreq( HL, 1 );
 	  contend_read_no_mreq( HL, 1 );
 	  PC-=2;
+	  z80.memptr.w = PC+1;
+	} else {
+	  z80.memptr.w--;
 	}
 	HL--;
       }
@@ -527,6 +553,7 @@
 	initemp = readport( BC );
 	writebyte( HL, initemp );
 
+	z80.memptr.w=BC - 1;
 	B--;
         initemp2 = initemp + C - 1;
 	F = ( initemp & 0x80 ? FLAG_N : 0 ) |
@@ -550,6 +577,7 @@
 	contend_read_no_mreq( IR, 1 );
 	outitemp = readbyte( HL );
 	B--;	/* This does happen first, despite what the specs say */
+	z80.memptr.w = BC - 1;
 	writeport(BC,outitemp);
 
 	HL--;

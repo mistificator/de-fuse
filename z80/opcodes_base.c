@@ -31,6 +31,8 @@
       B=readbyte(PC++);
       break;
     case 0x02:		/* LD (BC),A */
+      z80.memptr.b.l=BC+1;
+      z80.memptr.b.h=A;
       writebyte(BC,A);
       break;
     case 0x03:		/* INC BC */
@@ -75,6 +77,7 @@
       ADD16(HL,BC);
       break;
     case 0x0a:		/* LD A,(BC) */
+      z80.memptr.w=BC+1;
       A=readbyte(BC);
       break;
     case 0x0b:		/* DEC BC */
@@ -103,14 +106,16 @@
 	JR();
       } else {
 	contend_read( PC, 3 );
+        PC++;
       }
-      PC++;
       break;
     case 0x11:		/* LD DE,nnnn */
       E=readbyte(PC++);
       D=readbyte(PC++);
       break;
     case 0x12:		/* LD (DE),A */
+      z80.memptr.b.l=DE+1;
+      z80.memptr.b.h=A;
       writebyte(DE,A);
       break;
     case 0x13:		/* INC DE */
@@ -137,7 +142,6 @@
       break;
     case 0x18:		/* JR offset */
       JR();
-      PC++;
       break;
     case 0x19:		/* ADD HL,DE */
       contend_read_no_mreq( IR, 1 );
@@ -150,6 +154,7 @@
       ADD16(HL,DE);
       break;
     case 0x1a:		/* LD A,(DE) */
+      z80.memptr.w=DE+1;
       A=readbyte(DE);
       break;
     case 0x1b:		/* DEC DE */
@@ -179,8 +184,8 @@
         JR();
       } else {
         contend_read( PC, 3 );
+	PC++;
       }
-      PC++;
       break;
     case 0x21:		/* LD HL,nnnn */
       L=readbyte(PC++);
@@ -222,8 +227,8 @@
         JR();
       } else {
         contend_read( PC, 3 );
+	PC++;
       }
-      PC++;
       break;
     case 0x29:		/* ADD HL,HL */
       contend_read_no_mreq( IR, 1 );
@@ -262,8 +267,8 @@
         JR();
       } else {
         contend_read( PC, 3 );
+	PC++;
       }
-      PC++;
       break;
     case 0x31:		/* LD SP,nnnn */
       SPL=readbyte(PC++);
@@ -273,6 +278,8 @@
       {
 	libspectrum_word wordtemp = readbyte( PC++ );
 	wordtemp|=readbyte(PC++) << 8;
+	z80.memptr.b.l = wordtemp + 1;
+	z80.memptr.b.h = A;
 	writebyte(wordtemp,A);
       }
       break;
@@ -310,8 +317,8 @@
         JR();
       } else {
         contend_read( PC, 3 );
+	PC++;
       }
-      PC++;
       break;
     case 0x39:		/* ADD HL,SP */
       contend_read_no_mreq( IR, 1 );
@@ -325,10 +332,9 @@
       break;
     case 0x3a:		/* LD A,(nnnn) */
       {
-	libspectrum_word wordtemp;
-	wordtemp = readbyte(PC++);
-	wordtemp|= ( readbyte(PC++) << 8 );
-	A=readbyte(wordtemp);
+	z80.memptr.b.l = readbyte(PC++);
+	z80.memptr.b.h = readbyte(PC++);
+	A=readbyte(z80.memptr.w++);
       }
       break;
     case 0x3b:		/* DEC SP */
@@ -762,20 +768,26 @@
       POP16(C,B);
       break;
     case 0xc2:		/* JP NZ,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_Z ) ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xc3:		/* JP nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       JP();
       break;
     case 0xc4:		/* CALL NZ,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_Z ) ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xc5:		/* PUSH BC */
@@ -800,10 +812,12 @@
       RET();
       break;
     case 0xca:		/* JP Z,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_Z ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xcb:		/* shift CB */
@@ -822,13 +836,17 @@
       }
       break;
     case 0xcc:		/* CALL Z,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_Z ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xcd:		/* CALL nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       CALL();
       break;
     case 0xce:		/* ADC A,nn */
@@ -849,24 +867,30 @@
       POP16(E,D);
       break;
     case 0xd2:		/* JP NC,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_C ) ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xd3:		/* OUT (nn),A */
-      { 
-	libspectrum_word outtemp;
-	outtemp = readbyte( PC++ ) + ( A << 8 );
+      {
+	libspectrum_byte nn = readbyte( PC++ );
+	libspectrum_word outtemp = nn | ( A << 8 );
+	z80.memptr.b.h = A;
+	z80.memptr.b.l = (nn + 1);
 	writeport( outtemp, A );
       }
       break;
     case 0xd4:		/* CALL NC,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_C ) ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xd5:		/* PUSH DE */
@@ -896,24 +920,30 @@
       }
       break;
     case 0xda:		/* JP C,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_C ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xdb:		/* IN A,(nn) */
-      { 
+      {
 	libspectrum_word intemp;
 	intemp = readbyte( PC++ ) + ( A << 8 );
         A=readport( intemp );
+	/* TODO: is this correct if (nn) was 0xff? */
+	z80.memptr.w = intemp + 1;
       }
       break;
     case 0xdc:		/* CALL C,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_C ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xdd:		/* shift DD */
@@ -955,10 +985,12 @@
       POP16(L,H);
       break;
     case 0xe2:		/* JP PO,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_P ) ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xe3:		/* EX (SP),HL */
@@ -969,14 +1001,17 @@
 	writebyte( SP + 1, H );
 	writebyte( SP,     L  );
 	contend_write_no_mreq( SP, 1 ); contend_write_no_mreq( SP, 1 );
-	L=bytetempl; H=bytetemph;
+	L=z80.memptr.b.l=bytetempl;
+	H=z80.memptr.b.h=bytetemph;
       }
       break;
     case 0xe4:		/* CALL PO,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_P ) ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xe5:		/* PUSH HL */
@@ -1001,10 +1036,12 @@
       PC=HL;		/* NB: NOT INDIRECT! */
       break;
     case 0xea:		/* JP PE,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_P ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xeb:		/* EX DE,HL */
@@ -1013,10 +1050,12 @@
       }
       break;
     case 0xec:		/* CALL PE,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_P ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xed:		/* shift ED */
@@ -1052,20 +1091,24 @@
       POP16(F,A);
       break;
     case 0xf2:		/* JP P,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_S ) ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xf3:		/* DI */
       IFF1=IFF2=0;
       break;
     case 0xf4:		/* CALL P,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( ! ( F & FLAG_S ) ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xf5:		/* PUSH AF */
@@ -1092,10 +1135,12 @@
       SP = HL;
       break;
     case 0xfa:		/* JP M,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_S ) {
 	JP();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xfb:		/* EI */
@@ -1106,10 +1151,12 @@
       event_add( tstates + 1, z80_interrupt_event );
       break;
     case 0xfc:		/* CALL M,nnnn */
+      z80.memptr.b.l = readbyte(PC++);
+      z80.memptr.b.h = readbyte(PC);
       if( F & FLAG_S ) {
 	CALL();
       } else {
-	contend_read( PC, 3 ); contend_read( PC + 1, 3 ); PC += 2;
+        PC++;
       }
       break;
     case 0xfd:		/* shift FD */
