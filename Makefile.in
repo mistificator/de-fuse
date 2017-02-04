@@ -222,21 +222,21 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(fusemimedir)" "$(DESTDIR)$(pkgdatadir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
-	loader.c machine.c memory.c mempool.c menu.c movie.c module.c \
-	periph.c profile.c psg.c rectangle.c rzx.c screenshot.c \
-	settings.c slt.c snapshot.c sound.c spectrum.c svg.c tape.c \
-	ui.c uidisplay.c uimedia.c utils.c windres.rc compat/dirname.c \
-	compat/getopt.c compat/getopt1.c compat/unix/dir.c \
-	compat/unix/file.c compat/amiga/osname.c compat/amiga/paths.c \
-	compat/unix/timer.c compat/unix/osname.c compat/linux/paths.c \
-	compat/unix/socket.c compat/morphos/osname.c \
-	compat/unix/paths.c compat/wii/dir.c compat/wii/osname.c \
-	compat/wii/paths.c compat/wii/timer.c compat/win32/osname.c \
-	compat/win32/paths.c compat/win32/timer.c \
-	compat/win32/socket.c compat/unix/tuntap.c \
-	debugger/breakpoint.c debugger/command.c debugger/commandl.l \
-	debugger/commandy.y debugger/debugger.c debugger/disassemble.c \
-	debugger/event.c debugger/expression.c \
+	loader.c machine.c memory_pages.c mempool.c menu.c movie.c \
+	module.c periph.c profile.c psg.c rectangle.c rzx.c \
+	screenshot.c settings.c slt.c snapshot.c sound.c spectrum.c \
+	svg.c tape.c ui.c uidisplay.c uimedia.c utils.c windres.rc \
+	compat/dirname.c compat/getopt.c compat/getopt1.c \
+	compat/unix/dir.c compat/unix/file.c compat/amiga/osname.c \
+	compat/amiga/paths.c compat/unix/timer.c compat/unix/osname.c \
+	compat/linux/paths.c compat/unix/socket.c \
+	compat/morphos/osname.c compat/unix/paths.c compat/wii/dir.c \
+	compat/wii/osname.c compat/wii/paths.c compat/wii/timer.c \
+	compat/win32/osname.c compat/win32/paths.c \
+	compat/win32/timer.c compat/win32/socket.c \
+	compat/unix/tuntap.c debugger/breakpoint.c debugger/command.c \
+	debugger/commandl.l debugger/commandy.y debugger/debugger.c \
+	debugger/disassemble.c debugger/event.c debugger/expression.c \
 	debugger/system_variable.c debugger/variable.c \
 	infrastructure/startup_manager.c machines/machines_periph.c \
 	machines/pentagon.c machines/pentagon512.c \
@@ -413,7 +413,7 @@ am__objects_31 = ui/xlib/keysyms.$(OBJEXT) ui/xlib/xdisplay.$(OBJEXT) \
 @UI_X_TRUE@am__objects_32 = $(am__objects_31)
 am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	input.$(OBJEXT) keyboard.$(OBJEXT) loader.$(OBJEXT) \
-	machine.$(OBJEXT) memory.$(OBJEXT) mempool.$(OBJEXT) \
+	machine.$(OBJEXT) memory_pages.$(OBJEXT) mempool.$(OBJEXT) \
 	menu.$(OBJEXT) movie.$(OBJEXT) module.$(OBJEXT) \
 	periph.$(OBJEXT) profile.$(OBJEXT) psg.$(OBJEXT) \
 	rectangle.$(OBJEXT) rzx.$(OBJEXT) screenshot.$(OBJEXT) \
@@ -804,28 +804,29 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
 fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
-	machine.c memory.c mempool.c menu.c movie.c module.c periph.c \
-	profile.c psg.c rectangle.c rzx.c screenshot.c settings.c \
-	slt.c snapshot.c sound.c spectrum.c svg.c tape.c ui.c \
-	uidisplay.c uimedia.c utils.c $(am__append_1) $(am__append_4) \
-	$(am__append_5) $(am__append_6) $(am__append_7) \
-	$(am__append_8) $(am__append_9) $(am__append_10) \
-	$(am__append_11) $(am__append_12) $(am__append_13) \
-	$(am__append_14) $(am__append_15) debugger/breakpoint.c \
-	debugger/command.c debugger/commandl.l debugger/commandy.y \
-	debugger/debugger.c debugger/disassemble.c debugger/event.c \
-	debugger/expression.c debugger/system_variable.c \
-	debugger/variable.c infrastructure/startup_manager.c \
-	machines/machines_periph.c machines/pentagon.c \
-	machines/pentagon512.c machines/pentagon1024.c \
-	machines/scorpion.c machines/spec128.c machines/spec16.c \
-	machines/spec48.c machines/spec48_ntsc.c machines/specplus2.c \
-	machines/spec_se.c machines/specplus2a.c machines/specplus3.c \
-	machines/specplus3e.c machines/tc2048.c machines/tc2068.c \
-	machines/ts2068.c peripherals/ay.c peripherals/dck.c \
-	peripherals/fuller.c peripherals/if1.c peripherals/if2.c \
-	peripherals/joystick.c peripherals/kempmouse.c \
-	peripherals/melodik.c peripherals/printer.c peripherals/scld.c \
+	machine.c memory_pages.c mempool.c menu.c movie.c module.c \
+	periph.c profile.c psg.c rectangle.c rzx.c screenshot.c \
+	settings.c slt.c snapshot.c sound.c spectrum.c svg.c tape.c \
+	ui.c uidisplay.c uimedia.c utils.c $(am__append_1) \
+	$(am__append_4) $(am__append_5) $(am__append_6) \
+	$(am__append_7) $(am__append_8) $(am__append_9) \
+	$(am__append_10) $(am__append_11) $(am__append_12) \
+	$(am__append_13) $(am__append_14) $(am__append_15) \
+	debugger/breakpoint.c debugger/command.c debugger/commandl.l \
+	debugger/commandy.y debugger/debugger.c debugger/disassemble.c \
+	debugger/event.c debugger/expression.c \
+	debugger/system_variable.c debugger/variable.c \
+	infrastructure/startup_manager.c machines/machines_periph.c \
+	machines/pentagon.c machines/pentagon512.c \
+	machines/pentagon1024.c machines/scorpion.c machines/spec128.c \
+	machines/spec16.c machines/spec48.c machines/spec48_ntsc.c \
+	machines/specplus2.c machines/spec_se.c machines/specplus2a.c \
+	machines/specplus3.c machines/specplus3e.c machines/tc2048.c \
+	machines/tc2068.c machines/ts2068.c peripherals/ay.c \
+	peripherals/dck.c peripherals/fuller.c peripherals/if1.c \
+	peripherals/if2.c peripherals/joystick.c \
+	peripherals/kempmouse.c peripherals/melodik.c \
+	peripherals/printer.c peripherals/scld.c \
 	peripherals/speccyboot.c peripherals/specdrum.c \
 	peripherals/spectranet.c peripherals/ula.c \
 	peripherals/usource.c peripherals/disk/beta.c \
@@ -870,7 +871,7 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = $(WARN_CFLAGS) $(PTHREAD_CFLAGS)
 noinst_HEADERS = bitmap.h compat.h display.h event.h fuse.h input.h \
-	keyboard.h loader.h machine.h memory.h mempool.h menu.h \
+	keyboard.h loader.h machine.h memory_pages.h mempool.h menu.h \
 	movie.h movie_tables.h module.h periph.h psg.h rectangle.h \
 	rzx.h screenshot.h settings.h slt.h snapshot.h sound.h \
 	spectrum.h svg.h tape.h utils.h options.h profile.h \
@@ -1994,7 +1995,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keyboard.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/machine.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/memory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/memory_pages.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mempool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/menu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/module.Po@am__quote@
