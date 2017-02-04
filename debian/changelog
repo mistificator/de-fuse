@@ -1,3 +1,13 @@
+fuse-emulator (1.3.3+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * manpage-errors.patch:
+    - Refresh.
+  * debian/copyright:
+    - Update copyright years.
+
+ -- Alberto Garcia <berto@igalia.com>  Sat, 04 Feb 2017 12:39:48 +0200
+
 fuse-emulator (1.3.2+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
