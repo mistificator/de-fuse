@@ -76,6 +76,10 @@ int handle_menu( DWORD cmd, HWND window )
       menu_file_movie_pause( 0 ); return 0;
     case IDM_MENU_FILE_MOVIE_STOP:
       menu_file_movie_stop( 0 ); return 0;
+    case IDM_MENU_FILE_LOADBINARYDATA:
+      menu_file_loadbinarydata( 0 ); return 0;
+    case IDM_MENU_FILE_SAVEBINARYDATA:
+      menu_file_savebinarydata( 0 ); return 0;
     case IDM_MENU_FILE_EXIT:
       menu_file_exit( 0 ); return 0;
     case IDM_MENU_OPTIONS_GENERAL:
@@ -146,6 +150,8 @@ int handle_menu( DWORD cmd, HWND window )
       menu_options_diskoptions( 0 ); return 0;
     case IDM_MENU_OPTIONS_SAVE:
       menu_options_save( 0 ); return 0;
+    case IDM_MENU_MACHINE_PAUSE:
+      menu_machine_pause( 0 ); return 0;
     case IDM_MENU_MACHINE_RESET:
       menu_machine_reset( 0 ); return 0;
     case IDM_MENU_MACHINE_HARDRESET:

@@ -73,6 +73,8 @@ static widget_menu_entry menu_file[] = {
   { "S\012a\011ve Screen as SCR...", INPUT_KEY_a, NULL, menu_file_savescreenasscr, NULL, 0 },
   { "Save S\012c\011reen as PNG...", INPUT_KEY_c, NULL, menu_file_savescreenaspng, NULL, 0 },
   { "\012M\011ovie", INPUT_KEY_m, menu_file_movie, NULL, NULL, 0 },
+  { "Loa\012d\011 binary data...", INPUT_KEY_d, NULL, menu_file_loadbinarydata, NULL, 0 },
+  { "Save \012b\011inary data...", INPUT_KEY_b, NULL, menu_file_savebinarydata, NULL, 0 },
   { "E\012x\011it...", INPUT_KEY_x, NULL, menu_file_exit, NULL, 0 },
   { NULL }
 };
@@ -155,6 +157,7 @@ static widget_menu_entry menu_machine_profiler[] = {
 
 static widget_menu_entry menu_machine[] = {
   { "Machine" },
+  { "\012P\011ause...", INPUT_KEY_p, NULL, menu_machine_pause, NULL, 0 },
   { "\012R\011eset...", INPUT_KEY_r, NULL, menu_machine_reset, NULL, 0 },
   { "\012H\011ard reset...", INPUT_KEY_h, NULL, menu_machine_reset, NULL, 1 },
   { "\012S\011elect...", INPUT_KEY_s, NULL, menu_machine_select, menu_machine_detail, 0 },
