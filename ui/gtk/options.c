@@ -511,6 +511,12 @@ menu_options_peripherals_general( GtkWidget *widget GCC_UNUSED,
                                 settings_current.usource );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.usource );
 
+  dialog.covox =
+    gtk_check_button_new_with_label( "Covox interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.covox ),
+                                settings_current.covox );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.covox );
+
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_peripherals_general_done ),
@@ -578,6 +584,9 @@ menu_options_peripherals_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.usource =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->usource ) );
+
+  settings_current.covox =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->covox ) );
 
   int needs_hard_reset = periph_postcheck();
 
@@ -1097,6 +1106,28 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
     gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
   }
 
+  {
+    GtkWidget *frame = gtk_frame_new( "Covox volume" );
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *text = gtk_label_new( "%" );
+    gchar buffer[80];
+
+    gtk_box_pack_start( GTK_BOX( content_area ), frame, TRUE, TRUE, 0 );
+
+    gtk_container_set_border_width( GTK_CONTAINER( hbox ), 4 );
+    gtk_container_add( GTK_CONTAINER( frame ), hbox );
+
+    dialog.volume_covox = gtk_entry_new();
+    gtk_entry_set_max_length( GTK_ENTRY( dialog.volume_covox ),
+                              3 );
+    snprintf( buffer, 80, "%d", settings_current.volume_covox );
+    gtk_entry_set_text( GTK_ENTRY( dialog.volume_covox ), buffer );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_covox, TRUE, TRUE, 0 );
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+  }
+
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_sound_done ),
@@ -1143,6 +1174,9 @@ menu_options_sound_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.volume_specdrum =
     atoi( gtk_entry_get_text( GTK_ENTRY( ptr->volume_specdrum ) ) );
+
+  settings_current.volume_covox =
+    atoi( gtk_entry_get_text( GTK_ENTRY( ptr->volume_covox ) ) );
 
   gtk_widget_destroy( ptr->dialog );
 

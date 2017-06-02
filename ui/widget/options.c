@@ -365,6 +365,8 @@ static void widget_spectranet_disable_click( void );
 static void widget_option_spectranet_disable_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_usource_click( void );
 static void widget_option_usource_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_covox_click( void );
+static void widget_option_covox_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static int  widget_peripherals_disk_running = 0;
 static void widget_simpleide_active_click( void );
 static void widget_option_simpleide_active_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
@@ -422,6 +424,8 @@ static void widget_volume_beeper_click( void );
 static void widget_option_volume_beeper_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_volume_specdrum_click( void );
 static void widget_option_volume_specdrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_volume_covox_click( void );
+static void widget_option_volume_covox_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static int  widget_diskoptions_running = 0;
 static void widget_drive_plus3a_type_click( void );
 static void widget_option_drive_plus3a_type_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
@@ -512,6 +516,7 @@ static widget_option_entry options_peripherals_general[] = {
   { "Spectra\012n\001et", 11, INPUT_KEY_n, NULL, NULL, widget_spectranet_click, widget_option_spectranet_draw },
   { "Spe\012c\001tranet disable", 12, INPUT_KEY_c, NULL, NULL, widget_spectranet_disable_click, widget_option_spectranet_disable_draw },
   { "uSo\012u\001rce", 13, INPUT_KEY_u, NULL, NULL, widget_usource_click, widget_option_usource_draw },
+  { "C\012o\001vox interface", 14, INPUT_KEY_o, NULL, NULL, widget_covox_click, widget_option_covox_draw },
   { NULL }
 };
 
@@ -554,6 +559,7 @@ static widget_option_entry options_sound[] = {
   { "A\012Y\001 volume", 5, INPUT_KEY_y, "%", NULL, widget_volume_ay_click, widget_option_volume_ay_draw },
   { "B\012e\001eper volume", 6, INPUT_KEY_e, "%", NULL, widget_volume_beeper_click, widget_option_volume_beeper_draw },
   { "Spec\012D\001rum volume", 7, INPUT_KEY_d, "%", NULL, widget_volume_specdrum_click, widget_option_volume_specdrum_draw },
+  { "\012C\001ovox volume", 8, INPUT_KEY_c, "%", NULL, widget_volume_covox_click, widget_option_volume_covox_draw },
   { NULL }
 };
 
@@ -1529,6 +1535,18 @@ widget_option_usource_draw( int left_edge, int width, struct widget_option_entry
   widget_options_print_option( left_edge, width, menu->index, menu->text, show->usource );
 }
 
+static void
+widget_covox_click( void )
+{
+  widget_options_settings.covox = ! widget_options_settings.covox;
+}
+
+static void
+widget_option_covox_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->covox );
+}
+
 void
 widget_peripherals_general_keyhandler( input_key key )
 {
@@ -1542,7 +1560,7 @@ widget_peripherals_general_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 14 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 15 );
     widget_peripherals_general_show_all( &widget_options_settings );
     break;
 #endif
@@ -1565,7 +1583,7 @@ widget_peripherals_general_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 14 ) {
+    if ( highlight_line + 1 < 15 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1579,8 +1597,8 @@ widget_peripherals_general_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 14 ) {
-      new_highlight_line = 14 - 1;
+    if ( highlight_line + 2 < 15 ) {
+      new_highlight_line = 15 - 1;
       cursor_pressed = 1;
     }
     break;
@@ -2249,6 +2267,30 @@ widget_option_volume_specdrum_draw( int left_edge, int width, struct widget_opti
                               menu->suffix );
 }
 
+static void
+widget_volume_covox_click( void )
+{
+  widget_text_t text_data;
+
+  text_data.title = "Covox volume";
+  text_data.allow = WIDGET_INPUT_DIGIT;
+  text_data.max_length = 3;
+  snprintf( text_data.text, 40, "%d",
+            widget_options_settings.volume_covox );
+  widget_do_text( &text_data );
+
+  if( widget_text_text ) {
+    widget_options_settings.volume_covox = atoi( widget_text_text );
+  }
+}
+
+static void
+widget_option_volume_covox_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_entry( left_edge, width, menu->index, menu->text, show->volume_covox,
+                              menu->suffix );
+}
+
 void
 widget_sound_keyhandler( input_key key )
 {
@@ -2262,7 +2304,7 @@ widget_sound_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 8 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 9 );
     widget_sound_show_all( &widget_options_settings );
     break;
 #endif
@@ -2285,7 +2327,7 @@ widget_sound_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 8 ) {
+    if ( highlight_line + 1 < 9 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -2299,8 +2341,8 @@ widget_sound_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 8 ) {
-      new_highlight_line = 8 - 1;
+    if ( highlight_line + 2 < 9 ) {
+      new_highlight_line = 9 - 1;
       cursor_pressed = 1;
     }
     break;
