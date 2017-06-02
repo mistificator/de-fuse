@@ -414,6 +414,9 @@ menu_options_peripherals_general_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_USOURCE, BM_SETCHECK,
     settings_current.usource ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_COVOX, BM_SETCHECK,
+    settings_current.covox ? BST_CHECKED : BST_UNCHECKED, 0 );
+
 }
 
 static void
@@ -470,6 +473,9 @@ menu_options_peripherals_general_done( HWND hwndDlg )
 
   settings_current.usource =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_USOURCE );
+
+  settings_current.covox =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_COVOX );
 
   int needs_hard_reset = periph_postcheck();
 
@@ -953,6 +959,13 @@ menu_options_sound_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_SPECDRUM, WM_SETTEXT,
                       0, (LPARAM) buffer );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_COVOX, EM_LIMITTEXT,
+                      3, 0 );
+  /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+  snprintf( buffer, 80, "%d", settings_current.volume_covox );
+  SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_COVOX, WM_SETTEXT,
+                      0, (LPARAM) buffer );
+
 }
 
 static void
@@ -996,6 +1009,11 @@ menu_options_sound_done( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_SPECDRUM, WM_GETTEXT,
                       80, (LPARAM) buffer );
   settings_current.volume_specdrum = atoi( buffer );
+
+  /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+  SendDlgItemMessage( hwndDlg, IDC_OPT_SOUND_VOLUME_COVOX, WM_GETTEXT,
+                      80, (LPARAM) buffer );
+  settings_current.volume_covox = atoi( buffer );
 
   win32statusbar_set_visibility( settings_current.statusbar );
   display_refresh_all();

@@ -80,6 +80,7 @@ settings_info settings_default = {
   /* competition_code */ 0,
   /* competition_mode */ 0,
   /* confirm_actions */ 1,
+  /* covox */ 0,
   /* dck_file */ (char *)NULL,
   /* debugger_command */ (char *)NULL,
   /* detect_loader */ 1,
@@ -277,6 +278,7 @@ settings_info settings_default = {
   /* usource */ 0,
   /* volume_ay */ 100,
   /* volume_beeper */ 100,
+  /* volume_covox */ 100,
   /* volume_specdrum */ 100,
   /* writable_roms */ 0,
   /* z80_is_cmos */ 0,
@@ -456,6 +458,13 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
         settings->confirm_actions = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
+    if( !strcmp( (const char*)node->name, "covox" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->covox = atoi( (char*)xmlstring );
         xmlFree( xmlstring );
       }
     } else
@@ -1950,6 +1959,13 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "volumecovox" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->volume_covox = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "volumespecdrum" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
@@ -2080,6 +2096,7 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"competitioncode", (const xmlChar*)buffer );
   xmlNewTextChild( root, NULL, (const xmlChar*)"competitionmode", (const xmlChar*)(settings->competition_mode ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"confirmactions", (const xmlChar*)(settings->confirm_actions ? "1" : "0") );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"covox", (const xmlChar*)(settings->covox ? "1" : "0") );
   if( settings->dck_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"dock", (const xmlChar*)settings->dck_file );
   if( settings->debugger_command )
@@ -2428,6 +2445,8 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"volumeay", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->volume_beeper );
   xmlNewTextChild( root, NULL, (const xmlChar*)"volumebeeper", (const xmlChar*)buffer );
+  snprintf( buffer, 80, "%d", settings->volume_covox );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"volumecovox", (const xmlChar*)buffer );
   snprintf( buffer, 80, "%d", settings->volume_specdrum );
   xmlNewTextChild( root, NULL, (const xmlChar*)"volumespecdrum", (const xmlChar*)buffer );
   xmlNewTextChild( root, NULL, (const xmlChar*)"writableroms", (const xmlChar*)(settings->writable_roms ? "1" : "0") );
@@ -2566,6 +2585,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 14 && !strncmp( (const char *)name, "confirmactions", n ) ) {
     *val_int = &settings->confirm_actions;
+    return 0;
+  }
+  if( n == 5 && !strncmp( (const char *)name, "covox", n ) ) {
+    *val_int = &settings->covox;
     return 0;
   }
   if( n == 4 && !strncmp( (const char *)name, "dock", n ) ) {
@@ -3368,6 +3391,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_int = &settings->volume_beeper;
     return 0;
   }
+  if( n == 11 && !strncmp( (const char *)name, "volumecovox", n ) ) {
+    *val_int = &settings->volume_covox;
+    return 0;
+  }
   if( n == 14 && !strncmp( (const char *)name, "volumespecdrum", n ) ) {
     *val_int = &settings->volume_specdrum;
     return 0;
@@ -3551,6 +3578,9 @@ settings_write_config( settings_info *settings )
     goto error;
   if( settings_boolean_write( doc, "confirmactions",
                               settings->confirm_actions ) )
+    goto error;
+  if( settings_boolean_write( doc, "covox",
+                              settings->covox ) )
     goto error;
   if( settings_string_write( doc, "dock",
                              settings->dck_file ) )
@@ -4143,6 +4173,9 @@ settings_write_config( settings_info *settings )
   if( settings_numeric_write( doc, "volumebeeper",
                               settings->volume_beeper ) )
     goto error;
+  if( settings_numeric_write( doc, "volumecovox",
+                              settings->volume_covox ) )
+    goto error;
   if( settings_numeric_write( doc, "volumespecdrum",
                               settings->volume_specdrum ) )
     goto error;
@@ -4226,6 +4259,8 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-competition-mode", 0, &(settings->competition_mode), 0 },
     {    "confirm-actions", 0, &(settings->confirm_actions), 1 },
     { "no-confirm-actions", 0, &(settings->confirm_actions), 0 },
+    {    "covox", 0, &(settings->covox), 1 },
+    { "no-covox", 0, &(settings->covox), 0 },
     { "dock", 1, NULL, 258 },
     { "debugger-command", 1, NULL, 259 },
     {    "detect-loader", 0, &(settings->detect_loader), 1 },
@@ -4469,22 +4504,23 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-usource", 0, &(settings->usource), 0 },
     { "volume-ay", 1, NULL, 399 },
     { "volume-beeper", 1, NULL, 400 },
-    { "volume-specdrum", 1, NULL, 401 },
+    { "volume-covox", 1, NULL, 401 },
+    { "volume-specdrum", 1, NULL, 402 },
     {    "writable-roms", 0, &(settings->writable_roms), 1 },
     { "no-writable-roms", 0, &(settings->writable_roms), 0 },
     {    "cmos-z80", 0, &(settings->z80_is_cmos), 1 },
     { "no-cmos-z80", 0, &(settings->z80_is_cmos), 0 },
     {    "zxatasp", 0, &(settings->zxatasp_active), 1 },
     { "no-zxatasp", 0, &(settings->zxatasp_active), 0 },
-    { "zxatasp-masterfile", 1, NULL, 402 },
-    { "zxatasp-slavefile", 1, NULL, 403 },
+    { "zxatasp-masterfile", 1, NULL, 403 },
+    { "zxatasp-slavefile", 1, NULL, 404 },
     {    "zxatasp-upload", 0, &(settings->zxatasp_upload), 1 },
     { "no-zxatasp-upload", 0, &(settings->zxatasp_upload), 0 },
     {    "zxatasp-write-protect", 0, &(settings->zxatasp_wp), 1 },
     { "no-zxatasp-write-protect", 0, &(settings->zxatasp_wp), 0 },
     {    "zxcf", 0, &(settings->zxcf_active), 1 },
     { "no-zxcf", 0, &(settings->zxcf_active), 0 },
-    { "zxcf-cffile", 1, NULL, 404 },
+    { "zxcf-cffile", 1, NULL, 405 },
     {    "zxcf-upload", 0, &(settings->zxcf_upload), 1 },
     { "no-zxcf-upload", 0, &(settings->zxcf_upload), 0 },
     {    "zxprinter", 0, &(settings->zxprinter), 1 },
@@ -4668,10 +4704,11 @@ settings_command_line( settings_info *settings, int *first_arg,
     case 't': settings_set_string( &settings->tape_file, optarg ); break;
     case 399: settings->volume_ay = atoi( optarg ); break;
     case 400: settings->volume_beeper = atoi( optarg ); break;
-    case 401: settings->volume_specdrum = atoi( optarg ); break;
-    case 402: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
-    case 403: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
-    case 404: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
+    case 401: settings->volume_covox = atoi( optarg ); break;
+    case 402: settings->volume_specdrum = atoi( optarg ); break;
+    case 403: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
+    case 404: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
+    case 405: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
 #line 657"./settings.pl"
 
     case 'h': settings->show_help = 1; break;
@@ -4715,6 +4752,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->competition_code = src->competition_code;
   dest->competition_mode = src->competition_mode;
   dest->confirm_actions = src->confirm_actions;
+  dest->covox = src->covox;
   dest->dck_file = NULL;
   if( src->dck_file ) {
     dest->dck_file = utils_safe_strdup( src->dck_file );
@@ -5221,6 +5259,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   dest->usource = src->usource;
   dest->volume_ay = src->volume_ay;
   dest->volume_beeper = src->volume_beeper;
+  dest->volume_covox = src->volume_covox;
   dest->volume_specdrum = src->volume_specdrum;
   dest->writable_roms = src->writable_roms;
   dest->z80_is_cmos = src->z80_is_cmos;

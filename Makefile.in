@@ -245,8 +245,8 @@ am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	machines/specplus2.c machines/spec_se.c machines/specplus2a.c \
 	machines/specplus3.c machines/specplus3e.c machines/tc2048.c \
 	machines/tc2068.c machines/ts2068.c peripherals/ay.c \
-	peripherals/dck.c peripherals/fuller.c peripherals/if1.c \
-	peripherals/if2.c peripherals/joystick.c \
+	peripherals/covox.c peripherals/dck.c peripherals/fuller.c \
+	peripherals/if1.c peripherals/if2.c peripherals/joystick.c \
 	peripherals/kempmouse.c peripherals/melodik.c \
 	peripherals/printer.c peripherals/scld.c \
 	peripherals/speccyboot.c peripherals/specdrum.c \
@@ -440,11 +440,12 @@ am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	machines/specplus3.$(OBJEXT) machines/specplus3e.$(OBJEXT) \
 	machines/tc2048.$(OBJEXT) machines/tc2068.$(OBJEXT) \
 	machines/ts2068.$(OBJEXT) peripherals/ay.$(OBJEXT) \
-	peripherals/dck.$(OBJEXT) peripherals/fuller.$(OBJEXT) \
-	peripherals/if1.$(OBJEXT) peripherals/if2.$(OBJEXT) \
-	peripherals/joystick.$(OBJEXT) peripherals/kempmouse.$(OBJEXT) \
-	peripherals/melodik.$(OBJEXT) peripherals/printer.$(OBJEXT) \
-	peripherals/scld.$(OBJEXT) peripherals/speccyboot.$(OBJEXT) \
+	peripherals/covox.$(OBJEXT) peripherals/dck.$(OBJEXT) \
+	peripherals/fuller.$(OBJEXT) peripherals/if1.$(OBJEXT) \
+	peripherals/if2.$(OBJEXT) peripherals/joystick.$(OBJEXT) \
+	peripherals/kempmouse.$(OBJEXT) peripherals/melodik.$(OBJEXT) \
+	peripherals/printer.$(OBJEXT) peripherals/scld.$(OBJEXT) \
+	peripherals/speccyboot.$(OBJEXT) \
 	peripherals/specdrum.$(OBJEXT) \
 	peripherals/spectranet.$(OBJEXT) peripherals/ula.$(OBJEXT) \
 	peripherals/usource.$(OBJEXT) peripherals/disk/beta.$(OBJEXT) \
@@ -823,8 +824,8 @@ fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	machines/specplus2.c machines/spec_se.c machines/specplus2a.c \
 	machines/specplus3.c machines/specplus3e.c machines/tc2048.c \
 	machines/tc2068.c machines/ts2068.c peripherals/ay.c \
-	peripherals/dck.c peripherals/fuller.c peripherals/if1.c \
-	peripherals/if2.c peripherals/joystick.c \
+	peripherals/covox.c peripherals/dck.c peripherals/fuller.c \
+	peripherals/if1.c peripherals/if2.c peripherals/joystick.c \
 	peripherals/kempmouse.c peripherals/melodik.c \
 	peripherals/printer.c peripherals/scld.c \
 	peripherals/speccyboot.c peripherals/specdrum.c \
@@ -881,8 +882,8 @@ noinst_HEADERS = bitmap.h compat.h display.h event.h fuse.h input.h \
 	machines/machines_periph.h machines/pentagon.h \
 	machines/scorpion.h machines/spec128.h machines/spec48.h \
 	machines/specplus3.h machines/tc2068.h peripherals/ay.h \
-	peripherals/dck.h peripherals/fuller.h peripherals/if1.h \
-	peripherals/if2.h peripherals/joystick.h \
+	peripherals/covox.h peripherals/dck.h peripherals/fuller.h \
+	peripherals/if1.h peripherals/if2.h peripherals/joystick.h \
 	peripherals/kempmouse.h peripherals/melodik.h \
 	peripherals/printer.h peripherals/scld.h \
 	peripherals/speccyboot.h peripherals/specdrum.h \
@@ -1537,6 +1538,8 @@ peripherals/$(DEPDIR)/$(am__dirstamp):
 	@: > peripherals/$(DEPDIR)/$(am__dirstamp)
 peripherals/ay.$(OBJEXT): peripherals/$(am__dirstamp) \
 	peripherals/$(DEPDIR)/$(am__dirstamp)
+peripherals/covox.$(OBJEXT): peripherals/$(am__dirstamp) \
+	peripherals/$(DEPDIR)/$(am__dirstamp)
 peripherals/dck.$(OBJEXT): peripherals/$(am__dirstamp) \
 	peripherals/$(DEPDIR)/$(am__dirstamp)
 peripherals/fuller.$(OBJEXT): peripherals/$(am__dirstamp) \
@@ -2068,6 +2071,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@machines/$(DEPDIR)/tc2068.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@machines/$(DEPDIR)/ts2068.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/ay.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/covox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/dck.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/fuller.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/if1.Po@am__quote@

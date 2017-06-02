@@ -42,6 +42,7 @@ typedef struct settings_info {
    int competition_code;
    int competition_mode;
    int confirm_actions;
+   int covox;
   char *dck_file;
   char *debugger_command;
    int detect_loader;
@@ -239,6 +240,7 @@ typedef struct settings_info {
    int usource;
    int volume_ay;
    int volume_beeper;
+   int volume_covox;
    int volume_specdrum;
    int writable_roms;
    int z80_is_cmos;
