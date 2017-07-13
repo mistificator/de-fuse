@@ -138,12 +138,18 @@ int handle_menu( DWORD cmd, HWND window )
       menu_options_selectroms_peripheral_select( 4 ); return 0;
     case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_DISCIPLE:
       menu_options_selectroms_peripheral_select( 5 ); return 0;
-    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_OPUSDISCOVERY:
+    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACEONE:
       menu_options_selectroms_peripheral_select( 6 ); return 0;
-    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_SPECCYBOOT:
+    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACE128:
       menu_options_selectroms_peripheral_select( 7 ); return 0;
-    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_USOURCE:
+    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACE3:
       menu_options_selectroms_peripheral_select( 8 ); return 0;
+    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_OPUSDISCOVERY:
+      menu_options_selectroms_peripheral_select( 9 ); return 0;
+    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_SPECCYBOOT:
+      menu_options_selectroms_peripheral_select( 10 ); return 0;
+    case IDM_MENU_OPTIONS_SELECTROMS_PERIPHERALROMS_USOURCE:
+      menu_options_selectroms_peripheral_select( 11 ); return 0;
     case IDM_MENU_OPTIONS_FILTER:
       menu_options_filter( 0 ); return 0;
     case IDM_MENU_OPTIONS_DISKOPTIONS:
@@ -172,6 +178,8 @@ int handle_menu( DWORD cmd, HWND window )
       menu_machine_profiler_stop( 0 ); return 0;
     case IDM_MENU_MACHINE_NMI:
       menu_machine_nmi( 0 ); return 0;
+    case IDM_MENU_MACHINE_MULTIFACEREDBUTTON:
+      menu_machine_multifaceredbutton( 0 ); return 0;
     case IDM_MENU_MACHINE_DIDAKTIKSNAP:
       menu_machine_didaktiksnap( 0 ); return 0;
     case IDM_MENU_MEDIA_TAPE_OPEN:

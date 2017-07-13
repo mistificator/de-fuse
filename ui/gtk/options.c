@@ -469,6 +469,30 @@ menu_options_peripherals_general( GtkWidget *widget GCC_UNUSED,
                                 settings_current.interface2 );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.interface2 );
 
+  dialog.multiface1 =
+    gtk_check_button_new_with_label( "Multiface One" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.multiface1 ),
+                                settings_current.multiface1 );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.multiface1 );
+
+  dialog.multiface128 =
+    gtk_check_button_new_with_label( "Multiface 128" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.multiface128 ),
+                                settings_current.multiface128 );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.multiface128 );
+
+  dialog.multiface3 =
+    gtk_check_button_new_with_label( "Multiface 3" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.multiface3 ),
+                                settings_current.multiface3 );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.multiface3 );
+
+  dialog.multiface1_stealth =
+    gtk_check_button_new_with_label( "Stealth Multiface One" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.multiface1_stealth ),
+                                settings_current.multiface1_stealth );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.multiface1_stealth );
+
   dialog.printer =
     gtk_check_button_new_with_label( "Emulate printers" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.printer ),
@@ -563,6 +587,18 @@ menu_options_peripherals_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.interface2 =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->interface2 ) );
+
+  settings_current.multiface1 =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->multiface1 ) );
+
+  settings_current.multiface128 =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->multiface128 ) );
+
+  settings_current.multiface3 =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->multiface3 ) );
+
+  settings_current.multiface1_stealth =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->multiface1_stealth ) );
 
   settings_current.printer =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->printer ) );

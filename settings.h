@@ -144,6 +144,10 @@ typedef struct settings_info {
   char *movie_compr;
   char *movie_start;
    int movie_stop_after_rzx;
+   int multiface1;
+   int multiface128;
+   int multiface1_stealth;
+   int multiface3;
    int opus;
   char *opusdisk_file;
    int pal_tv2x;
@@ -166,6 +170,9 @@ typedef struct settings_info {
   char *rom_didaktik80;
   char *rom_disciple;
   char *rom_interface_1;
+  char *rom_multiface1;
+  char *rom_multiface128;
+  char *rom_multiface3;
   char *rom_opus;
   char *rom_pentagon1024_0;
   char *rom_pentagon1024_1;

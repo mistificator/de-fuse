@@ -393,6 +393,18 @@ menu_options_peripherals_general_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_INTERFACE2, BM_SETCHECK,
     settings_current.interface2 ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE1, BM_SETCHECK,
+    settings_current.multiface1 ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE128, BM_SETCHECK,
+    settings_current.multiface128 ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE3, BM_SETCHECK,
+    settings_current.multiface3 ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE1_STEALTH, BM_SETCHECK,
+    settings_current.multiface1_stealth ? BST_CHECKED : BST_UNCHECKED, 0 );
+
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_PRINTER, BM_SETCHECK,
     settings_current.printer ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -452,6 +464,18 @@ menu_options_peripherals_general_done( HWND hwndDlg )
 
   settings_current.interface2 =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_INTERFACE2 );
+
+  settings_current.multiface1 =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE1 );
+
+  settings_current.multiface128 =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE128 );
+
+  settings_current.multiface3 =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE3 );
+
+  settings_current.multiface1_stealth =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_MULTIFACE1_STEALTH );
 
   settings_current.printer =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_PRINTER );

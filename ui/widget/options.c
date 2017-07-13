@@ -351,6 +351,14 @@ static void widget_interface1_click( void );
 static void widget_option_interface1_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_interface2_click( void );
 static void widget_option_interface2_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_multiface1_click( void );
+static void widget_option_multiface1_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_multiface128_click( void );
+static void widget_option_multiface128_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_multiface3_click( void );
+static void widget_option_multiface3_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_multiface1_stealth_click( void );
+static void widget_option_multiface1_stealth_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_printer_click( void );
 static void widget_option_printer_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_zxprinter_click( void );
@@ -509,14 +517,18 @@ static widget_option_entry options_peripherals_general[] = {
   { "M\012e\001lodik", 4, INPUT_KEY_e, NULL, NULL, widget_melodik_click, widget_option_melodik_draw },
   { "\012I\001nterface 1", 5, INPUT_KEY_i, NULL, NULL, widget_interface1_click, widget_option_interface1_draw },
   { "In\012t\001erface 2", 6, INPUT_KEY_t, NULL, NULL, widget_interface2_click, widget_option_interface2_draw },
-  { "Emulate \012p\001rinters", 7, INPUT_KEY_p, NULL, NULL, widget_printer_click, widget_option_printer_draw },
-  { "\012Z\001X Printer", 8, INPUT_KEY_z, NULL, NULL, widget_zxprinter_click, widget_option_zxprinter_draw },
-  { "Speccy\012B\001oot interface", 9, INPUT_KEY_b, NULL, NULL, widget_speccyboot_click, widget_option_speccyboot_draw },
-  { "Spec\012D\001rum interface", 10, INPUT_KEY_d, NULL, NULL, widget_specdrum_click, widget_option_specdrum_draw },
-  { "Spectra\012n\001et", 11, INPUT_KEY_n, NULL, NULL, widget_spectranet_click, widget_option_spectranet_draw },
-  { "Spe\012c\001tranet disable", 12, INPUT_KEY_c, NULL, NULL, widget_spectranet_disable_click, widget_option_spectranet_disable_draw },
-  { "uSo\012u\001rce", 13, INPUT_KEY_u, NULL, NULL, widget_usource_click, widget_option_usource_draw },
-  { "C\012o\001vox interface", 14, INPUT_KEY_o, NULL, NULL, widget_covox_click, widget_option_covox_draw },
+  { "Mu\012l\001tiface One", 7, INPUT_KEY_l, NULL, NULL, widget_multiface1_click, widget_option_multiface1_draw },
+  { "Multiface 12\0128\001", 8, INPUT_KEY_8, NULL, NULL, widget_multiface128_click, widget_option_multiface128_draw },
+  { "Multiface \0123\001", 9, INPUT_KEY_3, NULL, NULL, widget_multiface3_click, widget_option_multiface3_draw },
+  { "Stealt\012h\001 Multiface One", 10, INPUT_KEY_h, NULL, NULL, widget_multiface1_stealth_click, widget_option_multiface1_stealth_draw },
+  { "Emulate \012p\001rinters", 11, INPUT_KEY_p, NULL, NULL, widget_printer_click, widget_option_printer_draw },
+  { "\012Z\001X Printer", 12, INPUT_KEY_z, NULL, NULL, widget_zxprinter_click, widget_option_zxprinter_draw },
+  { "Speccy\012B\001oot interface", 13, INPUT_KEY_b, NULL, NULL, widget_speccyboot_click, widget_option_speccyboot_draw },
+  { "Spec\012D\001rum interface", 14, INPUT_KEY_d, NULL, NULL, widget_specdrum_click, widget_option_specdrum_draw },
+  { "Spectra\012n\001et", 15, INPUT_KEY_n, NULL, NULL, widget_spectranet_click, widget_option_spectranet_draw },
+  { "Spe\012c\001tranet disable", 16, INPUT_KEY_c, NULL, NULL, widget_spectranet_disable_click, widget_option_spectranet_disable_draw },
+  { "uSo\012u\001rce", 17, INPUT_KEY_u, NULL, NULL, widget_usource_click, widget_option_usource_draw },
+  { "C\012o\001vox interface", 18, INPUT_KEY_o, NULL, NULL, widget_covox_click, widget_option_covox_draw },
   { NULL }
 };
 
@@ -1452,6 +1464,54 @@ widget_option_interface2_draw( int left_edge, int width, struct widget_option_en
 }
 
 static void
+widget_multiface1_click( void )
+{
+  widget_options_settings.multiface1 = ! widget_options_settings.multiface1;
+}
+
+static void
+widget_option_multiface1_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->multiface1 );
+}
+
+static void
+widget_multiface128_click( void )
+{
+  widget_options_settings.multiface128 = ! widget_options_settings.multiface128;
+}
+
+static void
+widget_option_multiface128_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->multiface128 );
+}
+
+static void
+widget_multiface3_click( void )
+{
+  widget_options_settings.multiface3 = ! widget_options_settings.multiface3;
+}
+
+static void
+widget_option_multiface3_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->multiface3 );
+}
+
+static void
+widget_multiface1_stealth_click( void )
+{
+  widget_options_settings.multiface1_stealth = ! widget_options_settings.multiface1_stealth;
+}
+
+static void
+widget_option_multiface1_stealth_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->multiface1_stealth );
+}
+
+static void
 widget_printer_click( void )
 {
   widget_options_settings.printer = ! widget_options_settings.printer;
@@ -1560,7 +1620,7 @@ widget_peripherals_general_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 15 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 19 );
     widget_peripherals_general_show_all( &widget_options_settings );
     break;
 #endif
@@ -1583,7 +1643,7 @@ widget_peripherals_general_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 15 ) {
+    if ( highlight_line + 1 < 19 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1597,8 +1657,8 @@ widget_peripherals_general_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 15 ) {
-      new_highlight_line = 15 - 1;
+    if ( highlight_line + 2 < 19 ) {
+      new_highlight_line = 19 - 1;
       cursor_pressed = 1;
     }
     break;
