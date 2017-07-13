@@ -136,19 +136,34 @@ static MENU_CALLBACK( menu_options_selectroms_peripheralroms_disciple )
   menu_options_selectroms_peripheral_select( gtk_action, 5 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_opusdiscovery )
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_multifaceone )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 6 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_speccyboot )
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_multiface128 )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 7 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_usource )
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_multiface3 )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 8 );
+}
+
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_opusdiscovery )
+{
+  menu_options_selectroms_peripheral_select( gtk_action, 9 );
+}
+
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_speccyboot )
+{
+  menu_options_selectroms_peripheral_select( gtk_action, 10 );
+}
+
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_usource )
+{
+  menu_options_selectroms_peripheral_select( gtk_action, 11 );
 }
 
 static MENU_CALLBACK( menu_machine_hardreset )
@@ -1255,6 +1270,9 @@ GtkActionEntry gtkui_menu_data[] = {
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_D", NULL, "+_D...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_d ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_DIDAKTIK80", NULL, "Didaktik _80...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_didaktik80 ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_DISCIPLE", NULL, "DISCiP_LE...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_disciple ) },
+  { "OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACEONE", NULL, "Mu_ltiface One...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_multifaceone ) },
+  { "OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACE128", NULL, "Multiface _128...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_multiface128 ) },
+  { "OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACE3", NULL, "Multiface _3...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_multiface3 ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_OPUSDISCOVERY", NULL, "_Opus Discovery...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_opusdiscovery ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_SPECCYBOOT", NULL, "Specc_yBoot...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_speccyboot ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_USOURCE", NULL, "_uSource...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_usource ) },
@@ -1274,6 +1292,7 @@ GtkActionEntry gtkui_menu_data[] = {
   { "MACHINE_PROFILER_START", NULL, "_Start", NULL, NULL, G_CALLBACK( menu_machine_profiler_start ) },
   { "MACHINE_PROFILER_STOP", NULL, "_Stop", NULL, NULL, G_CALLBACK( menu_machine_profiler_stop ) },
   { "MACHINE_NMI", NULL, "_NMI", NULL, NULL, G_CALLBACK( menu_machine_nmi ) },
+  { "MACHINE_MULTIFACEREDBUTTON", NULL, "Multiface Red _Button", NULL, NULL, G_CALLBACK( menu_machine_multifaceredbutton ) },
   { "MACHINE_DIDAKTIKSNAP", NULL, "Didaktik SNA_P", NULL, NULL, G_CALLBACK( menu_machine_didaktiksnap ) },
   { "MEDIA", NULL, "Media", NULL, NULL, NULL },
   { "MEDIA_TAPE", NULL, "_Tape", NULL, NULL, NULL },

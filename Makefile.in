@@ -248,51 +248,52 @@ am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	peripherals/covox.c peripherals/dck.c peripherals/fuller.c \
 	peripherals/if1.c peripherals/if2.c peripherals/joystick.c \
 	peripherals/kempmouse.c peripherals/melodik.c \
-	peripherals/printer.c peripherals/scld.c \
-	peripherals/speccyboot.c peripherals/specdrum.c \
-	peripherals/spectranet.c peripherals/ula.c \
-	peripherals/usource.c peripherals/disk/beta.c \
-	peripherals/disk/crc.c peripherals/disk/didaktik.c \
-	peripherals/disk/disciple.c peripherals/disk/disk.c \
-	peripherals/disk/fdd.c peripherals/disk/opus.c \
-	peripherals/disk/plusd.c peripherals/disk/trdos.c \
-	peripherals/disk/upd_fdc.c peripherals/disk/wd_fdc.c \
-	peripherals/ide/divide.c peripherals/ide/ide.c \
-	peripherals/ide/simpleide.c peripherals/ide/zxatasp.c \
-	peripherals/ide/zxcf.c peripherals/nic/enc28j60.c \
-	peripherals/flash/am29f010.c peripherals/nic/w5100.c \
-	peripherals/nic/w5100_socket.c pokefinder/pokefinder.c \
-	pokefinder/pokemem.c sound/blipbuffer.c timer/timer.c \
-	ui/fb/fbdisplay.c ui/fb/fbdisplay.h ui/fb/fbjoystick.c \
-	ui/fb/fbkeyboard.c ui/fb/fbkeyboard.h ui/fb/fbmouse.c \
-	ui/fb/fbmouse.h ui/fb/fbui.c ui/fb/keysyms.c ui/gtk/binary.c \
-	ui/gtk/browse.c ui/gtk/confirm.c ui/gtk/debugger.c \
-	ui/gtk/fileselector.c ui/gtk/gtkcompat.h ui/gtk/gtkdisplay.c \
-	ui/gtk/gtkinternals.h ui/gtk/gtkjoystick.c \
-	ui/gtk/gtkkeyboard.c ui/gtk/gtkmouse.c ui/gtk/gtkui.c \
-	ui/gtk/keysyms.c ui/gtk/memory.c ui/gtk/menu_data.c \
-	ui/gtk/options.c ui/gtk/picture.c ui/gtk/pixmaps.c \
-	ui/gtk/pokefinder.c ui/gtk/pokemem.c ui/gtk/rollback.c \
-	ui/gtk/roms.c ui/gtk/statusbar.c ui/gtk/stock.c \
-	ui/gtk/gtkcompat.c ui/scaler/scaler.c ui/sdl/sdldisplay.c \
-	ui/sdl/sdldisplay.h ui/sdl/sdljoystick.c ui/sdl/sdljoystick.h \
-	ui/sdl/sdlkeyboard.c ui/sdl/sdlkeyboard.h ui/sdl/sdlui.c \
-	ui/sdl/keysyms.c ui/svga/keysyms.c ui/svga/svgadisplay.c \
-	ui/svga/svgadisplay.h ui/svga/svgajoystick.c \
-	ui/svga/svgakeyboard.c ui/svga/svgakeyboard.h ui/svga/svgaui.c \
-	ui/widget/about.c ui/widget/browse.c ui/widget/debugger.c \
-	ui/widget/error.c ui/widget/filesel.c ui/widget/memory.c \
-	ui/widget/menu.c ui/widget/menu_data.c ui/widget/options.c \
-	ui/widget/picture.c ui/widget/pokefinder.c ui/widget/pokemem.c \
-	ui/widget/query.c ui/widget/roms.c ui/widget/select.c \
-	ui/widget/text.c ui/widget/widget_internals.h \
-	ui/widget/widget.c ui/widget/widget.h ui/wii/keysyms.c \
-	ui/wii/wiidisplay.c ui/wii/wiidisplay.h ui/wii/wiijoystick.c \
-	ui/wii/wiikeyboard.c ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h \
-	ui/wii/wiimouse.c ui/wii/wiimouse.h ui/wii/wiiui.c \
-	ui/win32/about.c ui/win32/about.h ui/win32/binary.c \
-	ui/win32/binary.h ui/win32/browse.c ui/win32/browse.h \
-	ui/win32/confirm.c ui/win32/debugger.c ui/win32/debugger.h \
+	peripherals/multiface.c peripherals/printer.c \
+	peripherals/scld.c peripherals/speccyboot.c \
+	peripherals/specdrum.c peripherals/spectranet.c \
+	peripherals/ula.c peripherals/usource.c \
+	peripherals/disk/beta.c peripherals/disk/crc.c \
+	peripherals/disk/didaktik.c peripherals/disk/disciple.c \
+	peripherals/disk/disk.c peripherals/disk/fdd.c \
+	peripherals/disk/opus.c peripherals/disk/plusd.c \
+	peripherals/disk/trdos.c peripherals/disk/upd_fdc.c \
+	peripherals/disk/wd_fdc.c peripherals/ide/divide.c \
+	peripherals/ide/ide.c peripherals/ide/simpleide.c \
+	peripherals/ide/zxatasp.c peripherals/ide/zxcf.c \
+	peripherals/nic/enc28j60.c peripherals/flash/am29f010.c \
+	peripherals/nic/w5100.c peripherals/nic/w5100_socket.c \
+	pokefinder/pokefinder.c pokefinder/pokemem.c \
+	sound/blipbuffer.c timer/timer.c ui/fb/fbdisplay.c \
+	ui/fb/fbdisplay.h ui/fb/fbjoystick.c ui/fb/fbkeyboard.c \
+	ui/fb/fbkeyboard.h ui/fb/fbmouse.c ui/fb/fbmouse.h \
+	ui/fb/fbui.c ui/fb/keysyms.c ui/gtk/binary.c ui/gtk/browse.c \
+	ui/gtk/confirm.c ui/gtk/debugger.c ui/gtk/fileselector.c \
+	ui/gtk/gtkcompat.h ui/gtk/gtkdisplay.c ui/gtk/gtkinternals.h \
+	ui/gtk/gtkjoystick.c ui/gtk/gtkkeyboard.c ui/gtk/gtkmouse.c \
+	ui/gtk/gtkui.c ui/gtk/keysyms.c ui/gtk/memory.c \
+	ui/gtk/menu_data.c ui/gtk/options.c ui/gtk/picture.c \
+	ui/gtk/pixmaps.c ui/gtk/pokefinder.c ui/gtk/pokemem.c \
+	ui/gtk/rollback.c ui/gtk/roms.c ui/gtk/statusbar.c \
+	ui/gtk/stock.c ui/gtk/gtkcompat.c ui/scaler/scaler.c \
+	ui/sdl/sdldisplay.c ui/sdl/sdldisplay.h ui/sdl/sdljoystick.c \
+	ui/sdl/sdljoystick.h ui/sdl/sdlkeyboard.c ui/sdl/sdlkeyboard.h \
+	ui/sdl/sdlui.c ui/sdl/keysyms.c ui/svga/keysyms.c \
+	ui/svga/svgadisplay.c ui/svga/svgadisplay.h \
+	ui/svga/svgajoystick.c ui/svga/svgakeyboard.c \
+	ui/svga/svgakeyboard.h ui/svga/svgaui.c ui/widget/about.c \
+	ui/widget/browse.c ui/widget/debugger.c ui/widget/error.c \
+	ui/widget/filesel.c ui/widget/memory.c ui/widget/menu.c \
+	ui/widget/menu_data.c ui/widget/options.c ui/widget/picture.c \
+	ui/widget/pokefinder.c ui/widget/pokemem.c ui/widget/query.c \
+	ui/widget/roms.c ui/widget/select.c ui/widget/text.c \
+	ui/widget/widget_internals.h ui/widget/widget.c \
+	ui/widget/widget.h ui/wii/keysyms.c ui/wii/wiidisplay.c \
+	ui/wii/wiidisplay.h ui/wii/wiijoystick.c ui/wii/wiikeyboard.c \
+	ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h ui/wii/wiimouse.c \
+	ui/wii/wiimouse.h ui/wii/wiiui.c ui/win32/about.c \
+	ui/win32/about.h ui/win32/binary.c ui/win32/binary.h \
+	ui/win32/browse.c ui/win32/browse.h ui/win32/confirm.c \
+	ui/win32/debugger.c ui/win32/debugger.h \
 	ui/win32/fileselector.c ui/win32/hyperlinks.c \
 	ui/win32/hyperlinks.h ui/win32/keysyms.c \
 	ui/win32/memorybrowser.c ui/win32/memorybrowser.h \
@@ -444,8 +445,8 @@ am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	peripherals/fuller.$(OBJEXT) peripherals/if1.$(OBJEXT) \
 	peripherals/if2.$(OBJEXT) peripherals/joystick.$(OBJEXT) \
 	peripherals/kempmouse.$(OBJEXT) peripherals/melodik.$(OBJEXT) \
-	peripherals/printer.$(OBJEXT) peripherals/scld.$(OBJEXT) \
-	peripherals/speccyboot.$(OBJEXT) \
+	peripherals/multiface.$(OBJEXT) peripherals/printer.$(OBJEXT) \
+	peripherals/scld.$(OBJEXT) peripherals/speccyboot.$(OBJEXT) \
 	peripherals/specdrum.$(OBJEXT) \
 	peripherals/spectranet.$(OBJEXT) peripherals/ula.$(OBJEXT) \
 	peripherals/usource.$(OBJEXT) peripherals/disk/beta.$(OBJEXT) \
@@ -827,24 +828,25 @@ fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	peripherals/covox.c peripherals/dck.c peripherals/fuller.c \
 	peripherals/if1.c peripherals/if2.c peripherals/joystick.c \
 	peripherals/kempmouse.c peripherals/melodik.c \
-	peripherals/printer.c peripherals/scld.c \
-	peripherals/speccyboot.c peripherals/specdrum.c \
-	peripherals/spectranet.c peripherals/ula.c \
-	peripherals/usource.c peripherals/disk/beta.c \
-	peripherals/disk/crc.c peripherals/disk/didaktik.c \
-	peripherals/disk/disciple.c peripherals/disk/disk.c \
-	peripherals/disk/fdd.c peripherals/disk/opus.c \
-	peripherals/disk/plusd.c peripherals/disk/trdos.c \
-	peripherals/disk/upd_fdc.c peripherals/disk/wd_fdc.c \
-	peripherals/ide/divide.c peripherals/ide/ide.c \
-	peripherals/ide/simpleide.c peripherals/ide/zxatasp.c \
-	peripherals/ide/zxcf.c $(am__append_16) $(am__append_17) \
-	pokefinder/pokefinder.c pokefinder/pokemem.c \
-	sound/blipbuffer.c timer/timer.c $(am__append_18) \
-	$(am__append_20) ui/scaler/scaler.c $(am__append_24) \
-	$(am__append_26) $(am__append_28) $(am__append_31) \
-	$(am__append_33) $(am__append_35) unittests/unittests.c \
-	z80/z80.c z80/z80_debugger_variables.c z80/z80_ops.c
+	peripherals/multiface.c peripherals/printer.c \
+	peripherals/scld.c peripherals/speccyboot.c \
+	peripherals/specdrum.c peripherals/spectranet.c \
+	peripherals/ula.c peripherals/usource.c \
+	peripherals/disk/beta.c peripherals/disk/crc.c \
+	peripherals/disk/didaktik.c peripherals/disk/disciple.c \
+	peripherals/disk/disk.c peripherals/disk/fdd.c \
+	peripherals/disk/opus.c peripherals/disk/plusd.c \
+	peripherals/disk/trdos.c peripherals/disk/upd_fdc.c \
+	peripherals/disk/wd_fdc.c peripherals/ide/divide.c \
+	peripherals/ide/ide.c peripherals/ide/simpleide.c \
+	peripherals/ide/zxatasp.c peripherals/ide/zxcf.c \
+	$(am__append_16) $(am__append_17) pokefinder/pokefinder.c \
+	pokefinder/pokemem.c sound/blipbuffer.c timer/timer.c \
+	$(am__append_18) $(am__append_20) ui/scaler/scaler.c \
+	$(am__append_24) $(am__append_26) $(am__append_28) \
+	$(am__append_31) $(am__append_33) $(am__append_35) \
+	unittests/unittests.c z80/z80.c z80/z80_debugger_variables.c \
+	z80/z80_ops.c
 fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPEC_LIBS) $(GTK_LIBS) $(GLIB_LIBS) \
 	$(PNG_LIBS) $(SDL_LIBS) $(X_LIBS) $(XML_LIBS) $(am__append_2) \
 	$(SOUND_LIBS) $(SOUND_LIBADD) $(TIMER_LIBADD) \
@@ -885,25 +887,25 @@ noinst_HEADERS = bitmap.h compat.h display.h event.h fuse.h input.h \
 	peripherals/covox.h peripherals/dck.h peripherals/fuller.h \
 	peripherals/if1.h peripherals/if2.h peripherals/joystick.h \
 	peripherals/kempmouse.h peripherals/melodik.h \
-	peripherals/printer.h peripherals/scld.h \
-	peripherals/speccyboot.h peripherals/specdrum.h \
-	peripherals/spectranet.h peripherals/ula.h \
-	peripherals/usource.h peripherals/disk/beta.h \
-	peripherals/disk/crc.h peripherals/disk/didaktik.h \
-	peripherals/disk/disciple.h peripherals/disk/disk.h \
-	peripherals/disk/fdd.h peripherals/disk/opus.h \
-	peripherals/disk/plusd.h peripherals/disk/trdos.h \
-	peripherals/disk/upd_fdc.h peripherals/disk/wd_fdc.h \
-	peripherals/ide/divide.h peripherals/ide/ide.h \
-	peripherals/ide/simpleide.h peripherals/ide/zxatasp.h \
-	peripherals/ide/zxcf.h peripherals/flash/am29f010.h \
-	peripherals/nic/enc28j60.h peripherals/nic/w5100.h \
-	peripherals/nic/w5100_internals.h pokefinder/pokefinder.h \
-	pokefinder/pokemem.h sound/blipbuffer.h sound/sfifo.h \
-	timer/timer.h ui/ui.h ui/uidisplay.h ui/uijoystick.h \
-	ui/uimedia.h ui/scaler/scaler.h ui/scaler/scaler_internals.h \
-	unittests/unittests.h z80/z80.h z80/z80_checks.h \
-	z80/z80_internals.h z80/z80_macros.h
+	peripherals/multiface.h peripherals/printer.h \
+	peripherals/scld.h peripherals/speccyboot.h \
+	peripherals/specdrum.h peripherals/spectranet.h \
+	peripherals/ula.h peripherals/usource.h \
+	peripherals/disk/beta.h peripherals/disk/crc.h \
+	peripherals/disk/didaktik.h peripherals/disk/disciple.h \
+	peripherals/disk/disk.h peripherals/disk/fdd.h \
+	peripherals/disk/opus.h peripherals/disk/plusd.h \
+	peripherals/disk/trdos.h peripherals/disk/upd_fdc.h \
+	peripherals/disk/wd_fdc.h peripherals/ide/divide.h \
+	peripherals/ide/ide.h peripherals/ide/simpleide.h \
+	peripherals/ide/zxatasp.h peripherals/ide/zxcf.h \
+	peripherals/flash/am29f010.h peripherals/nic/enc28j60.h \
+	peripherals/nic/w5100.h peripherals/nic/w5100_internals.h \
+	pokefinder/pokefinder.h pokefinder/pokemem.h \
+	sound/blipbuffer.h sound/sfifo.h timer/timer.h ui/ui.h \
+	ui/uidisplay.h ui/uijoystick.h ui/uimedia.h ui/scaler/scaler.h \
+	ui/scaler/scaler_internals.h unittests/unittests.h z80/z80.h \
+	z80/z80_checks.h z80/z80_internals.h z80/z80_macros.h
 EXTRA_DIST = AUTHORS INSTALL PORTING README THANKS keysyms.dat \
 	keysyms.pl m4/ax_create_stdint_h.m4 m4/ax_pthread.m4 \
 	m4/gtk-2.0.m4 m4/pkg.m4 m4/sdl.m4 menu_data.dat menu_data.pl \
@@ -1554,6 +1556,8 @@ peripherals/kempmouse.$(OBJEXT): peripherals/$(am__dirstamp) \
 	peripherals/$(DEPDIR)/$(am__dirstamp)
 peripherals/melodik.$(OBJEXT): peripherals/$(am__dirstamp) \
 	peripherals/$(DEPDIR)/$(am__dirstamp)
+peripherals/multiface.$(OBJEXT): peripherals/$(am__dirstamp) \
+	peripherals/$(DEPDIR)/$(am__dirstamp)
 peripherals/printer.$(OBJEXT): peripherals/$(am__dirstamp) \
 	peripherals/$(DEPDIR)/$(am__dirstamp)
 peripherals/scld.$(OBJEXT): peripherals/$(am__dirstamp) \
@@ -2079,6 +2083,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/joystick.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/kempmouse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/melodik.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/multiface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/printer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/scld.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/$(DEPDIR)/speccyboot.Po@am__quote@

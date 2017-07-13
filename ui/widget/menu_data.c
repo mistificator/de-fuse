@@ -119,9 +119,12 @@ static widget_menu_entry menu_options_selectroms_peripheralroms[] = {
   { "+\012D\011...", INPUT_KEY_d, NULL, menu_options_selectroms_peripheral_select, NULL, 3 },
   { "Didaktik \0128\0110...", INPUT_KEY_8, NULL, menu_options_selectroms_peripheral_select, NULL, 4 },
   { "DISCiP\012L\011E...", INPUT_KEY_l, NULL, menu_options_selectroms_peripheral_select, NULL, 5 },
-  { "\012O\011pus Discovery...", INPUT_KEY_o, NULL, menu_options_selectroms_peripheral_select, NULL, 6 },
-  { "Specc\012y\011Boot...", INPUT_KEY_y, NULL, menu_options_selectroms_peripheral_select, NULL, 7 },
-  { "\012u\011Source...", INPUT_KEY_u, NULL, menu_options_selectroms_peripheral_select, NULL, 8 },
+  { "Mu\012l\011tiface One...", INPUT_KEY_l, NULL, menu_options_selectroms_peripheral_select, NULL, 6 },
+  { "Multiface \0121\01128...", INPUT_KEY_1, NULL, menu_options_selectroms_peripheral_select, NULL, 7 },
+  { "Multiface \0123\011...", INPUT_KEY_3, NULL, menu_options_selectroms_peripheral_select, NULL, 8 },
+  { "\012O\011pus Discovery...", INPUT_KEY_o, NULL, menu_options_selectroms_peripheral_select, NULL, 9 },
+  { "Specc\012y\011Boot...", INPUT_KEY_y, NULL, menu_options_selectroms_peripheral_select, NULL, 10 },
+  { "\012u\011Source...", INPUT_KEY_u, NULL, menu_options_selectroms_peripheral_select, NULL, 11 },
   { NULL }
 };
 
@@ -167,6 +170,7 @@ static widget_menu_entry menu_machine[] = {
   { "\012M\011emory Browser...", INPUT_KEY_m, NULL, menu_machine_memorybrowser, NULL, 0 },
   { "Pro\012f\011iler", INPUT_KEY_f, menu_machine_profiler, NULL, NULL, 0 },
   { "\012N\011MI", INPUT_KEY_n, NULL, menu_machine_nmi, NULL, 0 },
+  { "Multiface Red \012B\011utton", INPUT_KEY_b, NULL, menu_machine_multifaceredbutton, NULL, 0 },
   { "Didaktik SNA\012P\011", INPUT_KEY_p, NULL, menu_machine_didaktiksnap, NULL, 0 },
   { NULL }
 };
