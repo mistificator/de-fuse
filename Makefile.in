@@ -689,11 +689,11 @@ LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBSPEC_CFLAGS = @LIBSPEC_CFLAGS@
+LIBSPECTRUM_CFLAGS = @LIBSPECTRUM_CFLAGS@
+LIBSPECTRUM_LIBS = @LIBSPECTRUM_LIBS@
 LIBSPEC_HAVE_AUDIOFILE = @LIBSPEC_HAVE_AUDIOFILE@
 LIBSPEC_HAVE_BZ2 = @LIBSPEC_HAVE_BZ2@
 LIBSPEC_HAVE_ZLIB = @LIBSPEC_HAVE_ZLIB@
-LIBSPEC_LIBS = @LIBSPEC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -847,9 +847,9 @@ fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	$(am__append_31) $(am__append_33) $(am__append_35) \
 	unittests/unittests.c z80/z80.c z80/z80_debugger_variables.c \
 	z80/z80_ops.c
-fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPEC_LIBS) $(GTK_LIBS) $(GLIB_LIBS) \
-	$(PNG_LIBS) $(SDL_LIBS) $(X_LIBS) $(XML_LIBS) $(am__append_2) \
-	$(SOUND_LIBS) $(SOUND_LIBADD) $(TIMER_LIBADD) \
+fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPECTRUM_LIBS) $(GTK_LIBS) \
+	$(GLIB_LIBS) $(PNG_LIBS) $(SDL_LIBS) $(X_LIBS) $(XML_LIBS) \
+	$(am__append_2) $(SOUND_LIBS) $(SOUND_LIBADD) $(TIMER_LIBADD) \
 	ui/scaler/scalers16.o ui/scaler/scalers32.o
 fuse_DEPENDENCIES = $(am__append_3) $(SOUND_LIBADD) $(TIMER_LIBADD) \
 	ui/scaler/scalers16.o ui/scaler/scalers32.o
@@ -866,7 +866,7 @@ BUILT_SOURCES = options.h settings.c settings.h $(am__append_19) \
 AM_CPPFLAGS = \
               $(GLIB_CFLAGS) \
               $(GTK_CFLAGS) \
-              $(LIBSPEC_CFLAGS) \
+              $(LIBSPECTRUM_CFLAGS) \
               $(XML_CFLAGS) \
               -DFUSEDATADIR="\"${pkgdatadir}\"" \
               $(SDL_CFLAGS) \
@@ -1252,8 +1252,8 @@ ui_xlib_built = \
                  ui/xlib/xpixmaps.c
 
 z80_coretest_SOURCES = z80/coretest.c z80/z80.c
-z80_coretest_LDADD = z80/z80_coretest.o $(GLIB_LIBS) $(LIBSPEC_LIBS)
-z80_coretest_CPPFLAGS = $(GLIB_CFLAGS) $(LIBSPEC_CFLAGS) -DCORETEST
+z80_coretest_LDADD = z80/z80_coretest.o $(GLIB_LIBS) $(LIBSPECTRUM_LIBS)
+z80_coretest_CPPFLAGS = $(GLIB_CFLAGS) $(LIBSPECTRUM_CFLAGS) -DCORETEST
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -3139,7 +3139,7 @@ options.h: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/@OPTIONS_DIR@/option
 	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/@OPTIONS_DIR@/options-header.pl - public > $@.tmp && mv $@.tmp $@
 
 @COMPAT_WIN32_TRUE@windres.o: windres.rc data/win32/winfuse.ico data/win32/fuse.manifest $(ui_win32_res)
-@COMPAT_WIN32_TRUE@	$(AM_V_GEN)$(WINDRES) -I$(srcdir) -I. $(srcdir)/windres.rc $(LIBSPEC_CFLAGS) $(CPPFLAGS) windres.o
+@COMPAT_WIN32_TRUE@	$(AM_V_GEN)$(WINDRES) -I$(srcdir) -I. $(srcdir)/windres.rc $(LIBSPECTRUM_CFLAGS) $(CPPFLAGS) windres.o
 
 # Generate fuse.xml according to libspectrum capabilities
 @DESKTOP_INTEGRATION_TRUE@data/fuse.xml: $(srcdir)/data/fuse.xml.in
