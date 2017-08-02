@@ -51,9 +51,6 @@
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
-/* Define to 1 if you have the <libspectrum.h> header file. */
-#undef HAVE_LIBSPECTRUM_H
-
 /* Defined if we've got GLib */
 #undef HAVE_LIB_GLIB
 
