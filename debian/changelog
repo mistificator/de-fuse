@@ -1,3 +1,14 @@
+fuse-emulator (1.3.8+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/control:
+    - Update Standards-Version to 4.0.0 (no changes).
+    - Build depend on libspectrum 1.3.6.
+  * Refresh the following patches:
+    - debian/patches/manpage-errors.patch
+
+ -- Alberto Garcia <berto@igalia.com>  Fri, 04 Aug 2017 10:39:48 +0300
+
 fuse-emulator (1.3.7+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
