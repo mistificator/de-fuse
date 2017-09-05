@@ -1206,6 +1206,36 @@ static MENU_CALLBACK( menu_media_ide_divide_slave_eject )
   menu_media_ide_eject( gtk_action, 7 );
 }
 
+static MENU_CALLBACK( menu_media_ide_divmmc_insert )
+{
+  menu_media_ide_insert( gtk_action, 8 );
+}
+
+static MENU_CALLBACK( menu_media_ide_divmmc_commit )
+{
+  menu_media_ide_commit( gtk_action, 8 );
+}
+
+static MENU_CALLBACK( menu_media_ide_divmmc_eject )
+{
+  menu_media_ide_eject( gtk_action, 8 );
+}
+
+static MENU_CALLBACK( menu_media_ide_zxmmc_insert )
+{
+  menu_media_ide_insert( gtk_action, 9 );
+}
+
+static MENU_CALLBACK( menu_media_ide_zxmmc_commit )
+{
+  menu_media_ide_commit( gtk_action, 9 );
+}
+
+static MENU_CALLBACK( menu_media_ide_zxmmc_eject )
+{
+  menu_media_ide_eject( gtk_action, 9 );
+}
+
 GtkActionEntry gtkui_menu_data[] = {
 
   { "FILE", NULL, "File", NULL, NULL, NULL },
@@ -1224,9 +1254,12 @@ GtkActionEntry gtkui_menu_data[] = {
   { "FILE_AYLOGGING", NULL, "A_Y Logging", NULL, NULL, NULL },
   { "FILE_AYLOGGING_RECORD", NULL, "_Record...", NULL, NULL, G_CALLBACK( menu_file_aylogging_record ) },
   { "FILE_AYLOGGING_STOP", NULL, "_Stop", NULL, NULL, G_CALLBACK( menu_file_aylogging_stop ) },
-  { "FILE_OPENSCRSCREENSHOT", NULL, "O_pen SCR Screenshot...", NULL, NULL, G_CALLBACK( menu_file_openscrscreenshot ) },
-  { "FILE_SAVESCREENASSCR", NULL, "S_ave Screen as SCR...", NULL, NULL, G_CALLBACK( menu_file_savescreenasscr ) },
-  { "FILE_SAVESCREENASPNG", NULL, "Save S_creen as PNG...", NULL, NULL, G_CALLBACK( menu_file_savescreenaspng ) },
+  { "FILE_SCREENSHOT", NULL, "S_creenshot", NULL, NULL, NULL },
+  { "FILE_SCREENSHOT_OPENSCRSCREENSHOT", NULL, "O_pen SCR Screenshot...", NULL, NULL, G_CALLBACK( menu_file_screenshot_openscrscreenshot ) },
+  { "FILE_SCREENSHOT_SAVESCREENASSCR", NULL, "S_ave Screen as SCR...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenasscr ) },
+  { "FILE_SCREENSHOT_OPENMLTSCREENSHOT", NULL, "Op_en MLT Screenshot...", NULL, NULL, G_CALLBACK( menu_file_screenshot_openmltscreenshot ) },
+  { "FILE_SCREENSHOT_SAVESCREENASMLT", NULL, "Sa_ve Screen as MLT...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenasmlt ) },
+  { "FILE_SCREENSHOT_SAVESCREENASPNG", NULL, "Save S_creen as PNG...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenaspng ) },
   { "FILE_MOVIE", NULL, "_Movie", NULL, NULL, NULL },
   { "FILE_MOVIE_RECORD", NULL, "_Record...", NULL, NULL, G_CALLBACK( menu_file_movie_record ) },
   { "FILE_MOVIE_RECORDFROMRZX", NULL, "R_ecord from RZX...", NULL, NULL, G_CALLBACK( menu_file_movie_record_recordfromrzx ) },
@@ -1596,6 +1629,14 @@ GtkActionEntry gtkui_menu_data[] = {
   { "MEDIA_IDE_DIVIDE_SLAVE_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_divide_slave_insert ) },
   { "MEDIA_IDE_DIVIDE_SLAVE_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_divide_slave_commit ) },
   { "MEDIA_IDE_DIVIDE_SLAVE_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_divide_slave_eject ) },
+  { "MEDIA_IDE_DIVMMC", NULL, "_DivMMC", NULL, NULL, NULL },
+  { "MEDIA_IDE_DIVMMC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_divmmc_insert ) },
+  { "MEDIA_IDE_DIVMMC_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_divmmc_commit ) },
+  { "MEDIA_IDE_DIVMMC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_divmmc_eject ) },
+  { "MEDIA_IDE_ZXMMC", NULL, "_ZXMMC", NULL, NULL, NULL },
+  { "MEDIA_IDE_ZXMMC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_zxmmc_insert ) },
+  { "MEDIA_IDE_ZXMMC_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_zxmmc_commit ) },
+  { "MEDIA_IDE_ZXMMC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_zxmmc_eject ) },
   { "HELP", NULL, "Help", NULL, NULL, NULL },
   { "HELP_KEYBOARD", NULL, "_Keyboard...", NULL, NULL, G_CALLBACK( menu_help_keyboard ) },
   { "HELP_ABOUT", NULL, "_About...", NULL, NULL, G_CALLBACK( menu_help_about ) },

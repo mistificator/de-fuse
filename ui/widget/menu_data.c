@@ -53,6 +53,16 @@ static widget_menu_entry menu_file_aylogging[] = {
   { NULL }
 };
 
+static widget_menu_entry menu_file_screenshot[] = {
+  { "Screenshot" },
+  { "O\012p\011en SCR Screenshot...", INPUT_KEY_p, NULL, menu_file_screenshot_openscrscreenshot, NULL, 0 },
+  { "S\012a\011ve Screen as SCR...", INPUT_KEY_a, NULL, menu_file_screenshot_savescreenasscr, NULL, 0 },
+  { "Op\012e\011n MLT Screenshot...", INPUT_KEY_e, NULL, menu_file_screenshot_openmltscreenshot, NULL, 0 },
+  { "Sa\012v\011e Screen as MLT...", INPUT_KEY_v, NULL, menu_file_screenshot_savescreenasmlt, NULL, 0 },
+  { "Save S\012c\011reen as PNG...", INPUT_KEY_c, NULL, menu_file_screenshot_savescreenaspng, NULL, 0 },
+  { NULL }
+};
+
 static widget_menu_entry menu_file_movie[] = {
   { "Movie" },
   { "\012R\011ecord...", INPUT_KEY_r, NULL, menu_file_movie_record, NULL, 0 },
@@ -69,9 +79,7 @@ static widget_menu_entry menu_file[] = {
   { "\012S\011ave Snapshot...", INPUT_KEY_s, NULL, menu_file_savesnapshot, NULL, 0 },
   { "\012R\011ecording", INPUT_KEY_r, menu_file_recording, NULL, NULL, 0 },
   { "A\012Y\011 Logging", INPUT_KEY_y, menu_file_aylogging, NULL, NULL, 0 },
-  { "O\012p\011en SCR Screenshot...", INPUT_KEY_p, NULL, menu_file_openscrscreenshot, NULL, 0 },
-  { "S\012a\011ve Screen as SCR...", INPUT_KEY_a, NULL, menu_file_savescreenasscr, NULL, 0 },
-  { "Save S\012c\011reen as PNG...", INPUT_KEY_c, NULL, menu_file_savescreenaspng, NULL, 0 },
+  { "S\012c\011reenshot", INPUT_KEY_c, menu_file_screenshot, NULL, NULL, 0 },
   { "\012M\011ovie", INPUT_KEY_m, menu_file_movie, NULL, NULL, 0 },
   { "Loa\012d\011 binary data...", INPUT_KEY_d, NULL, menu_file_loadbinarydata, NULL, 0 },
   { "Save \012b\011inary data...", INPUT_KEY_b, NULL, menu_file_savebinarydata, NULL, 0 },
@@ -872,12 +880,30 @@ static widget_menu_entry menu_media_ide_divide[] = {
   { NULL }
 };
 
+static widget_menu_entry menu_media_ide_divmmc[] = {
+  { "DivMMC" },
+  { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_ide_insert, NULL, 8 },
+  { "\012C\011ommit", INPUT_KEY_c, NULL, menu_media_ide_commit, NULL, 8 },
+  { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_ide_eject, NULL, 8 },
+  { NULL }
+};
+
+static widget_menu_entry menu_media_ide_zxmmc[] = {
+  { "ZXMMC" },
+  { "\012I\011nsert...", INPUT_KEY_i, NULL, menu_media_ide_insert, NULL, 9 },
+  { "\012C\011ommit", INPUT_KEY_c, NULL, menu_media_ide_commit, NULL, 9 },
+  { "\012E\011ject", INPUT_KEY_e, NULL, menu_media_ide_eject, NULL, 9 },
+  { NULL }
+};
+
 static widget_menu_entry menu_media_ide[] = {
   { "IDE" },
   { "Simple \0128\011-bit", INPUT_KEY_8, menu_media_ide_simple8bit, NULL, NULL, 0 },
   { "ZX\012A\011TASP", INPUT_KEY_a, menu_media_ide_zxatasp, NULL, NULL, 0 },
   { "ZX\012C\011F CompactFlash", INPUT_KEY_c, menu_media_ide_zxcfcompactflash, NULL, NULL, 0 },
   { "\012D\011ivIDE", INPUT_KEY_d, menu_media_ide_divide, NULL, NULL, 0 },
+  { "\012D\011ivMMC", INPUT_KEY_d, menu_media_ide_divmmc, NULL, NULL, 0 },
+  { "\012Z\011XMMC", INPUT_KEY_z, menu_media_ide_zxmmc, NULL, NULL, 0 },
   { NULL }
 };
 

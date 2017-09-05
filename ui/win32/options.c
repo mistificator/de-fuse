@@ -612,6 +612,12 @@ menu_options_peripherals_disk_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVIDE_WP, BM_SETCHECK,
     settings_current.divide_wp ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVMMC_ENABLED, BM_SETCHECK,
+    settings_current.divmmc_enabled ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVMMC_WP, BM_SETCHECK,
+    settings_current.divmmc_wp ? BST_CHECKED : BST_UNCHECKED, 0 );
+
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_PLUSD, BM_SETCHECK,
     settings_current.plusd ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -629,6 +635,9 @@ menu_options_peripherals_disk_init( HWND hwndDlg )
 
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_OPUS, BM_SETCHECK,
     settings_current.opus ? BST_CHECKED : BST_UNCHECKED, 0 );
+
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXMMC_ENABLED, BM_SETCHECK,
+    settings_current.zxmmc_enabled ? BST_CHECKED : BST_UNCHECKED, 0 );
 
 }
 
@@ -669,6 +678,12 @@ menu_options_peripherals_disk_done( HWND hwndDlg )
   settings_current.divide_wp =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVIDE_WP );
 
+  settings_current.divmmc_enabled =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVMMC_ENABLED );
+
+  settings_current.divmmc_wp =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_DIVMMC_WP );
+
   settings_current.plusd =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_PLUSD );
 
@@ -686,6 +701,9 @@ menu_options_peripherals_disk_done( HWND hwndDlg )
 
   settings_current.opus =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_OPUS );
+
+  settings_current.zxmmc_enabled =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_DISK_ZXMMC_ENABLED );
 
   int needs_hard_reset = periph_postcheck();
 
