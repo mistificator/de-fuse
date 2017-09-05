@@ -392,6 +392,10 @@ static void widget_divide_enabled_click( void );
 static void widget_option_divide_enabled_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_divide_wp_click( void );
 static void widget_option_divide_wp_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_divmmc_enabled_click( void );
+static void widget_option_divmmc_enabled_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_divmmc_wp_click( void );
+static void widget_option_divmmc_wp_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_plusd_click( void );
 static void widget_option_plusd_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_didaktik80_click( void );
@@ -404,6 +408,8 @@ static void widget_beta128_48boot_click( void );
 static void widget_option_beta128_48boot_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_opus_click( void );
 static void widget_option_opus_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_zxmmc_enabled_click( void );
+static void widget_option_zxmmc_enabled_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static int  widget_rzx_running = 0;
 static void widget_rzx_autosaves_click( void );
 static void widget_option_rzx_autosaves_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
@@ -542,12 +548,15 @@ static widget_option_entry options_peripherals_disk[] = {
   { "ZXCF \012u\001pload", 5, INPUT_KEY_u, NULL, NULL, widget_zxcf_upload_click, widget_option_zxcf_upload_draw },
   { "Div\012I\001DE interface", 6, INPUT_KEY_i, NULL, NULL, widget_divide_enabled_click, widget_option_divide_enabled_draw },
   { "DivIDE \012w\001rite protect", 7, INPUT_KEY_w, NULL, NULL, widget_divide_wp_click, widget_option_divide_wp_draw },
-  { "+\012D\001 interface", 8, INPUT_KEY_d, NULL, NULL, widget_plusd_click, widget_option_plusd_draw },
-  { "Dida\012k\001tik 80 interface", 9, INPUT_KEY_k, NULL, NULL, widget_didaktik80_click, widget_option_didaktik80_draw },
-  { "DISCi\012P\001LE interf(a)ce", 10, INPUT_KEY_p, NULL, NULL, widget_disciple_click, widget_option_disciple_draw },
-  { "\012B\001eta 128 interface", 11, INPUT_KEY_b, NULL, NULL, widget_beta128_click, widget_option_beta128_draw },
-  { "Beta 128 \012a\001uto-boot in 48K machines", 12, INPUT_KEY_a, NULL, NULL, widget_beta128_48boot_click, widget_option_beta128_48boot_draw },
-  { "\012O\001pus Discovery interface", 13, INPUT_KEY_o, NULL, NULL, widget_opus_click, widget_option_opus_draw },
+  { "Div\012M\001MC interface", 8, INPUT_KEY_m, NULL, NULL, widget_divmmc_enabled_click, widget_option_divmmc_enabled_draw },
+  { "DivMMC w\012r\001ite protect", 9, INPUT_KEY_r, NULL, NULL, widget_divmmc_wp_click, widget_option_divmmc_wp_draw },
+  { "+\012D\001 interface", 10, INPUT_KEY_d, NULL, NULL, widget_plusd_click, widget_option_plusd_draw },
+  { "Dida\012k\001tik 80 interface", 11, INPUT_KEY_k, NULL, NULL, widget_didaktik80_click, widget_option_didaktik80_draw },
+  { "DISCi\012P\001LE interf(a)ce", 12, INPUT_KEY_p, NULL, NULL, widget_disciple_click, widget_option_disciple_draw },
+  { "\012B\001eta 128 interface", 13, INPUT_KEY_b, NULL, NULL, widget_beta128_click, widget_option_beta128_draw },
+  { "Beta 128 \012a\001uto-boot in 48K machines", 14, INPUT_KEY_a, NULL, NULL, widget_beta128_48boot_click, widget_option_beta128_48boot_draw },
+  { "\012O\001pus Discovery interface", 15, INPUT_KEY_o, NULL, NULL, widget_opus_click, widget_option_opus_draw },
+  { "ZXMMC i\012n\001terface", 16, INPUT_KEY_n, NULL, NULL, widget_zxmmc_enabled_click, widget_option_zxmmc_enabled_draw },
   { NULL }
 };
 
@@ -1818,6 +1827,30 @@ widget_option_divide_wp_draw( int left_edge, int width, struct widget_option_ent
 }
 
 static void
+widget_divmmc_enabled_click( void )
+{
+  widget_options_settings.divmmc_enabled = ! widget_options_settings.divmmc_enabled;
+}
+
+static void
+widget_option_divmmc_enabled_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->divmmc_enabled );
+}
+
+static void
+widget_divmmc_wp_click( void )
+{
+  widget_options_settings.divmmc_wp = ! widget_options_settings.divmmc_wp;
+}
+
+static void
+widget_option_divmmc_wp_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->divmmc_wp );
+}
+
+static void
 widget_plusd_click( void )
 {
   widget_options_settings.plusd = ! widget_options_settings.plusd;
@@ -1889,6 +1922,18 @@ widget_option_opus_draw( int left_edge, int width, struct widget_option_entry *m
   widget_options_print_option( left_edge, width, menu->index, menu->text, show->opus );
 }
 
+static void
+widget_zxmmc_enabled_click( void )
+{
+  widget_options_settings.zxmmc_enabled = ! widget_options_settings.zxmmc_enabled;
+}
+
+static void
+widget_option_zxmmc_enabled_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_option( left_edge, width, menu->index, menu->text, show->zxmmc_enabled );
+}
+
 void
 widget_peripherals_disk_keyhandler( input_key key )
 {
@@ -1902,7 +1947,7 @@ widget_peripherals_disk_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 14 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 17 );
     widget_peripherals_disk_show_all( &widget_options_settings );
     break;
 #endif
@@ -1925,7 +1970,7 @@ widget_peripherals_disk_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 14 ) {
+    if ( highlight_line + 1 < 17 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1939,8 +1984,8 @@ widget_peripherals_disk_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 14 ) {
-      new_highlight_line = 14 - 1;
+    if ( highlight_line + 2 < 17 ) {
+      new_highlight_line = 17 - 1;
       cursor_pressed = 1;
     }
     break;

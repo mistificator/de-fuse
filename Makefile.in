@@ -258,42 +258,43 @@ am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	peripherals/disk/opus.c peripherals/disk/plusd.c \
 	peripherals/disk/trdos.c peripherals/disk/upd_fdc.c \
 	peripherals/disk/wd_fdc.c peripherals/ide/divide.c \
+	peripherals/ide/divmmc.c peripherals/ide/divxxx.c \
 	peripherals/ide/ide.c peripherals/ide/simpleide.c \
 	peripherals/ide/zxatasp.c peripherals/ide/zxcf.c \
-	peripherals/nic/enc28j60.c peripherals/flash/am29f010.c \
-	peripherals/nic/w5100.c peripherals/nic/w5100_socket.c \
-	pokefinder/pokefinder.c pokefinder/pokemem.c \
-	sound/blipbuffer.c timer/timer.c ui/fb/fbdisplay.c \
-	ui/fb/fbdisplay.h ui/fb/fbjoystick.c ui/fb/fbkeyboard.c \
-	ui/fb/fbkeyboard.h ui/fb/fbmouse.c ui/fb/fbmouse.h \
-	ui/fb/fbui.c ui/fb/keysyms.c ui/gtk/binary.c ui/gtk/browse.c \
-	ui/gtk/confirm.c ui/gtk/debugger.c ui/gtk/fileselector.c \
-	ui/gtk/gtkcompat.h ui/gtk/gtkdisplay.c ui/gtk/gtkinternals.h \
-	ui/gtk/gtkjoystick.c ui/gtk/gtkkeyboard.c ui/gtk/gtkmouse.c \
-	ui/gtk/gtkui.c ui/gtk/keysyms.c ui/gtk/memory.c \
-	ui/gtk/menu_data.c ui/gtk/options.c ui/gtk/picture.c \
-	ui/gtk/pixmaps.c ui/gtk/pokefinder.c ui/gtk/pokemem.c \
-	ui/gtk/rollback.c ui/gtk/roms.c ui/gtk/statusbar.c \
-	ui/gtk/stock.c ui/gtk/gtkcompat.c ui/scaler/scaler.c \
-	ui/sdl/sdldisplay.c ui/sdl/sdldisplay.h ui/sdl/sdljoystick.c \
-	ui/sdl/sdljoystick.h ui/sdl/sdlkeyboard.c ui/sdl/sdlkeyboard.h \
-	ui/sdl/sdlui.c ui/sdl/keysyms.c ui/svga/keysyms.c \
-	ui/svga/svgadisplay.c ui/svga/svgadisplay.h \
-	ui/svga/svgajoystick.c ui/svga/svgakeyboard.c \
-	ui/svga/svgakeyboard.h ui/svga/svgaui.c ui/widget/about.c \
-	ui/widget/browse.c ui/widget/debugger.c ui/widget/error.c \
-	ui/widget/filesel.c ui/widget/memory.c ui/widget/menu.c \
-	ui/widget/menu_data.c ui/widget/options.c ui/widget/picture.c \
-	ui/widget/pokefinder.c ui/widget/pokemem.c ui/widget/query.c \
-	ui/widget/roms.c ui/widget/select.c ui/widget/text.c \
-	ui/widget/widget_internals.h ui/widget/widget.c \
-	ui/widget/widget.h ui/wii/keysyms.c ui/wii/wiidisplay.c \
-	ui/wii/wiidisplay.h ui/wii/wiijoystick.c ui/wii/wiikeyboard.c \
-	ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h ui/wii/wiimouse.c \
-	ui/wii/wiimouse.h ui/wii/wiiui.c ui/win32/about.c \
-	ui/win32/about.h ui/win32/binary.c ui/win32/binary.h \
-	ui/win32/browse.c ui/win32/browse.h ui/win32/confirm.c \
-	ui/win32/debugger.c ui/win32/debugger.h \
+	peripherals/ide/zxmmc.c peripherals/nic/enc28j60.c \
+	peripherals/flash/am29f010.c peripherals/nic/w5100.c \
+	peripherals/nic/w5100_socket.c pokefinder/pokefinder.c \
+	pokefinder/pokemem.c sound/blipbuffer.c timer/timer.c \
+	ui/fb/fbdisplay.c ui/fb/fbdisplay.h ui/fb/fbjoystick.c \
+	ui/fb/fbkeyboard.c ui/fb/fbkeyboard.h ui/fb/fbmouse.c \
+	ui/fb/fbmouse.h ui/fb/fbui.c ui/fb/keysyms.c ui/gtk/binary.c \
+	ui/gtk/browse.c ui/gtk/confirm.c ui/gtk/debugger.c \
+	ui/gtk/fileselector.c ui/gtk/gtkcompat.h ui/gtk/gtkdisplay.c \
+	ui/gtk/gtkinternals.h ui/gtk/gtkjoystick.c \
+	ui/gtk/gtkkeyboard.c ui/gtk/gtkmouse.c ui/gtk/gtkui.c \
+	ui/gtk/keysyms.c ui/gtk/memory.c ui/gtk/menu_data.c \
+	ui/gtk/options.c ui/gtk/picture.c ui/gtk/pixmaps.c \
+	ui/gtk/pokefinder.c ui/gtk/pokemem.c ui/gtk/rollback.c \
+	ui/gtk/roms.c ui/gtk/statusbar.c ui/gtk/stock.c \
+	ui/gtk/gtkcompat.c ui/scaler/scaler.c ui/sdl/sdldisplay.c \
+	ui/sdl/sdldisplay.h ui/sdl/sdljoystick.c ui/sdl/sdljoystick.h \
+	ui/sdl/sdlkeyboard.c ui/sdl/sdlkeyboard.h ui/sdl/sdlui.c \
+	ui/sdl/keysyms.c ui/svga/keysyms.c ui/svga/svgadisplay.c \
+	ui/svga/svgadisplay.h ui/svga/svgajoystick.c \
+	ui/svga/svgakeyboard.c ui/svga/svgakeyboard.h ui/svga/svgaui.c \
+	ui/widget/about.c ui/widget/browse.c ui/widget/debugger.c \
+	ui/widget/error.c ui/widget/filesel.c ui/widget/memory.c \
+	ui/widget/menu.c ui/widget/menu_data.c ui/widget/options.c \
+	ui/widget/picture.c ui/widget/pokefinder.c ui/widget/pokemem.c \
+	ui/widget/query.c ui/widget/roms.c ui/widget/select.c \
+	ui/widget/text.c ui/widget/widget_internals.h \
+	ui/widget/widget.c ui/widget/widget.h ui/wii/keysyms.c \
+	ui/wii/wiidisplay.c ui/wii/wiidisplay.h ui/wii/wiijoystick.c \
+	ui/wii/wiikeyboard.c ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h \
+	ui/wii/wiimouse.c ui/wii/wiimouse.h ui/wii/wiiui.c \
+	ui/win32/about.c ui/win32/about.h ui/win32/binary.c \
+	ui/win32/binary.h ui/win32/browse.c ui/win32/browse.h \
+	ui/win32/confirm.c ui/win32/debugger.c ui/win32/debugger.h \
 	ui/win32/fileselector.c ui/win32/hyperlinks.c \
 	ui/win32/hyperlinks.h ui/win32/keysyms.c \
 	ui/win32/memorybrowser.c ui/win32/memorybrowser.h \
@@ -459,18 +460,20 @@ am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	peripherals/disk/trdos.$(OBJEXT) \
 	peripherals/disk/upd_fdc.$(OBJEXT) \
 	peripherals/disk/wd_fdc.$(OBJEXT) \
-	peripherals/ide/divide.$(OBJEXT) peripherals/ide/ide.$(OBJEXT) \
+	peripherals/ide/divide.$(OBJEXT) \
+	peripherals/ide/divmmc.$(OBJEXT) \
+	peripherals/ide/divxxx.$(OBJEXT) peripherals/ide/ide.$(OBJEXT) \
 	peripherals/ide/simpleide.$(OBJEXT) \
 	peripherals/ide/zxatasp.$(OBJEXT) \
-	peripherals/ide/zxcf.$(OBJEXT) $(am__objects_14) \
-	$(am__objects_15) pokefinder/pokefinder.$(OBJEXT) \
-	pokefinder/pokemem.$(OBJEXT) sound/blipbuffer.$(OBJEXT) \
-	timer/timer.$(OBJEXT) $(am__objects_17) $(am__objects_20) \
-	ui/scaler/scaler.$(OBJEXT) $(am__objects_22) $(am__objects_24) \
-	$(am__objects_26) $(am__objects_28) $(am__objects_30) \
-	$(am__objects_32) unittests/unittests.$(OBJEXT) \
-	z80/z80.$(OBJEXT) z80/z80_debugger_variables.$(OBJEXT) \
-	z80/z80_ops.$(OBJEXT)
+	peripherals/ide/zxcf.$(OBJEXT) peripherals/ide/zxmmc.$(OBJEXT) \
+	$(am__objects_14) $(am__objects_15) \
+	pokefinder/pokefinder.$(OBJEXT) pokefinder/pokemem.$(OBJEXT) \
+	sound/blipbuffer.$(OBJEXT) timer/timer.$(OBJEXT) \
+	$(am__objects_17) $(am__objects_20) ui/scaler/scaler.$(OBJEXT) \
+	$(am__objects_22) $(am__objects_24) $(am__objects_26) \
+	$(am__objects_28) $(am__objects_30) $(am__objects_32) \
+	unittests/unittests.$(OBJEXT) z80/z80.$(OBJEXT) \
+	z80/z80_debugger_variables.$(OBJEXT) z80/z80_ops.$(OBJEXT)
 fuse_OBJECTS = $(am_fuse_OBJECTS)
 am__DEPENDENCIES_1 =
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -838,15 +841,16 @@ fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	peripherals/disk/opus.c peripherals/disk/plusd.c \
 	peripherals/disk/trdos.c peripherals/disk/upd_fdc.c \
 	peripherals/disk/wd_fdc.c peripherals/ide/divide.c \
+	peripherals/ide/divmmc.c peripherals/ide/divxxx.c \
 	peripherals/ide/ide.c peripherals/ide/simpleide.c \
 	peripherals/ide/zxatasp.c peripherals/ide/zxcf.c \
-	$(am__append_16) $(am__append_17) pokefinder/pokefinder.c \
-	pokefinder/pokemem.c sound/blipbuffer.c timer/timer.c \
-	$(am__append_18) $(am__append_20) ui/scaler/scaler.c \
-	$(am__append_24) $(am__append_26) $(am__append_28) \
-	$(am__append_31) $(am__append_33) $(am__append_35) \
-	unittests/unittests.c z80/z80.c z80/z80_debugger_variables.c \
-	z80/z80_ops.c
+	peripherals/ide/zxmmc.c $(am__append_16) $(am__append_17) \
+	pokefinder/pokefinder.c pokefinder/pokemem.c \
+	sound/blipbuffer.c timer/timer.c $(am__append_18) \
+	$(am__append_20) ui/scaler/scaler.c $(am__append_24) \
+	$(am__append_26) $(am__append_28) $(am__append_31) \
+	$(am__append_33) $(am__append_35) unittests/unittests.c \
+	z80/z80.c z80/z80_debugger_variables.c z80/z80_ops.c
 fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPECTRUM_LIBS) $(GTK_LIBS) \
 	$(GLIB_LIBS) $(PNG_LIBS) $(SDL_LIBS) $(X_LIBS) $(XML_LIBS) \
 	$(am__append_2) $(SOUND_LIBS) $(SOUND_LIBADD) $(TIMER_LIBADD) \
@@ -897,15 +901,17 @@ noinst_HEADERS = bitmap.h compat.h display.h event.h fuse.h input.h \
 	peripherals/disk/opus.h peripherals/disk/plusd.h \
 	peripherals/disk/trdos.h peripherals/disk/upd_fdc.h \
 	peripherals/disk/wd_fdc.h peripherals/ide/divide.h \
+	peripherals/ide/divmmc.h peripherals/ide/divxxx.h \
 	peripherals/ide/ide.h peripherals/ide/simpleide.h \
 	peripherals/ide/zxatasp.h peripherals/ide/zxcf.h \
-	peripherals/flash/am29f010.h peripherals/nic/enc28j60.h \
-	peripherals/nic/w5100.h peripherals/nic/w5100_internals.h \
-	pokefinder/pokefinder.h pokefinder/pokemem.h \
-	sound/blipbuffer.h sound/sfifo.h timer/timer.h ui/ui.h \
-	ui/uidisplay.h ui/uijoystick.h ui/uimedia.h ui/scaler/scaler.h \
-	ui/scaler/scaler_internals.h unittests/unittests.h z80/z80.h \
-	z80/z80_checks.h z80/z80_internals.h z80/z80_macros.h
+	peripherals/ide/zxmmc.h peripherals/flash/am29f010.h \
+	peripherals/nic/enc28j60.h peripherals/nic/w5100.h \
+	peripherals/nic/w5100_internals.h pokefinder/pokefinder.h \
+	pokefinder/pokemem.h sound/blipbuffer.h sound/sfifo.h \
+	timer/timer.h ui/ui.h ui/uidisplay.h ui/uijoystick.h \
+	ui/uimedia.h ui/scaler/scaler.h ui/scaler/scaler_internals.h \
+	unittests/unittests.h z80/z80.h z80/z80_checks.h \
+	z80/z80_internals.h z80/z80_macros.h
 EXTRA_DIST = AUTHORS INSTALL PORTING README THANKS keysyms.dat \
 	keysyms.pl m4/ax_create_stdint_h.m4 m4/ax_pthread.m4 \
 	m4/gtk-2.0.m4 m4/pkg.m4 m4/sdl.m4 menu_data.dat menu_data.pl \
@@ -1608,6 +1614,10 @@ peripherals/ide/$(DEPDIR)/$(am__dirstamp):
 	@: > peripherals/ide/$(DEPDIR)/$(am__dirstamp)
 peripherals/ide/divide.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
 	peripherals/ide/$(DEPDIR)/$(am__dirstamp)
+peripherals/ide/divmmc.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
+	peripherals/ide/$(DEPDIR)/$(am__dirstamp)
+peripherals/ide/divxxx.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
+	peripherals/ide/$(DEPDIR)/$(am__dirstamp)
 peripherals/ide/ide.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
 	peripherals/ide/$(DEPDIR)/$(am__dirstamp)
 peripherals/ide/simpleide.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
@@ -1615,6 +1625,8 @@ peripherals/ide/simpleide.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
 peripherals/ide/zxatasp.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
 	peripherals/ide/$(DEPDIR)/$(am__dirstamp)
 peripherals/ide/zxcf.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
+	peripherals/ide/$(DEPDIR)/$(am__dirstamp)
+peripherals/ide/zxmmc.$(OBJEXT): peripherals/ide/$(am__dirstamp) \
 	peripherals/ide/$(DEPDIR)/$(am__dirstamp)
 peripherals/nic/$(am__dirstamp):
 	@$(MKDIR_P) peripherals/nic
@@ -2104,10 +2116,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/disk/$(DEPDIR)/wd_fdc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/flash/$(DEPDIR)/am29f010.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/divide.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/divmmc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/divxxx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/ide.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/simpleide.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/zxatasp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/zxcf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@peripherals/ide/$(DEPDIR)/zxmmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/nic/$(DEPDIR)/enc28j60.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/nic/$(DEPDIR)/w5100.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@peripherals/nic/$(DEPDIR)/w5100_socket.Po@am__quote@

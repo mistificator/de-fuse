@@ -713,6 +713,18 @@ menu_options_peripherals_disk( GtkWidget *widget GCC_UNUSED,
                                 settings_current.divide_wp );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.divide_wp );
 
+  dialog.divmmc_enabled =
+    gtk_check_button_new_with_label( "DivMMC interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.divmmc_enabled ),
+                                settings_current.divmmc_enabled );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.divmmc_enabled );
+
+  dialog.divmmc_wp =
+    gtk_check_button_new_with_label( "DivMMC write protect" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.divmmc_wp ),
+                                settings_current.divmmc_wp );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.divmmc_wp );
+
   dialog.plusd =
     gtk_check_button_new_with_label( "+D interface" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.plusd ),
@@ -748,6 +760,12 @@ menu_options_peripherals_disk( GtkWidget *widget GCC_UNUSED,
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.opus ),
                                 settings_current.opus );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.opus );
+
+  dialog.zxmmc_enabled =
+    gtk_check_button_new_with_label( "ZXMMC interface" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.zxmmc_enabled ),
+                                settings_current.zxmmc_enabled );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.zxmmc_enabled );
 
   /* Create the OK and Cancel buttons */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
@@ -799,6 +817,12 @@ menu_options_peripherals_disk_done( GtkWidget *widget GCC_UNUSED,
   settings_current.divide_wp =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->divide_wp ) );
 
+  settings_current.divmmc_enabled =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->divmmc_enabled ) );
+
+  settings_current.divmmc_wp =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->divmmc_wp ) );
+
   settings_current.plusd =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->plusd ) );
 
@@ -816,6 +840,9 @@ menu_options_peripherals_disk_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.opus =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->opus ) );
+
+  settings_current.zxmmc_enabled =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->zxmmc_enabled ) );
 
   int needs_hard_reset = periph_postcheck();
 

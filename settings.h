@@ -56,6 +56,9 @@ typedef struct settings_info {
   char *divide_master_file;
   char *divide_slave_file;
    int divide_wp;
+   int divmmc_enabled;
+  char *divmmc_file;
+   int divmmc_wp;
    int doublescan_mode;
    int drive_40_max_track;
    int drive_80_max_track;
@@ -259,6 +262,8 @@ typedef struct settings_info {
    int zxcf_active;
   char *zxcf_pri_file;
    int zxcf_upload;
+   int zxmmc_enabled;
+  char *zxmmc_file;
    int zxprinter;
 
   int show_help;

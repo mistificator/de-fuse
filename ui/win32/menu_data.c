@@ -60,12 +60,16 @@ int handle_menu( DWORD cmd, HWND window )
       menu_file_aylogging_record( 0 ); return 0;
     case IDM_MENU_FILE_AYLOGGING_STOP:
       menu_file_aylogging_stop( 0 ); return 0;
-    case IDM_MENU_FILE_OPENSCRSCREENSHOT:
-      menu_file_openscrscreenshot( 0 ); return 0;
-    case IDM_MENU_FILE_SAVESCREENASSCR:
-      menu_file_savescreenasscr( 0 ); return 0;
-    case IDM_MENU_FILE_SAVESCREENASPNG:
-      menu_file_savescreenaspng( 0 ); return 0;
+    case IDM_MENU_FILE_SCREENSHOT_OPENSCRSCREENSHOT:
+      menu_file_screenshot_openscrscreenshot( 0 ); return 0;
+    case IDM_MENU_FILE_SCREENSHOT_SAVESCREENASSCR:
+      menu_file_screenshot_savescreenasscr( 0 ); return 0;
+    case IDM_MENU_FILE_SCREENSHOT_OPENMLTSCREENSHOT:
+      menu_file_screenshot_openmltscreenshot( 0 ); return 0;
+    case IDM_MENU_FILE_SCREENSHOT_SAVESCREENASMLT:
+      menu_file_screenshot_savescreenasmlt( 0 ); return 0;
+    case IDM_MENU_FILE_SCREENSHOT_SAVESCREENASPNG:
+      menu_file_screenshot_savescreenaspng( 0 ); return 0;
     case IDM_MENU_FILE_MOVIE_RECORD:
       menu_file_movie_record( 0 ); return 0;
     case IDM_MENU_FILE_MOVIE_RECORDFROMRZX:
@@ -620,6 +624,18 @@ int handle_menu( DWORD cmd, HWND window )
       menu_media_ide_commit( 7 ); return 0;
     case IDM_MENU_MEDIA_IDE_DIVIDE_SLAVE_EJECT:
       menu_media_ide_eject( 7 ); return 0;
+    case IDM_MENU_MEDIA_IDE_DIVMMC_INSERT:
+      menu_media_ide_insert( 8 ); return 0;
+    case IDM_MENU_MEDIA_IDE_DIVMMC_COMMIT:
+      menu_media_ide_commit( 8 ); return 0;
+    case IDM_MENU_MEDIA_IDE_DIVMMC_EJECT:
+      menu_media_ide_eject( 8 ); return 0;
+    case IDM_MENU_MEDIA_IDE_ZXMMC_INSERT:
+      menu_media_ide_insert( 9 ); return 0;
+    case IDM_MENU_MEDIA_IDE_ZXMMC_COMMIT:
+      menu_media_ide_commit( 9 ); return 0;
+    case IDM_MENU_MEDIA_IDE_ZXMMC_EJECT:
+      menu_media_ide_eject( 9 ); return 0;
     case IDM_MENU_HELP_KEYBOARD:
       menu_help_keyboard( 0 ); return 0;
     case IDM_MENU_HELP_ABOUT:
