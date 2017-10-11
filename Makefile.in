@@ -94,14 +94,14 @@ DIST_COMMON = $(srcdir)/compat/Makefile.am $(srcdir)/data/Makefile.am \
 	$(srcdir)/pokefinder/Makefile.am $(srcdir)/roms/Makefile.am \
 	$(srcdir)/sound/Makefile.am $(srcdir)/timer/Makefile.am \
 	$(srcdir)/ui/Makefile.am $(srcdir)/ui/fb/Makefile.am \
-	$(srcdir)/ui/gtk/Makefile.am $(srcdir)/ui/scaler/Makefile.am \
-	$(srcdir)/ui/sdl/Makefile.am $(srcdir)/ui/svga/Makefile.am \
-	$(srcdir)/ui/widget/Makefile.am $(srcdir)/ui/wii/Makefile.am \
-	$(srcdir)/ui/win32/Makefile.am $(srcdir)/ui/xlib/Makefile.am \
-	$(srcdir)/unittests/Makefile.am $(srcdir)/z80/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in \
+	$(srcdir)/ui/gtk/Makefile.am $(srcdir)/ui/null/Makefile.am \
+	$(srcdir)/ui/scaler/Makefile.am $(srcdir)/ui/sdl/Makefile.am \
+	$(srcdir)/ui/svga/Makefile.am $(srcdir)/ui/widget/Makefile.am \
+	$(srcdir)/ui/wii/Makefile.am $(srcdir)/ui/win32/Makefile.am \
+	$(srcdir)/ui/xlib/Makefile.am $(srcdir)/unittests/Makefile.am \
+	$(srcdir)/z80/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/Makefile.am $(top_srcdir)/configure \
+	$(am__configure_deps) $(srcdir)/config.h.in \
 	$(top_srcdir)/data/win32/fuse.manifest.in \
 	$(top_srcdir)/data/win32/installer.nsi.in debugger/commandl.c \
 	debugger/commandy.c depcomp ylwrap \
@@ -177,19 +177,21 @@ DIST_COMMON = $(srcdir)/compat/Makefile.am $(srcdir)/data/Makefile.am \
 @UI_GTK_TRUE@am__append_21 = $(ui_gtk_built)
 @UI_GTK_TRUE@am__append_22 = ui/gtk/menu_data.ui
 @HAVE_GTK2_TRUE@am__append_23 = ui/gtk/gtkcompat.c
-@UI_SDL_TRUE@am__append_24 = $(ui_sdl_files)
-@UI_SDL_TRUE@am__append_25 = $(ui_sdl_built)
-@UI_SVGA_TRUE@am__append_26 = $(ui_svga_files)
-@UI_SVGA_TRUE@am__append_27 = $(ui_svga_built)
-@USE_WIDGET_TRUE@am__append_28 = $(ui_widget_files)
-@USE_WIDGET_TRUE@am__append_29 = $(ui_widget_built)
-@USE_WIDGET_TRUE@am__append_30 = ui/widget/fuse.font
-@UI_WII_TRUE@am__append_31 = $(ui_wii_files)
-@UI_WII_TRUE@am__append_32 = $(ui_wii_built)
-@UI_WIN32_TRUE@am__append_33 = $(ui_win32_files)
-@UI_WIN32_TRUE@am__append_34 = $(ui_win32_built)
-@UI_X_TRUE@am__append_35 = $(ui_xlib_files)
-@UI_X_TRUE@am__append_36 = $(ui_xlib_built)
+@UI_NULL_TRUE@am__append_24 = $(ui_null_files)
+@UI_NULL_TRUE@am__append_25 = $(ui_null_built)
+@UI_SDL_TRUE@am__append_26 = $(ui_sdl_files)
+@UI_SDL_TRUE@am__append_27 = $(ui_sdl_built)
+@UI_SVGA_TRUE@am__append_28 = $(ui_svga_files)
+@UI_SVGA_TRUE@am__append_29 = $(ui_svga_built)
+@USE_WIDGET_TRUE@am__append_30 = $(ui_widget_files)
+@USE_WIDGET_TRUE@am__append_31 = $(ui_widget_built)
+@USE_WIDGET_TRUE@am__append_32 = ui/widget/fuse.font
+@UI_WII_TRUE@am__append_33 = $(ui_wii_files)
+@UI_WII_TRUE@am__append_34 = $(ui_wii_built)
+@UI_WIN32_TRUE@am__append_35 = $(ui_win32_files)
+@UI_WIN32_TRUE@am__append_36 = $(ui_win32_built)
+@UI_X_TRUE@am__append_37 = $(ui_xlib_files)
+@UI_X_TRUE@am__append_38 = $(ui_xlib_built)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_pthread.m4 \
@@ -276,25 +278,26 @@ am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	ui/gtk/options.c ui/gtk/picture.c ui/gtk/pixmaps.c \
 	ui/gtk/pokefinder.c ui/gtk/pokemem.c ui/gtk/rollback.c \
 	ui/gtk/roms.c ui/gtk/statusbar.c ui/gtk/stock.c \
-	ui/gtk/gtkcompat.c ui/scaler/scaler.c ui/sdl/sdldisplay.c \
-	ui/sdl/sdldisplay.h ui/sdl/sdljoystick.c ui/sdl/sdljoystick.h \
-	ui/sdl/sdlkeyboard.c ui/sdl/sdlkeyboard.h ui/sdl/sdlui.c \
-	ui/sdl/keysyms.c ui/svga/keysyms.c ui/svga/svgadisplay.c \
-	ui/svga/svgadisplay.h ui/svga/svgajoystick.c \
-	ui/svga/svgakeyboard.c ui/svga/svgakeyboard.h ui/svga/svgaui.c \
-	ui/widget/about.c ui/widget/browse.c ui/widget/debugger.c \
-	ui/widget/error.c ui/widget/filesel.c ui/widget/memory.c \
-	ui/widget/menu.c ui/widget/menu_data.c ui/widget/options.c \
-	ui/widget/picture.c ui/widget/pokefinder.c ui/widget/pokemem.c \
-	ui/widget/query.c ui/widget/roms.c ui/widget/select.c \
-	ui/widget/text.c ui/widget/widget_internals.h \
-	ui/widget/widget.c ui/widget/widget.h ui/wii/keysyms.c \
-	ui/wii/wiidisplay.c ui/wii/wiidisplay.h ui/wii/wiijoystick.c \
-	ui/wii/wiikeyboard.c ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h \
-	ui/wii/wiimouse.c ui/wii/wiimouse.h ui/wii/wiiui.c \
-	ui/win32/about.c ui/win32/about.h ui/win32/binary.c \
-	ui/win32/binary.h ui/win32/browse.c ui/win32/browse.h \
-	ui/win32/confirm.c ui/win32/debugger.c ui/win32/debugger.h \
+	ui/gtk/gtkcompat.c ui/null/null_ui.c ui/null/options.c \
+	ui/scaler/scaler.c ui/sdl/sdldisplay.c ui/sdl/sdldisplay.h \
+	ui/sdl/sdljoystick.c ui/sdl/sdljoystick.h ui/sdl/sdlkeyboard.c \
+	ui/sdl/sdlkeyboard.h ui/sdl/sdlui.c ui/sdl/keysyms.c \
+	ui/svga/keysyms.c ui/svga/svgadisplay.c ui/svga/svgadisplay.h \
+	ui/svga/svgajoystick.c ui/svga/svgakeyboard.c \
+	ui/svga/svgakeyboard.h ui/svga/svgaui.c ui/widget/about.c \
+	ui/widget/browse.c ui/widget/debugger.c ui/widget/error.c \
+	ui/widget/filesel.c ui/widget/memory.c ui/widget/menu.c \
+	ui/widget/menu_data.c ui/widget/options.c ui/widget/picture.c \
+	ui/widget/pokefinder.c ui/widget/pokemem.c ui/widget/query.c \
+	ui/widget/roms.c ui/widget/select.c ui/widget/text.c \
+	ui/widget/widget_internals.h ui/widget/widget.c \
+	ui/widget/widget.h ui/wii/keysyms.c ui/wii/wiidisplay.c \
+	ui/wii/wiidisplay.h ui/wii/wiijoystick.c ui/wii/wiikeyboard.c \
+	ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h ui/wii/wiimouse.c \
+	ui/wii/wiimouse.h ui/wii/wiiui.c ui/win32/about.c \
+	ui/win32/about.h ui/win32/binary.c ui/win32/binary.h \
+	ui/win32/browse.c ui/win32/browse.h ui/win32/confirm.c \
+	ui/win32/debugger.c ui/win32/debugger.h \
 	ui/win32/fileselector.c ui/win32/hyperlinks.c \
 	ui/win32/hyperlinks.h ui/win32/keysyms.c \
 	ui/win32/memorybrowser.c ui/win32/memorybrowser.h \
@@ -374,15 +377,17 @@ am__objects_19 = ui/gtk/binary.$(OBJEXT) ui/gtk/browse.$(OBJEXT) \
 	ui/gtk/statusbar.$(OBJEXT) ui/gtk/stock.$(OBJEXT) \
 	$(am__objects_18)
 @UI_GTK_TRUE@am__objects_20 = $(am__objects_19)
-am__objects_21 = ui/sdl/sdldisplay.$(OBJEXT) \
+am__objects_21 = ui/null/null_ui.$(OBJEXT) ui/null/options.$(OBJEXT)
+@UI_NULL_TRUE@am__objects_22 = $(am__objects_21)
+am__objects_23 = ui/sdl/sdldisplay.$(OBJEXT) \
 	ui/sdl/sdljoystick.$(OBJEXT) ui/sdl/sdlkeyboard.$(OBJEXT) \
 	ui/sdl/sdlui.$(OBJEXT) ui/sdl/keysyms.$(OBJEXT)
-@UI_SDL_TRUE@am__objects_22 = $(am__objects_21)
-am__objects_23 = ui/svga/keysyms.$(OBJEXT) \
+@UI_SDL_TRUE@am__objects_24 = $(am__objects_23)
+am__objects_25 = ui/svga/keysyms.$(OBJEXT) \
 	ui/svga/svgadisplay.$(OBJEXT) ui/svga/svgajoystick.$(OBJEXT) \
 	ui/svga/svgakeyboard.$(OBJEXT) ui/svga/svgaui.$(OBJEXT)
-@UI_SVGA_TRUE@am__objects_24 = $(am__objects_23)
-am__objects_25 = ui/widget/about.$(OBJEXT) ui/widget/browse.$(OBJEXT) \
+@UI_SVGA_TRUE@am__objects_26 = $(am__objects_25)
+am__objects_27 = ui/widget/about.$(OBJEXT) ui/widget/browse.$(OBJEXT) \
 	ui/widget/debugger.$(OBJEXT) ui/widget/error.$(OBJEXT) \
 	ui/widget/filesel.$(OBJEXT) ui/widget/memory.$(OBJEXT) \
 	ui/widget/menu.$(OBJEXT) ui/widget/menu_data.$(OBJEXT) \
@@ -391,12 +396,12 @@ am__objects_25 = ui/widget/about.$(OBJEXT) ui/widget/browse.$(OBJEXT) \
 	ui/widget/query.$(OBJEXT) ui/widget/roms.$(OBJEXT) \
 	ui/widget/select.$(OBJEXT) ui/widget/text.$(OBJEXT) \
 	ui/widget/widget.$(OBJEXT)
-@USE_WIDGET_TRUE@am__objects_26 = $(am__objects_25)
-am__objects_27 = ui/wii/keysyms.$(OBJEXT) ui/wii/wiidisplay.$(OBJEXT) \
+@USE_WIDGET_TRUE@am__objects_28 = $(am__objects_27)
+am__objects_29 = ui/wii/keysyms.$(OBJEXT) ui/wii/wiidisplay.$(OBJEXT) \
 	ui/wii/wiijoystick.$(OBJEXT) ui/wii/wiikeyboard.$(OBJEXT) \
 	ui/wii/wiimouse.$(OBJEXT) ui/wii/wiiui.$(OBJEXT)
-@UI_WII_TRUE@am__objects_28 = $(am__objects_27)
-am__objects_29 = ui/win32/about.$(OBJEXT) ui/win32/binary.$(OBJEXT) \
+@UI_WII_TRUE@am__objects_30 = $(am__objects_29)
+am__objects_31 = ui/win32/about.$(OBJEXT) ui/win32/binary.$(OBJEXT) \
 	ui/win32/browse.$(OBJEXT) ui/win32/confirm.$(OBJEXT) \
 	ui/win32/debugger.$(OBJEXT) ui/win32/fileselector.$(OBJEXT) \
 	ui/win32/hyperlinks.$(OBJEXT) ui/win32/keysyms.$(OBJEXT) \
@@ -408,11 +413,11 @@ am__objects_29 = ui/win32/about.$(OBJEXT) ui/win32/binary.$(OBJEXT) \
 	ui/win32/win32joystick.$(OBJEXT) \
 	ui/win32/win32keyboard.$(OBJEXT) ui/win32/win32mouse.$(OBJEXT) \
 	ui/win32/win32ui.$(OBJEXT)
-@UI_WIN32_TRUE@am__objects_30 = $(am__objects_29)
-am__objects_31 = ui/xlib/keysyms.$(OBJEXT) ui/xlib/xdisplay.$(OBJEXT) \
+@UI_WIN32_TRUE@am__objects_32 = $(am__objects_31)
+am__objects_33 = ui/xlib/keysyms.$(OBJEXT) ui/xlib/xdisplay.$(OBJEXT) \
 	ui/xlib/xerror.$(OBJEXT) ui/xlib/xjoystick.$(OBJEXT) \
 	ui/xlib/xkeyboard.$(OBJEXT) ui/xlib/xui.$(OBJEXT)
-@UI_X_TRUE@am__objects_32 = $(am__objects_31)
+@UI_X_TRUE@am__objects_34 = $(am__objects_33)
 am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	input.$(OBJEXT) keyboard.$(OBJEXT) loader.$(OBJEXT) \
 	machine.$(OBJEXT) memory_pages.$(OBJEXT) mempool.$(OBJEXT) \
@@ -469,11 +474,12 @@ am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	$(am__objects_14) $(am__objects_15) \
 	pokefinder/pokefinder.$(OBJEXT) pokefinder/pokemem.$(OBJEXT) \
 	sound/blipbuffer.$(OBJEXT) timer/timer.$(OBJEXT) \
-	$(am__objects_17) $(am__objects_20) ui/scaler/scaler.$(OBJEXT) \
-	$(am__objects_22) $(am__objects_24) $(am__objects_26) \
+	$(am__objects_17) $(am__objects_20) $(am__objects_22) \
+	ui/scaler/scaler.$(OBJEXT) $(am__objects_24) $(am__objects_26) \
 	$(am__objects_28) $(am__objects_30) $(am__objects_32) \
-	unittests/unittests.$(OBJEXT) z80/z80.$(OBJEXT) \
-	z80/z80_debugger_variables.$(OBJEXT) z80/z80_ops.$(OBJEXT)
+	$(am__objects_34) unittests/unittests.$(OBJEXT) \
+	z80/z80.$(OBJEXT) z80/z80_debugger_variables.$(OBJEXT) \
+	z80/z80_ops.$(OBJEXT)
 fuse_OBJECTS = $(am_fuse_OBJECTS)
 am__DEPENDENCIES_1 =
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -847,10 +853,11 @@ fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	peripherals/ide/zxmmc.c $(am__append_16) $(am__append_17) \
 	pokefinder/pokefinder.c pokefinder/pokemem.c \
 	sound/blipbuffer.c timer/timer.c $(am__append_18) \
-	$(am__append_20) ui/scaler/scaler.c $(am__append_24) \
-	$(am__append_26) $(am__append_28) $(am__append_31) \
-	$(am__append_33) $(am__append_35) unittests/unittests.c \
-	z80/z80.c z80/z80_debugger_variables.c z80/z80_ops.c
+	$(am__append_20) $(am__append_24) ui/scaler/scaler.c \
+	$(am__append_26) $(am__append_28) $(am__append_30) \
+	$(am__append_33) $(am__append_35) $(am__append_37) \
+	unittests/unittests.c z80/z80.c z80/z80_debugger_variables.c \
+	z80/z80_ops.c
 fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPECTRUM_LIBS) $(GTK_LIBS) \
 	$(GLIB_LIBS) $(PNG_LIBS) $(SDL_LIBS) $(X_LIBS) $(XML_LIBS) \
 	$(am__append_2) $(SOUND_LIBS) $(SOUND_LIBADD) $(TIMER_LIBADD) \
@@ -864,9 +871,9 @@ EXTRA_fuse_SOURCES = sound/alsasound.c sound/aosound.c \
 	sound/win32sound.c timer/native.c timer/sdl.c $(ui_xlib_files)
 BUILT_SOURCES = options.h settings.c settings.h $(am__append_19) \
 	$(am__append_21) $(am__append_25) $(am__append_27) \
-	$(am__append_29) $(am__append_32) $(am__append_34) \
-	$(am__append_36) z80/opcodes_base.c z80/z80_cb.c \
-	z80/z80_ddfd.c z80/z80_ddfdcb.c z80/z80_ed.c
+	$(am__append_29) $(am__append_31) $(am__append_34) \
+	$(am__append_36) $(am__append_38) z80/opcodes_base.c \
+	z80/z80_cb.c z80/z80_ddfd.c z80/z80_ddfdcb.c z80/z80_ed.c
 AM_CPPFLAGS = \
               $(GLIB_CFLAGS) \
               $(GTK_CFLAGS) \
@@ -929,7 +936,8 @@ EXTRA_DIST = AUTHORS INSTALL PORTING README THANKS keysyms.dat \
 	$(lib_tests) $(lib_uncompressed_snaps) $(man_MANS) \
 	perl/cpp-perl.pl perl/Fuse.pm perl/Fuse/Dialog.pm $(ROMS) \
 	roms/README.copyright ui/options.dat ui/uijoystick.c \
-	ui/gtk/options.pl ui/gtk/options-header.pl ui/scaler/scalers.c \
+	ui/gtk/options.pl ui/gtk/options-header.pl ui/null/options.pl \
+	ui/null/options-header.pl ui/scaler/scalers.c \
 	ui/scaler/scaler_hq2x.c ui/scaler/scaler_hq3x.c \
 	ui/widget/fuse.font.sbf ui/widget/mkfusefont.pl \
 	ui/widget/options.pl ui/widget/options-header.pl \
@@ -956,15 +964,15 @@ CLEANFILES = options.h settings.c settings.h data/fuse.desktop \
 	data/shell-completion/man.txt \
 	data/shell-completion/settings.txt debugger/commandl.c \
 	debugger/commandy.c debugger/commandy.h $(ui_fb_built) \
-	$(ui_gtk_built) ui/scaler/scalers16.o ui/scaler/scalers32.o \
-	$(ui_sdl_built) $(ui_svga_built) $(ui_widget_built) \
-	$(ui_wii_built) $(ui_win32_built) $(ui_xlib_built) \
-	z80/opcodes_base.c z80/tests.actual z80/z80_cb.c \
-	z80/z80_coretest.o z80/z80_ddfd.c z80/z80_ddfdcb.c \
-	z80/z80_ed.c
+	$(ui_gtk_built) $(ui_null_built) ui/scaler/scalers16.o \
+	ui/scaler/scalers32.o $(ui_sdl_built) $(ui_svga_built) \
+	$(ui_widget_built) $(ui_wii_built) $(ui_win32_built) \
+	$(ui_xlib_built) z80/opcodes_base.c z80/tests.actual \
+	z80/z80_cb.c z80/z80_coretest.o z80/z80_ddfd.c \
+	z80/z80_ddfdcb.c z80/z80_ed.c
 DISTCLEANFILES = 
 pkgdata_DATA = $(lib_@AUTOLOAD_SNAPS@_snaps) $(lib_files) $(ROMS) \
-	$(am__append_22) $(am__append_30)
+	$(am__append_22) $(am__append_32)
 @DESKTOP_INTEGRATION_TRUE@fusemimedir = $(DESKTOP_DATADIR)/mime/packages
 @DESKTOP_INTEGRATION_TRUE@fusemime_DATA = data/fuse.xml
 @DESKTOP_INTEGRATION_TRUE@appdatadir = $(DESKTOP_DATADIR)/applications
@@ -1115,6 +1123,13 @@ ui_gtk_built = \
                ui/gtk/menu_data.ui \
                ui/gtk/options.c \
                ui/gtk/options_internals.h
+
+ui_null_files = \
+		ui/null/null_ui.c \
+                ui/null/options.c
+
+ui_null_built = \
+                ui/null/options.c
 
 ui_sdl_files = \
                ui/sdl/sdldisplay.c \
@@ -1267,7 +1282,7 @@ all: $(BUILT_SOURCES) config.h
 .SUFFIXES: .c .l .lo .o .obj .y
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/compat/Makefile.am $(srcdir)/data/Makefile.am $(srcdir)/data/win32/distribution.mk $(srcdir)/debugger/Makefile.am $(srcdir)/hacking/Makefile.am $(srcdir)/infrastructure/Makefile.am $(srcdir)/lib/Makefile.am $(srcdir)/machines/Makefile.am $(srcdir)/man/Makefile.am $(srcdir)/peripherals/Makefile.am $(srcdir)/perl/Makefile.am $(srcdir)/pokefinder/Makefile.am $(srcdir)/roms/Makefile.am $(srcdir)/sound/Makefile.am $(srcdir)/timer/Makefile.am $(srcdir)/ui/Makefile.am $(srcdir)/ui/fb/Makefile.am $(srcdir)/ui/gtk/Makefile.am $(srcdir)/ui/scaler/Makefile.am $(srcdir)/ui/sdl/Makefile.am $(srcdir)/ui/svga/Makefile.am $(srcdir)/ui/widget/Makefile.am $(srcdir)/ui/wii/Makefile.am $(srcdir)/ui/win32/Makefile.am $(srcdir)/ui/xlib/Makefile.am $(srcdir)/unittests/Makefile.am $(srcdir)/z80/Makefile.am $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/compat/Makefile.am $(srcdir)/data/Makefile.am $(srcdir)/data/win32/distribution.mk $(srcdir)/debugger/Makefile.am $(srcdir)/hacking/Makefile.am $(srcdir)/infrastructure/Makefile.am $(srcdir)/lib/Makefile.am $(srcdir)/machines/Makefile.am $(srcdir)/man/Makefile.am $(srcdir)/peripherals/Makefile.am $(srcdir)/perl/Makefile.am $(srcdir)/pokefinder/Makefile.am $(srcdir)/roms/Makefile.am $(srcdir)/sound/Makefile.am $(srcdir)/timer/Makefile.am $(srcdir)/ui/Makefile.am $(srcdir)/ui/fb/Makefile.am $(srcdir)/ui/gtk/Makefile.am $(srcdir)/ui/null/Makefile.am $(srcdir)/ui/scaler/Makefile.am $(srcdir)/ui/sdl/Makefile.am $(srcdir)/ui/svga/Makefile.am $(srcdir)/ui/widget/Makefile.am $(srcdir)/ui/wii/Makefile.am $(srcdir)/ui/win32/Makefile.am $(srcdir)/ui/xlib/Makefile.am $(srcdir)/unittests/Makefile.am $(srcdir)/z80/Makefile.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1290,7 +1305,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/compat/Makefile.am $(srcdir)/data/Makefile.am $(srcdir)/data/win32/distribution.mk $(srcdir)/debugger/Makefile.am $(srcdir)/hacking/Makefile.am $(srcdir)/infrastructure/Makefile.am $(srcdir)/lib/Makefile.am $(srcdir)/machines/Makefile.am $(srcdir)/man/Makefile.am $(srcdir)/peripherals/Makefile.am $(srcdir)/perl/Makefile.am $(srcdir)/pokefinder/Makefile.am $(srcdir)/roms/Makefile.am $(srcdir)/sound/Makefile.am $(srcdir)/timer/Makefile.am $(srcdir)/ui/Makefile.am $(srcdir)/ui/fb/Makefile.am $(srcdir)/ui/gtk/Makefile.am $(srcdir)/ui/scaler/Makefile.am $(srcdir)/ui/sdl/Makefile.am $(srcdir)/ui/svga/Makefile.am $(srcdir)/ui/widget/Makefile.am $(srcdir)/ui/wii/Makefile.am $(srcdir)/ui/win32/Makefile.am $(srcdir)/ui/xlib/Makefile.am $(srcdir)/unittests/Makefile.am $(srcdir)/z80/Makefile.am:
+$(srcdir)/compat/Makefile.am $(srcdir)/data/Makefile.am $(srcdir)/data/win32/distribution.mk $(srcdir)/debugger/Makefile.am $(srcdir)/hacking/Makefile.am $(srcdir)/infrastructure/Makefile.am $(srcdir)/lib/Makefile.am $(srcdir)/machines/Makefile.am $(srcdir)/man/Makefile.am $(srcdir)/peripherals/Makefile.am $(srcdir)/perl/Makefile.am $(srcdir)/pokefinder/Makefile.am $(srcdir)/roms/Makefile.am $(srcdir)/sound/Makefile.am $(srcdir)/timer/Makefile.am $(srcdir)/ui/Makefile.am $(srcdir)/ui/fb/Makefile.am $(srcdir)/ui/gtk/Makefile.am $(srcdir)/ui/null/Makefile.am $(srcdir)/ui/scaler/Makefile.am $(srcdir)/ui/sdl/Makefile.am $(srcdir)/ui/svga/Makefile.am $(srcdir)/ui/widget/Makefile.am $(srcdir)/ui/wii/Makefile.am $(srcdir)/ui/win32/Makefile.am $(srcdir)/ui/xlib/Makefile.am $(srcdir)/unittests/Makefile.am $(srcdir)/z80/Makefile.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1746,6 +1761,16 @@ ui/gtk/stock.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 	ui/gtk/$(DEPDIR)/$(am__dirstamp)
 ui/gtk/gtkcompat.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 	ui/gtk/$(DEPDIR)/$(am__dirstamp)
+ui/null/$(am__dirstamp):
+	@$(MKDIR_P) ui/null
+	@: > ui/null/$(am__dirstamp)
+ui/null/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ui/null/$(DEPDIR)
+	@: > ui/null/$(DEPDIR)/$(am__dirstamp)
+ui/null/null_ui.$(OBJEXT): ui/null/$(am__dirstamp) \
+	ui/null/$(DEPDIR)/$(am__dirstamp)
+ui/null/options.$(OBJEXT): ui/null/$(am__dirstamp) \
+	ui/null/$(DEPDIR)/$(am__dirstamp)
 ui/scaler/$(am__dirstamp):
 	@$(MKDIR_P) ui/scaler
 	@: > ui/scaler/$(am__dirstamp)
@@ -1994,6 +2019,7 @@ mostlyclean-compile:
 	-rm -f timer/*.$(OBJEXT)
 	-rm -f ui/fb/*.$(OBJEXT)
 	-rm -f ui/gtk/*.$(OBJEXT)
+	-rm -f ui/null/*.$(OBJEXT)
 	-rm -f ui/scaler/*.$(OBJEXT)
 	-rm -f ui/sdl/*.$(OBJEXT)
 	-rm -f ui/svga/*.$(OBJEXT)
@@ -2173,6 +2199,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/roms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/statusbar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/stock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/null/$(DEPDIR)/null_ui.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/null/$(DEPDIR)/options.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/scaler/$(DEPDIR)/scaler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/sdl/$(DEPDIR)/keysyms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/sdl/$(DEPDIR)/sdldisplay.Po@am__quote@
@@ -2984,6 +3012,8 @@ distclean-generic:
 	-rm -f ui/fb/$(am__dirstamp)
 	-rm -f ui/gtk/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/gtk/$(am__dirstamp)
+	-rm -f ui/null/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ui/null/$(am__dirstamp)
 	-rm -f ui/scaler/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/scaler/$(am__dirstamp)
 	-rm -f ui/sdl/$(DEPDIR)/$(am__dirstamp)
@@ -3019,7 +3049,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) compat/$(DEPDIR) compat/amiga/$(DEPDIR) compat/linux/$(DEPDIR) compat/morphos/$(DEPDIR) compat/unix/$(DEPDIR) compat/wii/$(DEPDIR) compat/win32/$(DEPDIR) debugger/$(DEPDIR) infrastructure/$(DEPDIR) machines/$(DEPDIR) peripherals/$(DEPDIR) peripherals/disk/$(DEPDIR) peripherals/flash/$(DEPDIR) peripherals/ide/$(DEPDIR) peripherals/nic/$(DEPDIR) pokefinder/$(DEPDIR) sound/$(DEPDIR) timer/$(DEPDIR) ui/fb/$(DEPDIR) ui/gtk/$(DEPDIR) ui/scaler/$(DEPDIR) ui/sdl/$(DEPDIR) ui/svga/$(DEPDIR) ui/widget/$(DEPDIR) ui/wii/$(DEPDIR) ui/win32/$(DEPDIR) ui/xlib/$(DEPDIR) unittests/$(DEPDIR) z80/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) compat/$(DEPDIR) compat/amiga/$(DEPDIR) compat/linux/$(DEPDIR) compat/morphos/$(DEPDIR) compat/unix/$(DEPDIR) compat/wii/$(DEPDIR) compat/win32/$(DEPDIR) debugger/$(DEPDIR) infrastructure/$(DEPDIR) machines/$(DEPDIR) peripherals/$(DEPDIR) peripherals/disk/$(DEPDIR) peripherals/flash/$(DEPDIR) peripherals/ide/$(DEPDIR) peripherals/nic/$(DEPDIR) pokefinder/$(DEPDIR) sound/$(DEPDIR) timer/$(DEPDIR) ui/fb/$(DEPDIR) ui/gtk/$(DEPDIR) ui/null/$(DEPDIR) ui/scaler/$(DEPDIR) ui/sdl/$(DEPDIR) ui/svga/$(DEPDIR) ui/widget/$(DEPDIR) ui/wii/$(DEPDIR) ui/win32/$(DEPDIR) ui/xlib/$(DEPDIR) unittests/$(DEPDIR) z80/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -3075,7 +3105,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) compat/$(DEPDIR) compat/amiga/$(DEPDIR) compat/linux/$(DEPDIR) compat/morphos/$(DEPDIR) compat/unix/$(DEPDIR) compat/wii/$(DEPDIR) compat/win32/$(DEPDIR) debugger/$(DEPDIR) infrastructure/$(DEPDIR) machines/$(DEPDIR) peripherals/$(DEPDIR) peripherals/disk/$(DEPDIR) peripherals/flash/$(DEPDIR) peripherals/ide/$(DEPDIR) peripherals/nic/$(DEPDIR) pokefinder/$(DEPDIR) sound/$(DEPDIR) timer/$(DEPDIR) ui/fb/$(DEPDIR) ui/gtk/$(DEPDIR) ui/scaler/$(DEPDIR) ui/sdl/$(DEPDIR) ui/svga/$(DEPDIR) ui/widget/$(DEPDIR) ui/wii/$(DEPDIR) ui/win32/$(DEPDIR) ui/xlib/$(DEPDIR) unittests/$(DEPDIR) z80/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) compat/$(DEPDIR) compat/amiga/$(DEPDIR) compat/linux/$(DEPDIR) compat/morphos/$(DEPDIR) compat/unix/$(DEPDIR) compat/wii/$(DEPDIR) compat/win32/$(DEPDIR) debugger/$(DEPDIR) infrastructure/$(DEPDIR) machines/$(DEPDIR) peripherals/$(DEPDIR) peripherals/disk/$(DEPDIR) peripherals/flash/$(DEPDIR) peripherals/ide/$(DEPDIR) peripherals/nic/$(DEPDIR) pokefinder/$(DEPDIR) sound/$(DEPDIR) timer/$(DEPDIR) ui/fb/$(DEPDIR) ui/gtk/$(DEPDIR) ui/null/$(DEPDIR) ui/scaler/$(DEPDIR) ui/sdl/$(DEPDIR) ui/svga/$(DEPDIR) ui/widget/$(DEPDIR) ui/wii/$(DEPDIR) ui/win32/$(DEPDIR) ui/xlib/$(DEPDIR) unittests/$(DEPDIR) z80/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -3327,6 +3357,10 @@ ui/gtk/options.c: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/gtk/options.p
 ui/gtk/options_internals.h: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/gtk/options-header.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
 	@$(MKDIR_P) ui/gtk
 	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/gtk/options-header.pl - > $@.tmp && mv $@.tmp $@
+
+ui/null/options.c: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/null/options.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
+	@$(MKDIR_P) ui/null
+	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/null/options.pl - > $@.tmp && mv $@.tmp $@
 
 ui/scaler/scalers16.o: ui/scaler/scalers.c
 	$(AM_V_CC)$(COMPILE) -DSCALER_DATA_SIZE=2 -c $(srcdir)/ui/scaler/scalers.c -o ui/scaler/scalers16.o
