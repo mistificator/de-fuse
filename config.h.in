@@ -155,6 +155,9 @@
 /* Defined if GTK+ UI is in use */
 #undef UI_GTK
 
+/* Defined if null UI is in use */
+#undef UI_NULL
+
 /* Defined if the SDL UI in use */
 #undef UI_SDL
 

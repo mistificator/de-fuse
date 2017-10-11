@@ -75,11 +75,10 @@ extern int yydebug;
      STEP = 284,
      TIME = 285,
      WRITE = 286,
-     DEBUGGER_REGISTER = 287,
-     NUMBER = 288,
-     STRING = 289,
-     VARIABLE = 290,
-     DEBUGGER_ERROR = 291
+     NUMBER = 287,
+     STRING = 288,
+     VARIABLE = 289,
+     DEBUGGER_ERROR = 290
    };
 #endif
 /* Tokens.  */
@@ -112,11 +111,10 @@ extern int yydebug;
 #define STEP 284
 #define TIME 285
 #define WRITE 286
-#define DEBUGGER_REGISTER 287
-#define NUMBER 288
-#define STRING 289
-#define VARIABLE 290
-#define DEBUGGER_ERROR 291
+#define NUMBER 287
+#define STRING 288
+#define VARIABLE 289
+#define DEBUGGER_ERROR 290
 
 
 
@@ -142,7 +140,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 146 "debugger/commandy.h"
+#line 144 "debugger/commandy.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
