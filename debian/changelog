@@ -1,3 +1,14 @@
+fuse-emulator (1.4.1+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Refresh the following patches:
+    - debian/patches/disable-autoload.patch
+    - debian/patches/manpage-errors.patch
+  * debian/control:
+    - Update Standards-Version to 4.1.1 (no changes).
+
+ -- Alberto Garcia <berto@igalia.com>  Wed, 11 Oct 2017 12:12:56 +0300
+
 fuse-emulator (1.4.0+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
