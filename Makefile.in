@@ -206,12 +206,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = data/win32/fuse.manifest data/win32/installer.nsi \
-	lib/disk_plus3.szx lib/tape_128.szx lib/tape_16.szx \
-	lib/tape_2048.szx lib/tape_2068.szx lib/tape_48.szx \
-	lib/tape_48_ntsc.szx lib/tape_plus2.szx lib/tape_plus2a.szx \
-	lib/tape_plus3.szx lib/tape_plus3e.szx lib/tape_pentagon.szx \
-	lib/tape_scorpion.szx lib/tape_se.szx lib/tape_ts2068.szx
+CONFIG_CLEAN_FILES = data/win32/fuse.manifest data/win32/installer.nsi
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(appdatadir)" "$(DESTDIR)$(bashcompletiondir)" \
@@ -225,10 +220,10 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	loader.c machine.c memory_pages.c mempool.c menu.c movie.c \
-	module.c periph.c profile.c psg.c rectangle.c rzx.c \
-	screenshot.c settings.c slt.c snapshot.c sound.c spectrum.c \
-	svg.c tape.c ui.c uidisplay.c uimedia.c utils.c windres.rc \
-	compat/dirname.c compat/getopt.c compat/getopt1.c \
+	module.c periph.c phantom_typist.c profile.c psg.c rectangle.c \
+	rzx.c screenshot.c settings.c slt.c snapshot.c sound.c \
+	spectrum.c svg.c tape.c ui.c uidisplay.c uimedia.c utils.c \
+	windres.rc compat/dirname.c compat/getopt.c compat/getopt1.c \
 	compat/unix/dir.c compat/unix/file.c compat/amiga/osname.c \
 	compat/amiga/paths.c compat/unix/timer.c compat/unix/osname.c \
 	compat/linux/paths.c compat/unix/socket.c \
@@ -422,11 +417,11 @@ am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	input.$(OBJEXT) keyboard.$(OBJEXT) loader.$(OBJEXT) \
 	machine.$(OBJEXT) memory_pages.$(OBJEXT) mempool.$(OBJEXT) \
 	menu.$(OBJEXT) movie.$(OBJEXT) module.$(OBJEXT) \
-	periph.$(OBJEXT) profile.$(OBJEXT) psg.$(OBJEXT) \
-	rectangle.$(OBJEXT) rzx.$(OBJEXT) screenshot.$(OBJEXT) \
-	settings.$(OBJEXT) slt.$(OBJEXT) snapshot.$(OBJEXT) \
-	sound.$(OBJEXT) spectrum.$(OBJEXT) svg.$(OBJEXT) \
-	tape.$(OBJEXT) ui.$(OBJEXT) uidisplay.$(OBJEXT) \
+	periph.$(OBJEXT) phantom_typist.$(OBJEXT) profile.$(OBJEXT) \
+	psg.$(OBJEXT) rectangle.$(OBJEXT) rzx.$(OBJEXT) \
+	screenshot.$(OBJEXT) settings.$(OBJEXT) slt.$(OBJEXT) \
+	snapshot.$(OBJEXT) sound.$(OBJEXT) spectrum.$(OBJEXT) \
+	svg.$(OBJEXT) tape.$(OBJEXT) ui.$(OBJEXT) uidisplay.$(OBJEXT) \
 	uimedia.$(OBJEXT) utils.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
 	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
@@ -654,7 +649,6 @@ AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
-AUTOLOAD_SNAPS = @AUTOLOAD_SNAPS@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BASH_COMPLETION_DIR = @BASH_COMPLETION_DIR@
@@ -816,16 +810,16 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
 fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	machine.c memory_pages.c mempool.c menu.c movie.c module.c \
-	periph.c profile.c psg.c rectangle.c rzx.c screenshot.c \
-	settings.c slt.c snapshot.c sound.c spectrum.c svg.c tape.c \
-	ui.c uidisplay.c uimedia.c utils.c $(am__append_1) \
-	$(am__append_4) $(am__append_5) $(am__append_6) \
-	$(am__append_7) $(am__append_8) $(am__append_9) \
-	$(am__append_10) $(am__append_11) $(am__append_12) \
-	$(am__append_13) $(am__append_14) $(am__append_15) \
-	debugger/breakpoint.c debugger/command.c debugger/commandl.l \
-	debugger/commandy.y debugger/debugger.c debugger/disassemble.c \
-	debugger/event.c debugger/expression.c \
+	periph.c phantom_typist.c profile.c psg.c rectangle.c rzx.c \
+	screenshot.c settings.c slt.c snapshot.c sound.c spectrum.c \
+	svg.c tape.c ui.c uidisplay.c uimedia.c utils.c \
+	$(am__append_1) $(am__append_4) $(am__append_5) \
+	$(am__append_6) $(am__append_7) $(am__append_8) \
+	$(am__append_9) $(am__append_10) $(am__append_11) \
+	$(am__append_12) $(am__append_13) $(am__append_14) \
+	$(am__append_15) debugger/breakpoint.c debugger/command.c \
+	debugger/commandl.l debugger/commandy.y debugger/debugger.c \
+	debugger/disassemble.c debugger/event.c debugger/expression.c \
 	debugger/system_variable.c debugger/variable.c \
 	infrastructure/startup_manager.c machines/machines_periph.c \
 	machines/pentagon.c machines/pentagon512.c \
@@ -886,39 +880,39 @@ AM_CPPFLAGS = \
 AM_CFLAGS = $(WARN_CFLAGS) $(PTHREAD_CFLAGS)
 noinst_HEADERS = bitmap.h compat.h display.h event.h fuse.h input.h \
 	keyboard.h loader.h machine.h memory_pages.h mempool.h menu.h \
-	movie.h movie_tables.h module.h periph.h psg.h rectangle.h \
-	rzx.h screenshot.h settings.h slt.h snapshot.h sound.h \
-	spectrum.h svg.h tape.h utils.h options.h profile.h \
-	compat/getopt.h debugger/breakpoint.h debugger/commandy.h \
-	debugger/debugger.h debugger/debugger_internals.h \
-	infrastructure/startup_manager.h machines/machines.h \
-	machines/machines_periph.h machines/pentagon.h \
-	machines/scorpion.h machines/spec128.h machines/spec48.h \
-	machines/specplus3.h machines/tc2068.h peripherals/ay.h \
-	peripherals/covox.h peripherals/dck.h peripherals/fuller.h \
-	peripherals/if1.h peripherals/if2.h peripherals/joystick.h \
-	peripherals/kempmouse.h peripherals/melodik.h \
-	peripherals/multiface.h peripherals/printer.h \
-	peripherals/scld.h peripherals/speccyboot.h \
-	peripherals/specdrum.h peripherals/spectranet.h \
-	peripherals/ula.h peripherals/usource.h \
-	peripherals/disk/beta.h peripherals/disk/crc.h \
-	peripherals/disk/didaktik.h peripherals/disk/disciple.h \
-	peripherals/disk/disk.h peripherals/disk/fdd.h \
-	peripherals/disk/opus.h peripherals/disk/plusd.h \
-	peripherals/disk/trdos.h peripherals/disk/upd_fdc.h \
-	peripherals/disk/wd_fdc.h peripherals/ide/divide.h \
-	peripherals/ide/divmmc.h peripherals/ide/divxxx.h \
-	peripherals/ide/ide.h peripherals/ide/simpleide.h \
-	peripherals/ide/zxatasp.h peripherals/ide/zxcf.h \
-	peripherals/ide/zxmmc.h peripherals/flash/am29f010.h \
-	peripherals/nic/enc28j60.h peripherals/nic/w5100.h \
-	peripherals/nic/w5100_internals.h pokefinder/pokefinder.h \
-	pokefinder/pokemem.h sound/blipbuffer.h sound/sfifo.h \
-	timer/timer.h ui/ui.h ui/uidisplay.h ui/uijoystick.h \
-	ui/uimedia.h ui/scaler/scaler.h ui/scaler/scaler_internals.h \
-	unittests/unittests.h z80/z80.h z80/z80_checks.h \
-	z80/z80_internals.h z80/z80_macros.h
+	movie.h movie_tables.h module.h periph.h phantom_typist.h \
+	psg.h rectangle.h rzx.h screenshot.h settings.h slt.h \
+	snapshot.h sound.h spectrum.h svg.h tape.h utils.h options.h \
+	profile.h compat/getopt.h debugger/breakpoint.h \
+	debugger/commandy.h debugger/debugger.h \
+	debugger/debugger_internals.h infrastructure/startup_manager.h \
+	machines/machines.h machines/machines_periph.h \
+	machines/pentagon.h machines/scorpion.h machines/spec128.h \
+	machines/spec48.h machines/specplus3.h machines/tc2068.h \
+	peripherals/ay.h peripherals/covox.h peripherals/dck.h \
+	peripherals/fuller.h peripherals/if1.h peripherals/if2.h \
+	peripherals/joystick.h peripherals/kempmouse.h \
+	peripherals/melodik.h peripherals/multiface.h \
+	peripherals/printer.h peripherals/scld.h \
+	peripherals/speccyboot.h peripherals/specdrum.h \
+	peripherals/spectranet.h peripherals/ula.h \
+	peripherals/usource.h peripherals/disk/beta.h \
+	peripherals/disk/crc.h peripherals/disk/didaktik.h \
+	peripherals/disk/disciple.h peripherals/disk/disk.h \
+	peripherals/disk/fdd.h peripherals/disk/opus.h \
+	peripherals/disk/plusd.h peripherals/disk/trdos.h \
+	peripherals/disk/upd_fdc.h peripherals/disk/wd_fdc.h \
+	peripherals/ide/divide.h peripherals/ide/divmmc.h \
+	peripherals/ide/divxxx.h peripherals/ide/ide.h \
+	peripherals/ide/simpleide.h peripherals/ide/zxatasp.h \
+	peripherals/ide/zxcf.h peripherals/ide/zxmmc.h \
+	peripherals/flash/am29f010.h peripherals/nic/enc28j60.h \
+	peripherals/nic/w5100.h peripherals/nic/w5100_internals.h \
+	pokefinder/pokefinder.h pokefinder/pokemem.h \
+	sound/blipbuffer.h sound/sfifo.h timer/timer.h ui/ui.h \
+	ui/uidisplay.h ui/uijoystick.h ui/uimedia.h ui/scaler/scaler.h \
+	ui/scaler/scaler_internals.h unittests/unittests.h z80/z80.h \
+	z80/z80_checks.h z80/z80_internals.h z80/z80_macros.h
 EXTRA_DIST = AUTHORS INSTALL PORTING README THANKS keysyms.dat \
 	keysyms.pl m4/ax_create_stdint_h.m4 m4/ax_pthread.m4 \
 	m4/gtk-2.0.m4 m4/pkg.m4 m4/sdl.m4 menu_data.dat menu_data.pl \
@@ -932,8 +926,7 @@ EXTRA_DIST = AUTHORS INSTALL PORTING README THANKS keysyms.dat \
 	hacking/peripheral_tests.txt hacking/sound.txt \
 	hacking/spectranet.txt hacking/tc2048_tech_notes.txt \
 	hacking/timer.txt hacking/ui.txt hacking/uncrustify.cfg \
-	hacking/valgrind.supp $(lib_compressed_snaps) $(lib_files) \
-	$(lib_tests) $(lib_uncompressed_snaps) $(man_MANS) \
+	hacking/valgrind.supp $(lib_files) $(lib_tests) $(man_MANS) \
 	perl/cpp-perl.pl perl/Fuse.pm perl/Fuse/Dialog.pm $(ROMS) \
 	roms/README.copyright ui/options.dat ui/uijoystick.c \
 	ui/gtk/options.pl ui/gtk/options-header.pl ui/null/options.pl \
@@ -971,8 +964,7 @@ CLEANFILES = options.h settings.c settings.h data/fuse.desktop \
 	z80/z80_cb.c z80/z80_coretest.o z80/z80_ddfd.c \
 	z80/z80_ddfdcb.c z80/z80_ed.c
 DISTCLEANFILES = 
-pkgdata_DATA = $(lib_@AUTOLOAD_SNAPS@_snaps) $(lib_files) $(ROMS) \
-	$(am__append_22) $(am__append_32)
+pkgdata_DATA = $(lib_files) $(ROMS) $(am__append_22) $(am__append_32)
 @DESKTOP_INTEGRATION_TRUE@fusemimedir = $(DESKTOP_DATADIR)/mime/packages
 @DESKTOP_INTEGRATION_TRUE@fusemime_DATA = data/fuse.xml
 @DESKTOP_INTEGRATION_TRUE@appdatadir = $(DESKTOP_DATADIR)/applications
@@ -1011,57 +1003,6 @@ lib_files = \
             lib/keyboard.scr \
             lib/microdrive.bmp \
             lib/plus3disk.bmp
-
-lib_snaps = \
-            disk_plus3.szx \
-            tape_128.szx \
-            tape_16.szx \
-            tape_2048.szx \
-            tape_2068.szx \
-            tape_48.szx \
-            tape_48_ntsc.szx \
-            tape_plus2.szx \
-            tape_plus2a.szx \
-            tape_plus3.szx \
-            tape_plus3e.szx \
-            tape_pentagon.szx \
-            tape_scorpion.szx \
-            tape_se.szx \
-            tape_ts2068.szx
-
-lib_compressed_snaps = \
-                       lib/compressed/disk_plus3.szx \
-                       lib/compressed/tape_128.szx \
-                       lib/compressed/tape_16.szx \
-                       lib/compressed/tape_2048.szx \
-                       lib/compressed/tape_2068.szx \
-                       lib/compressed/tape_48.szx \
-                       lib/compressed/tape_48_ntsc.szx \
-                       lib/compressed/tape_plus2.szx \
-                       lib/compressed/tape_plus2a.szx \
-                       lib/compressed/tape_plus3.szx \
-                       lib/compressed/tape_plus3e.szx \
-                       lib/compressed/tape_pentagon.szx \
-                       lib/compressed/tape_scorpion.szx \
-                       lib/compressed/tape_se.szx \
-                       lib/compressed/tape_ts2068.szx
-
-lib_uncompressed_snaps = \
-                         lib/uncompressed/disk_plus3.szx \
-                         lib/uncompressed/tape_128.szx \
-                         lib/uncompressed/tape_16.szx \
-                         lib/uncompressed/tape_2048.szx \
-                         lib/uncompressed/tape_2068.szx \
-                         lib/uncompressed/tape_48.szx \
-                         lib/uncompressed/tape_48_ntsc.szx \
-                         lib/uncompressed/tape_plus2.szx \
-                         lib/uncompressed/tape_plus2a.szx \
-                         lib/uncompressed/tape_plus3.szx \
-                         lib/uncompressed/tape_plus3e.szx \
-                         lib/uncompressed/tape_pentagon.szx \
-                         lib/uncompressed/tape_scorpion.szx \
-                         lib/uncompressed/tape_se.szx \
-                         lib/uncompressed/tape_ts2068.szx
 
 lib_tests = \
             lib/tests/fatware-success.hdf.bz2 \
@@ -2046,6 +1987,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/module.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/movie.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/periph.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/phantom_typist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/profile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rectangle.Po@am__quote@

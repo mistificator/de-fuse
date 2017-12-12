@@ -154,6 +154,7 @@ typedef struct settings_info {
    int opus;
   char *opusdisk_file;
    int pal_tv2x;
+  char *phantom_typist_mode;
   char *playback_file;
    int plus3_detect_speedlock;
   char *plus3disk_file;
