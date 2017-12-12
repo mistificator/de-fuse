@@ -192,6 +192,7 @@ settings_info settings_default = {
   /* opus */ 0,
   /* opusdisk_file */ (char *)NULL,
   /* pal_tv2x */ 0,
+  /* phantom_typist_mode */ (char *)"auto",
   /* playback_file */ (char *)NULL,
   /* plus3_detect_speedlock */ 1,
   /* plus3disk_file */ (char *)NULL,
@@ -1296,6 +1297,14 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "phantomtypistmode" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->phantom_typist_mode );
+        settings->phantom_typist_mode = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "playbackfile" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
@@ -2390,6 +2399,8 @@ settings_write_config( settings_info *settings )
   if( settings->opusdisk_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"opusdisk", (const xmlChar*)settings->opusdisk_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"paltv2x", (const xmlChar*)(settings->pal_tv2x ? "1" : "0") );
+  if( settings->phantom_typist_mode )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"phantomtypistmode", (const xmlChar*)settings->phantom_typist_mode );
   if( settings->playback_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"playbackfile", (const xmlChar*)settings->playback_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"plus3detectspeedlock", (const xmlChar*)(settings->plus3_detect_speedlock ? "1" : "0") );
@@ -3155,6 +3166,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 7 && !strncmp( (const char *)name, "paltv2x", n ) ) {
     *val_int = &settings->pal_tv2x;
+    return 0;
+  }
+  if( n == 17 && !strncmp( (const char *)name, "phantomtypistmode", n ) ) {
+    *val_char = &settings->phantom_typist_mode;
     return 0;
   }
   if( n == 12 && !strncmp( (const char *)name, "playbackfile", n ) ) {
@@ -4081,6 +4096,9 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "paltv2x",
                               settings->pal_tv2x ) )
     goto error;
+  if( settings_string_write( doc, "phantomtypistmode",
+                             settings->phantom_typist_mode ) )
+    goto error;
   if( settings_string_write( doc, "playbackfile",
                              settings->playback_file ) )
     goto error;
@@ -4604,89 +4622,90 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "opusdisk", 1, NULL, 336 },
     {    "pal-tv2x", 0, &(settings->pal_tv2x), 1 },
     { "no-pal-tv2x", 0, &(settings->pal_tv2x), 0 },
+    { "phantom-typist-mode", 1, NULL, 337 },
     { "playback", 1, NULL, 'p' },
     {    "plus3-detect-speedlock", 0, &(settings->plus3_detect_speedlock), 1 },
     { "no-plus3-detect-speedlock", 0, &(settings->plus3_detect_speedlock), 0 },
-    { "plus3disk", 1, NULL, 337 },
+    { "plus3disk", 1, NULL, 338 },
     {    "plusd", 0, &(settings->plusd), 1 },
     { "no-plusd", 0, &(settings->plusd), 0 },
-    { "plusddisk", 1, NULL, 338 },
+    { "plusddisk", 1, NULL, 339 },
     {    "printer", 0, &(settings->printer), 1 },
     { "no-printer", 0, &(settings->printer), 0 },
-    { "graphicsfile", 1, NULL, 339 },
-    { "textfile", 1, NULL, 340 },
+    { "graphicsfile", 1, NULL, 340 },
+    { "textfile", 1, NULL, 341 },
     {    "raw-s-net", 0, &(settings->raw_s_net), 1 },
     { "no-raw-s-net", 0, &(settings->raw_s_net), 0 },
     { "record", 1, NULL, 'r' },
     {    "recreated-spectrum", 0, &(settings->recreated_spectrum), 1 },
     { "no-recreated-spectrum", 0, &(settings->recreated_spectrum), 0 },
-    { "rom-128-0", 1, NULL, 342 },
-    { "rom-128-1", 1, NULL, 343 },
-    { "rom-16", 1, NULL, 344 },
-    { "rom-48", 1, NULL, 345 },
-    { "rom-beta128", 1, NULL, 346 },
-    { "rom-didaktik80", 1, NULL, 347 },
-    { "rom-disciple", 1, NULL, 348 },
-    { "rom-interface-1", 1, NULL, 349 },
-    { "rom-multiface1", 1, NULL, 350 },
-    { "rom-multiface128", 1, NULL, 351 },
-    { "rom-multiface3", 1, NULL, 352 },
-    { "rom-opus", 1, NULL, 353 },
-    { "rom-pentagon1024-0", 1, NULL, 354 },
-    { "rom-pentagon1024-1", 1, NULL, 355 },
-    { "rom-pentagon1024-2", 1, NULL, 356 },
-    { "rom-pentagon1024-3", 1, NULL, 357 },
-    { "rom-pentagon512-0", 1, NULL, 358 },
-    { "rom-pentagon512-1", 1, NULL, 359 },
-    { "rom-pentagon512-2", 1, NULL, 360 },
-    { "rom-pentagon512-3", 1, NULL, 361 },
-    { "rom-pentagon-0", 1, NULL, 362 },
-    { "rom-pentagon-1", 1, NULL, 363 },
-    { "rom-pentagon-2", 1, NULL, 364 },
-    { "rom-plus2-0", 1, NULL, 365 },
-    { "rom-plus2-1", 1, NULL, 366 },
-    { "rom-plus2a-0", 1, NULL, 367 },
-    { "rom-plus2a-1", 1, NULL, 368 },
-    { "rom-plus2a-2", 1, NULL, 369 },
-    { "rom-plus2a-3", 1, NULL, 370 },
-    { "rom-plus3-0", 1, NULL, 371 },
-    { "rom-plus3-1", 1, NULL, 372 },
-    { "rom-plus3-2", 1, NULL, 373 },
-    { "rom-plus3-3", 1, NULL, 374 },
-    { "rom-plus3e-0", 1, NULL, 375 },
-    { "rom-plus3e-1", 1, NULL, 376 },
-    { "rom-plus3e-2", 1, NULL, 377 },
-    { "rom-plus3e-3", 1, NULL, 378 },
-    { "rom-plusd", 1, NULL, 379 },
-    { "rom-scorpion-0", 1, NULL, 380 },
-    { "rom-scorpion-1", 1, NULL, 381 },
-    { "rom-scorpion-2", 1, NULL, 382 },
-    { "rom-scorpion-3", 1, NULL, 383 },
-    { "rom-spec-se-0", 1, NULL, 384 },
-    { "rom-spec-se-1", 1, NULL, 385 },
-    { "rom-speccyboot", 1, NULL, 386 },
-    { "rom-tc2048", 1, NULL, 387 },
-    { "rom-tc2068-0", 1, NULL, 388 },
-    { "rom-tc2068-1", 1, NULL, 389 },
-    { "rom-ts2068-0", 1, NULL, 390 },
-    { "rom-ts2068-1", 1, NULL, 391 },
-    { "rom-usource", 1, NULL, 392 },
+    { "rom-128-0", 1, NULL, 343 },
+    { "rom-128-1", 1, NULL, 344 },
+    { "rom-16", 1, NULL, 345 },
+    { "rom-48", 1, NULL, 346 },
+    { "rom-beta128", 1, NULL, 347 },
+    { "rom-didaktik80", 1, NULL, 348 },
+    { "rom-disciple", 1, NULL, 349 },
+    { "rom-interface-1", 1, NULL, 350 },
+    { "rom-multiface1", 1, NULL, 351 },
+    { "rom-multiface128", 1, NULL, 352 },
+    { "rom-multiface3", 1, NULL, 353 },
+    { "rom-opus", 1, NULL, 354 },
+    { "rom-pentagon1024-0", 1, NULL, 355 },
+    { "rom-pentagon1024-1", 1, NULL, 356 },
+    { "rom-pentagon1024-2", 1, NULL, 357 },
+    { "rom-pentagon1024-3", 1, NULL, 358 },
+    { "rom-pentagon512-0", 1, NULL, 359 },
+    { "rom-pentagon512-1", 1, NULL, 360 },
+    { "rom-pentagon512-2", 1, NULL, 361 },
+    { "rom-pentagon512-3", 1, NULL, 362 },
+    { "rom-pentagon-0", 1, NULL, 363 },
+    { "rom-pentagon-1", 1, NULL, 364 },
+    { "rom-pentagon-2", 1, NULL, 365 },
+    { "rom-plus2-0", 1, NULL, 366 },
+    { "rom-plus2-1", 1, NULL, 367 },
+    { "rom-plus2a-0", 1, NULL, 368 },
+    { "rom-plus2a-1", 1, NULL, 369 },
+    { "rom-plus2a-2", 1, NULL, 370 },
+    { "rom-plus2a-3", 1, NULL, 371 },
+    { "rom-plus3-0", 1, NULL, 372 },
+    { "rom-plus3-1", 1, NULL, 373 },
+    { "rom-plus3-2", 1, NULL, 374 },
+    { "rom-plus3-3", 1, NULL, 375 },
+    { "rom-plus3e-0", 1, NULL, 376 },
+    { "rom-plus3e-1", 1, NULL, 377 },
+    { "rom-plus3e-2", 1, NULL, 378 },
+    { "rom-plus3e-3", 1, NULL, 379 },
+    { "rom-plusd", 1, NULL, 380 },
+    { "rom-scorpion-0", 1, NULL, 381 },
+    { "rom-scorpion-1", 1, NULL, 382 },
+    { "rom-scorpion-2", 1, NULL, 383 },
+    { "rom-scorpion-3", 1, NULL, 384 },
+    { "rom-spec-se-0", 1, NULL, 385 },
+    { "rom-spec-se-1", 1, NULL, 386 },
+    { "rom-speccyboot", 1, NULL, 387 },
+    { "rom-tc2048", 1, NULL, 388 },
+    { "rom-tc2068-0", 1, NULL, 389 },
+    { "rom-tc2068-1", 1, NULL, 390 },
+    { "rom-ts2068-0", 1, NULL, 391 },
+    { "rom-ts2068-1", 1, NULL, 392 },
+    { "rom-usource", 1, NULL, 393 },
     {    "rs232-handshake", 0, &(settings->rs232_handshake), 1 },
     { "no-rs232-handshake", 0, &(settings->rs232_handshake), 0 },
-    { "rs232-rx", 1, NULL, 393 },
-    { "rs232-tx", 1, NULL, 394 },
+    { "rs232-rx", 1, NULL, 394 },
+    { "rs232-tx", 1, NULL, 395 },
     {    "rzx-autosaves", 0, &(settings->rzx_autosaves), 1 },
     { "no-rzx-autosaves", 0, &(settings->rzx_autosaves), 0 },
     {    "compress-rzx", 0, &(settings->rzx_compression), 1 },
     { "no-compress-rzx", 0, &(settings->rzx_compression), 0 },
     {    "simpleide", 0, &(settings->simpleide_active), 1 },
     { "no-simpleide", 0, &(settings->simpleide_active), 0 },
-    { "simpleide-masterfile", 1, NULL, 395 },
-    { "simpleide-slavefile", 1, NULL, 396 },
+    { "simpleide-masterfile", 1, NULL, 396 },
+    { "simpleide-slavefile", 1, NULL, 397 },
     {    "slt", 0, &(settings->slt_traps), 1 },
     { "no-slt", 0, &(settings->slt_traps), 0 },
     { "snapshot", 1, NULL, 's' },
-    { "snet", 1, NULL, 398 },
+    { "snet", 1, NULL, 399 },
     {    "sound", 0, &(settings->sound), 1 },
     { "no-sound", 0, &(settings->sound), 0 },
     { "sound-device", 1, NULL, 'd' },
@@ -4695,10 +4714,10 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "sound-freq", 1, NULL, 'f' },
     {    "loading-sound", 0, &(settings->sound_load), 1 },
     { "no-loading-sound", 0, &(settings->sound_load), 0 },
-    { "speaker-type", 1, NULL, 399 },
+    { "speaker-type", 1, NULL, 400 },
     {    "speccyboot", 0, &(settings->speccyboot), 1 },
     { "no-speccyboot", 0, &(settings->speccyboot), 0 },
-    { "speccyboot-tap", 1, NULL, 400 },
+    { "speccyboot-tap", 1, NULL, 401 },
     {    "specdrum", 0, &(settings->specdrum), 1 },
     { "no-specdrum", 0, &(settings->specdrum), 0 },
     {    "spectranet", 0, &(settings->spectranet), 1 },
@@ -4709,10 +4728,10 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "graphics-filter", 1, NULL, 'g' },
     {    "statusbar", 0, &(settings->statusbar), 1 },
     { "no-statusbar", 0, &(settings->statusbar), 0 },
-    { "separation", 1, NULL, 401 },
+    { "separation", 1, NULL, 402 },
     {    "strict-aspect-hint", 0, &(settings->strict_aspect_hint), 1 },
     { "no-strict-aspect-hint", 0, &(settings->strict_aspect_hint), 0 },
-    { "svga-modes", 1, NULL, 402 },
+    { "svga-modes", 1, NULL, 403 },
     { "tape", 1, NULL, 't' },
     {    "traps", 0, &(settings->tape_traps), 1 },
     { "no-traps", 0, &(settings->tape_traps), 0 },
@@ -4720,30 +4739,30 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-unittests", 0, &(settings->unittests), 0 },
     {    "usource", 0, &(settings->usource), 1 },
     { "no-usource", 0, &(settings->usource), 0 },
-    { "volume-ay", 1, NULL, 403 },
-    { "volume-beeper", 1, NULL, 404 },
-    { "volume-covox", 1, NULL, 405 },
-    { "volume-specdrum", 1, NULL, 406 },
+    { "volume-ay", 1, NULL, 404 },
+    { "volume-beeper", 1, NULL, 405 },
+    { "volume-covox", 1, NULL, 406 },
+    { "volume-specdrum", 1, NULL, 407 },
     {    "writable-roms", 0, &(settings->writable_roms), 1 },
     { "no-writable-roms", 0, &(settings->writable_roms), 0 },
     {    "cmos-z80", 0, &(settings->z80_is_cmos), 1 },
     { "no-cmos-z80", 0, &(settings->z80_is_cmos), 0 },
     {    "zxatasp", 0, &(settings->zxatasp_active), 1 },
     { "no-zxatasp", 0, &(settings->zxatasp_active), 0 },
-    { "zxatasp-masterfile", 1, NULL, 407 },
-    { "zxatasp-slavefile", 1, NULL, 408 },
+    { "zxatasp-masterfile", 1, NULL, 408 },
+    { "zxatasp-slavefile", 1, NULL, 409 },
     {    "zxatasp-upload", 0, &(settings->zxatasp_upload), 1 },
     { "no-zxatasp-upload", 0, &(settings->zxatasp_upload), 0 },
     {    "zxatasp-write-protect", 0, &(settings->zxatasp_wp), 1 },
     { "no-zxatasp-write-protect", 0, &(settings->zxatasp_wp), 0 },
     {    "zxcf", 0, &(settings->zxcf_active), 1 },
     { "no-zxcf", 0, &(settings->zxcf_active), 0 },
-    { "zxcf-cffile", 1, NULL, 409 },
+    { "zxcf-cffile", 1, NULL, 410 },
     {    "zxcf-upload", 0, &(settings->zxcf_upload), 1 },
     { "no-zxcf-upload", 0, &(settings->zxcf_upload), 0 },
     {    "zxmmc", 0, &(settings->zxmmc_enabled), 1 },
     { "no-zxmmc", 0, &(settings->zxmmc_enabled), 0 },
-    { "zxmmc-file", 1, NULL, 410 },
+    { "zxmmc-file", 1, NULL, 411 },
     {    "zxprinter", 0, &(settings->zxprinter), 1 },
     { "no-zxprinter", 0, &(settings->zxprinter), 0 },
 #line 607"./settings.pl"
@@ -4855,86 +4874,87 @@ settings_command_line( settings_info *settings, int *first_arg,
     case 334: settings_set_string( &settings->movie_compr, optarg ); break;
     case 335: settings_set_string( &settings->movie_start, optarg ); break;
     case 336: settings_set_string( &settings->opusdisk_file, optarg ); break;
+    case 337: settings_set_string( &settings->phantom_typist_mode, optarg ); break;
     case 'p': settings_set_string( &settings->playback_file, optarg ); break;
-    case 337: settings_set_string( &settings->plus3disk_file, optarg ); break;
-    case 338: settings_set_string( &settings->plusddisk_file, optarg ); break;
-    case 339: settings_set_string( &settings->printer_graphics_filename, optarg ); break;
-    case 340: settings_set_string( &settings->printer_text_filename, optarg ); break;
+    case 338: settings_set_string( &settings->plus3disk_file, optarg ); break;
+    case 339: settings_set_string( &settings->plusddisk_file, optarg ); break;
+    case 340: settings_set_string( &settings->printer_graphics_filename, optarg ); break;
+    case 341: settings_set_string( &settings->printer_text_filename, optarg ); break;
     case 'r': settings_set_string( &settings->record_file, optarg ); break;
-    case 342: settings_set_string( &settings->rom_128_0, optarg ); break;
-    case 343: settings_set_string( &settings->rom_128_1, optarg ); break;
-    case 344: settings_set_string( &settings->rom_16, optarg ); break;
-    case 345: settings_set_string( &settings->rom_48, optarg ); break;
-    case 346: settings_set_string( &settings->rom_beta128, optarg ); break;
-    case 347: settings_set_string( &settings->rom_didaktik80, optarg ); break;
-    case 348: settings_set_string( &settings->rom_disciple, optarg ); break;
-    case 349: settings_set_string( &settings->rom_interface_1, optarg ); break;
-    case 350: settings_set_string( &settings->rom_multiface1, optarg ); break;
-    case 351: settings_set_string( &settings->rom_multiface128, optarg ); break;
-    case 352: settings_set_string( &settings->rom_multiface3, optarg ); break;
-    case 353: settings_set_string( &settings->rom_opus, optarg ); break;
-    case 354: settings_set_string( &settings->rom_pentagon1024_0, optarg ); break;
-    case 355: settings_set_string( &settings->rom_pentagon1024_1, optarg ); break;
-    case 356: settings_set_string( &settings->rom_pentagon1024_2, optarg ); break;
-    case 357: settings_set_string( &settings->rom_pentagon1024_3, optarg ); break;
-    case 358: settings_set_string( &settings->rom_pentagon512_0, optarg ); break;
-    case 359: settings_set_string( &settings->rom_pentagon512_1, optarg ); break;
-    case 360: settings_set_string( &settings->rom_pentagon512_2, optarg ); break;
-    case 361: settings_set_string( &settings->rom_pentagon512_3, optarg ); break;
-    case 362: settings_set_string( &settings->rom_pentagon_0, optarg ); break;
-    case 363: settings_set_string( &settings->rom_pentagon_1, optarg ); break;
-    case 364: settings_set_string( &settings->rom_pentagon_2, optarg ); break;
-    case 365: settings_set_string( &settings->rom_plus2_0, optarg ); break;
-    case 366: settings_set_string( &settings->rom_plus2_1, optarg ); break;
-    case 367: settings_set_string( &settings->rom_plus2a_0, optarg ); break;
-    case 368: settings_set_string( &settings->rom_plus2a_1, optarg ); break;
-    case 369: settings_set_string( &settings->rom_plus2a_2, optarg ); break;
-    case 370: settings_set_string( &settings->rom_plus2a_3, optarg ); break;
-    case 371: settings_set_string( &settings->rom_plus3_0, optarg ); break;
-    case 372: settings_set_string( &settings->rom_plus3_1, optarg ); break;
-    case 373: settings_set_string( &settings->rom_plus3_2, optarg ); break;
-    case 374: settings_set_string( &settings->rom_plus3_3, optarg ); break;
-    case 375: settings_set_string( &settings->rom_plus3e_0, optarg ); break;
-    case 376: settings_set_string( &settings->rom_plus3e_1, optarg ); break;
-    case 377: settings_set_string( &settings->rom_plus3e_2, optarg ); break;
-    case 378: settings_set_string( &settings->rom_plus3e_3, optarg ); break;
-    case 379: settings_set_string( &settings->rom_plusd, optarg ); break;
-    case 380: settings_set_string( &settings->rom_scorpion_0, optarg ); break;
-    case 381: settings_set_string( &settings->rom_scorpion_1, optarg ); break;
-    case 382: settings_set_string( &settings->rom_scorpion_2, optarg ); break;
-    case 383: settings_set_string( &settings->rom_scorpion_3, optarg ); break;
-    case 384: settings_set_string( &settings->rom_spec_se_0, optarg ); break;
-    case 385: settings_set_string( &settings->rom_spec_se_1, optarg ); break;
-    case 386: settings_set_string( &settings->rom_speccyboot, optarg ); break;
-    case 387: settings_set_string( &settings->rom_tc2048, optarg ); break;
-    case 388: settings_set_string( &settings->rom_tc2068_0, optarg ); break;
-    case 389: settings_set_string( &settings->rom_tc2068_1, optarg ); break;
-    case 390: settings_set_string( &settings->rom_ts2068_0, optarg ); break;
-    case 391: settings_set_string( &settings->rom_ts2068_1, optarg ); break;
-    case 392: settings_set_string( &settings->rom_usource, optarg ); break;
-    case 393: settings_set_string( &settings->rs232_rx, optarg ); break;
-    case 394: settings_set_string( &settings->rs232_tx, optarg ); break;
-    case 395: settings_set_string( &settings->simpleide_master_file, optarg ); break;
-    case 396: settings_set_string( &settings->simpleide_slave_file, optarg ); break;
+    case 343: settings_set_string( &settings->rom_128_0, optarg ); break;
+    case 344: settings_set_string( &settings->rom_128_1, optarg ); break;
+    case 345: settings_set_string( &settings->rom_16, optarg ); break;
+    case 346: settings_set_string( &settings->rom_48, optarg ); break;
+    case 347: settings_set_string( &settings->rom_beta128, optarg ); break;
+    case 348: settings_set_string( &settings->rom_didaktik80, optarg ); break;
+    case 349: settings_set_string( &settings->rom_disciple, optarg ); break;
+    case 350: settings_set_string( &settings->rom_interface_1, optarg ); break;
+    case 351: settings_set_string( &settings->rom_multiface1, optarg ); break;
+    case 352: settings_set_string( &settings->rom_multiface128, optarg ); break;
+    case 353: settings_set_string( &settings->rom_multiface3, optarg ); break;
+    case 354: settings_set_string( &settings->rom_opus, optarg ); break;
+    case 355: settings_set_string( &settings->rom_pentagon1024_0, optarg ); break;
+    case 356: settings_set_string( &settings->rom_pentagon1024_1, optarg ); break;
+    case 357: settings_set_string( &settings->rom_pentagon1024_2, optarg ); break;
+    case 358: settings_set_string( &settings->rom_pentagon1024_3, optarg ); break;
+    case 359: settings_set_string( &settings->rom_pentagon512_0, optarg ); break;
+    case 360: settings_set_string( &settings->rom_pentagon512_1, optarg ); break;
+    case 361: settings_set_string( &settings->rom_pentagon512_2, optarg ); break;
+    case 362: settings_set_string( &settings->rom_pentagon512_3, optarg ); break;
+    case 363: settings_set_string( &settings->rom_pentagon_0, optarg ); break;
+    case 364: settings_set_string( &settings->rom_pentagon_1, optarg ); break;
+    case 365: settings_set_string( &settings->rom_pentagon_2, optarg ); break;
+    case 366: settings_set_string( &settings->rom_plus2_0, optarg ); break;
+    case 367: settings_set_string( &settings->rom_plus2_1, optarg ); break;
+    case 368: settings_set_string( &settings->rom_plus2a_0, optarg ); break;
+    case 369: settings_set_string( &settings->rom_plus2a_1, optarg ); break;
+    case 370: settings_set_string( &settings->rom_plus2a_2, optarg ); break;
+    case 371: settings_set_string( &settings->rom_plus2a_3, optarg ); break;
+    case 372: settings_set_string( &settings->rom_plus3_0, optarg ); break;
+    case 373: settings_set_string( &settings->rom_plus3_1, optarg ); break;
+    case 374: settings_set_string( &settings->rom_plus3_2, optarg ); break;
+    case 375: settings_set_string( &settings->rom_plus3_3, optarg ); break;
+    case 376: settings_set_string( &settings->rom_plus3e_0, optarg ); break;
+    case 377: settings_set_string( &settings->rom_plus3e_1, optarg ); break;
+    case 378: settings_set_string( &settings->rom_plus3e_2, optarg ); break;
+    case 379: settings_set_string( &settings->rom_plus3e_3, optarg ); break;
+    case 380: settings_set_string( &settings->rom_plusd, optarg ); break;
+    case 381: settings_set_string( &settings->rom_scorpion_0, optarg ); break;
+    case 382: settings_set_string( &settings->rom_scorpion_1, optarg ); break;
+    case 383: settings_set_string( &settings->rom_scorpion_2, optarg ); break;
+    case 384: settings_set_string( &settings->rom_scorpion_3, optarg ); break;
+    case 385: settings_set_string( &settings->rom_spec_se_0, optarg ); break;
+    case 386: settings_set_string( &settings->rom_spec_se_1, optarg ); break;
+    case 387: settings_set_string( &settings->rom_speccyboot, optarg ); break;
+    case 388: settings_set_string( &settings->rom_tc2048, optarg ); break;
+    case 389: settings_set_string( &settings->rom_tc2068_0, optarg ); break;
+    case 390: settings_set_string( &settings->rom_tc2068_1, optarg ); break;
+    case 391: settings_set_string( &settings->rom_ts2068_0, optarg ); break;
+    case 392: settings_set_string( &settings->rom_ts2068_1, optarg ); break;
+    case 393: settings_set_string( &settings->rom_usource, optarg ); break;
+    case 394: settings_set_string( &settings->rs232_rx, optarg ); break;
+    case 395: settings_set_string( &settings->rs232_tx, optarg ); break;
+    case 396: settings_set_string( &settings->simpleide_master_file, optarg ); break;
+    case 397: settings_set_string( &settings->simpleide_slave_file, optarg ); break;
     case 's': settings_set_string( &settings->snapshot, optarg ); break;
-    case 398: settings_set_string( &settings->snet, optarg ); break;
+    case 399: settings_set_string( &settings->snet, optarg ); break;
     case 'd': settings_set_string( &settings->sound_device, optarg ); break;
     case 'f': settings->sound_freq = atoi( optarg ); break;
-    case 399: settings_set_string( &settings->speaker_type, optarg ); break;
-    case 400: settings_set_string( &settings->speccyboot_tap, optarg ); break;
+    case 400: settings_set_string( &settings->speaker_type, optarg ); break;
+    case 401: settings_set_string( &settings->speccyboot_tap, optarg ); break;
     case 'm': settings_set_string( &settings->start_machine, optarg ); break;
     case 'g': settings_set_string( &settings->start_scaler_mode, optarg ); break;
-    case 401: settings_set_string( &settings->stereo_ay, optarg ); break;
-    case 402: settings_set_string( &settings->svga_modes, optarg ); break;
+    case 402: settings_set_string( &settings->stereo_ay, optarg ); break;
+    case 403: settings_set_string( &settings->svga_modes, optarg ); break;
     case 't': settings_set_string( &settings->tape_file, optarg ); break;
-    case 403: settings->volume_ay = atoi( optarg ); break;
-    case 404: settings->volume_beeper = atoi( optarg ); break;
-    case 405: settings->volume_covox = atoi( optarg ); break;
-    case 406: settings->volume_specdrum = atoi( optarg ); break;
-    case 407: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
-    case 408: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
-    case 409: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
-    case 410: settings_set_string( &settings->zxmmc_file, optarg ); break;
+    case 404: settings->volume_ay = atoi( optarg ); break;
+    case 405: settings->volume_beeper = atoi( optarg ); break;
+    case 406: settings->volume_covox = atoi( optarg ); break;
+    case 407: settings->volume_specdrum = atoi( optarg ); break;
+    case 408: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
+    case 409: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
+    case 410: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
+    case 411: settings_set_string( &settings->zxmmc_file, optarg ); break;
 #line 657"./settings.pl"
 
     case 'h': settings->show_help = 1; break;
@@ -5198,6 +5218,10 @@ settings_copy_internal( settings_info *dest, settings_info *src )
     dest->opusdisk_file = utils_safe_strdup( src->opusdisk_file );
   }
   dest->pal_tv2x = src->pal_tv2x;
+  dest->phantom_typist_mode = NULL;
+  if( src->phantom_typist_mode ) {
+    dest->phantom_typist_mode = utils_safe_strdup( src->phantom_typist_mode );
+  }
   dest->playback_file = NULL;
   if( src->playback_file ) {
     dest->playback_file = utils_safe_strdup( src->playback_file );
@@ -5661,6 +5685,7 @@ settings_free( settings_info *settings )
   if( settings->movie_compr ) libspectrum_free( settings->movie_compr );
   if( settings->movie_start ) libspectrum_free( settings->movie_start );
   if( settings->opusdisk_file ) libspectrum_free( settings->opusdisk_file );
+  if( settings->phantom_typist_mode ) libspectrum_free( settings->phantom_typist_mode );
   if( settings->playback_file ) libspectrum_free( settings->playback_file );
   if( settings->plus3disk_file ) libspectrum_free( settings->plus3disk_file );
   if( settings->plusddisk_file ) libspectrum_free( settings->plusddisk_file );
