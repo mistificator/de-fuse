@@ -2,7 +2,6 @@ compile-without-roms.patch
 missing-roms-help.patch
 rom-search-path.patch
 load-opense-rom.patch
-disable-autoload.patch
 desktop-file.patch
 manpage-errors.patch
 bash-completion.patch

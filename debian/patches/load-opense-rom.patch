@@ -5,16 +5,11 @@ Index: fuse-emulator/machine.c
 ===================================================================
 --- fuse-emulator.orig/machine.c
 +++ fuse-emulator/machine.c
-@@ -52,6 +52,7 @@
- 
- fuse_machine_info **machine_types = NULL; /* Array of available machines */
- int machine_count = 0;
-+int using_opense_rom = 0;
- 
- fuse_machine_info *machine_current = NULL; /* The currently selected machine */
- static int machine_location;	/* Where is the current machine in
-@@ -275,6 +276,41 @@ machine_load_rom_bank_from_file( memory_
+@@ -273,8 +273,46 @@ machine_load_rom_bank_from_file( memory_
+ {
+   int error;
    utils_file rom;
++  static int using_opense_rom = 0;
  
    error = utils_read_auxiliary_file( filename, &rom, UTILS_AUXILIARY_ROM );
 +
@@ -28,6 +23,7 @@ Index: fuse-emulator/machine.c
 +       ! strcmp( filename, "plus3-3.rom" ) ) {
 +
 +      error = utils_read_auxiliary_file( "opense.rom", &rom, UTILS_AUXILIARY_ROM );
++      custom = 1;
 +
 +      if( error != -1 && ! using_opense_rom ) {
 +
@@ -47,6 +43,7 @@ Index: fuse-emulator/machine.c
 +              ! strcmp( filename, "plus3-2.rom" ) ) {
 +
 +      error = utils_read_auxiliary_file( "opense-stub.rom", &rom, UTILS_AUXILIARY_ROM );
++      custom = 1;
 +
 +    }
 +
@@ -88,7 +85,7 @@ Index: fuse-emulator/settings.c
  
  /* The default settings of options, etc */
  settings_info settings_default = {
-@@ -377,6 +378,8 @@ read_config_file( settings_info *setting
+@@ -378,6 +379,8 @@ read_config_file( settings_info *setting
  
    xmlFreeDoc( doc );
  

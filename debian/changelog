@@ -1,3 +1,16 @@
+fuse-emulator (1.5.0+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Refresh the following patches:
+    - debian/patches/compile-without-roms.patch
+    - debian/patches/manpage-errors.patch
+  * Drop disable-autoload.patch and update load-opense-rom.patch to
+    implement the same functionality.
+  * debian/control:
+    - Update Standards-Version to 4.1.2 (no changes).
+
+ -- Alberto Garcia <berto@igalia.com>  Wed, 13 Dec 2017 22:11:23 +0100
+
 fuse-emulator (1.4.1+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
