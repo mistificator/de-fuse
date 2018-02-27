@@ -94,6 +94,7 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
                               5 );
     snprintf( buffer, 80, "%d", settings_current.emulation_speed );
     gtk_entry_set_text( GTK_ENTRY( dialog.emulation_speed ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.emulation_speed ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.emulation_speed, TRUE, TRUE, 0 );
 
@@ -116,6 +117,7 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
                               1 );
     snprintf( buffer, 80, "%d", settings_current.frame_rate );
     gtk_entry_set_text( GTK_ENTRY( dialog.frame_rate ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.frame_rate ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.frame_rate, TRUE, TRUE, 0 );
 
@@ -204,6 +206,9 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_general_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
+
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
 
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );
@@ -344,6 +349,7 @@ menu_options_media( GtkWidget *widget GCC_UNUSED,
                               3 );
     snprintf( buffer, 80, "%d", settings_current.mdr_len );
     gtk_entry_set_text( GTK_ENTRY( dialog.mdr_len ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.mdr_len ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.mdr_len, TRUE, TRUE, 0 );
 
@@ -360,6 +366,9 @@ menu_options_media( GtkWidget *widget GCC_UNUSED,
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_media_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
+
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
 
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );
@@ -545,6 +554,9 @@ menu_options_peripherals_general( GtkWidget *widget GCC_UNUSED,
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_peripherals_general_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
+
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
 
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );
@@ -772,6 +784,9 @@ menu_options_peripherals_disk( GtkWidget *widget GCC_UNUSED,
                              G_CALLBACK( menu_options_peripherals_disk_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
 
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
+
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );
 
@@ -919,6 +934,7 @@ menu_options_rzx( GtkWidget *widget GCC_UNUSED,
                               8 );
     snprintf( buffer, 80, "%d", settings_current.competition_code );
     gtk_entry_set_text( GTK_ENTRY( dialog.competition_code ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.competition_code ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.competition_code, TRUE, TRUE, 0 );
 
@@ -935,6 +951,9 @@ menu_options_rzx( GtkWidget *widget GCC_UNUSED,
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_rzx_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
+
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
 
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );
@@ -1119,6 +1138,7 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
                               3 );
     snprintf( buffer, 80, "%d", settings_current.volume_ay );
     gtk_entry_set_text( GTK_ENTRY( dialog.volume_ay ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.volume_ay ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_ay, TRUE, TRUE, 0 );
 
@@ -1141,6 +1161,7 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
                               3 );
     snprintf( buffer, 80, "%d", settings_current.volume_beeper );
     gtk_entry_set_text( GTK_ENTRY( dialog.volume_beeper ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.volume_beeper ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_beeper, TRUE, TRUE, 0 );
 
@@ -1163,6 +1184,7 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
                               3 );
     snprintf( buffer, 80, "%d", settings_current.volume_specdrum );
     gtk_entry_set_text( GTK_ENTRY( dialog.volume_specdrum ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.volume_specdrum ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_specdrum, TRUE, TRUE, 0 );
 
@@ -1185,6 +1207,7 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
                               3 );
     snprintf( buffer, 80, "%d", settings_current.volume_covox );
     gtk_entry_set_text( GTK_ENTRY( dialog.volume_covox ), buffer );
+    gtk_entry_set_activates_default( GTK_ENTRY( dialog.volume_covox ), TRUE );
 
     gtk_box_pack_start( GTK_BOX( hbox ), dialog.volume_covox, TRUE, TRUE, 0 );
 
@@ -1195,6 +1218,9 @@ menu_options_sound( GtkWidget *widget GCC_UNUSED,
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_sound_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
+
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
 
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );
@@ -1905,6 +1931,9 @@ menu_options_diskoptions( GtkWidget *widget GCC_UNUSED,
                              G_CALLBACK( menu_options_diskoptions_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
 
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
+
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );
 
@@ -2069,6 +2098,9 @@ menu_options_movie( GtkWidget *widget GCC_UNUSED,
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
                              G_CALLBACK( menu_options_movie_done ),
                              (gpointer) &dialog, NULL, DEFAULT_DESTROY );
+
+  gtk_dialog_set_default_response( GTK_DIALOG( dialog.dialog ),
+                                   GTK_RESPONSE_OK );
 
   /* Display the window */
   gtk_widget_show_all( dialog.dialog );

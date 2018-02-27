@@ -260,6 +260,7 @@ settings_info settings_default = {
   /* rs232_tx */ (char *)NULL,
   /* rzx_autosaves */ 1,
   /* rzx_compression */ 1,
+  /* sdl_fullscreen_mode */ (char *)NULL,
   /* simpleide_active */ 0,
   /* simpleide_master_file */ (char *)NULL,
   /* simpleide_slave_file */ (char *)NULL,
@@ -1836,6 +1837,14 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "sdlfullscreenmode" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        libspectrum_free( settings->sdl_fullscreen_mode );
+        settings->sdl_fullscreen_mode = utils_safe_strdup( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "simpleide" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
@@ -2527,6 +2536,8 @@ settings_write_config( settings_info *settings )
     xmlNewTextChild( root, NULL, (const xmlChar*)"rs232tx", (const xmlChar*)settings->rs232_tx );
   xmlNewTextChild( root, NULL, (const xmlChar*)"rzxautosaves", (const xmlChar*)(settings->rzx_autosaves ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"compressrzx", (const xmlChar*)(settings->rzx_compression ? "1" : "0") );
+  if( settings->sdl_fullscreen_mode )
+    xmlNewTextChild( root, NULL, (const xmlChar*)"sdlfullscreenmode", (const xmlChar*)settings->sdl_fullscreen_mode );
   xmlNewTextChild( root, NULL, (const xmlChar*)"simpleide", (const xmlChar*)(settings->simpleide_active ? "1" : "0") );
   if( settings->simpleide_master_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"simpleidemasterfile", (const xmlChar*)settings->simpleide_master_file );
@@ -3444,6 +3455,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
     *val_int = &settings->rzx_compression;
     return 0;
   }
+  if( n == 17 && !strncmp( (const char *)name, "sdlfullscreenmode", n ) ) {
+    *val_char = &settings->sdl_fullscreen_mode;
+    return 0;
+  }
   if( n == 9 && !strncmp( (const char *)name, "simpleide", n ) ) {
     *val_int = &settings->simpleide_active;
     return 0;
@@ -4300,6 +4315,9 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "compressrzx",
                               settings->rzx_compression ) )
     goto error;
+  if( settings_string_write( doc, "sdlfullscreenmode",
+                             settings->sdl_fullscreen_mode ) )
+    goto error;
   if( settings_boolean_write( doc, "simpleide",
                               settings->simpleide_active ) )
     goto error;
@@ -4698,14 +4716,15 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-rzx-autosaves", 0, &(settings->rzx_autosaves), 0 },
     {    "compress-rzx", 0, &(settings->rzx_compression), 1 },
     { "no-compress-rzx", 0, &(settings->rzx_compression), 0 },
+    { "sdl-fullscreen-mode", 1, NULL, 396 },
     {    "simpleide", 0, &(settings->simpleide_active), 1 },
     { "no-simpleide", 0, &(settings->simpleide_active), 0 },
-    { "simpleide-masterfile", 1, NULL, 396 },
-    { "simpleide-slavefile", 1, NULL, 397 },
+    { "simpleide-masterfile", 1, NULL, 397 },
+    { "simpleide-slavefile", 1, NULL, 398 },
     {    "slt", 0, &(settings->slt_traps), 1 },
     { "no-slt", 0, &(settings->slt_traps), 0 },
     { "snapshot", 1, NULL, 's' },
-    { "snet", 1, NULL, 399 },
+    { "snet", 1, NULL, 400 },
     {    "sound", 0, &(settings->sound), 1 },
     { "no-sound", 0, &(settings->sound), 0 },
     { "sound-device", 1, NULL, 'd' },
@@ -4714,10 +4733,10 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "sound-freq", 1, NULL, 'f' },
     {    "loading-sound", 0, &(settings->sound_load), 1 },
     { "no-loading-sound", 0, &(settings->sound_load), 0 },
-    { "speaker-type", 1, NULL, 400 },
+    { "speaker-type", 1, NULL, 401 },
     {    "speccyboot", 0, &(settings->speccyboot), 1 },
     { "no-speccyboot", 0, &(settings->speccyboot), 0 },
-    { "speccyboot-tap", 1, NULL, 401 },
+    { "speccyboot-tap", 1, NULL, 402 },
     {    "specdrum", 0, &(settings->specdrum), 1 },
     { "no-specdrum", 0, &(settings->specdrum), 0 },
     {    "spectranet", 0, &(settings->spectranet), 1 },
@@ -4728,10 +4747,10 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "graphics-filter", 1, NULL, 'g' },
     {    "statusbar", 0, &(settings->statusbar), 1 },
     { "no-statusbar", 0, &(settings->statusbar), 0 },
-    { "separation", 1, NULL, 402 },
+    { "separation", 1, NULL, 403 },
     {    "strict-aspect-hint", 0, &(settings->strict_aspect_hint), 1 },
     { "no-strict-aspect-hint", 0, &(settings->strict_aspect_hint), 0 },
-    { "svga-modes", 1, NULL, 403 },
+    { "svga-modes", 1, NULL, 404 },
     { "tape", 1, NULL, 't' },
     {    "traps", 0, &(settings->tape_traps), 1 },
     { "no-traps", 0, &(settings->tape_traps), 0 },
@@ -4739,30 +4758,30 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "no-unittests", 0, &(settings->unittests), 0 },
     {    "usource", 0, &(settings->usource), 1 },
     { "no-usource", 0, &(settings->usource), 0 },
-    { "volume-ay", 1, NULL, 404 },
-    { "volume-beeper", 1, NULL, 405 },
-    { "volume-covox", 1, NULL, 406 },
-    { "volume-specdrum", 1, NULL, 407 },
+    { "volume-ay", 1, NULL, 405 },
+    { "volume-beeper", 1, NULL, 406 },
+    { "volume-covox", 1, NULL, 407 },
+    { "volume-specdrum", 1, NULL, 408 },
     {    "writable-roms", 0, &(settings->writable_roms), 1 },
     { "no-writable-roms", 0, &(settings->writable_roms), 0 },
     {    "cmos-z80", 0, &(settings->z80_is_cmos), 1 },
     { "no-cmos-z80", 0, &(settings->z80_is_cmos), 0 },
     {    "zxatasp", 0, &(settings->zxatasp_active), 1 },
     { "no-zxatasp", 0, &(settings->zxatasp_active), 0 },
-    { "zxatasp-masterfile", 1, NULL, 408 },
-    { "zxatasp-slavefile", 1, NULL, 409 },
+    { "zxatasp-masterfile", 1, NULL, 409 },
+    { "zxatasp-slavefile", 1, NULL, 410 },
     {    "zxatasp-upload", 0, &(settings->zxatasp_upload), 1 },
     { "no-zxatasp-upload", 0, &(settings->zxatasp_upload), 0 },
     {    "zxatasp-write-protect", 0, &(settings->zxatasp_wp), 1 },
     { "no-zxatasp-write-protect", 0, &(settings->zxatasp_wp), 0 },
     {    "zxcf", 0, &(settings->zxcf_active), 1 },
     { "no-zxcf", 0, &(settings->zxcf_active), 0 },
-    { "zxcf-cffile", 1, NULL, 410 },
+    { "zxcf-cffile", 1, NULL, 411 },
     {    "zxcf-upload", 0, &(settings->zxcf_upload), 1 },
     { "no-zxcf-upload", 0, &(settings->zxcf_upload), 0 },
     {    "zxmmc", 0, &(settings->zxmmc_enabled), 1 },
     { "no-zxmmc", 0, &(settings->zxmmc_enabled), 0 },
-    { "zxmmc-file", 1, NULL, 411 },
+    { "zxmmc-file", 1, NULL, 412 },
     {    "zxprinter", 0, &(settings->zxprinter), 1 },
     { "no-zxprinter", 0, &(settings->zxprinter), 0 },
 #line 607"./settings.pl"
@@ -4934,27 +4953,28 @@ settings_command_line( settings_info *settings, int *first_arg,
     case 393: settings_set_string( &settings->rom_usource, optarg ); break;
     case 394: settings_set_string( &settings->rs232_rx, optarg ); break;
     case 395: settings_set_string( &settings->rs232_tx, optarg ); break;
-    case 396: settings_set_string( &settings->simpleide_master_file, optarg ); break;
-    case 397: settings_set_string( &settings->simpleide_slave_file, optarg ); break;
+    case 396: settings_set_string( &settings->sdl_fullscreen_mode, optarg ); break;
+    case 397: settings_set_string( &settings->simpleide_master_file, optarg ); break;
+    case 398: settings_set_string( &settings->simpleide_slave_file, optarg ); break;
     case 's': settings_set_string( &settings->snapshot, optarg ); break;
-    case 399: settings_set_string( &settings->snet, optarg ); break;
+    case 400: settings_set_string( &settings->snet, optarg ); break;
     case 'd': settings_set_string( &settings->sound_device, optarg ); break;
     case 'f': settings->sound_freq = atoi( optarg ); break;
-    case 400: settings_set_string( &settings->speaker_type, optarg ); break;
-    case 401: settings_set_string( &settings->speccyboot_tap, optarg ); break;
+    case 401: settings_set_string( &settings->speaker_type, optarg ); break;
+    case 402: settings_set_string( &settings->speccyboot_tap, optarg ); break;
     case 'm': settings_set_string( &settings->start_machine, optarg ); break;
     case 'g': settings_set_string( &settings->start_scaler_mode, optarg ); break;
-    case 402: settings_set_string( &settings->stereo_ay, optarg ); break;
-    case 403: settings_set_string( &settings->svga_modes, optarg ); break;
+    case 403: settings_set_string( &settings->stereo_ay, optarg ); break;
+    case 404: settings_set_string( &settings->svga_modes, optarg ); break;
     case 't': settings_set_string( &settings->tape_file, optarg ); break;
-    case 404: settings->volume_ay = atoi( optarg ); break;
-    case 405: settings->volume_beeper = atoi( optarg ); break;
-    case 406: settings->volume_covox = atoi( optarg ); break;
-    case 407: settings->volume_specdrum = atoi( optarg ); break;
-    case 408: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
-    case 409: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
-    case 410: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
-    case 411: settings_set_string( &settings->zxmmc_file, optarg ); break;
+    case 405: settings->volume_ay = atoi( optarg ); break;
+    case 406: settings->volume_beeper = atoi( optarg ); break;
+    case 407: settings->volume_covox = atoi( optarg ); break;
+    case 408: settings->volume_specdrum = atoi( optarg ); break;
+    case 409: settings_set_string( &settings->zxatasp_master_file, optarg ); break;
+    case 410: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
+    case 411: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
+    case 412: settings_set_string( &settings->zxmmc_file, optarg ); break;
 #line 657"./settings.pl"
 
     case 'h': settings->show_help = 1; break;
@@ -5466,6 +5486,10 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   }
   dest->rzx_autosaves = src->rzx_autosaves;
   dest->rzx_compression = src->rzx_compression;
+  dest->sdl_fullscreen_mode = NULL;
+  if( src->sdl_fullscreen_mode ) {
+    dest->sdl_fullscreen_mode = utils_safe_strdup( src->sdl_fullscreen_mode );
+  }
   dest->simpleide_active = src->simpleide_active;
   dest->simpleide_master_file = NULL;
   if( src->simpleide_master_file ) {
@@ -5745,6 +5769,7 @@ settings_free( settings_info *settings )
   if( settings->rom_usource ) libspectrum_free( settings->rom_usource );
   if( settings->rs232_rx ) libspectrum_free( settings->rs232_rx );
   if( settings->rs232_tx ) libspectrum_free( settings->rs232_tx );
+  if( settings->sdl_fullscreen_mode ) libspectrum_free( settings->sdl_fullscreen_mode );
   if( settings->simpleide_master_file ) libspectrum_free( settings->simpleide_master_file );
   if( settings->simpleide_slave_file ) libspectrum_free( settings->simpleide_slave_file );
   if( settings->snapshot ) libspectrum_free( settings->snapshot );

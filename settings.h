@@ -222,6 +222,7 @@ typedef struct settings_info {
   char *rs232_tx;
    int rzx_autosaves;
    int rzx_compression;
+  char *sdl_fullscreen_mode;
    int simpleide_active;
   char *simpleide_master_file;
   char *simpleide_slave_file;
