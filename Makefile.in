@@ -3183,7 +3183,6 @@ options.h: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/@OPTIONS_DIR@/option
 @COMPAT_WIN32_TRUE@	cp $(top_srcdir)/roms/README.copyright $(DESTDIR)/roms
 @COMPAT_WIN32_TRUE@	cp $(top_srcdir)/lib/*.bmp $(DESTDIR)/lib
 @COMPAT_WIN32_TRUE@	cp $(top_srcdir)/lib/*.scr $(DESTDIR)/lib
-@COMPAT_WIN32_TRUE@	cp $(top_builddir)/lib/*.szx $(DESTDIR)/lib
 @COMPAT_WIN32_TRUE@	test "$(UI)" != "sdl" || cp $(top_builddir)/ui/widget/fuse.font $(DESTDIR)/ui/widget
 #	Copy fuse executable (we should manually copy the required libraries)
 @COMPAT_WIN32_TRUE@	cp $(top_builddir)/.libs/fuse$(EXEEXT) $(DESTDIR) || \
