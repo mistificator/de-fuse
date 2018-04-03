@@ -192,7 +192,7 @@ settings_info settings_default = {
   /* opus */ 0,
   /* opusdisk_file */ (char *)NULL,
   /* pal_tv2x */ 0,
-  /* phantom_typist_mode */ (char *)"auto",
+  /* phantom_typist_mode */ (char *)"Auto",
   /* playback_file */ (char *)NULL,
   /* plus3_detect_speedlock */ 1,
   /* plus3disk_file */ (char *)NULL,

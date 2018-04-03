@@ -93,6 +93,23 @@ option_enumerate_combo( const char * const *options, char *value, int def ) {
   return def;
 }
 
+static const char * const widget_phantom_typist_mode_combo[] = {
+  "Auto",
+  "Keyword",
+  "Keystroke",
+  "Menu",
+  "Plus 2A",
+  "Plus 3",
+  NULL
+};
+
+int
+option_enumerate_media_phantom_typist_mode( void ) {
+  return option_enumerate_combo( widget_phantom_typist_mode_combo,
+				 settings_current.phantom_typist_mode,
+				 0 );
+}
+
 static const char * const widget_stereo_ay_combo[] = {
   "None",
   "ACB",
@@ -322,6 +339,8 @@ static void widget_option_autosave_settings_draw( int left_edge, int width, stru
 static int  widget_media_running = 0;
 static void widget_auto_load_click( void );
 static void widget_option_auto_load_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
+static void widget_phantom_typist_mode_click( void );
+static void widget_option_phantom_typist_mode_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_detect_loader_click( void );
 static void widget_option_detect_loader_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_fastload_click( void );
@@ -504,13 +523,14 @@ static widget_option_entry options_general[] = {
 static widget_option_entry options_media[] = {
   { "Media Options" },
   { "\012A\001uto-load media", 0, INPUT_KEY_a, NULL, NULL, widget_auto_load_click, widget_option_auto_load_draw },
-  { "\012D\001etect loaders", 1, INPUT_KEY_d, NULL, NULL, widget_detect_loader_click, widget_option_detect_loader_draw },
-  { "\012F\001astloading", 2, INPUT_KEY_f, NULL, NULL, widget_fastload_click, widget_option_fastload_draw },
-  { "Use \012t\001ape traps", 3, INPUT_KEY_t, NULL, NULL, widget_tape_traps_click, widget_option_tape_traps_draw },
-  { "Accelerate l\012o\001aders", 4, INPUT_KEY_o, NULL, NULL, widget_accelerate_loader_click, widget_option_accelerate_loader_draw },
-  { "Use .s\012l\001t traps", 5, INPUT_KEY_l, NULL, NULL, widget_slt_traps_click, widget_option_slt_traps_draw },
-  { "\012M\001DR cartridge len", 6, INPUT_KEY_m, "blocks", NULL, widget_mdr_len_click, widget_option_mdr_len_draw },
-  { "Random len\012g\001th MDR cartridge", 7, INPUT_KEY_g, NULL, NULL, widget_mdr_random_len_click, widget_option_mdr_random_len_draw },
+  { "\012P\001hantom typist mode", 1, INPUT_KEY_p, NULL, widget_phantom_typist_mode_combo, widget_phantom_typist_mode_click, widget_option_phantom_typist_mode_draw },
+  { "\012D\001etect loaders", 2, INPUT_KEY_d, NULL, NULL, widget_detect_loader_click, widget_option_detect_loader_draw },
+  { "\012F\001astloading", 3, INPUT_KEY_f, NULL, NULL, widget_fastload_click, widget_option_fastload_draw },
+  { "Use \012t\001ape traps", 4, INPUT_KEY_t, NULL, NULL, widget_tape_traps_click, widget_option_tape_traps_draw },
+  { "Accelerate l\012o\001aders", 5, INPUT_KEY_o, NULL, NULL, widget_accelerate_loader_click, widget_option_accelerate_loader_draw },
+  { "Use .s\012l\001t traps", 6, INPUT_KEY_l, NULL, NULL, widget_slt_traps_click, widget_option_slt_traps_draw },
+  { "\012M\001DR cartridge len", 7, INPUT_KEY_m, "blocks", NULL, widget_mdr_len_click, widget_option_mdr_len_draw },
+  { "Random len\012g\001th MDR cartridge", 8, INPUT_KEY_g, NULL, NULL, widget_mdr_random_len_click, widget_option_mdr_random_len_draw },
   { NULL }
 };
 
@@ -1179,6 +1199,21 @@ widget_option_auto_load_draw( int left_edge, int width, struct widget_option_ent
 }
 
 static void
+widget_phantom_typist_mode_click( void )
+{
+  widget_combo_click( "Phantom typist mode", widget_phantom_typist_mode_combo,
+				&widget_options_settings.phantom_typist_mode,
+				0 );
+}
+
+static void
+widget_option_phantom_typist_mode_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
+{
+  widget_options_print_combo( left_edge, width, menu->index, menu->text, menu->options,
+			      show->phantom_typist_mode, 0 );
+}
+
+static void
 widget_detect_loader_click( void )
 {
   widget_options_settings.detect_loader = ! widget_options_settings.detect_loader;
@@ -1287,7 +1322,7 @@ widget_media_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 8 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 9 );
     widget_media_show_all( &widget_options_settings );
     break;
 #endif
@@ -1310,7 +1345,7 @@ widget_media_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 8 ) {
+    if ( highlight_line + 1 < 9 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1324,8 +1359,8 @@ widget_media_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 8 ) {
-      new_highlight_line = 8 - 1;
+    if ( highlight_line + 2 < 9 ) {
+      new_highlight_line = 9 - 1;
       cursor_pressed = 1;
     }
     break;

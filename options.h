@@ -27,6 +27,8 @@
 #ifndef FUSE_OPTIONS_H
 #define FUSE_OPTIONS_H
 
+int option_enumerate_media_phantom_typist_mode( void );
+
 int option_enumerate_sound_stereo_ay( void );
 
 int option_enumerate_sound_speaker_type( void );
