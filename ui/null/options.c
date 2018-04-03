@@ -27,6 +27,12 @@
 #include <config.h>
 
 int
+option_enumerate_media_phantom_typist_mode( void )
+{
+  return 0;
+}
+
+int
 option_enumerate_sound_stereo_ay( void )
 {
   return 0;

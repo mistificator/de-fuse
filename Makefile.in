@@ -176,28 +176,32 @@ DIST_COMMON = $(srcdir)/compat/Makefile.am $(srcdir)/data/Makefile.am \
 @UI_GTK_TRUE@am__append_20 = $(ui_gtk_files)
 @UI_GTK_TRUE@am__append_21 = $(ui_gtk_built)
 @UI_GTK_TRUE@am__append_22 = ui/gtk/menu_data.ui
-@HAVE_GTK2_TRUE@am__append_23 = ui/gtk/gtkcompat.c
-@UI_NULL_TRUE@am__append_24 = $(ui_null_files)
-@UI_NULL_TRUE@am__append_25 = $(ui_null_built)
-@UI_SDL_TRUE@am__append_26 = $(ui_sdl_files)
-@UI_SDL_TRUE@am__append_27 = $(ui_sdl_built)
-@UI_SVGA_TRUE@am__append_28 = $(ui_svga_files)
-@UI_SVGA_TRUE@am__append_29 = $(ui_svga_built)
-@USE_WIDGET_TRUE@am__append_30 = $(ui_widget_files)
-@USE_WIDGET_TRUE@am__append_31 = $(ui_widget_built)
-@USE_WIDGET_TRUE@am__append_32 = ui/widget/fuse.font
-@UI_WII_TRUE@am__append_33 = $(ui_wii_files)
-@UI_WII_TRUE@am__append_34 = $(ui_wii_built)
-@UI_WIN32_TRUE@am__append_35 = $(ui_win32_files)
-@UI_WIN32_TRUE@am__append_36 = $(ui_win32_built)
-@UI_X_TRUE@am__append_37 = $(ui_xlib_files)
-@UI_X_TRUE@am__append_38 = $(ui_xlib_built)
+@HAVE_GTK2_TRUE@am__append_23 = ui/gtk/gtkcompat.c \
+@HAVE_GTK2_TRUE@                ui/gtk/memory_gtk2.c
+
+@HAVE_GTK2_FALSE@am__append_24 = ui/gtk/memory.c
+@UI_NULL_TRUE@am__append_25 = $(ui_null_files)
+@UI_NULL_TRUE@am__append_26 = $(ui_null_built)
+@UI_SDL_TRUE@am__append_27 = $(ui_sdl_files)
+@UI_SDL_TRUE@am__append_28 = $(ui_sdl_built)
+@UI_SVGA_TRUE@am__append_29 = $(ui_svga_files)
+@UI_SVGA_TRUE@am__append_30 = $(ui_svga_built)
+@USE_WIDGET_TRUE@am__append_31 = $(ui_widget_files)
+@USE_WIDGET_TRUE@am__append_32 = $(ui_widget_built)
+@USE_WIDGET_TRUE@am__append_33 = ui/widget/fuse.font
+@UI_WII_TRUE@am__append_34 = $(ui_wii_files)
+@UI_WII_TRUE@am__append_35 = $(ui_wii_built)
+@UI_WIN32_TRUE@am__append_36 = $(ui_win32_files)
+@UI_WIN32_TRUE@am__append_37 = $(ui_win32_built)
+@UI_X_TRUE@am__append_38 = $(ui_xlib_files)
+@UI_X_TRUE@am__append_39 = $(ui_xlib_built)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_pthread.m4 \
 	$(top_srcdir)/m4/gtk-2.0.m4 $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
 	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/m4_ax_string_strcasecmp.m4 \
 	$(top_srcdir)/m4/pkg.m4 $(top_srcdir)/m4/sdl.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -269,30 +273,30 @@ am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	ui/gtk/fileselector.c ui/gtk/gtkcompat.h ui/gtk/gtkdisplay.c \
 	ui/gtk/gtkinternals.h ui/gtk/gtkjoystick.c \
 	ui/gtk/gtkkeyboard.c ui/gtk/gtkmouse.c ui/gtk/gtkui.c \
-	ui/gtk/keysyms.c ui/gtk/memory.c ui/gtk/menu_data.c \
-	ui/gtk/options.c ui/gtk/picture.c ui/gtk/pixmaps.c \
-	ui/gtk/pokefinder.c ui/gtk/pokemem.c ui/gtk/rollback.c \
-	ui/gtk/roms.c ui/gtk/statusbar.c ui/gtk/stock.c \
-	ui/gtk/gtkcompat.c ui/null/null_ui.c ui/null/options.c \
-	ui/scaler/scaler.c ui/sdl/sdldisplay.c ui/sdl/sdldisplay.h \
-	ui/sdl/sdljoystick.c ui/sdl/sdljoystick.h ui/sdl/sdlkeyboard.c \
-	ui/sdl/sdlkeyboard.h ui/sdl/sdlui.c ui/sdl/keysyms.c \
-	ui/svga/keysyms.c ui/svga/svgadisplay.c ui/svga/svgadisplay.h \
-	ui/svga/svgajoystick.c ui/svga/svgakeyboard.c \
-	ui/svga/svgakeyboard.h ui/svga/svgaui.c ui/widget/about.c \
-	ui/widget/browse.c ui/widget/debugger.c ui/widget/error.c \
-	ui/widget/filesel.c ui/widget/memory.c ui/widget/menu.c \
-	ui/widget/menu_data.c ui/widget/options.c ui/widget/picture.c \
-	ui/widget/pokefinder.c ui/widget/pokemem.c ui/widget/query.c \
-	ui/widget/roms.c ui/widget/select.c ui/widget/text.c \
-	ui/widget/widget_internals.h ui/widget/widget.c \
-	ui/widget/widget.h ui/wii/keysyms.c ui/wii/wiidisplay.c \
-	ui/wii/wiidisplay.h ui/wii/wiijoystick.c ui/wii/wiikeyboard.c \
-	ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h ui/wii/wiimouse.c \
-	ui/wii/wiimouse.h ui/wii/wiiui.c ui/win32/about.c \
-	ui/win32/about.h ui/win32/binary.c ui/win32/binary.h \
-	ui/win32/browse.c ui/win32/browse.h ui/win32/confirm.c \
-	ui/win32/debugger.c ui/win32/debugger.h \
+	ui/gtk/keysyms.c ui/gtk/menu_data.c ui/gtk/options.c \
+	ui/gtk/picture.c ui/gtk/pixmaps.c ui/gtk/pokefinder.c \
+	ui/gtk/pokemem.c ui/gtk/rollback.c ui/gtk/roms.c \
+	ui/gtk/statusbar.c ui/gtk/stock.c ui/gtk/gtkcompat.c \
+	ui/gtk/memory_gtk2.c ui/gtk/memory.c ui/null/null_ui.c \
+	ui/null/options.c ui/scaler/scaler.c ui/sdl/sdldisplay.c \
+	ui/sdl/sdldisplay.h ui/sdl/sdljoystick.c ui/sdl/sdljoystick.h \
+	ui/sdl/sdlkeyboard.c ui/sdl/sdlkeyboard.h ui/sdl/sdlui.c \
+	ui/sdl/keysyms.c ui/svga/keysyms.c ui/svga/svgadisplay.c \
+	ui/svga/svgadisplay.h ui/svga/svgajoystick.c \
+	ui/svga/svgakeyboard.c ui/svga/svgakeyboard.h ui/svga/svgaui.c \
+	ui/widget/about.c ui/widget/browse.c ui/widget/debugger.c \
+	ui/widget/error.c ui/widget/filesel.c ui/widget/memory.c \
+	ui/widget/menu.c ui/widget/menu_data.c ui/widget/options.c \
+	ui/widget/picture.c ui/widget/pokefinder.c ui/widget/pokemem.c \
+	ui/widget/query.c ui/widget/roms.c ui/widget/select.c \
+	ui/widget/text.c ui/widget/widget_internals.h \
+	ui/widget/widget.c ui/widget/widget.h ui/wii/keysyms.c \
+	ui/wii/wiidisplay.c ui/wii/wiidisplay.h ui/wii/wiijoystick.c \
+	ui/wii/wiikeyboard.c ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h \
+	ui/wii/wiimouse.c ui/wii/wiimouse.h ui/wii/wiiui.c \
+	ui/win32/about.c ui/win32/about.h ui/win32/binary.c \
+	ui/win32/binary.h ui/win32/browse.c ui/win32/browse.h \
+	ui/win32/confirm.c ui/win32/debugger.c ui/win32/debugger.h \
 	ui/win32/fileselector.c ui/win32/hyperlinks.c \
 	ui/win32/hyperlinks.h ui/win32/keysyms.c \
 	ui/win32/memorybrowser.c ui/win32/memorybrowser.h \
@@ -358,31 +362,32 @@ am__objects_16 = ui/fb/fbdisplay.$(OBJEXT) ui/fb/fbjoystick.$(OBJEXT) \
 	ui/fb/fbkeyboard.$(OBJEXT) ui/fb/fbmouse.$(OBJEXT) \
 	ui/fb/fbui.$(OBJEXT) ui/fb/keysyms.$(OBJEXT)
 @UI_FB_TRUE@am__objects_17 = $(am__objects_16)
-@HAVE_GTK2_TRUE@am__objects_18 = ui/gtk/gtkcompat.$(OBJEXT)
-am__objects_19 = ui/gtk/binary.$(OBJEXT) ui/gtk/browse.$(OBJEXT) \
+@HAVE_GTK2_TRUE@am__objects_18 = ui/gtk/gtkcompat.$(OBJEXT) \
+@HAVE_GTK2_TRUE@	ui/gtk/memory_gtk2.$(OBJEXT)
+@HAVE_GTK2_FALSE@am__objects_19 = ui/gtk/memory.$(OBJEXT)
+am__objects_20 = ui/gtk/binary.$(OBJEXT) ui/gtk/browse.$(OBJEXT) \
 	ui/gtk/confirm.$(OBJEXT) ui/gtk/debugger.$(OBJEXT) \
 	ui/gtk/fileselector.$(OBJEXT) ui/gtk/gtkdisplay.$(OBJEXT) \
 	ui/gtk/gtkjoystick.$(OBJEXT) ui/gtk/gtkkeyboard.$(OBJEXT) \
 	ui/gtk/gtkmouse.$(OBJEXT) ui/gtk/gtkui.$(OBJEXT) \
-	ui/gtk/keysyms.$(OBJEXT) ui/gtk/memory.$(OBJEXT) \
-	ui/gtk/menu_data.$(OBJEXT) ui/gtk/options.$(OBJEXT) \
-	ui/gtk/picture.$(OBJEXT) ui/gtk/pixmaps.$(OBJEXT) \
-	ui/gtk/pokefinder.$(OBJEXT) ui/gtk/pokemem.$(OBJEXT) \
-	ui/gtk/rollback.$(OBJEXT) ui/gtk/roms.$(OBJEXT) \
-	ui/gtk/statusbar.$(OBJEXT) ui/gtk/stock.$(OBJEXT) \
-	$(am__objects_18)
-@UI_GTK_TRUE@am__objects_20 = $(am__objects_19)
-am__objects_21 = ui/null/null_ui.$(OBJEXT) ui/null/options.$(OBJEXT)
-@UI_NULL_TRUE@am__objects_22 = $(am__objects_21)
-am__objects_23 = ui/sdl/sdldisplay.$(OBJEXT) \
+	ui/gtk/keysyms.$(OBJEXT) ui/gtk/menu_data.$(OBJEXT) \
+	ui/gtk/options.$(OBJEXT) ui/gtk/picture.$(OBJEXT) \
+	ui/gtk/pixmaps.$(OBJEXT) ui/gtk/pokefinder.$(OBJEXT) \
+	ui/gtk/pokemem.$(OBJEXT) ui/gtk/rollback.$(OBJEXT) \
+	ui/gtk/roms.$(OBJEXT) ui/gtk/statusbar.$(OBJEXT) \
+	ui/gtk/stock.$(OBJEXT) $(am__objects_18) $(am__objects_19)
+@UI_GTK_TRUE@am__objects_21 = $(am__objects_20)
+am__objects_22 = ui/null/null_ui.$(OBJEXT) ui/null/options.$(OBJEXT)
+@UI_NULL_TRUE@am__objects_23 = $(am__objects_22)
+am__objects_24 = ui/sdl/sdldisplay.$(OBJEXT) \
 	ui/sdl/sdljoystick.$(OBJEXT) ui/sdl/sdlkeyboard.$(OBJEXT) \
 	ui/sdl/sdlui.$(OBJEXT) ui/sdl/keysyms.$(OBJEXT)
-@UI_SDL_TRUE@am__objects_24 = $(am__objects_23)
-am__objects_25 = ui/svga/keysyms.$(OBJEXT) \
+@UI_SDL_TRUE@am__objects_25 = $(am__objects_24)
+am__objects_26 = ui/svga/keysyms.$(OBJEXT) \
 	ui/svga/svgadisplay.$(OBJEXT) ui/svga/svgajoystick.$(OBJEXT) \
 	ui/svga/svgakeyboard.$(OBJEXT) ui/svga/svgaui.$(OBJEXT)
-@UI_SVGA_TRUE@am__objects_26 = $(am__objects_25)
-am__objects_27 = ui/widget/about.$(OBJEXT) ui/widget/browse.$(OBJEXT) \
+@UI_SVGA_TRUE@am__objects_27 = $(am__objects_26)
+am__objects_28 = ui/widget/about.$(OBJEXT) ui/widget/browse.$(OBJEXT) \
 	ui/widget/debugger.$(OBJEXT) ui/widget/error.$(OBJEXT) \
 	ui/widget/filesel.$(OBJEXT) ui/widget/memory.$(OBJEXT) \
 	ui/widget/menu.$(OBJEXT) ui/widget/menu_data.$(OBJEXT) \
@@ -391,12 +396,12 @@ am__objects_27 = ui/widget/about.$(OBJEXT) ui/widget/browse.$(OBJEXT) \
 	ui/widget/query.$(OBJEXT) ui/widget/roms.$(OBJEXT) \
 	ui/widget/select.$(OBJEXT) ui/widget/text.$(OBJEXT) \
 	ui/widget/widget.$(OBJEXT)
-@USE_WIDGET_TRUE@am__objects_28 = $(am__objects_27)
-am__objects_29 = ui/wii/keysyms.$(OBJEXT) ui/wii/wiidisplay.$(OBJEXT) \
+@USE_WIDGET_TRUE@am__objects_29 = $(am__objects_28)
+am__objects_30 = ui/wii/keysyms.$(OBJEXT) ui/wii/wiidisplay.$(OBJEXT) \
 	ui/wii/wiijoystick.$(OBJEXT) ui/wii/wiikeyboard.$(OBJEXT) \
 	ui/wii/wiimouse.$(OBJEXT) ui/wii/wiiui.$(OBJEXT)
-@UI_WII_TRUE@am__objects_30 = $(am__objects_29)
-am__objects_31 = ui/win32/about.$(OBJEXT) ui/win32/binary.$(OBJEXT) \
+@UI_WII_TRUE@am__objects_31 = $(am__objects_30)
+am__objects_32 = ui/win32/about.$(OBJEXT) ui/win32/binary.$(OBJEXT) \
 	ui/win32/browse.$(OBJEXT) ui/win32/confirm.$(OBJEXT) \
 	ui/win32/debugger.$(OBJEXT) ui/win32/fileselector.$(OBJEXT) \
 	ui/win32/hyperlinks.$(OBJEXT) ui/win32/keysyms.$(OBJEXT) \
@@ -408,11 +413,11 @@ am__objects_31 = ui/win32/about.$(OBJEXT) ui/win32/binary.$(OBJEXT) \
 	ui/win32/win32joystick.$(OBJEXT) \
 	ui/win32/win32keyboard.$(OBJEXT) ui/win32/win32mouse.$(OBJEXT) \
 	ui/win32/win32ui.$(OBJEXT)
-@UI_WIN32_TRUE@am__objects_32 = $(am__objects_31)
-am__objects_33 = ui/xlib/keysyms.$(OBJEXT) ui/xlib/xdisplay.$(OBJEXT) \
+@UI_WIN32_TRUE@am__objects_33 = $(am__objects_32)
+am__objects_34 = ui/xlib/keysyms.$(OBJEXT) ui/xlib/xdisplay.$(OBJEXT) \
 	ui/xlib/xerror.$(OBJEXT) ui/xlib/xjoystick.$(OBJEXT) \
 	ui/xlib/xkeyboard.$(OBJEXT) ui/xlib/xui.$(OBJEXT)
-@UI_X_TRUE@am__objects_34 = $(am__objects_33)
+@UI_X_TRUE@am__objects_35 = $(am__objects_34)
 am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	input.$(OBJEXT) keyboard.$(OBJEXT) loader.$(OBJEXT) \
 	machine.$(OBJEXT) memory_pages.$(OBJEXT) mempool.$(OBJEXT) \
@@ -469,10 +474,10 @@ am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	$(am__objects_14) $(am__objects_15) \
 	pokefinder/pokefinder.$(OBJEXT) pokefinder/pokemem.$(OBJEXT) \
 	sound/blipbuffer.$(OBJEXT) timer/timer.$(OBJEXT) \
-	$(am__objects_17) $(am__objects_20) $(am__objects_22) \
-	ui/scaler/scaler.$(OBJEXT) $(am__objects_24) $(am__objects_26) \
-	$(am__objects_28) $(am__objects_30) $(am__objects_32) \
-	$(am__objects_34) unittests/unittests.$(OBJEXT) \
+	$(am__objects_17) $(am__objects_21) $(am__objects_23) \
+	ui/scaler/scaler.$(OBJEXT) $(am__objects_25) $(am__objects_27) \
+	$(am__objects_29) $(am__objects_31) $(am__objects_33) \
+	$(am__objects_35) unittests/unittests.$(OBJEXT) \
 	z80/z80.$(OBJEXT) z80/z80_debugger_variables.$(OBJEXT) \
 	z80/z80_ops.$(OBJEXT)
 fuse_OBJECTS = $(am_fuse_OBJECTS)
@@ -847,9 +852,9 @@ fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	peripherals/ide/zxmmc.c $(am__append_16) $(am__append_17) \
 	pokefinder/pokefinder.c pokefinder/pokemem.c \
 	sound/blipbuffer.c timer/timer.c $(am__append_18) \
-	$(am__append_20) $(am__append_24) ui/scaler/scaler.c \
-	$(am__append_26) $(am__append_28) $(am__append_30) \
-	$(am__append_33) $(am__append_35) $(am__append_37) \
+	$(am__append_20) $(am__append_25) ui/scaler/scaler.c \
+	$(am__append_27) $(am__append_29) $(am__append_31) \
+	$(am__append_34) $(am__append_36) $(am__append_38) \
 	unittests/unittests.c z80/z80.c z80/z80_debugger_variables.c \
 	z80/z80_ops.c
 fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPECTRUM_LIBS) $(GTK_LIBS) \
@@ -864,9 +869,9 @@ EXTRA_fuse_SOURCES = sound/alsasound.c sound/aosound.c \
 	sound/sfifo.c sound/sunsound.c sound/wiisound.c \
 	sound/win32sound.c timer/native.c timer/sdl.c $(ui_xlib_files)
 BUILT_SOURCES = options.h settings.c settings.h $(am__append_19) \
-	$(am__append_21) $(am__append_25) $(am__append_27) \
-	$(am__append_29) $(am__append_31) $(am__append_34) \
-	$(am__append_36) $(am__append_38) z80/opcodes_base.c \
+	$(am__append_21) $(am__append_26) $(am__append_28) \
+	$(am__append_30) $(am__append_32) $(am__append_35) \
+	$(am__append_37) $(am__append_39) z80/opcodes_base.c \
 	z80/z80_cb.c z80/z80_ddfd.c z80/z80_ddfdcb.c z80/z80_ed.c
 AM_CPPFLAGS = \
               $(GLIB_CFLAGS) \
@@ -964,7 +969,7 @@ CLEANFILES = options.h settings.c settings.h data/fuse.desktop \
 	z80/z80_cb.c z80/z80_coretest.o z80/z80_ddfd.c \
 	z80/z80_ddfdcb.c z80/z80_ed.c
 DISTCLEANFILES = 
-pkgdata_DATA = $(lib_files) $(ROMS) $(am__append_22) $(am__append_32)
+pkgdata_DATA = $(lib_files) $(ROMS) $(am__append_22) $(am__append_33)
 @DESKTOP_INTEGRATION_TRUE@fusemimedir = $(DESKTOP_DATADIR)/mime/packages
 @DESKTOP_INTEGRATION_TRUE@fusemime_DATA = data/fuse.xml
 @DESKTOP_INTEGRATION_TRUE@appdatadir = $(DESKTOP_DATADIR)/applications
@@ -1053,11 +1058,11 @@ ui_gtk_files = ui/gtk/binary.c ui/gtk/browse.c ui/gtk/confirm.c \
 	ui/gtk/debugger.c ui/gtk/fileselector.c ui/gtk/gtkcompat.h \
 	ui/gtk/gtkdisplay.c ui/gtk/gtkinternals.h ui/gtk/gtkjoystick.c \
 	ui/gtk/gtkkeyboard.c ui/gtk/gtkmouse.c ui/gtk/gtkui.c \
-	ui/gtk/keysyms.c ui/gtk/memory.c ui/gtk/menu_data.c \
-	ui/gtk/options.c ui/gtk/picture.c ui/gtk/pixmaps.c \
-	ui/gtk/pokefinder.c ui/gtk/pokemem.c ui/gtk/rollback.c \
-	ui/gtk/roms.c ui/gtk/statusbar.c ui/gtk/stock.c \
-	$(am__append_23)
+	ui/gtk/keysyms.c ui/gtk/menu_data.c ui/gtk/options.c \
+	ui/gtk/picture.c ui/gtk/pixmaps.c ui/gtk/pokefinder.c \
+	ui/gtk/pokemem.c ui/gtk/rollback.c ui/gtk/roms.c \
+	ui/gtk/statusbar.c ui/gtk/stock.c $(am__append_23) \
+	$(am__append_24)
 ui_gtk_built = \
                ui/gtk/keysyms.c \
                ui/gtk/menu_data.c \
@@ -1678,8 +1683,6 @@ ui/gtk/gtkui.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 	ui/gtk/$(DEPDIR)/$(am__dirstamp)
 ui/gtk/keysyms.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 	ui/gtk/$(DEPDIR)/$(am__dirstamp)
-ui/gtk/memory.$(OBJEXT): ui/gtk/$(am__dirstamp) \
-	ui/gtk/$(DEPDIR)/$(am__dirstamp)
 ui/gtk/menu_data.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 	ui/gtk/$(DEPDIR)/$(am__dirstamp)
 ui/gtk/options.$(OBJEXT): ui/gtk/$(am__dirstamp) \
@@ -1701,6 +1704,10 @@ ui/gtk/statusbar.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 ui/gtk/stock.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 	ui/gtk/$(DEPDIR)/$(am__dirstamp)
 ui/gtk/gtkcompat.$(OBJEXT): ui/gtk/$(am__dirstamp) \
+	ui/gtk/$(DEPDIR)/$(am__dirstamp)
+ui/gtk/memory_gtk2.$(OBJEXT): ui/gtk/$(am__dirstamp) \
+	ui/gtk/$(DEPDIR)/$(am__dirstamp)
+ui/gtk/memory.$(OBJEXT): ui/gtk/$(am__dirstamp) \
 	ui/gtk/$(DEPDIR)/$(am__dirstamp)
 ui/null/$(am__dirstamp):
 	@$(MKDIR_P) ui/null
@@ -2131,6 +2138,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/gtkui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/keysyms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/memory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/memory_gtk2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/menu_data.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/options.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/gtk/$(DEPDIR)/picture.Po@am__quote@

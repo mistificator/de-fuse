@@ -279,6 +279,27 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
   gtk_main_quit();
 }
 
+
+static const char * const media_phantom_typist_mode_combo[] = {
+  "Auto",
+  "Keyword",
+  "Keystroke",
+  "Menu",
+  "Plus 2A",
+  "Plus 3",
+};
+
+static const guint media_phantom_typist_mode_combo_count = 6;
+
+int
+option_enumerate_media_phantom_typist_mode( void )
+{
+  return option_enumerate_combo( media_phantom_typist_mode_combo,
+                                 settings_current.phantom_typist_mode,
+                                 media_phantom_typist_mode_combo_count,
+                                 0 );
+}
+
 static void menu_options_media_done( GtkWidget *widget,
 					  gpointer user_data );
 
@@ -302,6 +323,34 @@ menu_options_media( GtkWidget *widget GCC_UNUSED,
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.auto_load ),
                                 settings_current.auto_load );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.auto_load );
+
+  {
+    GtkWidget *hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+    GtkWidget *combo = gtk_combo_box_text_new();
+    GtkWidget *text = gtk_label_new( "Phantom typist mode" );
+    guint i;
+
+    gtk_box_pack_start( GTK_BOX( hbox ), text, FALSE, FALSE, 5 );
+    text = gtk_label_new( " " );
+    gtk_box_pack_start( GTK_BOX( hbox ), text, TRUE, FALSE, 5 );
+
+    for( i = 0; i < media_phantom_typist_mode_combo_count; i++ ) {
+      gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), media_phantom_typist_mode_combo[i] );
+    }
+    gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );
+    if( settings_current.phantom_typist_mode != NULL ) {
+      for( i = 0; i < media_phantom_typist_mode_combo_count; i++ ) {
+        if( !strcmp( settings_current.phantom_typist_mode, media_phantom_typist_mode_combo[i] ) ) {
+          gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), i );
+        }
+      }
+    }
+
+    dialog.phantom_typist_mode = combo;
+    gtk_box_pack_start( GTK_BOX( hbox ), dialog.phantom_typist_mode, FALSE, FALSE, 5 );
+
+    gtk_box_pack_start( GTK_BOX( content_area ), hbox, TRUE, TRUE, 0 );
+  }
 
   dialog.detect_loader =
     gtk_check_button_new_with_label( "Detect loaders" );
@@ -388,6 +437,10 @@ menu_options_media_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.auto_load =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->auto_load ) );
+
+  libspectrum_free( settings_current.phantom_typist_mode );
+  settings_current.phantom_typist_mode = utils_safe_strdup( media_phantom_typist_mode_combo[
+    gtk_combo_box_get_active( GTK_COMBO_BOX( ptr->phantom_typist_mode ) ) ] );
 
   settings_current.detect_loader =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->detect_loader ) );

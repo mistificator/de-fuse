@@ -231,6 +231,26 @@ menu_options_general( int action GCC_UNUSED )
   fuse_emulation_unpause();
 }
 
+
+static const char * const media_phantom_typist_mode_combo[] = {
+  "Auto",
+  "Keyword",
+  "Keystroke",
+  "Menu",
+  "Plus 2A",
+  "Plus 3",
+};
+
+static const int media_phantom_typist_mode_combo_count = 6;
+
+int
+option_enumerate_media_phantom_typist_mode( void ) {
+  return option_enumerate_combo( media_phantom_typist_mode_combo,
+                                 settings_current.phantom_typist_mode,
+                                 media_phantom_typist_mode_combo_count,
+                                 0 );
+}
+
 static void
 menu_options_media_init( HWND hwndDlg )
 {
@@ -244,6 +264,22 @@ menu_options_media_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_AUTO_LOAD, BM_SETCHECK,
     settings_current.auto_load ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  for( i = 0; i < media_phantom_typist_mode_combo_count; i++ ) {
+    /* FIXME This is asuming SendDlgItemMessage is not UNICODE */
+    SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_PHANTOM_TYPIST_MODE, CB_ADDSTRING,
+                        0, (LPARAM) media_phantom_typist_mode_combo[i] );
+  }
+  SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_PHANTOM_TYPIST_MODE, CB_SETCURSEL,
+                      (LPARAM) 0, 0 );
+  if( settings_current.phantom_typist_mode != NULL ) {
+    for( i = 0; i < media_phantom_typist_mode_combo_count; i++ ) {
+      if( !strcmp( settings_current.phantom_typist_mode,
+                   media_phantom_typist_mode_combo[i] ) ) {
+        SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_PHANTOM_TYPIST_MODE,
+                            CB_SETCURSEL, i, 0 );
+      }
+    }
+  }
   SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_DETECT_LOADER, BM_SETCHECK,
     settings_current.detect_loader ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -281,6 +317,11 @@ menu_options_media_done( HWND hwndDlg )
 
   settings_current.auto_load =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_MEDIA_AUTO_LOAD );
+
+  libspectrum_free( settings_current.phantom_typist_mode );
+  settings_current.phantom_typist_mode =
+    utils_safe_strdup( media_phantom_typist_mode_combo[
+    SendDlgItemMessage( hwndDlg, IDC_OPT_MEDIA_PHANTOM_TYPIST_MODE, CB_GETCURSEL, 0, 0 ) ] );
 
   settings_current.detect_loader =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_MEDIA_DETECT_LOADER );
