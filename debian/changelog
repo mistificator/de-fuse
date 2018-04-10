@@ -1,3 +1,14 @@
+fuse-emulator (1.5.2+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Refresh the following patches:
+    - debian/patches/bash-completion.patch
+    - debian/patches/manpage-errors.patch
+  * debian/patches/phantom-typist-sound.patch:
+    - Cherry pick this bug fix from git master.
+
+ -- Alberto Garcia <berto@igalia.com>  Wed, 11 Apr 2018 00:12:52 +0200
+
 fuse-emulator (1.5.1+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
