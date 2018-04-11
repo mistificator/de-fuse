@@ -1,3 +1,10 @@
+fuse-emulator (1.5.2+dfsg1-2) UNRELEASED; urgency=medium
+
+  * debian/control:
+    - Update package description to list recently added features.
+
+ -- Alberto Garcia <berto@igalia.com>  Wed, 11 Apr 2018 13:25:20 +0200
+
 fuse-emulator (1.5.2+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
