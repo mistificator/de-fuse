@@ -1,9 +1,21 @@
-fuse-emulator (1.5.2+dfsg1-2) UNRELEASED; urgency=medium
+fuse-emulator (1.5.3+dfsg1-1) unstable; urgency=medium
 
+  * New upstream release.
   * debian/control:
     - Update package description to list recently added features.
+    - Update Standards-Version to 4.1.4 (no changes).
+  * Set debhelper compatibility level to v10:
+    - debian/control: update build dependency on debhelper and remove
+      build dependency on dh-autoreconf.
+    - debian/compat: update compatibility level.
+    - debian/rules: remove '--with autoreconf --parallel', these are now
+      enabled by default.
+  * debian/patches/phantom-typist-sound.patch:
+    - Remove this patch.
+  * debian/patches/compile-without-roms.patch:
+    - Refresh this patch.
 
- -- Alberto Garcia <berto@igalia.com>  Wed, 11 Apr 2018 13:25:20 +0200
+ -- Alberto Garcia <berto@igalia.com>  Wed, 02 May 2018 12:40:51 +0300
 
 fuse-emulator (1.5.2+dfsg1-1) unstable; urgency=medium
 

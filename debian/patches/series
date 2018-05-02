@@ -5,4 +5,3 @@ load-opense-rom.patch
 desktop-file.patch
 manpage-errors.patch
 bash-completion.patch
-phantom-typist-sound.patch
