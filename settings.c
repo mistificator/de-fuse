@@ -270,7 +270,7 @@ settings_info settings_default = {
   /* sound */ 1,
   /* sound_device */ (char *)NULL,
   /* sound_force_8bit */ 0,
-  /* sound_freq */ 32000,
+  /* sound_freq */ 44100,
   /* sound_load */ 1,
   /* speaker_type */ (char *)NULL,
   /* speccyboot */ 0,
