@@ -1,3 +1,13 @@
+fuse-emulator (1.5.5+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/control:
+    - Update Standards-Version to 4.1.5 (no changes).
+  * debian/patches/rom-search-path.patch:
+    - Update patch.
+
+ -- Alberto Garcia <berto@igalia.com>  Thu, 05 Jul 2018 23:20:15 +0200
+
 fuse-emulator (1.5.4+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.

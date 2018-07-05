@@ -15,7 +15,7 @@ Index: fuse-emulator/compat/linux/paths.c
  
 -    /* Then where we may have installed the data files */
    case 2:
-+    snprintf( ctx->path, PATH_MAX, "%s/.spectrum-roms", compat_get_home_path() );
++    snprintf( ctx->path, PATH_MAX, "%s/.spectrum-roms", compat_get_config_path() );
 +    return 1;
 +
 +  case 3:
@@ -46,7 +46,7 @@ Index: fuse-emulator/compat/unix/paths.c
  
 -    /* Then where we may have installed the data files */
    case 2:
-+    snprintf( ctx->path, PATH_MAX, "%s/.spectrum-roms", compat_get_home_path() );
++    snprintf( ctx->path, PATH_MAX, "%s/.spectrum-roms", compat_get_config_path() );
 +    return 1;
 +
 +  case 3:
