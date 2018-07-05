@@ -3,6 +3,9 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Defined if we can increase Blip Buffer accuracy */
+#undef BLIP_BUFFER_ACCURACY
+
 /* Define to 1 if SpeccyBoot is supported. */
 #undef BUILD_SPECCYBOOT
 
@@ -145,6 +148,9 @@
 
 /* Location of the ROM images */
 #undef ROMSDIR
+
+/* The size of `long', as computed by sizeof. */
+#undef SIZEOF_LONG
 
 /* Defined if the sound code uses a fifo */
 #undef SOUND_FIFO
