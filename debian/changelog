@@ -1,3 +1,10 @@
+fuse-emulator (1.5.5+dfsg1-2) UNRELEASED; urgency=medium
+
+  * debian/patches/manpage-errors.patch:
+    - Some hunks are no longer needed, remove them.
+
+ -- Alberto Garcia <berto@igalia.com>  Mon, 09 Jul 2018 01:04:35 +0200
+
 fuse-emulator (1.5.5+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
