@@ -386,10 +386,6 @@ static void widget_speccyboot_click( void );
 static void widget_option_speccyboot_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_specdrum_click( void );
 static void widget_option_specdrum_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_spectranet_click( void );
-static void widget_option_spectranet_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
-static void widget_spectranet_disable_click( void );
-static void widget_option_spectranet_disable_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_usource_click( void );
 static void widget_option_usource_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show );
 static void widget_covox_click( void );
@@ -551,10 +547,8 @@ static widget_option_entry options_peripherals_general[] = {
   { "\012Z\001X Printer", 12, INPUT_KEY_z, NULL, NULL, widget_zxprinter_click, widget_option_zxprinter_draw },
   { "Speccy\012B\001oot interface", 13, INPUT_KEY_b, NULL, NULL, widget_speccyboot_click, widget_option_speccyboot_draw },
   { "Spec\012D\001rum interface", 14, INPUT_KEY_d, NULL, NULL, widget_specdrum_click, widget_option_specdrum_draw },
-  { "Spectra\012n\001et", 15, INPUT_KEY_n, NULL, NULL, widget_spectranet_click, widget_option_spectranet_draw },
-  { "Spe\012c\001tranet disable", 16, INPUT_KEY_c, NULL, NULL, widget_spectranet_disable_click, widget_option_spectranet_disable_draw },
-  { "uSo\012u\001rce", 17, INPUT_KEY_u, NULL, NULL, widget_usource_click, widget_option_usource_draw },
-  { "C\012o\001vox interface", 18, INPUT_KEY_o, NULL, NULL, widget_covox_click, widget_option_covox_draw },
+  { "uSo\012u\001rce", 15, INPUT_KEY_u, NULL, NULL, widget_usource_click, widget_option_usource_draw },
+  { "C\012o\001vox interface", 16, INPUT_KEY_o, NULL, NULL, widget_covox_click, widget_option_covox_draw },
   { NULL }
 };
 
@@ -1604,30 +1598,6 @@ widget_option_specdrum_draw( int left_edge, int width, struct widget_option_entr
 }
 
 static void
-widget_spectranet_click( void )
-{
-  widget_options_settings.spectranet = ! widget_options_settings.spectranet;
-}
-
-static void
-widget_option_spectranet_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->spectranet );
-}
-
-static void
-widget_spectranet_disable_click( void )
-{
-  widget_options_settings.spectranet_disable = ! widget_options_settings.spectranet_disable;
-}
-
-static void
-widget_option_spectranet_disable_draw( int left_edge, int width, struct widget_option_entry *menu, settings_info *show )
-{
-  widget_options_print_option( left_edge, width, menu->index, menu->text, show->spectranet_disable );
-}
-
-static void
 widget_usource_click( void )
 {
   widget_options_settings.usource = ! widget_options_settings.usource;
@@ -1664,7 +1634,7 @@ widget_peripherals_general_keyhandler( input_key key )
 
 #if 0
   case INPUT_KEY_Resize:	/* Fake keypress used on window resize */
-    widget_dialog_with_border( 1, 2, 30, 2 + 19 );
+    widget_dialog_with_border( 1, 2, 30, 2 + 17 );
     widget_peripherals_general_show_all( &widget_options_settings );
     break;
 #endif
@@ -1687,7 +1657,7 @@ widget_peripherals_general_keyhandler( input_key key )
   case INPUT_KEY_Down:
   case INPUT_KEY_6:
   case INPUT_JOYSTICK_DOWN:
-    if ( highlight_line + 1 < 19 ) {
+    if ( highlight_line + 1 < 17 ) {
       new_highlight_line = highlight_line + 1;
       cursor_pressed = 1;
     }
@@ -1701,8 +1671,8 @@ widget_peripherals_general_keyhandler( input_key key )
     break;
 
   case INPUT_KEY_End:
-    if ( highlight_line + 2 < 19 ) {
-      new_highlight_line = 19 - 1;
+    if ( highlight_line + 2 < 17 ) {
+      new_highlight_line = 17 - 1;
       cursor_pressed = 1;
     }
     break;

@@ -1,19 +1,19 @@
-/* A Bison parser, made by GNU Bison 2.7.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison interface for Yacc-like parsers in C
-   
-      Copyright (C) 1984, 1989-1990, 2000-2012 Free Software Foundation, Inc.
-   
+
+   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
@@ -26,13 +26,13 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-   
+
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
 #ifndef YY_YY_DEBUGGER_COMMANDY_H_INCLUDED
 # define YY_YY_DEBUGGER_COMMANDY_H_INCLUDED
-/* Enabling traces.  */
+/* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
 #endif
@@ -40,46 +40,45 @@
 extern int yydebug;
 #endif
 
-/* Tokens.  */
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     LOGICAL_OR = 258,
-     LOGICAL_AND = 259,
-     COMPARISON = 260,
-     EQUALITY = 261,
-     NEGATE = 262,
-     BASE = 263,
-     BREAK = 264,
-     TBREAK = 265,
-     CLEAR = 266,
-     COMMANDS = 267,
-     CONDITION = 268,
-     CONTINUE = 269,
-     DEBUGGER_DELETE = 270,
-     DISASSEMBLE = 271,
-     DEBUGGER_END = 272,
-     EVENT = 273,
-     EXIT = 274,
-     FINISH = 275,
-     IF = 276,
-     DEBUGGER_IGNORE = 277,
-     NEXT = 278,
-     DEBUGGER_OUT = 279,
-     PORT = 280,
-     DEBUGGER_PRINT = 281,
-     READ = 282,
-     SET = 283,
-     STEP = 284,
-     TIME = 285,
-     WRITE = 286,
-     NUMBER = 287,
-     STRING = 288,
-     VARIABLE = 289,
-     DEBUGGER_ERROR = 290
-   };
+  enum yytokentype
+  {
+    LOGICAL_OR = 258,
+    LOGICAL_AND = 259,
+    COMPARISON = 260,
+    EQUALITY = 261,
+    NEGATE = 262,
+    BASE = 263,
+    BREAK = 264,
+    TBREAK = 265,
+    CLEAR = 266,
+    COMMANDS = 267,
+    CONDITION = 268,
+    CONTINUE = 269,
+    DEBUGGER_DELETE = 270,
+    DISASSEMBLE = 271,
+    DEBUGGER_END = 272,
+    EVENT = 273,
+    EXIT = 274,
+    FINISH = 275,
+    IF = 276,
+    DEBUGGER_IGNORE = 277,
+    NEXT = 278,
+    DEBUGGER_OUT = 279,
+    PORT = 280,
+    DEBUGGER_PRINT = 281,
+    READ = 282,
+    SET = 283,
+    STEP = 284,
+    TIME = 285,
+    WRITE = 286,
+    NUMBER = 287,
+    STRING = 288,
+    VARIABLE = 289,
+    DEBUGGER_ERROR = 290
+  };
 #endif
 /* Tokens.  */
 #define LOGICAL_OR 258
@@ -116,13 +115,12 @@ extern int yydebug;
 #define VARIABLE 289
 #define DEBUGGER_ERROR 290
 
-
-
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
+typedef union YYSTYPE YYSTYPE;
+union YYSTYPE
 {
-/* Line 2058 of yacc.c  */
-#line 45 "debugger/commandy.y"
+#line 45 "debugger/commandy.y" /* yacc.c:1909  */
 
 
   int token;
@@ -138,29 +136,15 @@ typedef union YYSTYPE
   debugger_expression* exp;
 
 
-
-/* Line 2058 of yacc.c  */
-#line 144 "debugger/commandy.h"
-} YYSTYPE;
+#line 140 "debugger/commandy.h" /* yacc.c:1909  */
+};
 # define YYSTYPE_IS_TRIVIAL 1
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+
 extern YYSTYPE yylval;
 
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
 int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
 #endif /* !YY_YY_DEBUGGER_COMMANDY_H_INCLUDED  */

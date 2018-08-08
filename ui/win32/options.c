@@ -458,12 +458,6 @@ menu_options_peripherals_general_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECDRUM, BM_SETCHECK,
     settings_current.specdrum ? BST_CHECKED : BST_UNCHECKED, 0 );
 
-  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET, BM_SETCHECK,
-    settings_current.spectranet ? BST_CHECKED : BST_UNCHECKED, 0 );
-
-  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET_DISABLE, BM_SETCHECK,
-    settings_current.spectranet_disable ? BST_CHECKED : BST_UNCHECKED, 0 );
-
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_USOURCE, BM_SETCHECK,
     settings_current.usource ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -529,12 +523,6 @@ menu_options_peripherals_general_done( HWND hwndDlg )
 
   settings_current.specdrum =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECDRUM );
-
-  settings_current.spectranet =
-    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET );
-
-  settings_current.spectranet_disable =
-    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECTRANET_DISABLE );
 
   settings_current.usource =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_USOURCE );

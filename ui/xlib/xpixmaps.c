@@ -271,7 +271,7 @@ static libspectrum_word pixmap_tape_inactive[] = {
 #define PIXMAPS_W 
 #define PIXMAPS_H 20
 
-static ui_statusbar_state pixmap_mdr_state, pixmap_tape_state, pixmap_disk_state;
+static ui_statusbar_state pixmap_tape_state, pixmap_mdr_state, pixmap_disk_state;
 static int status_updated;
 static int icon_size = 0;
 
