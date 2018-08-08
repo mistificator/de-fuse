@@ -5,7 +5,7 @@ Index: fuse-emulator/machine.c
 ===================================================================
 --- fuse-emulator.orig/machine.c
 +++ fuse-emulator/machine.c
-@@ -273,8 +273,46 @@ machine_load_rom_bank_from_file( memory_
+@@ -278,8 +278,46 @@ machine_load_rom_bank_from_file( memory_
  {
    int error;
    utils_file rom;
