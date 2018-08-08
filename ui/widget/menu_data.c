@@ -39,7 +39,6 @@ static widget_menu_entry menu_file_recording[] = {
   { "\012C\011ontinue recording...", INPUT_KEY_c, NULL, menu_file_recording_continuerecording, NULL, 0 },
   { "\012I\011nsert snapshot", INPUT_KEY_i, NULL, menu_file_recording_insertsnapshot, NULL, 0 },
   { "Roll\012b\011ack", INPUT_KEY_b, NULL, menu_file_recording_rollback, NULL, 0 },
-  { "Rollback \012t\011o...", INPUT_KEY_t, NULL, menu_file_recording_rollbackto, NULL, 0 },
   { "\012P\011lay...", INPUT_KEY_p, NULL, menu_file_recording_play, NULL, 0 },
   { "\012S\011top", INPUT_KEY_s, NULL, menu_file_recording_stop, NULL, 0 },
   { "\012F\011inalise...", INPUT_KEY_f, NULL, menu_file_recording_finalise, NULL, 0 },
@@ -59,7 +58,6 @@ static widget_menu_entry menu_file_screenshot[] = {
   { "S\012a\011ve Screen as SCR...", INPUT_KEY_a, NULL, menu_file_screenshot_savescreenasscr, NULL, 0 },
   { "Op\012e\011n MLT Screenshot...", INPUT_KEY_e, NULL, menu_file_screenshot_openmltscreenshot, NULL, 0 },
   { "Sa\012v\011e Screen as MLT...", INPUT_KEY_v, NULL, menu_file_screenshot_savescreenasmlt, NULL, 0 },
-  { "Save S\012c\011reen as PNG...", INPUT_KEY_c, NULL, menu_file_screenshot_savescreenaspng, NULL, 0 },
   { NULL }
 };
 
@@ -81,8 +79,6 @@ static widget_menu_entry menu_file[] = {
   { "A\012Y\011 Logging", INPUT_KEY_y, menu_file_aylogging, NULL, NULL, 0 },
   { "S\012c\011reenshot", INPUT_KEY_c, menu_file_screenshot, NULL, NULL, 0 },
   { "\012M\011ovie", INPUT_KEY_m, menu_file_movie, NULL, NULL, 0 },
-  { "Loa\012d\011 binary data...", INPUT_KEY_d, NULL, menu_file_loadbinarydata, NULL, 0 },
-  { "Save \012b\011inary data...", INPUT_KEY_b, NULL, menu_file_savebinarydata, NULL, 0 },
   { "E\012x\011it...", INPUT_KEY_x, NULL, menu_file_exit, NULL, 0 },
   { NULL }
 };
@@ -168,7 +164,6 @@ static widget_menu_entry menu_machine_profiler[] = {
 
 static widget_menu_entry menu_machine[] = {
   { "Machine" },
-  { "\012P\011ause...", INPUT_KEY_p, NULL, menu_machine_pause, NULL, 0 },
   { "\012R\011eset...", INPUT_KEY_r, NULL, menu_machine_reset, NULL, 0 },
   { "\012H\011ard reset...", INPUT_KEY_h, NULL, menu_machine_reset, NULL, 1 },
   { "\012S\011elect...", INPUT_KEY_s, NULL, menu_machine_select, menu_machine_detail, 0 },

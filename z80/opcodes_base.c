@@ -53,6 +53,7 @@
       A = ( A << 1 ) | ( A >> 7 );
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) |
 	( A & ( FLAG_C | FLAG_3 | FLAG_5 ) );
+      Q = F;
       break;
     case 0x08:		/* EX AF,AF' */
       /* Tape saving trap: note this traps the EX AF,AF' at #04d0, not
@@ -98,6 +99,7 @@
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) | ( A & FLAG_C );
       A = ( A >> 1) | ( A << 7 );
       F |= ( A & ( FLAG_3 | FLAG_5 ) );
+      Q = F;
       break;
     case 0x10:		/* DJNZ offset */
       contend_read_no_mreq( IR, 1 );
@@ -138,6 +140,7 @@
 	A = ( A << 1 ) | ( F & FLAG_C );
 	F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) |
 	  ( A & ( FLAG_3 | FLAG_5 ) ) | ( bytetemp >> 7 );
+	Q = F;
       }
       break;
     case 0x18:		/* JR offset */
@@ -177,6 +180,7 @@
 	A = ( A >> 1 ) | ( F << 7 );
 	F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) |
 	  ( A & ( FLAG_3 | FLAG_5 ) ) | ( bytetemp & FLAG_C ) ;
+	Q = F;
       }
       break;
     case 0x20:		/* JR NZ,offset */
@@ -220,6 +224,7 @@
 	  ADD(add);
 	}
 	F = ( F & ~( FLAG_C | FLAG_P ) ) | carry | parity_table[A];
+	Q = F;
       }
       break;
     case 0x28:		/* JR Z,offset */
@@ -261,6 +266,7 @@
       A ^= 0xff;
       F = ( F & ( FLAG_C | FLAG_P | FLAG_Z | FLAG_S ) ) |
 	( A & ( FLAG_3 | FLAG_5 ) ) | ( FLAG_N | FLAG_H );
+      Q = F;
       break;
     case 0x30:		/* JR NC,offset */
       if( ! ( F & FLAG_C ) ) {
@@ -309,8 +315,9 @@
       break;
     case 0x37:		/* SCF */
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) |
-	  ( A & ( FLAG_3 | FLAG_5          ) ) |
-	  FLAG_C;
+          ( ( IS_CMOS ? A : ( ( last_Q ^ F ) | A ) ) & ( FLAG_3 | FLAG_5 ) ) |
+          FLAG_C;
+      Q = F;
       break;
     case 0x38:		/* JR C,offset */
       if( F & FLAG_C ) {
@@ -353,7 +360,9 @@
       break;
     case 0x3f:		/* CCF */
       F = ( F & ( FLAG_P | FLAG_Z | FLAG_S ) ) |
-	( ( F & FLAG_C ) ? FLAG_H : FLAG_C ) | ( A & ( FLAG_3 | FLAG_5 ) );
+          ( ( F & FLAG_C ) ? FLAG_H : FLAG_C ) |
+          ( ( IS_CMOS ? A : ( ( last_Q ^ F ) | A ) ) & ( FLAG_3 | FLAG_5 ) );
+      Q = F;
       break;
     case 0x40:		/* LD B,B */
       break;
