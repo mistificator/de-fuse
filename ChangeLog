@@ -1,3 +1,27 @@
+2018-12-09  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+
+        * Fuse 1.5.7 released.
+
+        * UI improvements:
+          * GTK+ 3: Make the offset entry wider in memory browser (Derek
+            Fountain).
+          * GTK+: Remove duplicated surface creation code (Philip Kendall).
+          * GTK+: Remove use of deprecated gtk_device_(un)grab functions
+            (Philip Kendall).
+          * GTK+/Win32: Add *.bin as an allowed filetype to file selectors and
+            amend .fmf filetype (thanks, Allan Turvey) (Sergio Baldoví).
+          * Improve Fuse's window sizing under Wayland; still not right, but
+            better than it was before (Sergio Baldoví).
+          * Improve Fuse's Kempston mouse handling under GTK+ 3.x (Philip
+            Kendall).
+          * Stop Kempston mouse causing a crash under Wayland; still doesn't
+            work properly though (Philip Kendall).
+
+        * Miscellaneous improvements:
+          * "Save binary" command can now save 65536 bytes again (regression
+            introduced in 1.5.6; thanks, thrice) (Philip Kendall).
+          * Remove gcc 8 string overflow warnings (Philip Kendall).
+
 2018-08-06  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
 
         * Fuse 1.5.6 released.
