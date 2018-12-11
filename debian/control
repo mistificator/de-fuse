@@ -12,7 +12,7 @@ Build-Depends: debhelper (>= 10),
                libgtk-3-dev,
                zlib1g-dev,
                libspectrum-dev (>= 1.4.0)
-Standards-Version: 4.2.0
+Standards-Version: 4.2.1
 Homepage: http://fuse-emulator.sourceforge.net/
 Vcs-Browser: https://salsa.debian.org/berto/fuse-emulator
 Vcs-Git: https://salsa.debian.org/berto/fuse-emulator.git
@@ -20,8 +20,6 @@ Vcs-Git: https://salsa.debian.org/berto/fuse-emulator.git
 Package: fuse-emulator-common
 Architecture: all
 Depends: opense-basic | spectrum-roms, ${misc:Depends}
-Breaks: fuse-emulator (<< 1.0.0+dfsg1-1)
-Replaces: fuse-emulator (<< 1.0.0+dfsg1-1)
 Recommends: fuse-emulator-gtk | fuse-emulator-sdl
 Suggests: spectrum-roms, fuse-emulator-utils
 Description: The Free Unix Spectrum Emulator (common files)
