@@ -217,14 +217,7 @@ ui_init( int *argc, char ***argv )
   gtk_widget_set_size_request( gtkui_drawing_area, DISPLAY_ASPECT_WIDTH,
                                DISPLAY_SCREEN_HEIGHT );
 
-  gtk_widget_add_events( GTK_WIDGET( gtkui_drawing_area ),
-    GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK );
-  g_signal_connect( G_OBJECT( gtkui_drawing_area ), "motion-notify-event",
-		    G_CALLBACK( gtkmouse_position ), NULL );
-  g_signal_connect( G_OBJECT( gtkui_drawing_area ), "button-press-event",
-		    G_CALLBACK( gtkmouse_button ), NULL );
-  g_signal_connect( G_OBJECT( gtkui_drawing_area ), "button-release-event",
-		    G_CALLBACK( gtkmouse_button ), NULL );
+  gtkmouse_init();
 
   gtk_box_pack_start( GTK_BOX(box), gtkui_drawing_area, TRUE, TRUE, 0 );
 
@@ -798,7 +791,7 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type,
  */
 
 int
-gtkui_get_monospaced_font( gtkui_font *font )
+gtkui_get_monospaced_font( PangoFontDescription **font )
 {
   *font = pango_font_description_from_string( "Monospace 10" );
   if( !(*font) ) {
@@ -810,15 +803,9 @@ gtkui_get_monospaced_font( gtkui_font *font )
 }
 
 void
-gtkui_free_font( gtkui_font font )
+gtkui_free_font( PangoFontDescription *font )
 {
   pango_font_description_free( font );
-}
-
-void
-gtkui_set_font( GtkWidget *widget, gtkui_font font )
-{
-  gtk_widget_override_font( widget, font );
 }
 
 void
