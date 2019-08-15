@@ -1,3 +1,11 @@
+fuse-emulator (1.5.7+dfsg1-2) unstable; urgency=medium
+
+  * debian/patches/prefer-x11-over-wayland.patch:
+    - Prefer the X11 GDK backend over the Wayland one, as the latter is
+      known to have problems (see upstream bug #367) (Closes: #872994).
+
+ -- Alberto Garcia <berto@igalia.com>  Wed, 14 Aug 2019 16:04:09 +0300
+
 fuse-emulator (1.5.7+dfsg1-1) unstable; urgency=medium
 
   * New upstream release.
