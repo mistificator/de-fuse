@@ -6,3 +6,4 @@ desktop-file.patch
 manpage-errors.patch
 bash-completion.patch
 prefer-x11-over-wayland.patch
+show-fuse-icon.patch
