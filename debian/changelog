@@ -6,7 +6,7 @@ fuse-emulator (1.5.7+dfsg1-2) unstable; urgency=medium
   * debian/patches/show-fuse-icon.patch:
     - Show the Fuse icon on the GTK window and About dialog.
 
- -- Alberto Garcia <berto@igalia.com>  Wed, 14 Aug 2019 16:04:09 +0300
+ -- Alberto Garcia <berto@igalia.com>  Fri, 16 Aug 2019 11:49:27 +0300
 
 fuse-emulator (1.5.7+dfsg1-1) unstable; urgency=medium
 
