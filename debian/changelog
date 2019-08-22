@@ -1,3 +1,9 @@
+fuse-emulator (1.5.7+dfsg1-2~deb10u1) buster; urgency=medium
+
+  * Rebuild for buster.
+
+ -- Alberto Garcia <berto@igalia.com>  Thu, 22 Aug 2019 11:16:31 +0300
+
 fuse-emulator (1.5.7+dfsg1-2) unstable; urgency=medium
 
   * debian/patches/prefer-x11-over-wayland.patch:
