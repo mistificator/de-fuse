@@ -1,3 +1,14 @@
+fuse-emulator (1.5.7+dfsg1-3) UNRELEASED; urgency=medium
+
+  * debian/patches/select-audio-driver.patch:
+    - This patch adds a configure option to select the audio driver.
+  * debian/rules:
+    - Always use the SDL audio driver, since the Alsa driver has been
+      reported to cause problems in some cases (the emulation running much
+      faster than it should).
+
+ -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jan 2020 11:19:47 +0100
+
 fuse-emulator (1.5.7+dfsg1-2) unstable; urgency=medium
 
   * debian/patches/prefer-x11-over-wayland.patch:
