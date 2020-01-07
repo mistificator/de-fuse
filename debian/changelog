@@ -1,4 +1,4 @@
-fuse-emulator (1.5.7+dfsg1-3) UNRELEASED; urgency=medium
+fuse-emulator (1.5.7+dfsg1-3) unstable; urgency=medium
 
   * debian/patches/select-audio-driver.patch:
     - This patch adds a configure option to select the audio driver.
@@ -12,7 +12,7 @@ fuse-emulator (1.5.7+dfsg1-3) UNRELEASED; urgency=medium
   * debian/copyright:
     - Update copyright years.
 
- -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jan 2020 11:19:47 +0100
+ -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jan 2020 13:50:48 +0100
 
 fuse-emulator (1.5.7+dfsg1-2) unstable; urgency=medium
 
