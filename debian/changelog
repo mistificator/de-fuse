@@ -8,6 +8,8 @@ fuse-emulator (1.5.7+dfsg1-3) UNRELEASED; urgency=medium
       faster than it should).
   * debian/control:
     - Update Standards-Version to 4.4.1 (no changes).
+  * debian/copyright:
+    - Update copyright years.
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 07 Jan 2020 11:19:47 +0100
 
