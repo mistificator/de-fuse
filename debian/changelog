@@ -1,3 +1,10 @@
+fuse-emulator (1.5.7+dfsg1-4) UNRELEASED; urgency=medium
+
+  * debian/control:
+    - Make fuse-emulator-common Multi-Arch: foreign.
+
+ -- Alberto Garcia <berto@igalia.com>  Mon, 20 Apr 2020 15:49:10 +0200
+
 fuse-emulator (1.5.7+dfsg1-3) unstable; urgency=medium
 
   * debian/patches/select-audio-driver.patch:

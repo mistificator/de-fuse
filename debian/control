@@ -20,6 +20,7 @@ Vcs-Git: https://salsa.debian.org/berto/fuse-emulator.git
 
 Package: fuse-emulator-common
 Architecture: all
+Multi-Arch: foreign
 Depends: opense-basic | spectrum-roms, ${misc:Depends}
 Recommends: fuse-emulator-gtk | fuse-emulator-sdl
 Suggests: spectrum-roms, fuse-emulator-utils
