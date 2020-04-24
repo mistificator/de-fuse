@@ -8,3 +8,4 @@ bash-completion.patch
 prefer-x11-over-wayland.patch
 show-fuse-icon.patch
 select-audio-driver.patch
+remove-duplicate-symbol.patch

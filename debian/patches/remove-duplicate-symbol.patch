@@ -1,0 +1,17 @@
+From: Alberto Garcia <berto@igalia.com>
+Subject: Remove duplicate symbol. Fixes FTBFS with GCC 10
+Forwarded: https://sourceforge.net/p/fuse-emulator/patches/429/
+Index: fuse-emulator/ui/widget/widget.c
+===================================================================
+--- fuse-emulator.orig/ui/widget/widget.c
++++ fuse-emulator/ui/widget/widget.c
+@@ -90,9 +90,6 @@ typedef struct widget_recurse_t {
+ 
+ static widget_recurse_t widget_return[10]; /* The stack to recurse on */
+ 
+-/* The settings used whilst playing with an options dialog box */
+-settings_info widget_options_settings;
+-
+ static int widget_read_font( const char *filename )
+ {
+   utils_file file;
