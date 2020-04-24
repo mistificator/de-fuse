@@ -4,6 +4,8 @@ fuse-emulator (1.5.7+dfsg1-4) UNRELEASED; urgency=medium
     - Make fuse-emulator-common Multi-Arch: foreign.
   * debian/patches/remove-duplicate-symbol.patch:
     - Remove duplicate symbol. Fixes FTBFS with GCC 10 (Closes: #957242).
+  * debian/rules:
+    - Disable GTK and GLib deprecation warnings.
 
  -- Alberto Garcia <berto@igalia.com>  Mon, 20 Apr 2020 15:49:10 +0200
 

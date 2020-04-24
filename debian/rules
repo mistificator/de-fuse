@@ -7,6 +7,10 @@ CONFIGURE_OPTIONS := --with-roms-dir=/usr/share/spectrum-roms \
 	--with-bash-completion-dir=/usr/share/bash-completion/completions \
 	--enable-desktop-integration --with-audio-driver=sdl
 
+CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS) \
+	-DGLIB_DISABLE_DEPRECATION_WARNINGS \
+	-DGDK_DISABLE_DEPRECATION_WARNINGS
+
 ifeq (,$(filter debug,$(DEB_BUILD_OPTIONS)))
 	CPPFLAGS += -DNDEBUG -DG_DISABLE_CAST_CHECKS
 endif
