@@ -1,5 +1,8 @@
 fuse-emulator (1.5.7+dfsg1-4) UNRELEASED; urgency=medium
 
+  * Set the debhelper compatibility level to 12:
+    - Get rid of debian/compat.
+    - Add build dependency on debhelper-compat.
   * debian/control:
     - Make fuse-emulator-common Multi-Arch: foreign.
     - Update Standards-Version to 4.5.0 (no changes).
