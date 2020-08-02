@@ -1,4 +1,4 @@
-fuse-emulator (1.5.7+dfsg1-4) UNRELEASED; urgency=medium
+fuse-emulator (1.5.7+dfsg1-4) unstable; urgency=medium
 
   * Set the debhelper compatibility level to 12:
     - Get rid of debian/compat.
@@ -11,7 +11,7 @@ fuse-emulator (1.5.7+dfsg1-4) UNRELEASED; urgency=medium
   * debian/rules:
     - Disable GTK and GLib deprecation warnings.
 
- -- Alberto Garcia <berto@igalia.com>  Mon, 20 Apr 2020 15:49:10 +0200
+ -- Alberto Garcia <berto@igalia.com>  Sun, 02 Aug 2020 02:23:30 +0200
 
 fuse-emulator (1.5.7+dfsg1-3) unstable; urgency=medium
 
