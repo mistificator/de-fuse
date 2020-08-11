@@ -2,6 +2,7 @@ fuse-emulator (1.5.7+dfsg1-5) UNRELEASED; urgency=medium
 
   * debian/copyright:
     - Set Upstream-Name to 'fuse'.
+  * Add upstream metadata file.
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 11 Aug 2020 10:02:46 +0200
 
