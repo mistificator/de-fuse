@@ -1,4 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: fuse
 Upstream-Contact: Philip Kendall <philip-fuse@shadowmagic.org.uk>
 Source: http://fuse-emulator.sourceforge.net/
 Comment:
