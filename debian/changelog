@@ -1,4 +1,4 @@
-fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
+fuse-emulator (1.6.0+dfsg1-1) experimental; urgency=medium
 
   * New upstream release.
   * debian/copyright:
@@ -25,7 +25,7 @@ fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
     - Build with hardening=+bindnow.
   * Replace GTK+ with GTK in the package description and desktop files.
 
- -- Alberto Garcia <berto@igalia.com>  Tue, 11 Aug 2020 10:02:46 +0200
+ -- Alberto Garcia <berto@igalia.com>  Thu, 04 Mar 2021 00:00:55 +0100
 
 fuse-emulator (1.5.7+dfsg1-4) unstable; urgency=medium
 
