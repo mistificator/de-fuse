@@ -56,7 +56,7 @@ Index: fuse-emulator/settings.pl
 ===================================================================
 --- fuse-emulator.orig/settings.pl
 +++ fuse-emulator/settings.pl
-@@ -104,6 +104,7 @@ print hashline( __LINE__ ), << 'CODE';
+@@ -103,6 +103,7 @@ print hashline( __LINE__ ), << 'CODE';
  
  /* The current settings of options, etc */
  settings_info settings_current;
@@ -64,7 +64,7 @@ Index: fuse-emulator/settings.pl
  
  /* The default settings of options, etc */
  settings_info settings_default = {
-@@ -192,6 +193,8 @@ read_config_file( settings_info *setting
+@@ -191,6 +192,8 @@ read_config_file( settings_info *setting
  
    xmlFreeDoc( doc );
  
@@ -85,7 +85,7 @@ Index: fuse-emulator/settings.c
  
  /* The default settings of options, etc */
  settings_info settings_default = {
-@@ -379,6 +380,8 @@ read_config_file( settings_info *setting
+@@ -389,6 +390,8 @@ read_config_file( settings_info *setting
  
    xmlFreeDoc( doc );
  

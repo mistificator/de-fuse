@@ -5,7 +5,7 @@ Index: fuse-emulator/man/fuse.1
 ===================================================================
 --- fuse-emulator.orig/man/fuse.1
 +++ fuse-emulator/man/fuse.1
-@@ -1628,7 +1628,7 @@ selects the ALSA device used, it can be
+@@ -1639,7 +1639,7 @@ selects the ALSA device used, it can be
  device name. e.g.:
  .IR default " or " hw:0 " or " tee:plughw:0,\(aq/tmp/out.raw\(aq,raw .
  See the alsa-lib pcm api reference at

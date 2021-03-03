@@ -8,6 +8,11 @@ fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
   * Add upstream metadata file.
   * Remove the upstream PGP signing key, the Fuse 1.6.0 tarball is
     not signed.
+  * Refresh all patches and remove the following obsolete ones:
+    - prefer-x11-over-wayland.patch
+    - show-fuse-icon.patch
+    - select-audio-driver.patch
+    - remove-duplicate-symbol.patch
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 11 Aug 2020 10:02:46 +0200
 
