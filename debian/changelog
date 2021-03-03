@@ -4,6 +4,7 @@ fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
   * debian/copyright:
     - Set Upstream-Name to 'fuse'.
     - Set Upstream-Contact to the address of the official mailing list.
+    - Update copyright years.
   * Add upstream metadata file.
   * Remove the upstream PGP signing key, the Fuse 1.6.0 tarball is
     not signed.
