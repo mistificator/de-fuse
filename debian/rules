@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=+bindnow
+
 BUILD_DIR_GTK=$(CURDIR)/build-gtk
 BUILD_DIR_SDL=$(CURDIR)/build-sdl
 
