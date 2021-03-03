@@ -26,7 +26,7 @@
 
 #include <config.h>
 
-#ifdef UI_GTK                /* Use this file if we're using GTK+ */
+#ifdef UI_GTK                /* Use this file if we're using GTK */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -579,6 +579,12 @@ menu_options_peripherals_general( GtkWidget *widget GCC_UNUSED,
                                 settings_current.specdrum );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.specdrum );
 
+  dialog.ttx2000s =
+    gtk_check_button_new_with_label( "TTX2000S" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.ttx2000s ),
+                                settings_current.ttx2000s );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.ttx2000s );
+
   dialog.usource =
     gtk_check_button_new_with_label( "uSource" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.usource ),
@@ -664,6 +670,9 @@ menu_options_peripherals_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.specdrum =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->specdrum ) );
+
+  settings_current.ttx2000s =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->ttx2000s ) );
 
   settings_current.usource =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->usource ) );

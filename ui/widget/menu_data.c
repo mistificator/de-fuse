@@ -79,6 +79,8 @@ static widget_menu_entry menu_file[] = {
   { "A\012Y\011 Logging", INPUT_KEY_y, menu_file_aylogging, NULL, NULL, 0 },
   { "S\012c\011reenshot", INPUT_KEY_c, menu_file_screenshot, NULL, NULL, 0 },
   { "\012M\011ovie", INPUT_KEY_m, menu_file_movie, NULL, NULL, 0 },
+  { "Loa\012d\011 binary data...", INPUT_KEY_d, NULL, menu_file_loadbinarydata, NULL, 0 },
+  { "Save \012b\011inary data...", INPUT_KEY_b, NULL, menu_file_savebinarydata, NULL, 0 },
   { "E\012x\011it...", INPUT_KEY_x, NULL, menu_file_exit, NULL, 0 },
   { NULL }
 };
@@ -128,7 +130,8 @@ static widget_menu_entry menu_options_selectroms_peripheralroms[] = {
   { "Multiface \0123\011...", INPUT_KEY_3, NULL, menu_options_selectroms_peripheral_select, NULL, 8 },
   { "\012O\011pus Discovery...", INPUT_KEY_o, NULL, menu_options_selectroms_peripheral_select, NULL, 9 },
   { "Specc\012y\011Boot...", INPUT_KEY_y, NULL, menu_options_selectroms_peripheral_select, NULL, 10 },
-  { "\012u\011Source...", INPUT_KEY_u, NULL, menu_options_selectroms_peripheral_select, NULL, 11 },
+  { "TT\012X\0112000S...", INPUT_KEY_x, NULL, menu_options_selectroms_peripheral_select, NULL, 11 },
+  { "\012u\011Source...", INPUT_KEY_u, NULL, menu_options_selectroms_peripheral_select, NULL, 12 },
   { NULL }
 };
 

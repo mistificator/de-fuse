@@ -458,6 +458,9 @@ menu_options_peripherals_general_init( HWND hwndDlg )
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECDRUM, BM_SETCHECK,
     settings_current.specdrum ? BST_CHECKED : BST_UNCHECKED, 0 );
 
+  SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_TTX2000S, BM_SETCHECK,
+    settings_current.ttx2000s ? BST_CHECKED : BST_UNCHECKED, 0 );
+
   SendDlgItemMessage( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_USOURCE, BM_SETCHECK,
     settings_current.usource ? BST_CHECKED : BST_UNCHECKED, 0 );
 
@@ -523,6 +526,9 @@ menu_options_peripherals_general_done( HWND hwndDlg )
 
   settings_current.specdrum =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_SPECDRUM );
+
+  settings_current.ttx2000s =
+    IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_TTX2000S );
 
   settings_current.usource =
     IsDlgButtonChecked( hwndDlg, IDC_OPT_PERIPHERALS_GENERAL_USOURCE );
