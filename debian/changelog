@@ -4,6 +4,8 @@ fuse-emulator (1.5.7+dfsg1-5) UNRELEASED; urgency=medium
     - Set Upstream-Name to 'fuse'.
     - Set Upstream-Contact to the address of the official mailing list.
   * Add upstream metadata file.
+  * Remove the upstream PGP signing key, the Fuse 1.6.0 tarball is
+    not signed.
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 11 Aug 2020 10:02:46 +0200
 
