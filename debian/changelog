@@ -15,6 +15,7 @@ fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
     - remove-duplicate-symbol.patch
   * debian/control:
     - Build depend on libspectrum 1.5.0.
+    - Update Standards-Version to 4.5.1 (no changes).
   * debian/watch:
     - Set version to 4 (fixes older-debian-watch-file-standard)
   * debian/rules:
