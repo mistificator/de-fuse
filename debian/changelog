@@ -22,6 +22,7 @@ fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
     - Set version to 4 (fixes older-debian-watch-file-standard)
   * debian/rules:
     - Build with hardening=+bindnow.
+  * Replace GTK+ with GTK in the package description and desktop files.
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 11 Aug 2020 10:02:46 +0200
 

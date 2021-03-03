@@ -28,7 +28,7 @@ override_dh_auto_build:
 	dh_auto_build -B$(BUILD_DIR_GTK) -- EXEEXT=-gtk
 	cat $(BUILD_DIR_GTK)/data/fuse.desktop | \
 		sed -e 's,Exec=.*,Exec=/usr/bin/fuse-gtk %f,' \
-		    -e 's,^Name=\(.*\),Name=\1 (GTK+),' > \
+		    -e 's,^Name=\(.*\),Name=\1 (GTK),' > \
 		$(BUILD_DIR_GTK)/fuse-gtk.desktop
 
 	dh_auto_build -B$(BUILD_DIR_SDL) -- EXEEXT=-sdl

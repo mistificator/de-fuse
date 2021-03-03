@@ -35,7 +35,7 @@ Description: The Free Unix Spectrum Emulator (common files)
 Package: fuse-emulator-gtk
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, fuse-emulator-common (= ${source:Version})
-Description: The Free Unix Spectrum Emulator (GTK+ version)
+Description: The Free Unix Spectrum Emulator (GTK version)
  Fuse is a Sinclair ZX Spectrum emulator. It supports several models
  (including 16K/48K/128K/+2/+2A/+3 and some clones), with quite
  faithful emulation of the display and sound.
@@ -68,7 +68,7 @@ Description: The Free Unix Spectrum Emulator (GTK+ version)
   * Emulation of the Spectranet and SpeccyBoot network interfaces.
   * Support for the Recreated ZX Spectrum Bluetooth keyboard.
  .
- This package provides binaries for the GTK+ version of Fuse.
+ This package provides binaries for the GTK version of Fuse.
 
 Package: fuse-emulator-sdl
 Architecture: any
