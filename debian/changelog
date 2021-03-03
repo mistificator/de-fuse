@@ -1,5 +1,6 @@
-fuse-emulator (1.5.7+dfsg1-5) UNRELEASED; urgency=medium
+fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
 
+  * New upstream release.
   * debian/copyright:
     - Set Upstream-Name to 'fuse'.
     - Set Upstream-Contact to the address of the official mailing list.
