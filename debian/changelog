@@ -13,6 +13,8 @@ fuse-emulator (1.6.0+dfsg1-1) UNRELEASED; urgency=medium
     - show-fuse-icon.patch
     - select-audio-driver.patch
     - remove-duplicate-symbol.patch
+  * debian/control:
+    - Build depend on libspectrum 1.5.0.
 
  -- Alberto Garcia <berto@igalia.com>  Tue, 11 Aug 2020 10:02:46 +0200
 
