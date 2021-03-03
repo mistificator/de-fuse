@@ -216,6 +216,7 @@ typedef struct settings_info {
   char *rom_tc2068_1;
   char *rom_ts2068_0;
   char *rom_ts2068_1;
+  char *rom_ttx2000s;
   char *rom_usource;
    int rs232_handshake;
   char *rs232_rx;
@@ -248,6 +249,15 @@ typedef struct settings_info {
   char *svga_modes;
   char *tape_file;
    int tape_traps;
+  char *teletext_addr_1;
+  char *teletext_addr_2;
+  char *teletext_addr_3;
+  char *teletext_addr_4;
+   int teletext_port_1;
+   int teletext_port_2;
+   int teletext_port_3;
+   int teletext_port_4;
+   int ttx2000s;
    int unittests;
    int usource;
    int volume_ay;

@@ -12,11 +12,17 @@
 /* Defined if we support spectranet */
 #undef BUILD_SPECTRANET
 
+/* Defined if we support ttx2000s */
+#undef BUILD_TTX2000S
+
 /* DirectX 7 or higher is required */
 #undef DIRECTSOUND_VERSION
 
 /* Define copyright of Fuse */
 #undef FUSE_COPYRIGHT
+
+/* Defined if the Fuse icon is installed */
+#undef FUSE_ICON_AVAILABLE
 
 /* Define version information for win32 executables */
 #undef FUSE_RC_VERSION
@@ -111,8 +117,7 @@
 /* Define to 1 if you have the <zlib.h> header file. */
 #undef HAVE_ZLIB_H
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Defined if no sound code is present */
@@ -158,7 +163,7 @@
 /* Defined if framebuffer UI in use */
 #undef UI_FB
 
-/* Defined if GTK+ UI is in use */
+/* Defined if GTK UI is in use */
 #undef UI_GTK
 
 /* Defined if null UI is in use */

@@ -161,9 +161,14 @@ static MENU_CALLBACK( menu_options_selectroms_peripheralroms_speccyboot )
   menu_options_selectroms_peripheral_select( gtk_action, 10 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_usource )
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_ttx2000s )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 11 );
+}
+
+static MENU_CALLBACK( menu_options_selectroms_peripheralroms_usource )
+{
+  menu_options_selectroms_peripheral_select( gtk_action, 12 );
 }
 
 static MENU_CALLBACK( menu_machine_hardreset )
@@ -1264,6 +1269,8 @@ GtkActionEntry gtkui_menu_data[] = {
   { "FILE_MOVIE_PAUSE", NULL, "_Pause", NULL, NULL, G_CALLBACK( menu_file_movie_pause ) },
   { "FILE_MOVIE_CONTINUE", NULL, "_Continue", NULL, NULL, G_CALLBACK( menu_file_movie_pause ) },
   { "FILE_MOVIE_STOP", NULL, "_Stop", NULL, NULL, G_CALLBACK( menu_file_movie_stop ) },
+  { "FILE_LOADBINARYDATA", NULL, "Loa_d binary data...", NULL, NULL, G_CALLBACK( menu_file_loadbinarydata ) },
+  { "FILE_SAVEBINARYDATA", NULL, "Save _binary data...", NULL, NULL, G_CALLBACK( menu_file_savebinarydata ) },
   { "FILE_EXIT", NULL, "E_xit...", "F10", NULL, G_CALLBACK( menu_file_exit ) },
   { "OPTIONS", NULL, "Options", NULL, NULL, NULL },
   { "OPTIONS_GENERAL", NULL, "_General...", "F4", NULL, G_CALLBACK( menu_options_general ) },
@@ -1304,6 +1311,7 @@ GtkActionEntry gtkui_menu_data[] = {
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACE3", NULL, "Multiface _3...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_multiface3 ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_OPUSDISCOVERY", NULL, "_Opus Discovery...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_opusdiscovery ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_SPECCYBOOT", NULL, "Specc_yBoot...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_speccyboot ) },
+  { "OPTIONS_SELECTROMS_PERIPHERALROMS_TTX2000S", NULL, "TT_X2000S...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_ttx2000s ) },
   { "OPTIONS_SELECTROMS_PERIPHERALROMS_USOURCE", NULL, "_uSource...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_usource ) },
   { "OPTIONS_FILTER", NULL, "_Filter...", NULL, NULL, G_CALLBACK( menu_options_filter ) },
   { "OPTIONS_DISKOPTIONS", NULL, "_Disk options...", NULL, NULL, G_CALLBACK( menu_options_diskoptions ) },
