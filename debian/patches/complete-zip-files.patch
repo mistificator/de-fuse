@@ -1,0 +1,18 @@
+From: Alberto Garcia <berto@igalia.com>
+Subject: Add ZIP files to the bash completion script
+Origin: https://sourceforge.net/p/fuse-emulator/fuse/ci/dc4e279f2146fd31e5a9c753bbbf1f50889bc338/
+Bug: https://sourceforge.net/p/fuse-emulator/patches/436/
+Bug-Debian: https://bugs.debian.org/989352
+Index: fuse-emulator/data/shell-completion/bash/fuse
+===================================================================
+--- fuse-emulator.orig/data/shell-completion/bash/fuse
++++ fuse-emulator/data/shell-completion/bash/fuse
+@@ -281,7 +281,7 @@ _fuse()
+             --zxatasp-write-protect --zxcf --zxcf-cffile --zxcf-upload
+             --zxmmc --zxmmc-file --zxprinter' -- "$cur" ) )
+     else
+-        _filedir '@(csw|CSW|ltp|LTP|pzx|PZX|spc|SPC|sta|STA|tap|TAP|tzx|TZX|wav|WAV|slt|SLT|sna?(pshot)|SNA?(PSHOT)|?(mgt)snp|?(MGT)SNP|sp|SP|szx|SZX|z80|Z80|zxs|ZXS|d40|D40|d80|D80|dsk|DSK|img|IMG|fdi|FDI|mgt|MGT|opd|OPD|opu|OPU|sad|SAD|scl|SCL|td0|TD0|trd|TRD|udi|UDI|rzx|RZX|dck|DCK|hdf|HDF|mdr|MDR)'
++        _filedir '@(csw|CSW|ltp|LTP|pzx|PZX|spc|SPC|sta|STA|tap|TAP|tzx|TZX|wav|WAV|slt|SLT|sna?(pshot)|SNA?(PSHOT)|?(mgt)snp|?(MGT)SNP|sp|SP|szx|SZX|z80|Z80|zxs|ZXS|d40|D40|d80|D80|dsk|DSK|img|IMG|fdi|FDI|mgt|MGT|opd|OPD|opu|OPU|sad|SAD|scl|SCL|td0|TD0|trd|TRD|udi|UDI|rzx|RZX|dck|DCK|hdf|HDF|mdr|MDR|zip|ZIP)'
+     fi
+ } &&
+ complete -F _fuse -o filenames fuse fuse-gtk fuse-sdl
