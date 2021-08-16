@@ -1,5 +1,6 @@
-fuse-emulator (1.6.0+dfsg1-2) UNRELEASED; urgency=medium
+fuse-emulator (1.6.0+dfsg1-2) unstable; urgency=medium
 
+  * Upload to unstable.
   * debian/patches/complete-zip-files.patch:
     - Add ZIP files to the bash completion script (Closes: #989352).
 
