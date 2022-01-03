@@ -1,3 +1,12 @@
+fuse-emulator (1.6.0+dfsg1-3) UNRELEASED; urgency=medium
+
+  * debian/rules:
+    - Use desktop-file-edit to edit the .desktop files.
+  * debian/control:
+    - Add build dependency on desktop-file-utils.
+
+ -- Alberto Garcia <berto@igalia.com>  Mon, 03 Jan 2022 02:23:16 +0100
+
 fuse-emulator (1.6.0+dfsg1-2) unstable; urgency=medium
 
   * Upload to unstable.
