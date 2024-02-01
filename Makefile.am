@@ -182,7 +182,6 @@ include man/Makefile.am
 include peripherals/Makefile.am
 include perl/Makefile.am
 include pokefinder/Makefile.am
-include roms/Makefile.am
 include sound/Makefile.am
 include timer/Makefile.am
 include ui/Makefile.am

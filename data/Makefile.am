@@ -25,8 +25,7 @@ if DESKTOP_INTEGRATION
 fusemimedir = $(DESKTOP_DATADIR)/mime/packages
 fusemime_DATA = data/fuse.xml
 
-appdatadir = $(DESKTOP_DATADIR)/applications
-appdata_DATA = data/fuse.desktop
+noinst_DATA = data/fuse.desktop
 
 iconsdatadir = $(DESKTOP_DATADIR)/icons/hicolor
 icons16dir = $(iconsdatadir)/16x16/apps

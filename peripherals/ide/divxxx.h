@@ -30,6 +30,8 @@
 
 typedef struct divxxx_t divxxx_t;
 
+static const libspectrum_byte DIVXXX_CONTROL2_ALLRAM;
+
 /* Allocation and deallocation */
 
 divxxx_t*
@@ -44,6 +46,9 @@ divxxx_free( divxxx_t *divxxx );
 
 libspectrum_byte
 divxxx_get_control( divxxx_t *divxxx );
+
+libspectrum_byte
+divxxx_get_control2( divxxx_t *divxxx );
 
 int
 divxxx_get_active( divxxx_t *divxxx );
@@ -76,6 +81,12 @@ divxxx_control_write( divxxx_t *divxxx, libspectrum_byte data );
 
 void
 divxxx_control_write_internal( divxxx_t *divxxx, libspectrum_byte data );
+
+void
+divxxx_control2_write( divxxx_t *divxxx, libspectrum_byte data );
+
+void
+divxxx_control2_write_internal( divxxx_t *divxxx, libspectrum_byte data );
 
 void
 divxxx_set_automap( divxxx_t *divxxx, int automap );

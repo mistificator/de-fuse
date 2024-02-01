@@ -103,6 +103,7 @@ print hashline( __LINE__ ), << 'CODE';
 
 /* The current settings of options, etc */
 settings_info settings_current;
+int config_file_present = 0;
 
 /* The default settings of options, etc */
 settings_info settings_default = {
@@ -190,6 +191,8 @@ read_config_file( settings_info *settings )
   }
 
   xmlFreeDoc( doc );
+
+  config_file_present = 1;
 
   return 0;
 }

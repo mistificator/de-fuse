@@ -31,6 +31,16 @@
 #include <gtk/gtk.h>
 
 /* Bindings to callbacks with action */
+static MENU_CALLBACK( menu_options_joysticks_joystick1 )
+{
+  menu_options_joysticks_select( gtk_action, 1 );
+}
+
+static MENU_CALLBACK( menu_options_joysticks_joystick2 )
+{
+  menu_options_joysticks_select( gtk_action, 2 );
+}
+
 static MENU_CALLBACK( menu_options_joysticks_keyboard )
 {
   menu_options_joysticks_select( gtk_action, 3 );
@@ -1252,6 +1262,7 @@ GtkActionEntry gtkui_menu_data[] = {
   { "FILE_RECORDING_CONTINUERECORDING", NULL, "_Continue recording...", NULL, NULL, G_CALLBACK( menu_file_recording_continuerecording ) },
   { "FILE_RECORDING_INSERTSNAPSHOT", NULL, "_Insert snapshot", "Insert", NULL, G_CALLBACK( menu_file_recording_insertsnapshot ) },
   { "FILE_RECORDING_ROLLBACK", NULL, "Roll_back", "Delete", NULL, G_CALLBACK( menu_file_recording_rollback ) },
+  { "FILE_RECORDING_ROLLBACKTO", NULL, "Rollback _to...", NULL, NULL, G_CALLBACK( menu_file_recording_rollbackto ) },
   { "FILE_RECORDING_PLAY", NULL, "_Play...", NULL, NULL, G_CALLBACK( menu_file_recording_play ) },
   { "FILE_RECORDING_STOP", NULL, "_Stop", NULL, NULL, G_CALLBACK( menu_file_recording_stop ) },
   { "FILE_RECORDING_FINALISE", NULL, "_Finalise...", NULL, NULL, G_CALLBACK( menu_file_recording_finalise ) },
@@ -1263,6 +1274,11 @@ GtkActionEntry gtkui_menu_data[] = {
   { "FILE_SCREENSHOT_SAVESCREENASSCR", NULL, "S_ave Screen as SCR...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenasscr ) },
   { "FILE_SCREENSHOT_OPENMLTSCREENSHOT", NULL, "Op_en MLT Screenshot...", NULL, NULL, G_CALLBACK( menu_file_screenshot_openmltscreenshot ) },
   { "FILE_SCREENSHOT_SAVESCREENASMLT", NULL, "Sa_ve Screen as MLT...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenasmlt ) },
+  { "FILE_SCREENSHOT_SAVESCREENASPNG", NULL, "Save S_creen as PNG...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenaspng ) },
+  { "FILE_SCALABLEVECTORGRAPHICS", NULL, "Scalable _Vector Graphics", NULL, NULL, NULL },
+  { "FILE_SCALABLEVECTORGRAPHICS_STARTCAPTUREINLINEMODE", NULL, "Start capture in _line mode...", NULL, NULL, G_CALLBACK( menu_file_scalablevectorgraphics_startcaptureinlinemode ) },
+  { "FILE_SCALABLEVECTORGRAPHICS_STARTCAPTUREINDOTMODE", NULL, "Start capture in _dot mode...", NULL, NULL, G_CALLBACK( menu_file_scalablevectorgraphics_startcaptureindotmode ) },
+  { "FILE_SCALABLEVECTORGRAPHICS_STOPCAPTURE", NULL, "_Stop capture", NULL, NULL, G_CALLBACK( menu_file_scalablevectorgraphics_stopcapture ) },
   { "FILE_MOVIE", NULL, "_Movie", NULL, NULL, NULL },
   { "FILE_MOVIE_RECORD", NULL, "_Record...", NULL, NULL, G_CALLBACK( menu_file_movie_record ) },
   { "FILE_MOVIE_RECORDFROMRZX", NULL, "R_ecord from RZX...", NULL, NULL, G_CALLBACK( menu_file_movie_record_recordfromrzx ) },
@@ -1282,6 +1298,8 @@ GtkActionEntry gtkui_menu_data[] = {
   { "OPTIONS_RZX", NULL, "_RZX...", NULL, NULL, G_CALLBACK( menu_options_rzx ) },
   { "OPTIONS_MOVIE", NULL, "_Movie...", NULL, NULL, G_CALLBACK( menu_options_movie ) },
   { "OPTIONS_JOYSTICKS", NULL, "_Joysticks", NULL, NULL, NULL },
+  { "OPTIONS_JOYSTICKS_JOYSTICK1", NULL, "Joystick _1...", NULL, NULL, G_CALLBACK( menu_options_joysticks_joystick1 ) },
+  { "OPTIONS_JOYSTICKS_JOYSTICK2", NULL, "Joystick _2...", NULL, NULL, G_CALLBACK( menu_options_joysticks_joystick2 ) },
   { "OPTIONS_JOYSTICKS_KEYBOARD", NULL, "_Keyboard...", NULL, NULL, G_CALLBACK( menu_options_joysticks_keyboard ) },
   { "OPTIONS_SELECTROMS", NULL, "S_elect ROMs", NULL, NULL, NULL },
   { "OPTIONS_SELECTROMS_MACHINEROMS", NULL, "_Machine ROMs", NULL, NULL, NULL },
@@ -1317,6 +1335,7 @@ GtkActionEntry gtkui_menu_data[] = {
   { "OPTIONS_DISKOPTIONS", NULL, "_Disk options...", NULL, NULL, G_CALLBACK( menu_options_diskoptions ) },
   { "OPTIONS_SAVE", NULL, "S_ave", NULL, NULL, G_CALLBACK( menu_options_save ) },
   { "MACHINE", NULL, "Machine", NULL, NULL, NULL },
+  { "MACHINE_PAUSE", NULL, "_Pause...", "Pause", NULL, G_CALLBACK( menu_machine_pause ) },
   { "MACHINE_RESET", NULL, "_Reset...", "F5", NULL, G_CALLBACK( menu_machine_reset ) },
   { "MACHINE_HARDRESET", NULL, "_Hard reset...", NULL, NULL, G_CALLBACK( menu_machine_hardreset ) },
   { "MACHINE_SELECT", NULL, "_Select...", "F9", NULL, G_CALLBACK( menu_machine_select ) },

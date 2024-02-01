@@ -43,17 +43,24 @@
 /* Private function prototypes */
 
 static void divmmc_control_write( libspectrum_word port, libspectrum_byte data );
+static void divmmc_control2_write( libspectrum_word port, libspectrum_byte data );
+static void divmmc_oldports_write( libspectrum_word port, libspectrum_byte data );
 static void divmmc_card_select( libspectrum_word port, libspectrum_byte data );
 static libspectrum_byte divmmc_mmc_read( libspectrum_word port, libspectrum_byte *attached );
 static void divmmc_mmc_write( libspectrum_word port, libspectrum_byte data );
 static void divmmc_activate( void );
 static libspectrum_dword get_control_register( void );
+static libspectrum_dword get_control2_register( void );
 static void set_control_register( libspectrum_dword value );
+static void set_control2_register( libspectrum_dword value );
 
 /* Data */
 
 static const periph_port_t divmmc_ports[] = {
   { 0x00ff, 0x00e3, NULL, divmmc_control_write },
+  { 0xffff, 0x0f3b, NULL, divmmc_control2_write },
+  { 0xffff, 0x1ffd, NULL, divmmc_oldports_write },
+  { 0xffff, 0x7ffd, NULL, divmmc_oldports_write },
   { 0x00ff, 0x00e7, NULL, divmmc_card_select },
   { 0x00ff, 0x00eb, divmmc_mmc_read, divmmc_mmc_write },
   { 0, 0, NULL, NULL }
@@ -100,6 +107,7 @@ static const char * const event_type_string = "divmmc";
 /* Debugger system variables */
 static const char * const debugger_type_string = "divmmc";
 static const char * const control_register_detail_string = "control";
+static const char * const control2_register_detail_string = "control";
 
 /* Eject menu item */
 static const ui_menu_item eject_menu_item = UI_MENU_ITEM_MEDIA_IDE_DIVMMC_EJECT;
@@ -135,6 +143,10 @@ divmmc_init( void *context )
   debugger_system_variable_register(
     debugger_type_string, control_register_detail_string, get_control_register,
     set_control_register );
+
+  debugger_system_variable_register(
+    debugger_type_string, control2_register_detail_string, get_control2_register,
+    set_control2_register );
 
   return 0;
 }
@@ -232,7 +244,32 @@ divmmc_eject( void )
 static void
 divmmc_control_write( libspectrum_word port GCC_UNUSED, libspectrum_byte data )
 {
-  divxxx_control_write( divmmc_state, data );
+  // TODO: bit 3 as paging bit 2
+  divxxx_control_write( divmmc_state, data );  
+}
+
+static void
+divmmc_control2_write( libspectrum_word port GCC_UNUSED, libspectrum_byte data )
+{
+  divxxx_control2_write( divmmc_state, data );  
+}
+
+static void divmmc_oldports_write( libspectrum_word port, libspectrum_byte data ) 
+{
+  if ( ( divxxx_get_control2( divmmc_state ) & DIVXXX_CONTROL2_ALLRAM ) == 0 ) return;
+
+  switch (port) {
+    case 0x1ffd:
+    // TODO: bit 2 as paging bit 1
+      divxxx_refresh_page_state( divmmc_state );
+      break;
+    case 0x7ffd:
+    // TODO: bit 4 as paging bit 0
+      divxxx_refresh_page_state( divmmc_state );
+      break;
+    default:
+      break;
+  }
 }
 
 static void
@@ -366,10 +403,22 @@ get_control_register( void )
   return divxxx_get_control( divmmc_state );
 }
 
+static libspectrum_dword
+get_control2_register( void )
+{
+  return divxxx_get_control2( divmmc_state );
+}
+
 static void
 set_control_register( libspectrum_dword value )
 {
   divxxx_control_write_internal( divmmc_state, value & 0xff );
+}
+
+static void
+set_control2_register( libspectrum_dword value )
+{
+  divxxx_control2_write_internal( divmmc_state, value & 0xff );
 }
 
 int

@@ -3,7 +3,6 @@ Priority: optional
 Section: otherosfs
 Maintainer: Alberto Garcia <berto@igalia.com>
 Build-Depends: debhelper-compat (= 12),
-               desktop-file-utils,
                flex,
                bison,
                libpng-dev,

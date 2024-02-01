@@ -579,6 +579,18 @@ menu_options_peripherals_general( GtkWidget *widget GCC_UNUSED,
                                 settings_current.specdrum );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.specdrum );
 
+  dialog.spectranet =
+    gtk_check_button_new_with_label( "Spectranet" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.spectranet ),
+                                settings_current.spectranet );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.spectranet );
+
+  dialog.spectranet_disable =
+    gtk_check_button_new_with_label( "Spectranet disable" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.spectranet_disable ),
+                                settings_current.spectranet_disable );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.spectranet_disable );
+
   dialog.ttx2000s =
     gtk_check_button_new_with_label( "TTX2000S" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.ttx2000s ),
@@ -670,6 +682,12 @@ menu_options_peripherals_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.specdrum =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->specdrum ) );
+
+  settings_current.spectranet =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->spectranet ) );
+
+  settings_current.spectranet_disable =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->spectranet_disable ) );
 
   settings_current.ttx2000s =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->ttx2000s ) );
