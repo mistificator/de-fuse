@@ -325,7 +325,7 @@ goto_offset( GtkWidget *widget GCC_UNUSED, gpointer user_data GCC_UNUSED )
 #endif
 
 void
-menu_machine_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
+menu_debug_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
                             gpointer data GCC_UNUSED )
 {
   GtkWidget *dialog, *content_area, *scrollbar, *label, *offset;

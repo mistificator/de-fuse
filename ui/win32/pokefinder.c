@@ -34,7 +34,7 @@
 #include "ui/ui.h"
 #include "win32internals.h"
 
-void menu_machine_pokefinder( int action );
+void menu_debug_pokefinder( int action );
 void move_button( int button, int dlg_height );
 static void possible_click( LPNMITEMACTIVATE lpnmitem );
 static void update_pokefinder( void );
@@ -212,7 +212,7 @@ update_pokefinder( void )
 }
 
 void
-menu_machine_pokefinder( int action GCC_UNUSED )
+menu_debug_pokefinder( int action GCC_UNUSED )
 {
   RECT rect;
   int cx;

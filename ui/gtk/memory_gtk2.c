@@ -147,7 +147,7 @@ create_mem_list( void )
 }
 
 void
-menu_machine_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
+menu_debug_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
                             gpointer data GCC_UNUSED )
 {
   GtkWidget *dialog, *box, *content_area, *list, *scrollbar;

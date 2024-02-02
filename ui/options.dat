@@ -22,8 +22,8 @@ Checkbox, Snap (j)oystick prompt, joy_prompt, INPUT_KEY_j
 Checkbox, (C)onfirm actions, confirm_actions, INPUT_KEY_c
 Checkbox, A(u)to-save settings, autosave_settings, INPUT_KEY_u
 
-media
-Media Options
+internals_loaders
+Loaders, traps and hooks
 Checkbox, (A)uto-load media, auto_load, INPUT_KEY_a
 Combo, (P)hantom typist mode, phantom_typist_mode, INPUT_KEY_p, *Auto|Keyword|Keystroke|Menu|Plus 2A|Plus 3
 Checkbox, (D)etect loaders, detect_loader, INPUT_KEY_d
@@ -34,8 +34,8 @@ Checkbox, Use .s(l)t traps, slt_traps, INPUT_KEY_l
 Entry, (M)DR cartridge len, mdr_len, INPUT_KEY_m, 3, blocks
 Checkbox, Random len(g)th MDR cartridge, mdr_random_len, INPUT_KEY_g
 
-peripherals_general
-General Peripheral Options
+peripherals_devices
+Peripheral devices
 Checkbox, (K)empston joystick, joy_kempston, INPUT_KEY_k
 Checkbox, Kempston (m)ouse, kempston_mouse, INPUT_KEY_m
 Checkbox, (S)wap mouse buttons, mouse_swap_buttons, INPUT_KEY_s
@@ -65,8 +65,8 @@ Checkbox, C(o)vox interface, covox, INPUT_KEY_o
 Postcheck, periph_postcheck
 Posthook, periph_posthook
 
-peripherals_disk
-Disk Peripheral Options
+peripherals_storages
+Peripheral storages
 Checkbox, Simple (8)-bit IDE, simpleide_active, INPUT_KEY_8
 Checkbox, (Z)XATASP interface, zxatasp_active, INPUT_KEY_z
 Checkbox, ZXATASP up(l)oad, zxatasp_upload, INPUT_KEY_l
@@ -87,7 +87,7 @@ Checkbox, ZXMMC i(n)terface, zxmmc_enabled, INPUT_KEY_n
 Postcheck, periph_postcheck
 Posthook, periph_posthook
 
-rzx
+recording_rzx
 RZX Options
 Checkbox, Create (a)utosaves, rzx_autosaves, INPUT_KEY_a
 Checkbox, (C)ompress RZX data, rzx_compression, INPUT_KEY_c
@@ -95,7 +95,7 @@ Checkbox, C(o)mpetition mode, competition_mode, INPUT_KEY_o
 Entry, Co(m)petition code, competition_code, INPUT_KEY_m, 8,
 Checkbox, Always (e)mbed snapshot, embed_snapshot, INPUT_KEY_e
 
-sound
+internals_sound
 Sound Options
 Checkbox, (S)ound enabled, sound, INPUT_KEY_s
 Checkbox, (L)oading sound, sound_load, INPUT_KEY_l
@@ -107,7 +107,7 @@ Entry, B(e)eper volume, volume_beeper, INPUT_KEY_e, 3, %
 Entry, Spec(D)rum volume, volume_specdrum, INPUT_KEY_d, 3, %
 Entry, (C)ovox volume, volume_covox, INPUT_KEY_c, 3, %
 
-diskoptions
+internals_diskettes
 Drives Setup
 Combo, +(3) Drive A, drive_plus3a_type, INPUT_KEY_3, *Single-sided 40 track|Double-sided 40 track|Single-sided 80 track|Double-sided 80 track
 Combo, +3 Driv(e) B, drive_plus3b_type, INPUT_KEY_e, Disabled|Single-sided 40 track|Double-sided 40 track|Single-sided 80 track|*Double-sided 80 track
@@ -127,7 +127,7 @@ Combo, O(p)us Drive 2, drive_opus2_type, INPUT_KEY_p, Disabled|*Single-sided 40 
 Combo, (T)ry merge 'B' side of disks, disk_try_merge, INPUT_KEY_t, Never|*With single-sided drives|Always
 Checkbox, Con(f)irm merge disk sides, disk_ask_merge, INPUT_KEY_f
 
-movie
+recording_movie
 Movie Options
 #ifdef HAVE_ZLIB_H
 Combo, Movie (c)ompression, movie_compr, INPUT_KEY_c, None|*Lossless|High

@@ -144,8 +144,8 @@ sound_init_blip( Blip_Buffer **buf, Blip_Synth **synth )
   blip_synth_set_volume( *synth, sound_get_volume( settings_current.volume_beeper ) );
   blip_synth_set_output( *synth, *buf );
 
-  blip_buffer_set_bass_freq( *buf, speaker_type[ option_enumerate_sound_speaker_type() ].bass );
-  blip_synth_set_treble_eq( *synth, speaker_type[ option_enumerate_sound_speaker_type() ].treble );
+  blip_buffer_set_bass_freq( *buf, speaker_type[ option_enumerate_internals_sound_speaker_type() ].bass );
+  blip_synth_set_treble_eq( *synth, speaker_type[ option_enumerate_internals_sound_speaker_type() ].treble );
 
   return 1;
 }
@@ -215,7 +215,7 @@ sound_init( const char *device )
     return;
 
   /* only try for stereo if we need it */
-  sound_stereo_ay = option_enumerate_sound_stereo_ay();
+  sound_stereo_ay = option_enumerate_internals_sound_stereo_ay();
 
   if( settings_current.sound &&
       sound_lowlevel_init( device, &settings_current.sound_freq,
@@ -227,7 +227,7 @@ sound_init( const char *device )
       !sound_init_blip(&right_buf, &right_beeper_synth) )
     return;
 
-  treble = speaker_type[ option_enumerate_sound_speaker_type() ].treble;
+  treble = speaker_type[ option_enumerate_internals_sound_speaker_type() ].treble;
 
   ay_a_synth = new_Blip_Synth();
   blip_synth_set_volume( ay_a_synth,

@@ -78,7 +78,7 @@ enum
 };
 
 void
-menu_machine_pokefinder( GtkAction *gtk_action GCC_UNUSED,
+menu_debug_pokefinder( GtkAction *gtk_action GCC_UNUSED,
                          gpointer data GCC_UNUSED )
 {
   int error;

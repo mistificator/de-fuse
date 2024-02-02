@@ -27,42 +27,42 @@
 #ifndef FUSE_OPTIONS_H
 #define FUSE_OPTIONS_H
 
-int option_enumerate_media_phantom_typist_mode( void );
+int option_enumerate_internals_loaders_phantom_typist_mode( void );
 
-int option_enumerate_sound_stereo_ay( void );
+int option_enumerate_internals_sound_stereo_ay( void );
 
-int option_enumerate_sound_speaker_type( void );
+int option_enumerate_internals_sound_speaker_type( void );
 
-int option_enumerate_diskoptions_drive_plus3a_type( void );
+int option_enumerate_internals_diskettes_drive_plus3a_type( void );
 
-int option_enumerate_diskoptions_drive_plus3b_type( void );
+int option_enumerate_internals_diskettes_drive_plus3b_type( void );
 
-int option_enumerate_diskoptions_drive_beta128a_type( void );
+int option_enumerate_internals_diskettes_drive_beta128a_type( void );
 
-int option_enumerate_diskoptions_drive_beta128b_type( void );
+int option_enumerate_internals_diskettes_drive_beta128b_type( void );
 
-int option_enumerate_diskoptions_drive_beta128c_type( void );
+int option_enumerate_internals_diskettes_drive_beta128c_type( void );
 
-int option_enumerate_diskoptions_drive_beta128d_type( void );
+int option_enumerate_internals_diskettes_drive_beta128d_type( void );
 
-int option_enumerate_diskoptions_drive_plusd1_type( void );
+int option_enumerate_internals_diskettes_drive_plusd1_type( void );
 
-int option_enumerate_diskoptions_drive_plusd2_type( void );
+int option_enumerate_internals_diskettes_drive_plusd2_type( void );
 
-int option_enumerate_diskoptions_drive_didaktik80a_type( void );
+int option_enumerate_internals_diskettes_drive_didaktik80a_type( void );
 
-int option_enumerate_diskoptions_drive_didaktik80b_type( void );
+int option_enumerate_internals_diskettes_drive_didaktik80b_type( void );
 
-int option_enumerate_diskoptions_drive_disciple1_type( void );
+int option_enumerate_internals_diskettes_drive_disciple1_type( void );
 
-int option_enumerate_diskoptions_drive_disciple2_type( void );
+int option_enumerate_internals_diskettes_drive_disciple2_type( void );
 
-int option_enumerate_diskoptions_drive_opus1_type( void );
+int option_enumerate_internals_diskettes_drive_opus1_type( void );
 
-int option_enumerate_diskoptions_drive_opus2_type( void );
+int option_enumerate_internals_diskettes_drive_opus2_type( void );
 
-int option_enumerate_diskoptions_disk_try_merge( void );
+int option_enumerate_internals_diskettes_disk_try_merge( void );
 
-int option_enumerate_movie_movie_compr( void );
+int option_enumerate_recording_movie_movie_compr( void );
 
 #endif				/* #ifndef FUSE_OPTIONS_H */

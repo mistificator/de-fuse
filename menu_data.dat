@@ -50,7 +50,7 @@ File/Screenshot/Op_en MLT Screenshot..., Item
 File/Screenshot/Sa_ve Screen as MLT..., Item
 
 #ifdef USE_LIBPNG
-File/Screenshot/Save S_creen as PNG..., Item
+File/Screenshot/Save S_creen as PNG..., Item, F12
 #endif
 
 #ifdef HAVE_LIB_XML2
@@ -72,67 +72,65 @@ File/Loa_d binary data..., Item
 File/Save _binary data..., Item
 
 File/separator, Separator
-File/E_xit..., Item, F10
+File/E_xit..., Item
 
-_Options, Branch
-Options/_General..., Item, F4
-Options/_Media..., Item
-Options/_Sound..., Item
-
-Options/_Peripherals, Branch
-Options/Peripherals/_General..., Item
-Options/Peripherals/_Disk..., Item
-
-Options/_RZX..., Item
-Options/_Movie..., Item
-
-Options/_Joysticks, Branch
-#ifdef USE_JOYSTICK
-Options/Joysticks/Joystick _1..., Item,, menu_options_joysticks_select, menu_joystick_1_detail, 1
-Options/Joysticks/Joystick _2..., Item,, menu_options_joysticks_select, menu_joystick_2_detail, 2
-#endif
-Options/Joysticks/_Keyboard..., Item,, menu_options_joysticks_select, menu_keyboard_joystick_detail, 3
-
-Options/S_elect ROMs, Branch
-
-Options/Select ROMs/_Machine ROMs, Branch
-Options/Select ROMs/Machine ROMs/Spectrum 1_6K..., Item,, menu_options_selectroms_machine_select,, 1
-Options/Select ROMs/Machine ROMs/Spectrum _48K..., Item,, menu_options_selectroms_machine_select,, 2
-Options/Select ROMs/Machine ROMs/Spectrum _128K..., Item,, menu_options_selectroms_machine_select,, 3
-Options/Select ROMs/Machine ROMs/Spectrum +_2..., Item,, menu_options_selectroms_machine_select,, 4
-Options/Select ROMs/Machine ROMs/Spectrum +2_A..., Item,, menu_options_selectroms_machine_select,, 5
-Options/Select ROMs/Machine ROMs/Spectrum +_3..., Item,, menu_options_selectroms_machine_select,, 6
-Options/Select ROMs/Machine ROMs/Spectrum +3_e..., Item,, menu_options_selectroms_machine_select,, 7
-Options/Select ROMs/Machine ROMs/Timex _TC2048..., Item,, menu_options_selectroms_machine_select,, 8
-Options/Select ROMs/Machine ROMs/Timex TC206_8..., Item,, menu_options_selectroms_machine_select,, 9
-Options/Select ROMs/Machine ROMs/Ti_mex TS2068..., Item,, menu_options_selectroms_machine_select,, 10
-Options/Select ROMs/Machine ROMs/_Pentagon 128K..., Item,, menu_options_selectroms_machine_select,, 11
-Options/Select ROMs/Machine ROMs/Pe_ntagon 512K..., Item,, menu_options_selectroms_machine_select,, 12
-Options/Select ROMs/Machine ROMs/Penta_gon 1024K..., Item,, menu_options_selectroms_machine_select,, 13
-Options/Select ROMs/Machine ROMs/S_corpion ZS 256..., Item,, menu_options_selectroms_machine_select,, 14
-Options/Select ROMs/Machine ROMs/Spectrum _SE..., Item,, menu_options_selectroms_machine_select,, 15
-
-Options/Select ROMs/_Peripheral ROMs, Branch
-Options/Select ROMs/Peripheral ROMs/_Interface 1..., Item,, menu_options_selectroms_peripheral_select,, 1
-Options/Select ROMs/Peripheral ROMs/_Beta 128..., Item,, menu_options_selectroms_peripheral_select,, 2
-Options/Select ROMs/Peripheral ROMs/+_D..., Item,, menu_options_selectroms_peripheral_select,, 3
-Options/Select ROMs/Peripheral ROMs/Didaktik _80..., Item,, menu_options_selectroms_peripheral_select,, 4
-Options/Select ROMs/Peripheral ROMs/DISCiP_LE..., Item,, menu_options_selectroms_peripheral_select,, 5
-Options/Select ROMs/Peripheral ROMs/Mu_ltiface One..., Item,, menu_options_selectroms_peripheral_select,, 6
-Options/Select ROMs/Peripheral ROMs/Multiface _128..., Item,, menu_options_selectroms_peripheral_select,, 7
-Options/Select ROMs/Peripheral ROMs/Multiface _3..., Item,, menu_options_selectroms_peripheral_select,, 8
-Options/Select ROMs/Peripheral ROMs/_Opus Discovery..., Item,, menu_options_selectroms_peripheral_select,, 9
-Options/Select ROMs/Peripheral ROMs/Specc_yBoot..., Item,, menu_options_selectroms_peripheral_select,, 10
-Options/Select ROMs/Peripheral ROMs/TT_X2000S..., Item,, menu_options_selectroms_peripheral_select,, 11
-Options/Select ROMs/Peripheral ROMs/_uSource..., Item,, menu_options_selectroms_peripheral_select,, 12
-
-Options/_Filter..., Item,,, menu_filter_detail
+_View, Branch
+View/_Screen filter..., Item,,, menu_filter_detail
 
 #ifdef UI_SDL
-Options/F_ull screen, Item, F11
+View/F_ull screen, Item, F11
 #endif
 
-Options/_Disk options..., Item
+_Options, Branch
+Options/_General..., Item
+
+Options/_Internals, Branch
+Options/Internals/_Machine ROMs, Branch
+Options/Internals/Machine ROMs/Spectrum 1_6K..., Item,, menu_options_selectroms_machine_select,, 1
+Options/Internals/Machine ROMs/Spectrum _48K..., Item,, menu_options_selectroms_machine_select,, 2
+Options/Internals/Machine ROMs/Spectrum _128K..., Item,, menu_options_selectroms_machine_select,, 3
+Options/Internals/Machine ROMs/Spectrum +_2..., Item,, menu_options_selectroms_machine_select,, 4
+Options/Internals/Machine ROMs/Spectrum +2_A..., Item,, menu_options_selectroms_machine_select,, 5
+Options/Internals/Machine ROMs/Spectrum +_3..., Item,, menu_options_selectroms_machine_select,, 6
+Options/Internals/Machine ROMs/Spectrum +3_e..., Item,, menu_options_selectroms_machine_select,, 7
+Options/Internals/Machine ROMs/Timex _TC2048..., Item,, menu_options_selectroms_machine_select,, 8
+Options/Internals/Machine ROMs/Timex TC206_8..., Item,, menu_options_selectroms_machine_select,, 9
+Options/Internals/Machine ROMs/Ti_mex TS2068..., Item,, menu_options_selectroms_machine_select,, 10
+Options/Internals/Machine ROMs/_Pentagon 128K..., Item,, menu_options_selectroms_machine_select,, 11
+Options/Internals/Machine ROMs/Pe_ntagon 512K..., Item,, menu_options_selectroms_machine_select,, 12
+Options/Internals/Machine ROMs/Penta_gon 1024K..., Item,, menu_options_selectroms_machine_select,, 13
+Options/Internals/Machine ROMs/S_corpion ZS 256..., Item,, menu_options_selectroms_machine_select,, 14
+Options/Internals/Machine ROMs/Spectrum _SE..., Item,, menu_options_selectroms_machine_select,, 15
+Options/Internals/_Sound..., Item
+Options/Internals/_Diskettes..., Item
+Options/Internals/_Loaders..., Item
+
+Options/_Peripherals, Branch
+Options/Peripherals/_Devices ROMs, Branch
+Options/Peripherals/Devices ROMs/_Interface 1..., Item,, menu_options_selectroms_peripheral_select,, 1
+Options/Peripherals/Devices ROMs/_Beta 128..., Item,, menu_options_selectroms_peripheral_select,, 2
+Options/Peripherals/Devices ROMs/+_D..., Item,, menu_options_selectroms_peripheral_select,, 3
+Options/Peripherals/Devices ROMs/Didaktik _80..., Item,, menu_options_selectroms_peripheral_select,, 4
+Options/Peripherals/Devices ROMs/DISCiP_LE..., Item,, menu_options_selectroms_peripheral_select,, 5
+Options/Peripherals/Devices ROMs/Mu_ltiface One..., Item,, menu_options_selectroms_peripheral_select,, 6
+Options/Peripherals/Devices ROMs/Multiface _128..., Item,, menu_options_selectroms_peripheral_select,, 7
+Options/Peripherals/Devices ROMs/Multiface _3..., Item,, menu_options_selectroms_peripheral_select,, 8
+Options/Peripherals/Devices ROMs/_Opus Discovery..., Item,, menu_options_selectroms_peripheral_select,, 9
+Options/Peripherals/Devices ROMs/Specc_yBoot..., Item,, menu_options_selectroms_peripheral_select,, 10
+Options/Peripherals/Devices ROMs/TT_X2000S..., Item,, menu_options_selectroms_peripheral_select,, 11
+Options/Peripherals/Devices ROMs/_uSource..., Item,, menu_options_selectroms_peripheral_select,, 12
+Options/Peripherals/_Devices..., Item
+Options/Peripherals/_Storages..., Item
+Options/Peripherals/_Joysticks, Branch
+#ifdef USE_JOYSTICK
+Options/Peripherals/Joysticks/Joystick _1..., Item,, menu_options_joysticks_select, menu_joystick_1_detail, 1
+Options/Peripherals/Joysticks/Joystick _2..., Item,, menu_options_joysticks_select, menu_joystick_2_detail, 2
+#endif
+Options/Peripherals/Joysticks/_Keyboard..., Item,, menu_options_joysticks_select, menu_keyboard_joystick_detail, 3
+
+Options/_Recording, Branch
+Options/Recording/_RZX..., Item
+Options/Recording/_Movie..., Item
 
 Options/separator, Separator
 Options/S_ave, Item
@@ -140,24 +138,26 @@ Options/S_ave, Item
 _Machine, Branch
 
 #ifndef USE_WIDGET
-Machine/_Pause..., Item, Pause
+Machine/_Pause..., Item, F5
 #endif
 
-Machine/_Reset..., Item, F5,,, 0
+Machine/_Reset..., Item,,,, 0
 Machine/_Hard reset..., Item,, menu_machine_reset,, 1
 Machine/_Select..., Item, F9,, menu_machine_detail
-Machine/_Debugger..., Item
-Machine/P_oke Finder..., Item
-Machine/Po_ke Memory..., Item
-Machine/_Memory Browser..., Item
 
-Machine/Pro_filer, Branch
-Machine/Profiler/_Start, Item
-Machine/Profiler/_Stop, Item
-
-Machine/_NMI, Item
+Machine/_NMI, Item, F6
 Machine/Multiface Red _Button, Item
 Machine/Didaktik SNA_P, Item
+
+_Debug, Branch
+Debug/_Debugger..., Item, F10
+Debug/_Memory Browser..., Item, F4
+Debug/P_oke Finder..., Item
+Debug/Po_ke Memory..., Item
+
+Debug/Pro_filer, Branch
+Debug/Profiler/_Start, Item
+Debug/Profiler/_Stop, Item
 
 M_edia, Branch
 
@@ -167,9 +167,241 @@ Media/Tape/_Play, Item, F8
 Media/Tape/_Browse..., Item
 Media/Tape/_Rewind, Item
 Media/Tape/_Clear, Item
-Media/Tape/_Write..., Item, F6
+Media/Tape/_Write..., Item
 Media/Tape/R_ecord Start, Item
 Media/Tape/Recor_d Stop, Item
+
+Media/_Diskette, Branch
+
+Media/Diskette/+_3, Branch
+Media/Diskette/+3/Drive _A:, Branch,,,menu_plus3a_detail
+Media/Diskette/+3/Drive A:/Insert _New, Item,, menu_media_insert_new,, 0x01
+Media/Diskette/+3/Drive A:/_Insert..., Item,, menu_media_insert,, 0x01
+Media/Diskette/+3/Drive A:/_Eject, Item,, menu_media_eject,, 0x01
+Media/Diskette/+3/Drive A:/_Save, Item,, menu_media_save,, 0x001
+Media/Diskette/+3/Drive A:/Save _As..., Item,, menu_media_save,, 0x101
+Media/Diskette/+3/Drive A:/_Flip disk, Branch
+Media/Diskette/+3/Drive A:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x101
+Media/Diskette/+3/Drive A:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x001
+Media/Diskette/+3/Drive A:/Write _protect, Branch
+Media/Diskette/+3/Drive A:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x101
+Media/Diskette/+3/Drive A:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x001
+Media/Diskette/+3/Drive _B:, Branch,,,menu_plus3b_detail
+Media/Diskette/+3/Drive B:/Insert _New, Item,, menu_media_insert_new,, 0x02
+Media/Diskette/+3/Drive B:/_Insert..., Item,, menu_media_insert,, 0x02
+Media/Diskette/+3/Drive B:/_Eject, Item,, menu_media_eject,, 0x02
+Media/Diskette/+3/Drive B:/_Save, Item,, menu_media_save,, 0x002
+Media/Diskette/+3/Drive B:/Save _As..., Item,, menu_media_save,, 0x102
+Media/Diskette/+3/Drive B:/_Flip disk, Branch
+Media/Diskette/+3/Drive B:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x102
+Media/Diskette/+3/Drive B:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x002
+Media/Diskette/+3/Drive B:/Write _protect, Branch
+Media/Diskette/+3/Drive B:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x102
+Media/Diskette/+3/Drive B:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x002
+
+Media/Diskette/_Beta, Branch
+Media/Diskette/Beta/Drive _A:, Branch,,,menu_beta128a_detail
+Media/Diskette/Beta/Drive A:/Insert _New, Item,, menu_media_insert_new,, 0x11
+Media/Diskette/Beta/Drive A:/_Insert..., Item,, menu_media_insert,, 0x11
+Media/Diskette/Beta/Drive A:/_Eject, Item,, menu_media_eject,, 0x11
+Media/Diskette/Beta/Drive A:/_Save, Item,, menu_media_save,, 0x011
+Media/Diskette/Beta/Drive A:/Save _As..., Item,, menu_media_save,, 0x111
+Media/Diskette/Beta/Drive A:/_Flip disk, Branch
+Media/Diskette/Beta/Drive A:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x111
+Media/Diskette/Beta/Drive A:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x011
+Media/Diskette/Beta/Drive A:/Write _protect, Branch
+Media/Diskette/Beta/Drive A:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x111
+Media/Diskette/Beta/Drive A:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x011
+Media/Diskette/Beta/Drive _B:, Branch,,,menu_beta128b_detail
+Media/Diskette/Beta/Drive B:/Insert _New, Item,, menu_media_insert_new,, 0x12
+Media/Diskette/Beta/Drive B:/_Insert..., Item,, menu_media_insert,, 0x12
+Media/Diskette/Beta/Drive B:/_Eject, Item,, menu_media_eject,, 0x12
+Media/Diskette/Beta/Drive B:/_Save, Item,, menu_media_save,, 0x012
+Media/Diskette/Beta/Drive B:/Save _As..., Item,, menu_media_save,, 0x112
+Media/Diskette/Beta/Drive B:/_Flip disk, Branch
+Media/Diskette/Beta/Drive B:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x112
+Media/Diskette/Beta/Drive B:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x012
+Media/Diskette/Beta/Drive B:/Write _protect, Branch
+Media/Diskette/Beta/Drive B:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x112
+Media/Diskette/Beta/Drive B:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x012
+Media/Diskette/Beta/Drive _C:, Branch,,,menu_beta128c_detail
+Media/Diskette/Beta/Drive C:/Insert _New, Item,, menu_media_insert_new,, 0x13
+Media/Diskette/Beta/Drive C:/_Insert..., Item,, menu_media_insert,, 0x13
+Media/Diskette/Beta/Drive C:/_Eject, Item,, menu_media_eject,, 0x13
+Media/Diskette/Beta/Drive C:/_Save, Item,, menu_media_save,, 0x013
+Media/Diskette/Beta/Drive C:/Save _As..., Item,, menu_media_save,, 0x113
+Media/Diskette/Beta/Drive C:/_Flip disk, Branch
+Media/Diskette/Beta/Drive C:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x113
+Media/Diskette/Beta/Drive C:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x013
+Media/Diskette/Beta/Drive C:/Write _protect, Branch
+Media/Diskette/Beta/Drive C:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x113
+Media/Diskette/Beta/Drive C:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x013
+Media/Diskette/Beta/Drive _D:, Branch,,,menu_beta128d_detail
+Media/Diskette/Beta/Drive D:/Insert _New, Item,, menu_media_insert_new,, 0x14
+Media/Diskette/Beta/Drive D:/_Insert..., Item,, menu_media_insert,, 0x14
+Media/Diskette/Beta/Drive D:/_Eject, Item,, menu_media_eject,, 0x14
+Media/Diskette/Beta/Drive D:/_Save, Item,, menu_media_save,, 0x014
+Media/Diskette/Beta/Drive D:/Save _As..., Item,, menu_media_save,, 0x114
+Media/Diskette/Beta/Drive D:/_Flip disk, Branch
+Media/Diskette/Beta/Drive D:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x114
+Media/Diskette/Beta/Drive D:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x014
+Media/Diskette/Beta/Drive D:/Write _protect, Branch
+Media/Diskette/Beta/Drive D:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x114
+Media/Diskette/Beta/Drive D:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x014
+
+Media/Diskette/+_D, Branch
+Media/Diskette/+D/Drive _1, Branch,,,menu_plusd1_detail
+Media/Diskette/+D/Drive 1/Insert _New, Item,, menu_media_insert_new,, 0x21
+Media/Diskette/+D/Drive 1/_Insert..., Item,, menu_media_insert,, 0x21
+Media/Diskette/+D/Drive 1/_Eject, Item,, menu_media_eject,, 0x21
+Media/Diskette/+D/Drive 1/_Save, Item,, menu_media_save,, 0x021
+Media/Diskette/+D/Drive 1/Save _As..., Item,, menu_media_save,, 0x121
+Media/Diskette/+D/Drive 1/_Flip disk, Branch
+Media/Diskette/+D/Drive 1/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x121
+Media/Diskette/+D/Drive 1/Flip disk/Turn _back, Item,, menu_media_flip,, 0x021
+Media/Diskette/+D/Drive 1/Write _protect, Branch
+Media/Diskette/+D/Drive 1/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x121
+Media/Diskette/+D/Drive 1/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x021
+Media/Diskette/+D/Drive _2, Branch,,,menu_plusd2_detail
+Media/Diskette/+D/Drive 2/Insert _New, Item,, menu_media_insert_new,, 0x22
+Media/Diskette/+D/Drive 2/_Insert..., Item,, menu_media_insert,, 0x22
+Media/Diskette/+D/Drive 2/_Eject, Item,, menu_media_eject,, 0x22
+Media/Diskette/+D/Drive 2/_Save, Item,, menu_media_save,, 0x022
+Media/Diskette/+D/Drive 2/Save _As..., Item,, menu_media_save,, 0x122
+Media/Diskette/+D/Drive 2/_Flip disk, Branch
+Media/Diskette/+D/Drive 2/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x122
+Media/Diskette/+D/Drive 2/Flip disk/Turn _back, Item,, menu_media_flip,, 0x022
+Media/Diskette/+D/Drive 2/Write _protect, Branch
+Media/Diskette/+D/Drive 2/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x122
+Media/Diskette/+D/Drive 2/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x022
+
+Media/Diskette/DISC_iPLE, Branch
+Media/Diskette/DISCiPLE/Drive _1, Branch,,,menu_disciple1_detail
+Media/Diskette/DISCiPLE/Drive 1/Insert _New, Item,, menu_media_insert_new,, 0x51
+Media/Diskette/DISCiPLE/Drive 1/_Insert..., Item,, menu_media_insert,, 0x51
+Media/Diskette/DISCiPLE/Drive 1/_Eject, Item,, menu_media_eject,, 0x51
+Media/Diskette/DISCiPLE/Drive 1/_Save, Item,, menu_media_save,, 0x051
+Media/Diskette/DISCiPLE/Drive 1/Save _As..., Item,, menu_media_save,, 0x151
+Media/Diskette/DISCiPLE/Drive 1/_Flip disk, Branch
+Media/Diskette/DISCiPLE/Drive 1/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x151
+Media/Diskette/DISCiPLE/Drive 1/Flip disk/Turn _back, Item,, menu_media_flip,, 0x051
+Media/Diskette/DISCiPLE/Drive 1/Write _protect, Branch
+Media/Diskette/DISCiPLE/Drive 1/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x151
+Media/Diskette/DISCiPLE/Drive 1/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x051
+Media/Diskette/DISCiPLE/Drive _2, Branch,,,menu_disciple2_detail
+Media/Diskette/DISCiPLE/Drive 2/Insert _New, Item,, menu_media_insert_new,, 0x52
+Media/Diskette/DISCiPLE/Drive 2/_Insert..., Item,, menu_media_insert,, 0x52
+Media/Diskette/DISCiPLE/Drive 2/_Eject, Item,, menu_media_eject,, 0x52
+Media/Diskette/DISCiPLE/Drive 2/_Save, Item,, menu_media_save,, 0x052
+Media/Diskette/DISCiPLE/Drive 2/Save _As..., Item,, menu_media_save,, 0x152
+Media/Diskette/DISCiPLE/Drive 2/_Flip disk, Branch
+Media/Diskette/DISCiPLE/Drive 2/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x152
+Media/Diskette/DISCiPLE/Drive 2/Flip disk/Turn _back, Item,, menu_media_flip,, 0x052
+Media/Diskette/DISCiPLE/Drive 2/Write _protect, Branch
+Media/Diskette/DISCiPLE/Drive 2/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x152
+Media/Diskette/DISCiPLE/Drive 2/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x052
+
+Media/Diskette/_Opus, Branch
+Media/Diskette/Opus/Drive _1, Branch,,,menu_opus1_detail
+Media/Diskette/Opus/Drive 1/Insert _New, Item,, menu_media_insert_new,, 0x41
+Media/Diskette/Opus/Drive 1/_Insert..., Item,, menu_media_insert,, 0x41
+Media/Diskette/Opus/Drive 1/_Eject, Item,, menu_media_eject,, 0x41
+Media/Diskette/Opus/Drive 1/_Save, Item,, menu_media_save,, 0x041
+Media/Diskette/Opus/Drive 1/Save _As..., Item,, menu_media_save,, 0x141
+Media/Diskette/Opus/Drive 1/_Flip disk, Branch
+Media/Diskette/Opus/Drive 1/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x141
+Media/Diskette/Opus/Drive 1/Flip disk/Turn _back, Item,, menu_media_flip,, 0x041
+Media/Diskette/Opus/Drive 1/Write _protect, Branch
+Media/Diskette/Opus/Drive 1/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x141
+Media/Diskette/Opus/Drive 1/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x041
+Media/Diskette/Opus/Drive _2, Branch,,,menu_opus2_detail
+Media/Diskette/Opus/Drive 2/Insert _New, Item,, menu_media_insert_new,, 0x42
+Media/Diskette/Opus/Drive 2/_Insert..., Item,, menu_media_insert,, 0x42
+Media/Diskette/Opus/Drive 2/_Eject, Item,, menu_media_eject,, 0x42
+Media/Diskette/Opus/Drive 2/_Save, Item,, menu_media_save,, 0x042
+Media/Diskette/Opus/Drive 2/Save _As..., Item,, menu_media_save,, 0x142
+Media/Diskette/Opus/Drive 2/_Flip disk, Branch
+Media/Diskette/Opus/Drive 2/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x142
+Media/Diskette/Opus/Drive 2/Flip disk/Turn _back, Item,, menu_media_flip,, 0x042
+Media/Diskette/Opus/Drive 2/Write _protect, Branch
+Media/Diskette/Opus/Drive 2/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x142
+Media/Diskette/Opus/Drive 2/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x042
+
+Media/Diskette/_Didaktik 80, Branch
+Media/Diskette/Didaktik 80/Drive _A, Branch,,,menu_didaktik_a_detail
+Media/Diskette/Didaktik 80/Drive A/Insert _New, Item,, menu_media_insert_new,, 0x61
+Media/Diskette/Didaktik 80/Drive A/_Insert..., Item,, menu_media_insert,, 0x61
+Media/Diskette/Didaktik 80/Drive A/_Eject, Item,, menu_media_eject,, 0x61
+Media/Diskette/Didaktik 80/Drive A/_Save, Item,, menu_media_save,, 0x061
+Media/Diskette/Didaktik 80/Drive A/Save _As..., Item,, menu_media_save,, 0x161
+Media/Diskette/Didaktik 80/Drive A/_Flip disk, Branch
+Media/Diskette/Didaktik 80/Drive A/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x161
+Media/Diskette/Didaktik 80/Drive A/Flip disk/Turn _back, Item,, menu_media_flip,, 0x061
+Media/Diskette/Didaktik 80/Drive A/Write _protect, Branch
+Media/Diskette/Didaktik 80/Drive A/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x161
+Media/Diskette/Didaktik 80/Drive A/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x061
+Media/Diskette/Didaktik 80/Drive _B, Branch,,,menu_didaktik_b_detail
+Media/Diskette/Didaktik 80/Drive B/Insert _New, Item,, menu_media_insert_new,, 0x62
+Media/Diskette/Didaktik 80/Drive B/_Insert..., Item,, menu_media_insert,, 0x62
+Media/Diskette/Didaktik 80/Drive B/_Eject, Item,, menu_media_eject,, 0x62
+Media/Diskette/Didaktik 80/Drive B/_Save, Item,, menu_media_save,, 0x062
+Media/Diskette/Didaktik 80/Drive B/Save _As..., Item,, menu_media_save,, 0x162
+Media/Diskette/Didaktik 80/Drive B/_Flip disk, Branch
+Media/Diskette/Didaktik 80/Drive B/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x162
+Media/Diskette/Didaktik 80/Drive B/Flip disk/Turn _back, Item,, menu_media_flip,, 0x062
+Media/Diskette/Didaktik 80/Drive B/Write _protect, Branch
+Media/Diskette/Didaktik 80/Drive B/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x162
+Media/Diskette/Didaktik 80/Drive B/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x062
+
+
+
+Media/Storag_e, Branch
+
+Media/Storage/Simple _8-bit, Branch
+Media/Storage/Simple 8-bit/_Master, Branch
+Media/Storage/Simple 8-bit/Master/_Insert..., Item,, menu_media_ide_insert,, 1
+Media/Storage/Simple 8-bit/Master/_Commit, Item,, menu_media_ide_commit,, 1
+Media/Storage/Simple 8-bit/Master/_Eject, Item,, menu_media_ide_eject,, 1
+Media/Storage/Simple 8-bit/_Slave, Branch
+Media/Storage/Simple 8-bit/Slave/_Insert..., Item,, menu_media_ide_insert,, 2
+Media/Storage/Simple 8-bit/Slave/_Commit, Item,, menu_media_ide_commit,, 2
+Media/Storage/Simple 8-bit/Slave/_Eject, Item,, menu_media_ide_eject,, 2
+
+Media/Storage/ZX_ATASP, Branch
+Media/Storage/ZXATASP/_Master, Branch
+Media/Storage/ZXATASP/Master/_Insert..., Item,, menu_media_ide_insert,, 3
+Media/Storage/ZXATASP/Master/_Commit, Item,, menu_media_ide_commit,, 3
+Media/Storage/ZXATASP/Master/_Eject, Item,, menu_media_ide_eject,, 3
+Media/Storage/ZXATASP/_Slave, Branch
+Media/Storage/ZXATASP/Slave/_Insert..., Item,, menu_media_ide_insert,, 4
+Media/Storage/ZXATASP/Slave/_Commit, Item,, menu_media_ide_commit,, 4
+Media/Storage/ZXATASP/Slave/_Eject, Item,, menu_media_ide_eject,, 4
+
+Media/Storage/ZX_CF CompactFlash, Branch
+Media/Storage/ZXCF CompactFlash/_Insert..., Item,, menu_media_ide_insert,, 5
+Media/Storage/ZXCF CompactFlash/_Commit, Item,, menu_media_ide_commit,, 5
+Media/Storage/ZXCF CompactFlash/_Eject, Item,, menu_media_ide_eject,, 5
+
+Media/Storage/_DivIDE, Branch
+Media/Storage/DivIDE/_Master, Branch
+Media/Storage/DivIDE/Master/_Insert..., Item,, menu_media_ide_insert,, 6
+Media/Storage/DivIDE/Master/_Commit, Item,, menu_media_ide_commit,, 6
+Media/Storage/DivIDE/Master/_Eject, Item,, menu_media_ide_eject,, 6
+Media/Storage/DivIDE/_Slave, Branch
+Media/Storage/DivIDE/Slave/_Insert..., Item,, menu_media_ide_insert,, 7
+Media/Storage/DivIDE/Slave/_Commit, Item,, menu_media_ide_commit,, 7
+Media/Storage/DivIDE/Slave/_Eject, Item,, menu_media_ide_eject,, 7
+
+Media/Storage/_DivMMC, Branch
+Media/Storage/DivMMC/_Insert..., Item,, menu_media_ide_insert,, 8
+Media/Storage/DivMMC/_Commit, Item,, menu_media_ide_commit,, 8
+Media/Storage/DivMMC/_Eject, Item,, menu_media_ide_eject,, 8
+
+Media/Storage/_ZXMMC, Branch
+Media/Storage/ZXMMC/_Insert..., Item,, menu_media_ide_insert,, 9
+Media/Storage/ZXMMC/_Commit, Item,, menu_media_ide_commit,, 9
+Media/Storage/ZXMMC/_Eject, Item,, menu_media_ide_eject,, 9
+
 
 Media/_Interface 1, Branch
 
@@ -265,187 +497,6 @@ Media/Interface 1/Sinclair NET/_Plug in, Item,, menu_media_if1_rs232,, 0x03
 Media/Interface 1/Sinclair NET/_Unplug, Item,, menu_media_if1_rs232,, 0x13
 #endif
 
-Media/_Disk, Branch
-
-Media/Disk/+_3, Branch
-Media/Disk/+3/Drive _A:, Branch,,,menu_plus3a_detail
-Media/Disk/+3/Drive A:/Insert _New, Item,, menu_media_insert_new,, 0x01
-Media/Disk/+3/Drive A:/_Insert..., Item,, menu_media_insert,, 0x01
-Media/Disk/+3/Drive A:/_Eject, Item,, menu_media_eject,, 0x01
-Media/Disk/+3/Drive A:/_Save, Item,, menu_media_save,, 0x001
-Media/Disk/+3/Drive A:/Save _As..., Item,, menu_media_save,, 0x101
-Media/Disk/+3/Drive A:/_Flip disk, Branch
-Media/Disk/+3/Drive A:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x101
-Media/Disk/+3/Drive A:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x001
-Media/Disk/+3/Drive A:/Write _protect, Branch
-Media/Disk/+3/Drive A:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x101
-Media/Disk/+3/Drive A:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x001
-Media/Disk/+3/Drive _B:, Branch,,,menu_plus3b_detail
-Media/Disk/+3/Drive B:/Insert _New, Item,, menu_media_insert_new,, 0x02
-Media/Disk/+3/Drive B:/_Insert..., Item,, menu_media_insert,, 0x02
-Media/Disk/+3/Drive B:/_Eject, Item,, menu_media_eject,, 0x02
-Media/Disk/+3/Drive B:/_Save, Item,, menu_media_save,, 0x002
-Media/Disk/+3/Drive B:/Save _As..., Item,, menu_media_save,, 0x102
-Media/Disk/+3/Drive B:/_Flip disk, Branch
-Media/Disk/+3/Drive B:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x102
-Media/Disk/+3/Drive B:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x002
-Media/Disk/+3/Drive B:/Write _protect, Branch
-Media/Disk/+3/Drive B:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x102
-Media/Disk/+3/Drive B:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x002
-
-Media/Disk/_Beta, Branch
-Media/Disk/Beta/Drive _A:, Branch,,,menu_beta128a_detail
-Media/Disk/Beta/Drive A:/Insert _New, Item,, menu_media_insert_new,, 0x11
-Media/Disk/Beta/Drive A:/_Insert..., Item,, menu_media_insert,, 0x11
-Media/Disk/Beta/Drive A:/_Eject, Item,, menu_media_eject,, 0x11
-Media/Disk/Beta/Drive A:/_Save, Item,, menu_media_save,, 0x011
-Media/Disk/Beta/Drive A:/Save _As..., Item,, menu_media_save,, 0x111
-Media/Disk/Beta/Drive A:/_Flip disk, Branch
-Media/Disk/Beta/Drive A:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x111
-Media/Disk/Beta/Drive A:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x011
-Media/Disk/Beta/Drive A:/Write _protect, Branch
-Media/Disk/Beta/Drive A:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x111
-Media/Disk/Beta/Drive A:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x011
-Media/Disk/Beta/Drive _B:, Branch,,,menu_beta128b_detail
-Media/Disk/Beta/Drive B:/Insert _New, Item,, menu_media_insert_new,, 0x12
-Media/Disk/Beta/Drive B:/_Insert..., Item,, menu_media_insert,, 0x12
-Media/Disk/Beta/Drive B:/_Eject, Item,, menu_media_eject,, 0x12
-Media/Disk/Beta/Drive B:/_Save, Item,, menu_media_save,, 0x012
-Media/Disk/Beta/Drive B:/Save _As..., Item,, menu_media_save,, 0x112
-Media/Disk/Beta/Drive B:/_Flip disk, Branch
-Media/Disk/Beta/Drive B:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x112
-Media/Disk/Beta/Drive B:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x012
-Media/Disk/Beta/Drive B:/Write _protect, Branch
-Media/Disk/Beta/Drive B:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x112
-Media/Disk/Beta/Drive B:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x012
-Media/Disk/Beta/Drive _C:, Branch,,,menu_beta128c_detail
-Media/Disk/Beta/Drive C:/Insert _New, Item,, menu_media_insert_new,, 0x13
-Media/Disk/Beta/Drive C:/_Insert..., Item,, menu_media_insert,, 0x13
-Media/Disk/Beta/Drive C:/_Eject, Item,, menu_media_eject,, 0x13
-Media/Disk/Beta/Drive C:/_Save, Item,, menu_media_save,, 0x013
-Media/Disk/Beta/Drive C:/Save _As..., Item,, menu_media_save,, 0x113
-Media/Disk/Beta/Drive C:/_Flip disk, Branch
-Media/Disk/Beta/Drive C:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x113
-Media/Disk/Beta/Drive C:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x013
-Media/Disk/Beta/Drive C:/Write _protect, Branch
-Media/Disk/Beta/Drive C:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x113
-Media/Disk/Beta/Drive C:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x013
-Media/Disk/Beta/Drive _D:, Branch,,,menu_beta128d_detail
-Media/Disk/Beta/Drive D:/Insert _New, Item,, menu_media_insert_new,, 0x14
-Media/Disk/Beta/Drive D:/_Insert..., Item,, menu_media_insert,, 0x14
-Media/Disk/Beta/Drive D:/_Eject, Item,, menu_media_eject,, 0x14
-Media/Disk/Beta/Drive D:/_Save, Item,, menu_media_save,, 0x014
-Media/Disk/Beta/Drive D:/Save _As..., Item,, menu_media_save,, 0x114
-Media/Disk/Beta/Drive D:/_Flip disk, Branch
-Media/Disk/Beta/Drive D:/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x114
-Media/Disk/Beta/Drive D:/Flip disk/Turn _back, Item,, menu_media_flip,, 0x014
-Media/Disk/Beta/Drive D:/Write _protect, Branch
-Media/Disk/Beta/Drive D:/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x114
-Media/Disk/Beta/Drive D:/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x014
-
-Media/Disk/+_D, Branch
-Media/Disk/+D/Drive _1, Branch,,,menu_plusd1_detail
-Media/Disk/+D/Drive 1/Insert _New, Item,, menu_media_insert_new,, 0x21
-Media/Disk/+D/Drive 1/_Insert..., Item,, menu_media_insert,, 0x21
-Media/Disk/+D/Drive 1/_Eject, Item,, menu_media_eject,, 0x21
-Media/Disk/+D/Drive 1/_Save, Item,, menu_media_save,, 0x021
-Media/Disk/+D/Drive 1/Save _As..., Item,, menu_media_save,, 0x121
-Media/Disk/+D/Drive 1/_Flip disk, Branch
-Media/Disk/+D/Drive 1/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x121
-Media/Disk/+D/Drive 1/Flip disk/Turn _back, Item,, menu_media_flip,, 0x021
-Media/Disk/+D/Drive 1/Write _protect, Branch
-Media/Disk/+D/Drive 1/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x121
-Media/Disk/+D/Drive 1/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x021
-Media/Disk/+D/Drive _2, Branch,,,menu_plusd2_detail
-Media/Disk/+D/Drive 2/Insert _New, Item,, menu_media_insert_new,, 0x22
-Media/Disk/+D/Drive 2/_Insert..., Item,, menu_media_insert,, 0x22
-Media/Disk/+D/Drive 2/_Eject, Item,, menu_media_eject,, 0x22
-Media/Disk/+D/Drive 2/_Save, Item,, menu_media_save,, 0x022
-Media/Disk/+D/Drive 2/Save _As..., Item,, menu_media_save,, 0x122
-Media/Disk/+D/Drive 2/_Flip disk, Branch
-Media/Disk/+D/Drive 2/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x122
-Media/Disk/+D/Drive 2/Flip disk/Turn _back, Item,, menu_media_flip,, 0x022
-Media/Disk/+D/Drive 2/Write _protect, Branch
-Media/Disk/+D/Drive 2/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x122
-Media/Disk/+D/Drive 2/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x022
-
-Media/Disk/DISC_iPLE, Branch
-Media/Disk/DISCiPLE/Drive _1, Branch,,,menu_disciple1_detail
-Media/Disk/DISCiPLE/Drive 1/Insert _New, Item,, menu_media_insert_new,, 0x51
-Media/Disk/DISCiPLE/Drive 1/_Insert..., Item,, menu_media_insert,, 0x51
-Media/Disk/DISCiPLE/Drive 1/_Eject, Item,, menu_media_eject,, 0x51
-Media/Disk/DISCiPLE/Drive 1/_Save, Item,, menu_media_save,, 0x051
-Media/Disk/DISCiPLE/Drive 1/Save _As..., Item,, menu_media_save,, 0x151
-Media/Disk/DISCiPLE/Drive 1/_Flip disk, Branch
-Media/Disk/DISCiPLE/Drive 1/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x151
-Media/Disk/DISCiPLE/Drive 1/Flip disk/Turn _back, Item,, menu_media_flip,, 0x051
-Media/Disk/DISCiPLE/Drive 1/Write _protect, Branch
-Media/Disk/DISCiPLE/Drive 1/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x151
-Media/Disk/DISCiPLE/Drive 1/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x051
-Media/Disk/DISCiPLE/Drive _2, Branch,,,menu_disciple2_detail
-Media/Disk/DISCiPLE/Drive 2/Insert _New, Item,, menu_media_insert_new,, 0x52
-Media/Disk/DISCiPLE/Drive 2/_Insert..., Item,, menu_media_insert,, 0x52
-Media/Disk/DISCiPLE/Drive 2/_Eject, Item,, menu_media_eject,, 0x52
-Media/Disk/DISCiPLE/Drive 2/_Save, Item,, menu_media_save,, 0x052
-Media/Disk/DISCiPLE/Drive 2/Save _As..., Item,, menu_media_save,, 0x152
-Media/Disk/DISCiPLE/Drive 2/_Flip disk, Branch
-Media/Disk/DISCiPLE/Drive 2/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x152
-Media/Disk/DISCiPLE/Drive 2/Flip disk/Turn _back, Item,, menu_media_flip,, 0x052
-Media/Disk/DISCiPLE/Drive 2/Write _protect, Branch
-Media/Disk/DISCiPLE/Drive 2/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x152
-Media/Disk/DISCiPLE/Drive 2/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x052
-
-Media/Disk/_Opus, Branch
-Media/Disk/Opus/Drive _1, Branch,,,menu_opus1_detail
-Media/Disk/Opus/Drive 1/Insert _New, Item,, menu_media_insert_new,, 0x41
-Media/Disk/Opus/Drive 1/_Insert..., Item,, menu_media_insert,, 0x41
-Media/Disk/Opus/Drive 1/_Eject, Item,, menu_media_eject,, 0x41
-Media/Disk/Opus/Drive 1/_Save, Item,, menu_media_save,, 0x041
-Media/Disk/Opus/Drive 1/Save _As..., Item,, menu_media_save,, 0x141
-Media/Disk/Opus/Drive 1/_Flip disk, Branch
-Media/Disk/Opus/Drive 1/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x141
-Media/Disk/Opus/Drive 1/Flip disk/Turn _back, Item,, menu_media_flip,, 0x041
-Media/Disk/Opus/Drive 1/Write _protect, Branch
-Media/Disk/Opus/Drive 1/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x141
-Media/Disk/Opus/Drive 1/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x041
-Media/Disk/Opus/Drive _2, Branch,,,menu_opus2_detail
-Media/Disk/Opus/Drive 2/Insert _New, Item,, menu_media_insert_new,, 0x42
-Media/Disk/Opus/Drive 2/_Insert..., Item,, menu_media_insert,, 0x42
-Media/Disk/Opus/Drive 2/_Eject, Item,, menu_media_eject,, 0x42
-Media/Disk/Opus/Drive 2/_Save, Item,, menu_media_save,, 0x042
-Media/Disk/Opus/Drive 2/Save _As..., Item,, menu_media_save,, 0x142
-Media/Disk/Opus/Drive 2/_Flip disk, Branch
-Media/Disk/Opus/Drive 2/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x142
-Media/Disk/Opus/Drive 2/Flip disk/Turn _back, Item,, menu_media_flip,, 0x042
-Media/Disk/Opus/Drive 2/Write _protect, Branch
-Media/Disk/Opus/Drive 2/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x142
-Media/Disk/Opus/Drive 2/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x042
-
-Media/Disk/_Didaktik 80, Branch
-Media/Disk/Didaktik 80/Drive _A, Branch,,,menu_didaktik_a_detail
-Media/Disk/Didaktik 80/Drive A/Insert _New, Item,, menu_media_insert_new,, 0x61
-Media/Disk/Didaktik 80/Drive A/_Insert..., Item,, menu_media_insert,, 0x61
-Media/Disk/Didaktik 80/Drive A/_Eject, Item,, menu_media_eject,, 0x61
-Media/Disk/Didaktik 80/Drive A/_Save, Item,, menu_media_save,, 0x061
-Media/Disk/Didaktik 80/Drive A/Save _As..., Item,, menu_media_save,, 0x161
-Media/Disk/Didaktik 80/Drive A/_Flip disk, Branch
-Media/Disk/Didaktik 80/Drive A/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x161
-Media/Disk/Didaktik 80/Drive A/Flip disk/Turn _back, Item,, menu_media_flip,, 0x061
-Media/Disk/Didaktik 80/Drive A/Write _protect, Branch
-Media/Disk/Didaktik 80/Drive A/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x161
-Media/Disk/Didaktik 80/Drive A/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x061
-Media/Disk/Didaktik 80/Drive _B, Branch,,,menu_didaktik_b_detail
-Media/Disk/Didaktik 80/Drive B/Insert _New, Item,, menu_media_insert_new,, 0x62
-Media/Disk/Didaktik 80/Drive B/_Insert..., Item,, menu_media_insert,, 0x62
-Media/Disk/Didaktik 80/Drive B/_Eject, Item,, menu_media_eject,, 0x62
-Media/Disk/Didaktik 80/Drive B/_Save, Item,, menu_media_save,, 0x062
-Media/Disk/Didaktik 80/Drive B/Save _As..., Item,, menu_media_save,, 0x162
-Media/Disk/Didaktik 80/Drive B/_Flip disk, Branch
-Media/Disk/Didaktik 80/Drive B/Flip disk/Turn _upside down, Item,, menu_media_flip,, 0x162
-Media/Disk/Didaktik 80/Drive B/Flip disk/Turn _back, Item,, menu_media_flip,, 0x062
-Media/Disk/Didaktik 80/Drive B/Write _protect, Branch
-Media/Disk/Didaktik 80/Drive B/Write protect/_Enable, Item,, menu_media_writeprotect,, 0x162
-Media/Disk/Didaktik 80/Drive B/Write protect/_Disable, Item,, menu_media_writeprotect,, 0x062
 
 Media/_Cartridge, Branch
 Media/Cartridge/_Timex Dock, Branch
@@ -454,53 +505,6 @@ Media/Cartridge/Timex Dock/_Eject, Item
 Media/Cartridge/_Interface 2, Branch
 Media/Cartridge/Interface 2/_Insert..., Item
 Media/Cartridge/Interface 2/_Eject, Item
-
-Media/ID_E, Branch
-
-Media/IDE/Simple _8-bit, Branch
-Media/IDE/Simple 8-bit/_Master, Branch
-Media/IDE/Simple 8-bit/Master/_Insert..., Item,, menu_media_ide_insert,, 1
-Media/IDE/Simple 8-bit/Master/_Commit, Item,, menu_media_ide_commit,, 1
-Media/IDE/Simple 8-bit/Master/_Eject, Item,, menu_media_ide_eject,, 1
-Media/IDE/Simple 8-bit/_Slave, Branch
-Media/IDE/Simple 8-bit/Slave/_Insert..., Item,, menu_media_ide_insert,, 2
-Media/IDE/Simple 8-bit/Slave/_Commit, Item,, menu_media_ide_commit,, 2
-Media/IDE/Simple 8-bit/Slave/_Eject, Item,, menu_media_ide_eject,, 2
-
-Media/IDE/ZX_ATASP, Branch
-Media/IDE/ZXATASP/_Master, Branch
-Media/IDE/ZXATASP/Master/_Insert..., Item,, menu_media_ide_insert,, 3
-Media/IDE/ZXATASP/Master/_Commit, Item,, menu_media_ide_commit,, 3
-Media/IDE/ZXATASP/Master/_Eject, Item,, menu_media_ide_eject,, 3
-Media/IDE/ZXATASP/_Slave, Branch
-Media/IDE/ZXATASP/Slave/_Insert..., Item,, menu_media_ide_insert,, 4
-Media/IDE/ZXATASP/Slave/_Commit, Item,, menu_media_ide_commit,, 4
-Media/IDE/ZXATASP/Slave/_Eject, Item,, menu_media_ide_eject,, 4
-
-Media/IDE/ZX_CF CompactFlash, Branch
-Media/IDE/ZXCF CompactFlash/_Insert..., Item,, menu_media_ide_insert,, 5
-Media/IDE/ZXCF CompactFlash/_Commit, Item,, menu_media_ide_commit,, 5
-Media/IDE/ZXCF CompactFlash/_Eject, Item,, menu_media_ide_eject,, 5
-
-Media/IDE/_DivIDE, Branch
-Media/IDE/DivIDE/_Master, Branch
-Media/IDE/DivIDE/Master/_Insert..., Item,, menu_media_ide_insert,, 6
-Media/IDE/DivIDE/Master/_Commit, Item,, menu_media_ide_commit,, 6
-Media/IDE/DivIDE/Master/_Eject, Item,, menu_media_ide_eject,, 6
-Media/IDE/DivIDE/_Slave, Branch
-Media/IDE/DivIDE/Slave/_Insert..., Item,, menu_media_ide_insert,, 7
-Media/IDE/DivIDE/Slave/_Commit, Item,, menu_media_ide_commit,, 7
-Media/IDE/DivIDE/Slave/_Eject, Item,, menu_media_ide_eject,, 7
-
-Media/IDE/_DivMMC, Branch
-Media/IDE/DivMMC/_Insert..., Item,, menu_media_ide_insert,, 8
-Media/IDE/DivMMC/_Commit, Item,, menu_media_ide_commit,, 8
-Media/IDE/DivMMC/_Eject, Item,, menu_media_ide_eject,, 8
-
-Media/IDE/_ZXMMC, Branch
-Media/IDE/ZXMMC/_Insert..., Item,, menu_media_ide_insert,, 9
-Media/IDE/ZXMMC/_Commit, Item,, menu_media_ide_commit,, 9
-Media/IDE/ZXMMC/_Eject, Item,, menu_media_ide_eject,, 9
 
 _Help, Branch
 Help/_Keyboard..., Item

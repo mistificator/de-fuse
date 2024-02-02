@@ -177,10 +177,10 @@ specplus3_765_reset( void )
   const fdd_params_t *dt;
 
   upd_fdc_master_reset( specplus3_fdc );
-  dt = &fdd_params[ option_enumerate_diskoptions_drive_plus3a_type() + 1 ];	/* +1 => there is no `Disabled' */
+  dt = &fdd_params[ option_enumerate_internals_diskettes_drive_plus3a_type() + 1 ];	/* +1 => there is no `Disabled' */
   fdd_init( &specplus3_drives[ 0 ], FDD_SHUGART, dt, 1 );
 
-  dt = &fdd_params[ option_enumerate_diskoptions_drive_plus3b_type() ];
+  dt = &fdd_params[ option_enumerate_internals_diskettes_drive_plus3b_type() ];
   fdd_init( &specplus3_drives[ 1 ], dt->enabled ? FDD_SHUGART : FDD_TYPE_NONE,
             dt, 1 );
 }
@@ -424,13 +424,13 @@ static const fdd_params_t *
 ui_drive_get_params_a( void )
 {
   /* +1 => there is no `Disabled' */
-  return &fdd_params[ option_enumerate_diskoptions_drive_plus3a_type() + 1 ];
+  return &fdd_params[ option_enumerate_internals_diskettes_drive_plus3a_type() + 1 ];
 }
 
 static const fdd_params_t *
 ui_drive_get_params_b( void )
 {
-  return &fdd_params[ option_enumerate_diskoptions_drive_plus3b_type() ];
+  return &fdd_params[ option_enumerate_internals_diskettes_drive_plus3b_type() ];
 }
 
 static int

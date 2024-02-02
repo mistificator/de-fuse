@@ -95,7 +95,7 @@ static gboolean gtkui_gain_focus( GtkWidget*, GdkEvent*, gpointer );
 static gboolean gtkui_delete( GtkWidget *widget, GdkEvent *event,
 			      gpointer data );
 
-static void menu_options_filter_done( GtkWidget *widget, gpointer user_data );
+static void menu_view_screenfilter_done( GtkWidget *widget, gpointer user_data );
 static void menu_machine_select_done( GtkWidget *widget, gpointer user_data );
 
 static const GtkTargetEntry drag_types[] =
@@ -439,7 +439,7 @@ menu_get_scaler( scaler_available_fn selector )
   count = 0;
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Select Scaler", NULL );
+  dialog.dialog = gtkstock_dialog_new( "Screen filter", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   for( scaler = 0; scaler < SCALER_NUM; scaler++ ) {
@@ -461,7 +461,7 @@ menu_get_scaler( scaler_available_fn selector )
 
   /* Create and add the actions buttons to the dialog box */
   gtkstock_create_ok_cancel( dialog.dialog, NULL,
-                             G_CALLBACK( menu_options_filter_done ),
+                             G_CALLBACK( menu_view_screenfilter_done ),
                              (gpointer) &dialog, DEFAULT_DESTROY,
                              DEFAULT_DESTROY );
 
@@ -478,7 +478,7 @@ menu_get_scaler( scaler_available_fn selector )
 
 /* Callback used by the filter selection dialog */
 static void
-menu_options_filter_done( GtkWidget *widget GCC_UNUSED, gpointer user_data )
+menu_view_screenfilter_done( GtkWidget *widget GCC_UNUSED, gpointer user_data )
 {
   int i, count;
   gtkui_select_info *ptr = (gtkui_select_info*)user_data;
@@ -646,7 +646,7 @@ menu_machine_select_done( GtkWidget *widget GCC_UNUSED, gpointer user_data )
 }
 
 void
-menu_machine_debugger( GtkAction *gtk_action GCC_UNUSED,
+menu_debug_debugger( GtkAction *gtk_action GCC_UNUSED,
                        gpointer data GCC_UNUSED )
 {
   debugger_mode = DEBUGGER_MODE_HALTED;

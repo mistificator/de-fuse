@@ -302,7 +302,7 @@ MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_peripheral_select )
   fuse_abort();
 }
 
-MENU_CALLBACK( menu_options_filter )
+MENU_CALLBACK( menu_view_screenfilter )
 {
   scaler_type scaler;
 
@@ -317,7 +317,7 @@ MENU_CALLBACK( menu_options_filter )
   fuse_emulation_unpause();
 }
 
-MENU_CALLBACK( menu_options_fullscreen )
+MENU_CALLBACK( menu_view_fullscreen )
 {
   ui_widget_finish();
   settings_current.full_screen = !settings_current.full_screen;
@@ -329,13 +329,13 @@ MENU_CALLBACK( menu_options_save )
   settings_write_config( &settings_current );
 }
 
-MENU_CALLBACK( menu_machine_profiler_start )
+MENU_CALLBACK( menu_debug_profiler_start )
 {
   ui_widget_finish();
   profile_start();
 }
 
-MENU_CALLBACK( menu_machine_profiler_stop )
+MENU_CALLBACK( menu_debug_profiler_stop )
 {
   char *filename;
 

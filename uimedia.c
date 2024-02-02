@@ -36,8 +36,8 @@
 #include "utils.h"
 
 #define DISK_TRY_MERGE(heads) \
-  ( option_enumerate_diskoptions_disk_try_merge() == 2 || \
-    ( option_enumerate_diskoptions_disk_try_merge() == 1 && heads == 1 ) )
+  ( option_enumerate_internals_diskettes_disk_try_merge() == 2 || \
+    ( option_enumerate_internals_diskettes_disk_try_merge() == 1 && heads == 1 ) )
 
 static GSList *registered_drives = NULL;
 

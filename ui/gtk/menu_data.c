@@ -31,159 +31,924 @@
 #include <gtk/gtk.h>
 
 /* Bindings to callbacks with action */
-static MENU_CALLBACK( menu_options_joysticks_joystick1 )
-{
-  menu_options_joysticks_select( gtk_action, 1 );
-}
-
-static MENU_CALLBACK( menu_options_joysticks_joystick2 )
-{
-  menu_options_joysticks_select( gtk_action, 2 );
-}
-
-static MENU_CALLBACK( menu_options_joysticks_keyboard )
-{
-  menu_options_joysticks_select( gtk_action, 3 );
-}
-
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrum16k )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrum16k )
 {
   menu_options_selectroms_machine_select( gtk_action, 1 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrum48k )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrum48k )
 {
   menu_options_selectroms_machine_select( gtk_action, 2 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrum128k )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrum128k )
 {
   menu_options_selectroms_machine_select( gtk_action, 3 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrum2 )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrum2 )
 {
   menu_options_selectroms_machine_select( gtk_action, 4 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrum2a )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrum2a )
 {
   menu_options_selectroms_machine_select( gtk_action, 5 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrum3 )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrum3 )
 {
   menu_options_selectroms_machine_select( gtk_action, 6 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrum3e )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrum3e )
 {
   menu_options_selectroms_machine_select( gtk_action, 7 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_timextc2048 )
+static MENU_CALLBACK( menu_options_internals_machineroms_timextc2048 )
 {
   menu_options_selectroms_machine_select( gtk_action, 8 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_timextc2068 )
+static MENU_CALLBACK( menu_options_internals_machineroms_timextc2068 )
 {
   menu_options_selectroms_machine_select( gtk_action, 9 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_timexts2068 )
+static MENU_CALLBACK( menu_options_internals_machineroms_timexts2068 )
 {
   menu_options_selectroms_machine_select( gtk_action, 10 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_pentagon128k )
+static MENU_CALLBACK( menu_options_internals_machineroms_pentagon128k )
 {
   menu_options_selectroms_machine_select( gtk_action, 11 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_pentagon512k )
+static MENU_CALLBACK( menu_options_internals_machineroms_pentagon512k )
 {
   menu_options_selectroms_machine_select( gtk_action, 12 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_pentagon1024k )
+static MENU_CALLBACK( menu_options_internals_machineroms_pentagon1024k )
 {
   menu_options_selectroms_machine_select( gtk_action, 13 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_scorpionzs256 )
+static MENU_CALLBACK( menu_options_internals_machineroms_scorpionzs256 )
 {
   menu_options_selectroms_machine_select( gtk_action, 14 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_machineroms_spectrumse )
+static MENU_CALLBACK( menu_options_internals_machineroms_spectrumse )
 {
   menu_options_selectroms_machine_select( gtk_action, 15 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_interface1 )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_interface1 )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 1 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_beta128 )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_beta128 )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 2 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_d )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_d )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 3 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_didaktik80 )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_didaktik80 )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 4 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_disciple )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_disciple )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 5 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_multifaceone )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_multifaceone )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 6 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_multiface128 )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_multiface128 )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 7 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_multiface3 )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_multiface3 )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 8 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_opusdiscovery )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_opusdiscovery )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 9 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_speccyboot )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_speccyboot )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 10 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_ttx2000s )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_ttx2000s )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 11 );
 }
 
-static MENU_CALLBACK( menu_options_selectroms_peripheralroms_usource )
+static MENU_CALLBACK( menu_options_peripherals_devicesroms_usource )
 {
   menu_options_selectroms_peripheral_select( gtk_action, 12 );
+}
+
+static MENU_CALLBACK( menu_options_peripherals_joysticks_joystick1 )
+{
+  menu_options_joysticks_select( gtk_action, 1 );
+}
+
+static MENU_CALLBACK( menu_options_peripherals_joysticks_joystick2 )
+{
+  menu_options_joysticks_select( gtk_action, 2 );
+}
+
+static MENU_CALLBACK( menu_options_peripherals_joysticks_keyboard )
+{
+  menu_options_joysticks_select( gtk_action, 3 );
 }
 
 static MENU_CALLBACK( menu_machine_hardreset )
 {
   menu_machine_reset( gtk_action, 1 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x01 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_insert )
+{
+  menu_media_insert( gtk_action, 0x01 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_eject )
+{
+  menu_media_eject( gtk_action, 0x01 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_save )
+{
+  menu_media_save( gtk_action, 0x001 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_saveas )
+{
+  menu_media_save( gtk_action, 0x101 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x101 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x001 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x101 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_drivea_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x001 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x02 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_insert )
+{
+  menu_media_insert( gtk_action, 0x02 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_eject )
+{
+  menu_media_eject( gtk_action, 0x02 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_save )
+{
+  menu_media_save( gtk_action, 0x002 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_saveas )
+{
+  menu_media_save( gtk_action, 0x102 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x102 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x002 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x102 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_3_driveb_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x002 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x11 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_insert )
+{
+  menu_media_insert( gtk_action, 0x11 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_eject )
+{
+  menu_media_eject( gtk_action, 0x11 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_save )
+{
+  menu_media_save( gtk_action, 0x011 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_saveas )
+{
+  menu_media_save( gtk_action, 0x111 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x111 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x011 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x111 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivea_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x011 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x12 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_insert )
+{
+  menu_media_insert( gtk_action, 0x12 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_eject )
+{
+  menu_media_eject( gtk_action, 0x12 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_save )
+{
+  menu_media_save( gtk_action, 0x012 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_saveas )
+{
+  menu_media_save( gtk_action, 0x112 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x112 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x012 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x112 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_driveb_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x012 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x13 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_insert )
+{
+  menu_media_insert( gtk_action, 0x13 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_eject )
+{
+  menu_media_eject( gtk_action, 0x13 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_save )
+{
+  menu_media_save( gtk_action, 0x013 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_saveas )
+{
+  menu_media_save( gtk_action, 0x113 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x113 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x013 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x113 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drivec_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x013 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x14 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_insert )
+{
+  menu_media_insert( gtk_action, 0x14 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_eject )
+{
+  menu_media_eject( gtk_action, 0x14 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_save )
+{
+  menu_media_save( gtk_action, 0x014 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_saveas )
+{
+  menu_media_save( gtk_action, 0x114 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x114 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x014 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x114 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_beta_drived_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x014 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x21 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_insert )
+{
+  menu_media_insert( gtk_action, 0x21 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_eject )
+{
+  menu_media_eject( gtk_action, 0x21 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_save )
+{
+  menu_media_save( gtk_action, 0x021 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_saveas )
+{
+  menu_media_save( gtk_action, 0x121 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x121 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x021 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x121 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive1_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x021 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x22 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_insert )
+{
+  menu_media_insert( gtk_action, 0x22 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_eject )
+{
+  menu_media_eject( gtk_action, 0x22 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_save )
+{
+  menu_media_save( gtk_action, 0x022 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_saveas )
+{
+  menu_media_save( gtk_action, 0x122 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x122 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x022 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x122 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_d_drive2_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x022 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x51 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_insert )
+{
+  menu_media_insert( gtk_action, 0x51 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_eject )
+{
+  menu_media_eject( gtk_action, 0x51 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_save )
+{
+  menu_media_save( gtk_action, 0x051 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_saveas )
+{
+  menu_media_save( gtk_action, 0x151 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x151 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x051 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x151 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive1_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x051 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x52 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_insert )
+{
+  menu_media_insert( gtk_action, 0x52 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_eject )
+{
+  menu_media_eject( gtk_action, 0x52 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_save )
+{
+  menu_media_save( gtk_action, 0x052 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_saveas )
+{
+  menu_media_save( gtk_action, 0x152 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x152 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x052 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x152 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_disciple_drive2_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x052 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x41 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_insert )
+{
+  menu_media_insert( gtk_action, 0x41 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_eject )
+{
+  menu_media_eject( gtk_action, 0x41 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_save )
+{
+  menu_media_save( gtk_action, 0x041 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_saveas )
+{
+  menu_media_save( gtk_action, 0x141 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x141 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x041 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x141 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive1_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x041 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x42 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_insert )
+{
+  menu_media_insert( gtk_action, 0x42 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_eject )
+{
+  menu_media_eject( gtk_action, 0x42 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_save )
+{
+  menu_media_save( gtk_action, 0x042 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_saveas )
+{
+  menu_media_save( gtk_action, 0x142 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x142 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x042 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x142 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_opus_drive2_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x042 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x61 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_insert )
+{
+  menu_media_insert( gtk_action, 0x61 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_eject )
+{
+  menu_media_eject( gtk_action, 0x61 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_save )
+{
+  menu_media_save( gtk_action, 0x061 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_saveas )
+{
+  menu_media_save( gtk_action, 0x161 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x161 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x061 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x161 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_drivea_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x061 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_insertnew )
+{
+  menu_media_insert_new( gtk_action, 0x62 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_insert )
+{
+  menu_media_insert( gtk_action, 0x62 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_eject )
+{
+  menu_media_eject( gtk_action, 0x62 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_save )
+{
+  menu_media_save( gtk_action, 0x062 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_saveas )
+{
+  menu_media_save( gtk_action, 0x162 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_flipdisk_turnupsidedown )
+{
+  menu_media_flip( gtk_action, 0x162 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_flipdisk_turnback )
+{
+  menu_media_flip( gtk_action, 0x062 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_writeprotect_enable )
+{
+  menu_media_writeprotect( gtk_action, 0x162 );
+}
+
+static MENU_CALLBACK( menu_media_diskette_didaktik80_driveb_writeprotect_disable )
+{
+  menu_media_writeprotect( gtk_action, 0x062 );
+}
+
+static MENU_CALLBACK( menu_media_storage_simple8bit_master_insert )
+{
+  menu_media_ide_insert( gtk_action, 1 );
+}
+
+static MENU_CALLBACK( menu_media_storage_simple8bit_master_commit )
+{
+  menu_media_ide_commit( gtk_action, 1 );
+}
+
+static MENU_CALLBACK( menu_media_storage_simple8bit_master_eject )
+{
+  menu_media_ide_eject( gtk_action, 1 );
+}
+
+static MENU_CALLBACK( menu_media_storage_simple8bit_slave_insert )
+{
+  menu_media_ide_insert( gtk_action, 2 );
+}
+
+static MENU_CALLBACK( menu_media_storage_simple8bit_slave_commit )
+{
+  menu_media_ide_commit( gtk_action, 2 );
+}
+
+static MENU_CALLBACK( menu_media_storage_simple8bit_slave_eject )
+{
+  menu_media_ide_eject( gtk_action, 2 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxatasp_master_insert )
+{
+  menu_media_ide_insert( gtk_action, 3 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxatasp_master_commit )
+{
+  menu_media_ide_commit( gtk_action, 3 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxatasp_master_eject )
+{
+  menu_media_ide_eject( gtk_action, 3 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxatasp_slave_insert )
+{
+  menu_media_ide_insert( gtk_action, 4 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxatasp_slave_commit )
+{
+  menu_media_ide_commit( gtk_action, 4 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxatasp_slave_eject )
+{
+  menu_media_ide_eject( gtk_action, 4 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxcfcompactflash_insert )
+{
+  menu_media_ide_insert( gtk_action, 5 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxcfcompactflash_commit )
+{
+  menu_media_ide_commit( gtk_action, 5 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxcfcompactflash_eject )
+{
+  menu_media_ide_eject( gtk_action, 5 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divide_master_insert )
+{
+  menu_media_ide_insert( gtk_action, 6 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divide_master_commit )
+{
+  menu_media_ide_commit( gtk_action, 6 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divide_master_eject )
+{
+  menu_media_ide_eject( gtk_action, 6 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divide_slave_insert )
+{
+  menu_media_ide_insert( gtk_action, 7 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divide_slave_commit )
+{
+  menu_media_ide_commit( gtk_action, 7 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divide_slave_eject )
+{
+  menu_media_ide_eject( gtk_action, 7 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divmmc_insert )
+{
+  menu_media_ide_insert( gtk_action, 8 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divmmc_commit )
+{
+  menu_media_ide_commit( gtk_action, 8 );
+}
+
+static MENU_CALLBACK( menu_media_storage_divmmc_eject )
+{
+  menu_media_ide_eject( gtk_action, 8 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxmmc_insert )
+{
+  menu_media_ide_insert( gtk_action, 9 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxmmc_commit )
+{
+  menu_media_ide_commit( gtk_action, 9 );
+}
+
+static MENU_CALLBACK( menu_media_storage_zxmmc_eject )
+{
+  menu_media_ide_eject( gtk_action, 9 );
 }
 
 static MENU_CALLBACK( menu_media_interface1_microdrive1_insertnew )
@@ -486,771 +1251,6 @@ static MENU_CALLBACK( menu_media_interface1_rs232_unplugtxd )
   menu_media_if1_rs232( gtk_action, 0x12 );
 }
 
-static MENU_CALLBACK( menu_media_disk_3_drivea_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x01 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_insert )
-{
-  menu_media_insert( gtk_action, 0x01 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_eject )
-{
-  menu_media_eject( gtk_action, 0x01 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_save )
-{
-  menu_media_save( gtk_action, 0x001 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_saveas )
-{
-  menu_media_save( gtk_action, 0x101 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x101 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x001 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x101 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_drivea_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x001 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x02 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_insert )
-{
-  menu_media_insert( gtk_action, 0x02 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_eject )
-{
-  menu_media_eject( gtk_action, 0x02 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_save )
-{
-  menu_media_save( gtk_action, 0x002 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_saveas )
-{
-  menu_media_save( gtk_action, 0x102 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x102 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x002 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x102 );
-}
-
-static MENU_CALLBACK( menu_media_disk_3_driveb_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x002 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x11 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_insert )
-{
-  menu_media_insert( gtk_action, 0x11 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_eject )
-{
-  menu_media_eject( gtk_action, 0x11 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_save )
-{
-  menu_media_save( gtk_action, 0x011 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_saveas )
-{
-  menu_media_save( gtk_action, 0x111 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x111 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x011 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x111 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivea_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x011 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x12 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_insert )
-{
-  menu_media_insert( gtk_action, 0x12 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_eject )
-{
-  menu_media_eject( gtk_action, 0x12 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_save )
-{
-  menu_media_save( gtk_action, 0x012 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_saveas )
-{
-  menu_media_save( gtk_action, 0x112 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x112 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x012 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x112 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_driveb_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x012 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x13 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_insert )
-{
-  menu_media_insert( gtk_action, 0x13 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_eject )
-{
-  menu_media_eject( gtk_action, 0x13 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_save )
-{
-  menu_media_save( gtk_action, 0x013 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_saveas )
-{
-  menu_media_save( gtk_action, 0x113 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x113 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x013 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x113 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drivec_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x013 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x14 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_insert )
-{
-  menu_media_insert( gtk_action, 0x14 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_eject )
-{
-  menu_media_eject( gtk_action, 0x14 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_save )
-{
-  menu_media_save( gtk_action, 0x014 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_saveas )
-{
-  menu_media_save( gtk_action, 0x114 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x114 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x014 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x114 );
-}
-
-static MENU_CALLBACK( menu_media_disk_beta_drived_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x014 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x21 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_insert )
-{
-  menu_media_insert( gtk_action, 0x21 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_eject )
-{
-  menu_media_eject( gtk_action, 0x21 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_save )
-{
-  menu_media_save( gtk_action, 0x021 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_saveas )
-{
-  menu_media_save( gtk_action, 0x121 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x121 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x021 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x121 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive1_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x021 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x22 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_insert )
-{
-  menu_media_insert( gtk_action, 0x22 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_eject )
-{
-  menu_media_eject( gtk_action, 0x22 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_save )
-{
-  menu_media_save( gtk_action, 0x022 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_saveas )
-{
-  menu_media_save( gtk_action, 0x122 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x122 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x022 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x122 );
-}
-
-static MENU_CALLBACK( menu_media_disk_d_drive2_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x022 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x51 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_insert )
-{
-  menu_media_insert( gtk_action, 0x51 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_eject )
-{
-  menu_media_eject( gtk_action, 0x51 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_save )
-{
-  menu_media_save( gtk_action, 0x051 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_saveas )
-{
-  menu_media_save( gtk_action, 0x151 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x151 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x051 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x151 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive1_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x051 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x52 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_insert )
-{
-  menu_media_insert( gtk_action, 0x52 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_eject )
-{
-  menu_media_eject( gtk_action, 0x52 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_save )
-{
-  menu_media_save( gtk_action, 0x052 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_saveas )
-{
-  menu_media_save( gtk_action, 0x152 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x152 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x052 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x152 );
-}
-
-static MENU_CALLBACK( menu_media_disk_disciple_drive2_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x052 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x41 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_insert )
-{
-  menu_media_insert( gtk_action, 0x41 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_eject )
-{
-  menu_media_eject( gtk_action, 0x41 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_save )
-{
-  menu_media_save( gtk_action, 0x041 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_saveas )
-{
-  menu_media_save( gtk_action, 0x141 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x141 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x041 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x141 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive1_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x041 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x42 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_insert )
-{
-  menu_media_insert( gtk_action, 0x42 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_eject )
-{
-  menu_media_eject( gtk_action, 0x42 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_save )
-{
-  menu_media_save( gtk_action, 0x042 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_saveas )
-{
-  menu_media_save( gtk_action, 0x142 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x142 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x042 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x142 );
-}
-
-static MENU_CALLBACK( menu_media_disk_opus_drive2_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x042 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x61 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_insert )
-{
-  menu_media_insert( gtk_action, 0x61 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_eject )
-{
-  menu_media_eject( gtk_action, 0x61 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_save )
-{
-  menu_media_save( gtk_action, 0x061 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_saveas )
-{
-  menu_media_save( gtk_action, 0x161 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x161 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x061 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x161 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_drivea_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x061 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_insertnew )
-{
-  menu_media_insert_new( gtk_action, 0x62 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_insert )
-{
-  menu_media_insert( gtk_action, 0x62 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_eject )
-{
-  menu_media_eject( gtk_action, 0x62 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_save )
-{
-  menu_media_save( gtk_action, 0x062 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_saveas )
-{
-  menu_media_save( gtk_action, 0x162 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_flipdisk_turnupsidedown )
-{
-  menu_media_flip( gtk_action, 0x162 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_flipdisk_turnback )
-{
-  menu_media_flip( gtk_action, 0x062 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_writeprotect_enable )
-{
-  menu_media_writeprotect( gtk_action, 0x162 );
-}
-
-static MENU_CALLBACK( menu_media_disk_didaktik80_driveb_writeprotect_disable )
-{
-  menu_media_writeprotect( gtk_action, 0x062 );
-}
-
-static MENU_CALLBACK( menu_media_ide_simple8bit_master_insert )
-{
-  menu_media_ide_insert( gtk_action, 1 );
-}
-
-static MENU_CALLBACK( menu_media_ide_simple8bit_master_commit )
-{
-  menu_media_ide_commit( gtk_action, 1 );
-}
-
-static MENU_CALLBACK( menu_media_ide_simple8bit_master_eject )
-{
-  menu_media_ide_eject( gtk_action, 1 );
-}
-
-static MENU_CALLBACK( menu_media_ide_simple8bit_slave_insert )
-{
-  menu_media_ide_insert( gtk_action, 2 );
-}
-
-static MENU_CALLBACK( menu_media_ide_simple8bit_slave_commit )
-{
-  menu_media_ide_commit( gtk_action, 2 );
-}
-
-static MENU_CALLBACK( menu_media_ide_simple8bit_slave_eject )
-{
-  menu_media_ide_eject( gtk_action, 2 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxatasp_master_insert )
-{
-  menu_media_ide_insert( gtk_action, 3 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxatasp_master_commit )
-{
-  menu_media_ide_commit( gtk_action, 3 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxatasp_master_eject )
-{
-  menu_media_ide_eject( gtk_action, 3 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxatasp_slave_insert )
-{
-  menu_media_ide_insert( gtk_action, 4 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxatasp_slave_commit )
-{
-  menu_media_ide_commit( gtk_action, 4 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxatasp_slave_eject )
-{
-  menu_media_ide_eject( gtk_action, 4 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxcfcompactflash_insert )
-{
-  menu_media_ide_insert( gtk_action, 5 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxcfcompactflash_commit )
-{
-  menu_media_ide_commit( gtk_action, 5 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxcfcompactflash_eject )
-{
-  menu_media_ide_eject( gtk_action, 5 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divide_master_insert )
-{
-  menu_media_ide_insert( gtk_action, 6 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divide_master_commit )
-{
-  menu_media_ide_commit( gtk_action, 6 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divide_master_eject )
-{
-  menu_media_ide_eject( gtk_action, 6 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divide_slave_insert )
-{
-  menu_media_ide_insert( gtk_action, 7 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divide_slave_commit )
-{
-  menu_media_ide_commit( gtk_action, 7 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divide_slave_eject )
-{
-  menu_media_ide_eject( gtk_action, 7 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divmmc_insert )
-{
-  menu_media_ide_insert( gtk_action, 8 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divmmc_commit )
-{
-  menu_media_ide_commit( gtk_action, 8 );
-}
-
-static MENU_CALLBACK( menu_media_ide_divmmc_eject )
-{
-  menu_media_ide_eject( gtk_action, 8 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxmmc_insert )
-{
-  menu_media_ide_insert( gtk_action, 9 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxmmc_commit )
-{
-  menu_media_ide_commit( gtk_action, 9 );
-}
-
-static MENU_CALLBACK( menu_media_ide_zxmmc_eject )
-{
-  menu_media_ide_eject( gtk_action, 9 );
-}
-
 GtkActionEntry gtkui_menu_data[] = {
 
   { "FILE", NULL, "File", NULL, NULL, NULL },
@@ -1274,7 +1274,7 @@ GtkActionEntry gtkui_menu_data[] = {
   { "FILE_SCREENSHOT_SAVESCREENASSCR", NULL, "S_ave Screen as SCR...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenasscr ) },
   { "FILE_SCREENSHOT_OPENMLTSCREENSHOT", NULL, "Op_en MLT Screenshot...", NULL, NULL, G_CALLBACK( menu_file_screenshot_openmltscreenshot ) },
   { "FILE_SCREENSHOT_SAVESCREENASMLT", NULL, "Sa_ve Screen as MLT...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenasmlt ) },
-  { "FILE_SCREENSHOT_SAVESCREENASPNG", NULL, "Save S_creen as PNG...", NULL, NULL, G_CALLBACK( menu_file_screenshot_savescreenaspng ) },
+  { "FILE_SCREENSHOT_SAVESCREENASPNG", NULL, "Save S_creen as PNG...", "F12", NULL, G_CALLBACK( menu_file_screenshot_savescreenaspng ) },
   { "FILE_SCALABLEVECTORGRAPHICS", NULL, "Scalable _Vector Graphics", NULL, NULL, NULL },
   { "FILE_SCALABLEVECTORGRAPHICS_STARTCAPTUREINLINEMODE", NULL, "Start capture in _line mode...", NULL, NULL, G_CALLBACK( menu_file_scalablevectorgraphics_startcaptureinlinemode ) },
   { "FILE_SCALABLEVECTORGRAPHICS_STARTCAPTUREINDOTMODE", NULL, "Start capture in _dot mode...", NULL, NULL, G_CALLBACK( menu_file_scalablevectorgraphics_startcaptureindotmode ) },
@@ -1287,68 +1287,71 @@ GtkActionEntry gtkui_menu_data[] = {
   { "FILE_MOVIE_STOP", NULL, "_Stop", NULL, NULL, G_CALLBACK( menu_file_movie_stop ) },
   { "FILE_LOADBINARYDATA", NULL, "Loa_d binary data...", NULL, NULL, G_CALLBACK( menu_file_loadbinarydata ) },
   { "FILE_SAVEBINARYDATA", NULL, "Save _binary data...", NULL, NULL, G_CALLBACK( menu_file_savebinarydata ) },
-  { "FILE_EXIT", NULL, "E_xit...", "F10", NULL, G_CALLBACK( menu_file_exit ) },
+  { "FILE_EXIT", NULL, "E_xit...", NULL, NULL, G_CALLBACK( menu_file_exit ) },
+  { "VIEW", NULL, "View", NULL, NULL, NULL },
+  { "VIEW_SCREENFILTER", NULL, "_Screen filter...", NULL, NULL, G_CALLBACK( menu_view_screenfilter ) },
   { "OPTIONS", NULL, "Options", NULL, NULL, NULL },
-  { "OPTIONS_GENERAL", NULL, "_General...", "F4", NULL, G_CALLBACK( menu_options_general ) },
-  { "OPTIONS_MEDIA", NULL, "_Media...", NULL, NULL, G_CALLBACK( menu_options_media ) },
-  { "OPTIONS_SOUND", NULL, "_Sound...", NULL, NULL, G_CALLBACK( menu_options_sound ) },
+  { "OPTIONS_GENERAL", NULL, "_General...", NULL, NULL, G_CALLBACK( menu_options_general ) },
+  { "OPTIONS_INTERNALS", NULL, "_Internals", NULL, NULL, NULL },
+  { "OPTIONS_INTERNALS_MACHINEROMS", NULL, "_Machine ROMs", NULL, NULL, NULL },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUM16K", NULL, "Spectrum 1_6K...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrum16k ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUM48K", NULL, "Spectrum _48K...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrum48k ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUM128K", NULL, "Spectrum _128K...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrum128k ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUM2", NULL, "Spectrum +_2...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrum2 ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUM2A", NULL, "Spectrum +2_A...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrum2a ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUM3", NULL, "Spectrum +_3...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrum3 ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUM3E", NULL, "Spectrum +3_e...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrum3e ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_TIMEXTC2048", NULL, "Timex _TC2048...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_timextc2048 ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_TIMEXTC2068", NULL, "Timex TC206_8...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_timextc2068 ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_TIMEXTS2068", NULL, "Ti_mex TS2068...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_timexts2068 ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_PENTAGON128K", NULL, "_Pentagon 128K...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_pentagon128k ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_PENTAGON512K", NULL, "Pe_ntagon 512K...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_pentagon512k ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_PENTAGON1024K", NULL, "Penta_gon 1024K...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_pentagon1024k ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SCORPIONZS256", NULL, "S_corpion ZS 256...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_scorpionzs256 ) },
+  { "OPTIONS_INTERNALS_MACHINEROMS_SPECTRUMSE", NULL, "Spectrum _SE...", NULL, NULL, G_CALLBACK( menu_options_internals_machineroms_spectrumse ) },
+  { "OPTIONS_INTERNALS_SOUND", NULL, "_Sound...", NULL, NULL, G_CALLBACK( menu_options_internals_sound ) },
+  { "OPTIONS_INTERNALS_DISKETTES", NULL, "_Diskettes...", NULL, NULL, G_CALLBACK( menu_options_internals_diskettes ) },
+  { "OPTIONS_INTERNALS_LOADERS", NULL, "_Loaders...", NULL, NULL, G_CALLBACK( menu_options_internals_loaders ) },
   { "OPTIONS_PERIPHERALS", NULL, "_Peripherals", NULL, NULL, NULL },
-  { "OPTIONS_PERIPHERALS_GENERAL", NULL, "_General...", NULL, NULL, G_CALLBACK( menu_options_peripherals_general ) },
-  { "OPTIONS_PERIPHERALS_DISK", NULL, "_Disk...", NULL, NULL, G_CALLBACK( menu_options_peripherals_disk ) },
-  { "OPTIONS_RZX", NULL, "_RZX...", NULL, NULL, G_CALLBACK( menu_options_rzx ) },
-  { "OPTIONS_MOVIE", NULL, "_Movie...", NULL, NULL, G_CALLBACK( menu_options_movie ) },
-  { "OPTIONS_JOYSTICKS", NULL, "_Joysticks", NULL, NULL, NULL },
-  { "OPTIONS_JOYSTICKS_JOYSTICK1", NULL, "Joystick _1...", NULL, NULL, G_CALLBACK( menu_options_joysticks_joystick1 ) },
-  { "OPTIONS_JOYSTICKS_JOYSTICK2", NULL, "Joystick _2...", NULL, NULL, G_CALLBACK( menu_options_joysticks_joystick2 ) },
-  { "OPTIONS_JOYSTICKS_KEYBOARD", NULL, "_Keyboard...", NULL, NULL, G_CALLBACK( menu_options_joysticks_keyboard ) },
-  { "OPTIONS_SELECTROMS", NULL, "S_elect ROMs", NULL, NULL, NULL },
-  { "OPTIONS_SELECTROMS_MACHINEROMS", NULL, "_Machine ROMs", NULL, NULL, NULL },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUM16K", NULL, "Spectrum 1_6K...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrum16k ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUM48K", NULL, "Spectrum _48K...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrum48k ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUM128K", NULL, "Spectrum _128K...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrum128k ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUM2", NULL, "Spectrum +_2...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrum2 ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUM2A", NULL, "Spectrum +2_A...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrum2a ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUM3", NULL, "Spectrum +_3...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrum3 ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUM3E", NULL, "Spectrum +3_e...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrum3e ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_TIMEXTC2048", NULL, "Timex _TC2048...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_timextc2048 ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_TIMEXTC2068", NULL, "Timex TC206_8...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_timextc2068 ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_TIMEXTS2068", NULL, "Ti_mex TS2068...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_timexts2068 ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_PENTAGON128K", NULL, "_Pentagon 128K...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_pentagon128k ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_PENTAGON512K", NULL, "Pe_ntagon 512K...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_pentagon512k ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_PENTAGON1024K", NULL, "Penta_gon 1024K...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_pentagon1024k ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SCORPIONZS256", NULL, "S_corpion ZS 256...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_scorpionzs256 ) },
-  { "OPTIONS_SELECTROMS_MACHINEROMS_SPECTRUMSE", NULL, "Spectrum _SE...", NULL, NULL, G_CALLBACK( menu_options_selectroms_machineroms_spectrumse ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS", NULL, "_Peripheral ROMs", NULL, NULL, NULL },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_INTERFACE1", NULL, "_Interface 1...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_interface1 ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_BETA128", NULL, "_Beta 128...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_beta128 ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_D", NULL, "+_D...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_d ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_DIDAKTIK80", NULL, "Didaktik _80...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_didaktik80 ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_DISCIPLE", NULL, "DISCiP_LE...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_disciple ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACEONE", NULL, "Mu_ltiface One...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_multifaceone ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACE128", NULL, "Multiface _128...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_multiface128 ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_MULTIFACE3", NULL, "Multiface _3...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_multiface3 ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_OPUSDISCOVERY", NULL, "_Opus Discovery...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_opusdiscovery ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_SPECCYBOOT", NULL, "Specc_yBoot...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_speccyboot ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_TTX2000S", NULL, "TT_X2000S...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_ttx2000s ) },
-  { "OPTIONS_SELECTROMS_PERIPHERALROMS_USOURCE", NULL, "_uSource...", NULL, NULL, G_CALLBACK( menu_options_selectroms_peripheralroms_usource ) },
-  { "OPTIONS_FILTER", NULL, "_Filter...", NULL, NULL, G_CALLBACK( menu_options_filter ) },
-  { "OPTIONS_DISKOPTIONS", NULL, "_Disk options...", NULL, NULL, G_CALLBACK( menu_options_diskoptions ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS", NULL, "_Devices ROMs", NULL, NULL, NULL },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_INTERFACE1", NULL, "_Interface 1...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_interface1 ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_BETA128", NULL, "_Beta 128...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_beta128 ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_D", NULL, "+_D...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_d ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_DIDAKTIK80", NULL, "Didaktik _80...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_didaktik80 ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_DISCIPLE", NULL, "DISCiP_LE...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_disciple ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_MULTIFACEONE", NULL, "Mu_ltiface One...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_multifaceone ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_MULTIFACE128", NULL, "Multiface _128...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_multiface128 ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_MULTIFACE3", NULL, "Multiface _3...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_multiface3 ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_OPUSDISCOVERY", NULL, "_Opus Discovery...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_opusdiscovery ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_SPECCYBOOT", NULL, "Specc_yBoot...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_speccyboot ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_TTX2000S", NULL, "TT_X2000S...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_ttx2000s ) },
+  { "OPTIONS_PERIPHERALS_DEVICESROMS_USOURCE", NULL, "_uSource...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devicesroms_usource ) },
+  { "OPTIONS_PERIPHERALS_DEVICES", NULL, "_Devices...", NULL, NULL, G_CALLBACK( menu_options_peripherals_devices ) },
+  { "OPTIONS_PERIPHERALS_STORAGES", NULL, "_Storages...", NULL, NULL, G_CALLBACK( menu_options_peripherals_storages ) },
+  { "OPTIONS_PERIPHERALS_JOYSTICKS", NULL, "_Joysticks", NULL, NULL, NULL },
+  { "OPTIONS_PERIPHERALS_JOYSTICKS_JOYSTICK1", NULL, "Joystick _1...", NULL, NULL, G_CALLBACK( menu_options_peripherals_joysticks_joystick1 ) },
+  { "OPTIONS_PERIPHERALS_JOYSTICKS_JOYSTICK2", NULL, "Joystick _2...", NULL, NULL, G_CALLBACK( menu_options_peripherals_joysticks_joystick2 ) },
+  { "OPTIONS_PERIPHERALS_JOYSTICKS_KEYBOARD", NULL, "_Keyboard...", NULL, NULL, G_CALLBACK( menu_options_peripherals_joysticks_keyboard ) },
+  { "OPTIONS_RECORDING", NULL, "_Recording", NULL, NULL, NULL },
+  { "OPTIONS_RECORDING_RZX", NULL, "_RZX...", NULL, NULL, G_CALLBACK( menu_options_recording_rzx ) },
+  { "OPTIONS_RECORDING_MOVIE", NULL, "_Movie...", NULL, NULL, G_CALLBACK( menu_options_recording_movie ) },
   { "OPTIONS_SAVE", NULL, "S_ave", NULL, NULL, G_CALLBACK( menu_options_save ) },
   { "MACHINE", NULL, "Machine", NULL, NULL, NULL },
-  { "MACHINE_PAUSE", NULL, "_Pause...", "Pause", NULL, G_CALLBACK( menu_machine_pause ) },
-  { "MACHINE_RESET", NULL, "_Reset...", "F5", NULL, G_CALLBACK( menu_machine_reset ) },
+  { "MACHINE_PAUSE", NULL, "_Pause...", "F5", NULL, G_CALLBACK( menu_machine_pause ) },
+  { "MACHINE_RESET", NULL, "_Reset...", NULL, NULL, G_CALLBACK( menu_machine_reset ) },
   { "MACHINE_HARDRESET", NULL, "_Hard reset...", NULL, NULL, G_CALLBACK( menu_machine_hardreset ) },
   { "MACHINE_SELECT", NULL, "_Select...", "F9", NULL, G_CALLBACK( menu_machine_select ) },
-  { "MACHINE_DEBUGGER", NULL, "_Debugger...", NULL, NULL, G_CALLBACK( menu_machine_debugger ) },
-  { "MACHINE_POKEFINDER", NULL, "P_oke Finder...", NULL, NULL, G_CALLBACK( menu_machine_pokefinder ) },
-  { "MACHINE_POKEMEMORY", NULL, "Po_ke Memory...", NULL, NULL, G_CALLBACK( menu_machine_pokememory ) },
-  { "MACHINE_MEMORYBROWSER", NULL, "_Memory Browser...", NULL, NULL, G_CALLBACK( menu_machine_memorybrowser ) },
-  { "MACHINE_PROFILER", NULL, "Pro_filer", NULL, NULL, NULL },
-  { "MACHINE_PROFILER_START", NULL, "_Start", NULL, NULL, G_CALLBACK( menu_machine_profiler_start ) },
-  { "MACHINE_PROFILER_STOP", NULL, "_Stop", NULL, NULL, G_CALLBACK( menu_machine_profiler_stop ) },
-  { "MACHINE_NMI", NULL, "_NMI", NULL, NULL, G_CALLBACK( menu_machine_nmi ) },
+  { "MACHINE_NMI", NULL, "_NMI", "F6", NULL, G_CALLBACK( menu_machine_nmi ) },
   { "MACHINE_MULTIFACEREDBUTTON", NULL, "Multiface Red _Button", NULL, NULL, G_CALLBACK( menu_machine_multifaceredbutton ) },
   { "MACHINE_DIDAKTIKSNAP", NULL, "Didaktik SNA_P", NULL, NULL, G_CALLBACK( menu_machine_didaktiksnap ) },
+  { "DEBUG", NULL, "Debug", NULL, NULL, NULL },
+  { "DEBUG_DEBUGGER", NULL, "_Debugger...", "F10", NULL, G_CALLBACK( menu_debug_debugger ) },
+  { "DEBUG_MEMORYBROWSER", NULL, "_Memory Browser...", "F4", NULL, G_CALLBACK( menu_debug_memorybrowser ) },
+  { "DEBUG_POKEFINDER", NULL, "P_oke Finder...", NULL, NULL, G_CALLBACK( menu_debug_pokefinder ) },
+  { "DEBUG_POKEMEMORY", NULL, "Po_ke Memory...", NULL, NULL, G_CALLBACK( menu_debug_pokememory ) },
+  { "DEBUG_PROFILER", NULL, "Pro_filer", NULL, NULL, NULL },
+  { "DEBUG_PROFILER_START", NULL, "_Start", NULL, NULL, G_CALLBACK( menu_debug_profiler_start ) },
+  { "DEBUG_PROFILER_STOP", NULL, "_Stop", NULL, NULL, G_CALLBACK( menu_debug_profiler_stop ) },
   { "MEDIA", NULL, "Media", NULL, NULL, NULL },
   { "MEDIA_TAPE", NULL, "_Tape", NULL, NULL, NULL },
   { "MEDIA_TAPE_OPEN", NULL, "_Open...", "F7", NULL, G_CALLBACK( menu_media_tape_open ) },
@@ -1356,9 +1359,224 @@ GtkActionEntry gtkui_menu_data[] = {
   { "MEDIA_TAPE_BROWSE", NULL, "_Browse...", NULL, NULL, G_CALLBACK( menu_media_tape_browse ) },
   { "MEDIA_TAPE_REWIND", NULL, "_Rewind", NULL, NULL, G_CALLBACK( menu_media_tape_rewind ) },
   { "MEDIA_TAPE_CLEAR", NULL, "_Clear", NULL, NULL, G_CALLBACK( menu_media_tape_clear ) },
-  { "MEDIA_TAPE_WRITE", NULL, "_Write...", "F6", NULL, G_CALLBACK( menu_media_tape_write ) },
+  { "MEDIA_TAPE_WRITE", NULL, "_Write...", NULL, NULL, G_CALLBACK( menu_media_tape_write ) },
   { "MEDIA_TAPE_RECORDSTART", NULL, "R_ecord Start", NULL, NULL, G_CALLBACK( menu_media_tape_recordstart ) },
   { "MEDIA_TAPE_RECORDSTOP", NULL, "Recor_d Stop", NULL, NULL, G_CALLBACK( menu_media_tape_recordstop ) },
+  { "MEDIA_DISKETTE", NULL, "_Diskette", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3", NULL, "+_3", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3_DRIVEA", NULL, "Drive _A:", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3_DRIVEA_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_insertnew ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_insert ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_eject ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_save ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_saveas ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3_DRIVEA_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3_DRIVEA_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_3_DRIVEA_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_3_drivea_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_3_DRIVEB", NULL, "Drive _B:", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3_DRIVEB_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_insertnew ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_insert ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_eject ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_save ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_saveas ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3_DRIVEB_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_3_DRIVEB_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_3_DRIVEB_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_3_driveb_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_BETA", NULL, "_Beta", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEA", NULL, "Drive _A:", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_insertnew ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_insert ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_eject ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_save ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_saveas ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEA_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivea_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB", NULL, "Drive _B:", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_insertnew ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_insert ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_eject ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_save ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_saveas ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEB_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_driveb_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC", NULL, "Drive _C:", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_insertnew ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_insert ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_eject ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_save ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_saveas ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_BETA_DRIVEC_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drivec_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED", NULL, "Drive _D:", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVED_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_insertnew ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_insert ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_eject ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_save ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_saveas ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVED_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_BETA_DRIVED_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_BETA_DRIVED_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_beta_drived_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_D", NULL, "+_D", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_D_DRIVE1", NULL, "Drive _1", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_D_DRIVE1_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_insertnew ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_insert ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_eject ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_save ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_saveas ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_D_DRIVE1_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_D_DRIVE1_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_D_DRIVE1_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive1_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_D_DRIVE2", NULL, "Drive _2", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_D_DRIVE2_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_insertnew ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_insert ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_eject ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_save ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_saveas ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_D_DRIVE2_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_D_DRIVE2_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_D_DRIVE2_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_d_drive2_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_DISCIPLE", NULL, "DISC_iPLE", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1", NULL, "Drive _1", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_insertnew ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_insert ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_eject ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_save ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_saveas ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE1_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive1_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2", NULL, "Drive _2", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_insertnew ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_insert ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_eject ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_save ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_saveas ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_DISCIPLE_DRIVE2_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_disciple_drive2_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_OPUS", NULL, "_Opus", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1", NULL, "Drive _1", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_insertnew ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_insert ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_eject ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_save ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_saveas ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE1_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive1_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2", NULL, "Drive _2", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_insertnew ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_insert ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_eject ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_save ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_saveas ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_OPUS_DRIVE2_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_opus_drive2_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80", NULL, "_Didaktik 80", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA", NULL, "Drive _A", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_insertnew ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_insert ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_eject ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_save ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_saveas ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEA_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_drivea_writeprotect_disable ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB", NULL, "Drive _B", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_insertnew ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_insert ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_eject ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_save ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_saveas ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_flipdisk_turnupsidedown ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_flipdisk_turnback ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_writeprotect_enable ) },
+  { "MEDIA_DISKETTE_DIDAKTIK80_DRIVEB_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_diskette_didaktik80_driveb_writeprotect_disable ) },
+  { "MEDIA_STORAGE", NULL, "Storag_e", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_SIMPLE8BIT", NULL, "Simple _8-bit", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_SIMPLE8BIT_MASTER", NULL, "_Master", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_SIMPLE8BIT_MASTER_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_simple8bit_master_insert ) },
+  { "MEDIA_STORAGE_SIMPLE8BIT_MASTER_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_simple8bit_master_commit ) },
+  { "MEDIA_STORAGE_SIMPLE8BIT_MASTER_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_simple8bit_master_eject ) },
+  { "MEDIA_STORAGE_SIMPLE8BIT_SLAVE", NULL, "_Slave", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_SIMPLE8BIT_SLAVE_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_simple8bit_slave_insert ) },
+  { "MEDIA_STORAGE_SIMPLE8BIT_SLAVE_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_simple8bit_slave_commit ) },
+  { "MEDIA_STORAGE_SIMPLE8BIT_SLAVE_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_simple8bit_slave_eject ) },
+  { "MEDIA_STORAGE_ZXATASP", NULL, "ZX_ATASP", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_ZXATASP_MASTER", NULL, "_Master", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_ZXATASP_MASTER_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_zxatasp_master_insert ) },
+  { "MEDIA_STORAGE_ZXATASP_MASTER_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_zxatasp_master_commit ) },
+  { "MEDIA_STORAGE_ZXATASP_MASTER_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_zxatasp_master_eject ) },
+  { "MEDIA_STORAGE_ZXATASP_SLAVE", NULL, "_Slave", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_ZXATASP_SLAVE_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_zxatasp_slave_insert ) },
+  { "MEDIA_STORAGE_ZXATASP_SLAVE_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_zxatasp_slave_commit ) },
+  { "MEDIA_STORAGE_ZXATASP_SLAVE_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_zxatasp_slave_eject ) },
+  { "MEDIA_STORAGE_ZXCFCOMPACTFLASH", NULL, "ZX_CF CompactFlash", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_ZXCFCOMPACTFLASH_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_zxcfcompactflash_insert ) },
+  { "MEDIA_STORAGE_ZXCFCOMPACTFLASH_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_zxcfcompactflash_commit ) },
+  { "MEDIA_STORAGE_ZXCFCOMPACTFLASH_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_zxcfcompactflash_eject ) },
+  { "MEDIA_STORAGE_DIVIDE", NULL, "_DivIDE", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_DIVIDE_MASTER", NULL, "_Master", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_DIVIDE_MASTER_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_divide_master_insert ) },
+  { "MEDIA_STORAGE_DIVIDE_MASTER_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_divide_master_commit ) },
+  { "MEDIA_STORAGE_DIVIDE_MASTER_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_divide_master_eject ) },
+  { "MEDIA_STORAGE_DIVIDE_SLAVE", NULL, "_Slave", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_DIVIDE_SLAVE_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_divide_slave_insert ) },
+  { "MEDIA_STORAGE_DIVIDE_SLAVE_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_divide_slave_commit ) },
+  { "MEDIA_STORAGE_DIVIDE_SLAVE_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_divide_slave_eject ) },
+  { "MEDIA_STORAGE_DIVMMC", NULL, "_DivMMC", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_DIVMMC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_divmmc_insert ) },
+  { "MEDIA_STORAGE_DIVMMC_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_divmmc_commit ) },
+  { "MEDIA_STORAGE_DIVMMC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_divmmc_eject ) },
+  { "MEDIA_STORAGE_ZXMMC", NULL, "_ZXMMC", NULL, NULL, NULL },
+  { "MEDIA_STORAGE_ZXMMC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_storage_zxmmc_insert ) },
+  { "MEDIA_STORAGE_ZXMMC_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_storage_zxmmc_commit ) },
+  { "MEDIA_STORAGE_ZXMMC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_storage_zxmmc_eject ) },
   { "MEDIA_INTERFACE1", NULL, "_Interface 1", NULL, NULL, NULL },
   { "MEDIA_INTERFACE1_MICRODRIVE1", NULL, "Microdrive _1", NULL, NULL, NULL },
   { "MEDIA_INTERFACE1_MICRODRIVE1_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_interface1_microdrive1_insertnew ) },
@@ -1437,181 +1655,6 @@ GtkActionEntry gtkui_menu_data[] = {
   { "MEDIA_INTERFACE1_RS232_UNPLUGRXD", NULL, "_Unplug RxD", NULL, NULL, G_CALLBACK( menu_media_interface1_rs232_unplugrxd ) },
   { "MEDIA_INTERFACE1_RS232_PLUGTXD", NULL, "Plug _TxD", NULL, NULL, G_CALLBACK( menu_media_interface1_rs232_plugtxd ) },
   { "MEDIA_INTERFACE1_RS232_UNPLUGTXD", NULL, "Un_plug TxD", NULL, NULL, G_CALLBACK( menu_media_interface1_rs232_unplugtxd ) },
-  { "MEDIA_DISK", NULL, "_Disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_3", NULL, "+_3", NULL, NULL, NULL },
-  { "MEDIA_DISK_3_DRIVEA", NULL, "Drive _A:", NULL, NULL, NULL },
-  { "MEDIA_DISK_3_DRIVEA_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_insertnew ) },
-  { "MEDIA_DISK_3_DRIVEA_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_insert ) },
-  { "MEDIA_DISK_3_DRIVEA_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_eject ) },
-  { "MEDIA_DISK_3_DRIVEA_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_save ) },
-  { "MEDIA_DISK_3_DRIVEA_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_saveas ) },
-  { "MEDIA_DISK_3_DRIVEA_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_3_DRIVEA_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_3_DRIVEA_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_flipdisk_turnback ) },
-  { "MEDIA_DISK_3_DRIVEA_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_3_DRIVEA_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_writeprotect_enable ) },
-  { "MEDIA_DISK_3_DRIVEA_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_3_drivea_writeprotect_disable ) },
-  { "MEDIA_DISK_3_DRIVEB", NULL, "Drive _B:", NULL, NULL, NULL },
-  { "MEDIA_DISK_3_DRIVEB_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_insertnew ) },
-  { "MEDIA_DISK_3_DRIVEB_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_insert ) },
-  { "MEDIA_DISK_3_DRIVEB_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_eject ) },
-  { "MEDIA_DISK_3_DRIVEB_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_save ) },
-  { "MEDIA_DISK_3_DRIVEB_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_saveas ) },
-  { "MEDIA_DISK_3_DRIVEB_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_3_DRIVEB_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_3_DRIVEB_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_flipdisk_turnback ) },
-  { "MEDIA_DISK_3_DRIVEB_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_3_DRIVEB_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_writeprotect_enable ) },
-  { "MEDIA_DISK_3_DRIVEB_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_3_driveb_writeprotect_disable ) },
-  { "MEDIA_DISK_BETA", NULL, "_Beta", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEA", NULL, "Drive _A:", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEA_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_insertnew ) },
-  { "MEDIA_DISK_BETA_DRIVEA_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_insert ) },
-  { "MEDIA_DISK_BETA_DRIVEA_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_eject ) },
-  { "MEDIA_DISK_BETA_DRIVEA_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_save ) },
-  { "MEDIA_DISK_BETA_DRIVEA_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_saveas ) },
-  { "MEDIA_DISK_BETA_DRIVEA_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEA_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_BETA_DRIVEA_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_flipdisk_turnback ) },
-  { "MEDIA_DISK_BETA_DRIVEA_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEA_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_writeprotect_enable ) },
-  { "MEDIA_DISK_BETA_DRIVEA_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivea_writeprotect_disable ) },
-  { "MEDIA_DISK_BETA_DRIVEB", NULL, "Drive _B:", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEB_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_insertnew ) },
-  { "MEDIA_DISK_BETA_DRIVEB_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_insert ) },
-  { "MEDIA_DISK_BETA_DRIVEB_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_eject ) },
-  { "MEDIA_DISK_BETA_DRIVEB_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_save ) },
-  { "MEDIA_DISK_BETA_DRIVEB_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_saveas ) },
-  { "MEDIA_DISK_BETA_DRIVEB_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEB_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_BETA_DRIVEB_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_flipdisk_turnback ) },
-  { "MEDIA_DISK_BETA_DRIVEB_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEB_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_writeprotect_enable ) },
-  { "MEDIA_DISK_BETA_DRIVEB_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_driveb_writeprotect_disable ) },
-  { "MEDIA_DISK_BETA_DRIVEC", NULL, "Drive _C:", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEC_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_insertnew ) },
-  { "MEDIA_DISK_BETA_DRIVEC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_insert ) },
-  { "MEDIA_DISK_BETA_DRIVEC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_eject ) },
-  { "MEDIA_DISK_BETA_DRIVEC_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_save ) },
-  { "MEDIA_DISK_BETA_DRIVEC_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_saveas ) },
-  { "MEDIA_DISK_BETA_DRIVEC_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEC_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_BETA_DRIVEC_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_flipdisk_turnback ) },
-  { "MEDIA_DISK_BETA_DRIVEC_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVEC_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_writeprotect_enable ) },
-  { "MEDIA_DISK_BETA_DRIVEC_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drivec_writeprotect_disable ) },
-  { "MEDIA_DISK_BETA_DRIVED", NULL, "Drive _D:", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVED_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_insertnew ) },
-  { "MEDIA_DISK_BETA_DRIVED_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_insert ) },
-  { "MEDIA_DISK_BETA_DRIVED_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_eject ) },
-  { "MEDIA_DISK_BETA_DRIVED_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_save ) },
-  { "MEDIA_DISK_BETA_DRIVED_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_saveas ) },
-  { "MEDIA_DISK_BETA_DRIVED_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVED_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_BETA_DRIVED_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_flipdisk_turnback ) },
-  { "MEDIA_DISK_BETA_DRIVED_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_BETA_DRIVED_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_writeprotect_enable ) },
-  { "MEDIA_DISK_BETA_DRIVED_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_beta_drived_writeprotect_disable ) },
-  { "MEDIA_DISK_D", NULL, "+_D", NULL, NULL, NULL },
-  { "MEDIA_DISK_D_DRIVE1", NULL, "Drive _1", NULL, NULL, NULL },
-  { "MEDIA_DISK_D_DRIVE1_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_insertnew ) },
-  { "MEDIA_DISK_D_DRIVE1_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_insert ) },
-  { "MEDIA_DISK_D_DRIVE1_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_eject ) },
-  { "MEDIA_DISK_D_DRIVE1_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_save ) },
-  { "MEDIA_DISK_D_DRIVE1_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_saveas ) },
-  { "MEDIA_DISK_D_DRIVE1_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_D_DRIVE1_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_D_DRIVE1_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_flipdisk_turnback ) },
-  { "MEDIA_DISK_D_DRIVE1_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_D_DRIVE1_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_writeprotect_enable ) },
-  { "MEDIA_DISK_D_DRIVE1_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive1_writeprotect_disable ) },
-  { "MEDIA_DISK_D_DRIVE2", NULL, "Drive _2", NULL, NULL, NULL },
-  { "MEDIA_DISK_D_DRIVE2_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_insertnew ) },
-  { "MEDIA_DISK_D_DRIVE2_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_insert ) },
-  { "MEDIA_DISK_D_DRIVE2_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_eject ) },
-  { "MEDIA_DISK_D_DRIVE2_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_save ) },
-  { "MEDIA_DISK_D_DRIVE2_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_saveas ) },
-  { "MEDIA_DISK_D_DRIVE2_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_D_DRIVE2_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_D_DRIVE2_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_flipdisk_turnback ) },
-  { "MEDIA_DISK_D_DRIVE2_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_D_DRIVE2_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_writeprotect_enable ) },
-  { "MEDIA_DISK_D_DRIVE2_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_d_drive2_writeprotect_disable ) },
-  { "MEDIA_DISK_DISCIPLE", NULL, "DISC_iPLE", NULL, NULL, NULL },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1", NULL, "Drive _1", NULL, NULL, NULL },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_insertnew ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_insert ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_eject ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_save ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_saveas ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_flipdisk_turnback ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_writeprotect_enable ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE1_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive1_writeprotect_disable ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2", NULL, "Drive _2", NULL, NULL, NULL },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_insertnew ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_insert ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_eject ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_save ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_saveas ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_flipdisk_turnback ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_writeprotect_enable ) },
-  { "MEDIA_DISK_DISCIPLE_DRIVE2_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_disciple_drive2_writeprotect_disable ) },
-  { "MEDIA_DISK_OPUS", NULL, "_Opus", NULL, NULL, NULL },
-  { "MEDIA_DISK_OPUS_DRIVE1", NULL, "Drive _1", NULL, NULL, NULL },
-  { "MEDIA_DISK_OPUS_DRIVE1_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_insertnew ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_insert ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_eject ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_save ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_saveas ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_OPUS_DRIVE1_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_flipdisk_turnback ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_OPUS_DRIVE1_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_writeprotect_enable ) },
-  { "MEDIA_DISK_OPUS_DRIVE1_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive1_writeprotect_disable ) },
-  { "MEDIA_DISK_OPUS_DRIVE2", NULL, "Drive _2", NULL, NULL, NULL },
-  { "MEDIA_DISK_OPUS_DRIVE2_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_insertnew ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_insert ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_eject ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_save ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_saveas ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_OPUS_DRIVE2_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_flipdisk_turnback ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_OPUS_DRIVE2_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_writeprotect_enable ) },
-  { "MEDIA_DISK_OPUS_DRIVE2_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_opus_drive2_writeprotect_disable ) },
-  { "MEDIA_DISK_DIDAKTIK80", NULL, "_Didaktik 80", NULL, NULL, NULL },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA", NULL, "Drive _A", NULL, NULL, NULL },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_insertnew ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_insert ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_eject ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_save ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_saveas ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_flipdisk_turnback ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_writeprotect_enable ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEA_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_drivea_writeprotect_disable ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB", NULL, "Drive _B", NULL, NULL, NULL },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_INSERTNEW", NULL, "Insert _New", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_insertnew ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_insert ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_eject ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_SAVE", NULL, "_Save", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_save ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_SAVEAS", NULL, "Save _As...", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_saveas ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_FLIPDISK", NULL, "_Flip disk", NULL, NULL, NULL },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_FLIPDISK_TURNUPSIDEDOWN", NULL, "Turn _upside down", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_flipdisk_turnupsidedown ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_FLIPDISK_TURNBACK", NULL, "Turn _back", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_flipdisk_turnback ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_WRITEPROTECT", NULL, "Write _protect", NULL, NULL, NULL },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_WRITEPROTECT_ENABLE", NULL, "_Enable", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_writeprotect_enable ) },
-  { "MEDIA_DISK_DIDAKTIK80_DRIVEB_WRITEPROTECT_DISABLE", NULL, "_Disable", NULL, NULL, G_CALLBACK( menu_media_disk_didaktik80_driveb_writeprotect_disable ) },
   { "MEDIA_CARTRIDGE", NULL, "_Cartridge", NULL, NULL, NULL },
   { "MEDIA_CARTRIDGE_TIMEXDOCK", NULL, "_Timex Dock", NULL, NULL, NULL },
   { "MEDIA_CARTRIDGE_TIMEXDOCK_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_cartridge_timexdock_insert ) },
@@ -1619,46 +1662,6 @@ GtkActionEntry gtkui_menu_data[] = {
   { "MEDIA_CARTRIDGE_INTERFACE2", NULL, "_Interface 2", NULL, NULL, NULL },
   { "MEDIA_CARTRIDGE_INTERFACE2_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_cartridge_interface2_insert ) },
   { "MEDIA_CARTRIDGE_INTERFACE2_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_cartridge_interface2_eject ) },
-  { "MEDIA_IDE", NULL, "ID_E", NULL, NULL, NULL },
-  { "MEDIA_IDE_SIMPLE8BIT", NULL, "Simple _8-bit", NULL, NULL, NULL },
-  { "MEDIA_IDE_SIMPLE8BIT_MASTER", NULL, "_Master", NULL, NULL, NULL },
-  { "MEDIA_IDE_SIMPLE8BIT_MASTER_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_simple8bit_master_insert ) },
-  { "MEDIA_IDE_SIMPLE8BIT_MASTER_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_simple8bit_master_commit ) },
-  { "MEDIA_IDE_SIMPLE8BIT_MASTER_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_simple8bit_master_eject ) },
-  { "MEDIA_IDE_SIMPLE8BIT_SLAVE", NULL, "_Slave", NULL, NULL, NULL },
-  { "MEDIA_IDE_SIMPLE8BIT_SLAVE_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_simple8bit_slave_insert ) },
-  { "MEDIA_IDE_SIMPLE8BIT_SLAVE_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_simple8bit_slave_commit ) },
-  { "MEDIA_IDE_SIMPLE8BIT_SLAVE_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_simple8bit_slave_eject ) },
-  { "MEDIA_IDE_ZXATASP", NULL, "ZX_ATASP", NULL, NULL, NULL },
-  { "MEDIA_IDE_ZXATASP_MASTER", NULL, "_Master", NULL, NULL, NULL },
-  { "MEDIA_IDE_ZXATASP_MASTER_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_zxatasp_master_insert ) },
-  { "MEDIA_IDE_ZXATASP_MASTER_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_zxatasp_master_commit ) },
-  { "MEDIA_IDE_ZXATASP_MASTER_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_zxatasp_master_eject ) },
-  { "MEDIA_IDE_ZXATASP_SLAVE", NULL, "_Slave", NULL, NULL, NULL },
-  { "MEDIA_IDE_ZXATASP_SLAVE_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_zxatasp_slave_insert ) },
-  { "MEDIA_IDE_ZXATASP_SLAVE_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_zxatasp_slave_commit ) },
-  { "MEDIA_IDE_ZXATASP_SLAVE_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_zxatasp_slave_eject ) },
-  { "MEDIA_IDE_ZXCFCOMPACTFLASH", NULL, "ZX_CF CompactFlash", NULL, NULL, NULL },
-  { "MEDIA_IDE_ZXCFCOMPACTFLASH_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_zxcfcompactflash_insert ) },
-  { "MEDIA_IDE_ZXCFCOMPACTFLASH_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_zxcfcompactflash_commit ) },
-  { "MEDIA_IDE_ZXCFCOMPACTFLASH_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_zxcfcompactflash_eject ) },
-  { "MEDIA_IDE_DIVIDE", NULL, "_DivIDE", NULL, NULL, NULL },
-  { "MEDIA_IDE_DIVIDE_MASTER", NULL, "_Master", NULL, NULL, NULL },
-  { "MEDIA_IDE_DIVIDE_MASTER_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_divide_master_insert ) },
-  { "MEDIA_IDE_DIVIDE_MASTER_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_divide_master_commit ) },
-  { "MEDIA_IDE_DIVIDE_MASTER_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_divide_master_eject ) },
-  { "MEDIA_IDE_DIVIDE_SLAVE", NULL, "_Slave", NULL, NULL, NULL },
-  { "MEDIA_IDE_DIVIDE_SLAVE_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_divide_slave_insert ) },
-  { "MEDIA_IDE_DIVIDE_SLAVE_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_divide_slave_commit ) },
-  { "MEDIA_IDE_DIVIDE_SLAVE_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_divide_slave_eject ) },
-  { "MEDIA_IDE_DIVMMC", NULL, "_DivMMC", NULL, NULL, NULL },
-  { "MEDIA_IDE_DIVMMC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_divmmc_insert ) },
-  { "MEDIA_IDE_DIVMMC_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_divmmc_commit ) },
-  { "MEDIA_IDE_DIVMMC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_divmmc_eject ) },
-  { "MEDIA_IDE_ZXMMC", NULL, "_ZXMMC", NULL, NULL, NULL },
-  { "MEDIA_IDE_ZXMMC_INSERT", NULL, "_Insert...", NULL, NULL, G_CALLBACK( menu_media_ide_zxmmc_insert ) },
-  { "MEDIA_IDE_ZXMMC_COMMIT", NULL, "_Commit", NULL, NULL, G_CALLBACK( menu_media_ide_zxmmc_commit ) },
-  { "MEDIA_IDE_ZXMMC_EJECT", NULL, "_Eject", NULL, NULL, G_CALLBACK( menu_media_ide_zxmmc_eject ) },
   { "HELP", NULL, "Help", NULL, NULL, NULL },
   { "HELP_KEYBOARD", NULL, "_Keyboard...", NULL, NULL, G_CALLBACK( menu_help_keyboard ) },
   { "HELP_ABOUT", NULL, "_About...", NULL, NULL, G_CALLBACK( menu_help_about ) },

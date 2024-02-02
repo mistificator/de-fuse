@@ -503,7 +503,7 @@ menu_get_scaler( scaler_available_fn selector )
   }
 
   /* Populate win32ui_select_info */
-  items.dialog_title = TEXT( "Fuse - Select Scaler" );
+  items.dialog_title = TEXT( "Screen filter" );
   items.labels = malloc( count * sizeof( char * ) );
   items.length = count; 
 
@@ -638,7 +638,7 @@ menu_machine_select( int action )
 }
 
 void
-menu_machine_debugger( int action )
+menu_debug_debugger( int action )
 {
   debugger_mode = DEBUGGER_MODE_HALTED;
   if( paused ) ui_debugger_activate();

@@ -44,7 +44,7 @@ static void
 memorybrowser_init( HWND hwndDlg );
 
 void
-menu_machine_memorybrowser( int action );
+menu_debug_memorybrowser( int action );
 
 /* helper constants for memory listview's scrollbar */
 static const int memorysb_min = 0x0000;
@@ -179,7 +179,7 @@ scroller( HWND hwndDlg, WPARAM scroll_command )
 }
 
 void
-menu_machine_memorybrowser( int action GCC_UNUSED )
+menu_debug_memorybrowser( int action GCC_UNUSED )
 {
   fuse_emulation_pause();
 
