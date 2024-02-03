@@ -630,15 +630,15 @@ const char * disassembly_color_table[] = {
   "DJNZ", "Dark Cyan",    "",
   "NOP",  "Light Gray",   "",
   "RET",  "Green",        "",
-  "CP",   "Dark Magenta", "",
-  "RST",  "Red",          "Black",
+  "CP ",  "Dark Magenta", "",
+  "RST",  "Orange",       "Black",
   "OUT",  "Light Green",  "Black",
   "IN ",  "Yellow",       "Black",
   "HALT", "Pink",         "Black",
   "DI",   "White",        "Pink",
   "EI",   "White",        "Pink",
   "EX",   "White",        "Dark Blue",
-  "IM",   "White",        "Dark Greem",
+  "IM",   "White",        "Dark Green",
   ""
 };
 
@@ -894,7 +894,8 @@ ui_debugger_update( void )
   libspectrum_word address;
   int capabilities; size_t length;
 
-  const char *register_name[] = { "PC", "SP",
+  const char *register_name[] = { 
+          "PC", "SP",
 				  "AF", "AF'",
 				  "BC", "BC'",
 				  "DE", "DE'",
@@ -902,7 +903,8 @@ ui_debugger_update( void )
 				  "IX", "IY",
                                 };
 
-  libspectrum_word *value_ptr[] = { &PC, &SP,  &AF, &AF_,
+  libspectrum_word *value_ptr[] = { 
+            &PC, &SP,  &AF, &AF_,
 				    &BC, &BC_, &DE, &DE_,
 				    &HL, &HL_, &IX, &IY,
 				  };
