@@ -82,6 +82,8 @@ enum {
 /* The columns used in the disassembly pane */
 
 enum {
+  DISASSEMBLY_COLUMN_PC,
+  DISASSEMBLY_COLUMN_BREAKPOINT,
   DISASSEMBLY_COLUMN_ADDRESS,
   DISASSEMBLY_COLUMN_INSTRUCTION,
 
@@ -173,6 +175,7 @@ static GtkWidget *dialog,		/* The debugger dialog box */
   *registers_frame, 
   *registers[18],			/* Individual registers */
   *memory_map,				/* The memory map display */
+  *memory_box,
   *memory_map_table,                    /* The table for the memory map */
   *map_label[MEMORY_PAGES_IN_64K][4],   /* Labels in the memory map */
   *breakpoints = NULL,				/* The breakpoint display */
@@ -338,7 +341,7 @@ get_pane( debugger_pane pane )
 {
   switch( pane ) {
   case DEBUGGER_PANE_REGISTERS: return registers_frame;
-  case DEBUGGER_PANE_MEMORYMAP: return memory_map;
+  case DEBUGGER_PANE_MEMORYMAP: return memory_box;
   case DEBUGGER_PANE_BREAKPOINTS: return breakpoints;
   case DEBUGGER_PANE_DISASSEMBLY: return disassembly_box;
   case DEBUGGER_PANE_STACK: return stack;
@@ -578,9 +581,8 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
 static int
 create_memory_map( GtkBox *parent, PangoFontDescription *font )
 {
-  size_t i, j;
   GtkWidget *label_address, *label_source, *label_writable, *label_contended;
-  GtkWidget *search_label, *search_box, *search_offset, *vbox;
+  GtkWidget *search_label, *search_box, *search_offset;
 
   label_address   = gtk_label_new( "Address" );
   label_source    = gtk_label_new( "Source" );
@@ -590,11 +592,11 @@ create_memory_map( GtkBox *parent, PangoFontDescription *font )
   gtk_widget_set_tooltip_text( GTK_WIDGET( label_writable ), "Writable" ); 
   gtk_widget_set_tooltip_text( GTK_WIDGET( label_contended ), "Contended" ); 
 
-  vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
-  gtk_box_pack_start( parent, vbox, TRUE, TRUE, 0 );
+  memory_box = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+  gtk_box_pack_start( parent, memory_box, TRUE, TRUE, 0 );
 
   memory_map = gtk_frame_new( "Memory Map" );
-  gtk_box_pack_start( GTK_BOX( vbox ), memory_map, TRUE, TRUE, 0 );
+  gtk_box_pack_start( GTK_BOX( memory_box ), memory_map, TRUE, TRUE, 0 );
 
 #if GTK_CHECK_VERSION( 3, 0, 0 )
 
@@ -629,7 +631,7 @@ create_memory_map( GtkBox *parent, PangoFontDescription *font )
   search_label = gtk_label_new( "Go to offset" );
   gtk_box_pack_end( GTK_BOX( search_box ), search_label, FALSE, FALSE, 0 );
 
-  gtk_box_pack_start( GTK_BOX( vbox ), search_box, FALSE, FALSE, 8 );
+  gtk_box_pack_start( GTK_BOX( memory_box ), search_box, FALSE, FALSE, 8 );
 
   g_signal_connect( G_OBJECT( search_offset ), "activate",
                     G_CALLBACK( debugger_goto_offset ), NULL );
@@ -738,7 +740,7 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
 
   GtkWidget *scrollbar;
   static const gchar *const titles[] =
-    { "Address", "Instruction" };
+    { "PC", "ID", "Address", "Instruction" };
 
   /* A box to hold the disassembly listing and the scrollbar */
   disassembly_box = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
@@ -746,7 +748,7 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
 
   /* The disassembly itself */
   disassembly_model =
-    gtk_list_store_new( DISASSEMBLY_COLUMN_COUNT, G_TYPE_STRING, G_TYPE_STRING );
+    gtk_list_store_new( DISASSEMBLY_COLUMN_COUNT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING );
 
   disassembly = gtk_tree_view_new_with_model( GTK_TREE_MODEL( disassembly_model ) );
   for( i = 0; i < DISASSEMBLY_COLUMN_COUNT; i++ ) {
@@ -843,8 +845,6 @@ breakpoints_activate( GtkTreeView *tree_view, GtkTreePath *path,
     GValue value;
     gchar *type, *address, *endptr;
     int base_num, offset;
-
-    debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ];
 
     bzero ( &value, sizeof (value) );
     gtk_tree_model_get_value( model, &it, BREAKPOINTS_COLUMN_TYPE, &value );
@@ -1270,18 +1270,48 @@ update_disassembly( void )
 
   for( i = 0, address = disassembly_top; i < 20; i++ ) {
     size_t l, length;
-    char buffer1[40], buffer2[40];
+    char buffer[DISASSEMBLY_COLUMN_COUNT][40];
+    GSList *ptr;
 
-    snprintf( buffer1, sizeof( buffer1 ), format_16_bit(), address );
-    debugger_disassemble( buffer2, sizeof( buffer2 ), &length, address );
+    bzero( buffer[DISASSEMBLY_COLUMN_PC], sizeof( buffer[DISASSEMBLY_COLUMN_PC] ));
+    bzero( buffer[DISASSEMBLY_COLUMN_BREAKPOINT], sizeof( buffer[DISASSEMBLY_COLUMN_BREAKPOINT] ));
+
+    if ( address == PC )
+    {
+      snprintf( buffer[DISASSEMBLY_COLUMN_PC], sizeof( buffer[DISASSEMBLY_COLUMN_PC] ), "->");
+    }
+
+    for( ptr = debugger_breakpoints; ptr; ptr = ptr->next ) {
+
+      debugger_breakpoint *bp = ptr->data;
+
+      switch( bp->type ) {
+
+      case DEBUGGER_BREAKPOINT_TYPE_EXECUTE:
+      case DEBUGGER_BREAKPOINT_TYPE_READ:
+      case DEBUGGER_BREAKPOINT_TYPE_WRITE:
+        if ( bp->value.address.offset == address ) {
+          snprintf( buffer[DISASSEMBLY_COLUMN_BREAKPOINT], sizeof( buffer[DISASSEMBLY_COLUMN_BREAKPOINT] ), "%lu", bp->id);
+        }
+        break;
+      default:
+        break;
+      }
+    }
+
+    snprintf( buffer[DISASSEMBLY_COLUMN_ADDRESS], sizeof( buffer[DISASSEMBLY_COLUMN_ADDRESS] ), format_16_bit(), address );
+    debugger_disassemble( buffer[DISASSEMBLY_COLUMN_INSTRUCTION], sizeof( buffer[DISASSEMBLY_COLUMN_INSTRUCTION] ), &length, address );
 
     /* pad to 16 characters (long instruction) to avoid varying width */
-    l = strlen( buffer2 );
-    while( l < 16 ) buffer2[l++] = ' ';
-    buffer2[l] = 0;
+    l = strlen( buffer[DISASSEMBLY_COLUMN_INSTRUCTION] );
+    while( l < 16 ) buffer[DISASSEMBLY_COLUMN_INSTRUCTION][l++] = ' ';
+    buffer[DISASSEMBLY_COLUMN_INSTRUCTION][l] = 0;
 
     gtk_list_store_append( disassembly_model, &it );
-    gtk_list_store_set( disassembly_model, &it, DISASSEMBLY_COLUMN_ADDRESS, buffer1, DISASSEMBLY_COLUMN_INSTRUCTION, buffer2, -1 );
+    gtk_list_store_set( disassembly_model, &it,
+      DISASSEMBLY_COLUMN_PC, buffer[DISASSEMBLY_COLUMN_PC], DISASSEMBLY_COLUMN_BREAKPOINT, buffer[DISASSEMBLY_COLUMN_BREAKPOINT],
+      DISASSEMBLY_COLUMN_ADDRESS, buffer[DISASSEMBLY_COLUMN_ADDRESS], DISASSEMBLY_COLUMN_INSTRUCTION, buffer[DISASSEMBLY_COLUMN_INSTRUCTION], 
+      -1 );
 
     address += length;
   }
