@@ -108,6 +108,7 @@ enum {
 };
 
 static int create_dialog( void );
+static PangoFontDescription * monospaced_font( void );
 static int hide_hidden_panes( void );
 static GtkCheckMenuItem* get_pane_menu_item( debugger_pane pane );
 static GtkWidget* get_pane( debugger_pane pane );
@@ -123,13 +124,15 @@ static void toggle_display_disassembly( GtkToggleAction* action,
 static void toggle_display_stack( GtkToggleAction* action, gpointer data );
 static void toggle_display_events( GtkToggleAction* action, gpointer data );
 static int create_register_display( GtkBox *parent, PangoFontDescription *font );
-static int create_memory_map( GtkBox *parent );
-static void create_breakpoints( GtkBox *parent );
+static int create_memory_map( GtkBox *parent, PangoFontDescription *font );
+static void create_breakpoints( GtkBox *parent, PangoFontDescription *font );
 static void create_disassembly( GtkBox *parent, PangoFontDescription *font );
 static void create_stack_display( GtkBox *parent, PangoFontDescription *font );
 static void stack_activate( GtkTreeView *tree_view, GtkTreePath *path,
 			    GtkTreeViewColumn *column, gpointer user_data );
-static void create_events( GtkBox *parent );
+static void breakpoints_activate( GtkTreeView *tree_view, GtkTreePath *path,
+	        GtkTreeViewColumn *column, gpointer user_data );          
+static void create_events( GtkBox *parent, PangoFontDescription *font );
 static void events_activate( GtkTreeView *tree_view, GtkTreePath *path,
 			     GtkTreeViewColumn *column, gpointer user_data );
 static int create_command_entry( GtkBox *parent, GtkAccelGroup *accel_group );
@@ -167,6 +170,7 @@ static void gtkui_debugger_done_close( GtkWidget *widget, gpointer user_data );
 static GtkWidget *dialog,		/* The debugger dialog box */
   *continue_button, *break_button,	/* Two of its buttons */
   *register_display,			/* The register display */
+  *registers_frame, 
   *registers[18],			/* Individual registers */
   *memory_map,				/* The memory map display */
   *memory_map_table,                    /* The table for the memory map */
@@ -333,7 +337,7 @@ static GtkWidget*
 get_pane( debugger_pane pane )
 {
   switch( pane ) {
-  case DEBUGGER_PANE_REGISTERS: return register_display;
+  case DEBUGGER_PANE_REGISTERS: return registers_frame;
   case DEBUGGER_PANE_MEMORYMAP: return memory_map;
   case DEBUGGER_PANE_BREAKPOINTS: return breakpoints;
   case DEBUGGER_PANE_DISASSEMBLY: return disassembly_box;
@@ -360,6 +364,14 @@ ui_debugger_deactivate( int interruptable )
   return 0;
 }
 
+static PangoFontDescription * monospaced_font() {
+  PangoFontDescription *font;
+  if ( gtkui_get_monospaced_font( &font ) ) {
+    return NULL;
+  }
+  return font;
+}
+
 static int
 create_dialog( void )
 {
@@ -369,7 +381,7 @@ create_dialog( void )
 
   PangoFontDescription *font;
 
-  error = gtkui_get_monospaced_font( &font ); if( error ) return error;
+  font = monospaced_font(); if( font == NULL ) return -1;
 
   dialog = gtkstock_dialog_new( "Fuse - Debugger",
 				G_CALLBACK( delete_dialog ) );
@@ -396,12 +408,12 @@ create_dialog( void )
   error = create_register_display( GTK_BOX( hbox2 ), font );
   if( error ) return error;
 
-  error = create_memory_map( GTK_BOX( hbox2 ) ); if( error ) return error;
+  error = create_memory_map( GTK_BOX( hbox2 ), font ); if( error ) return error;
 
-  create_breakpoints( GTK_BOX( vbox ) );
+  create_breakpoints( GTK_BOX( vbox ), font );
   create_disassembly( GTK_BOX( hbox ), font );
   create_stack_display( GTK_BOX( hbox ), font );
-  create_events( GTK_BOX( hbox ) );
+  create_events( GTK_BOX( hbox ), font );
 
   error = create_command_entry( GTK_BOX( content_area ), accel_group );
   if( error ) return error;
@@ -521,6 +533,9 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
 {
   size_t i;
 
+  registers_frame = gtk_frame_new( "Registers, flags, states..." );
+  gtk_box_pack_start( parent, registers_frame, TRUE, TRUE, 0 );
+
 #if GTK_CHECK_VERSION( 3, 0, 0 )
 
   register_display = gtk_grid_new();
@@ -533,7 +548,7 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
 
 #endif
 
-  gtk_box_pack_start( parent, register_display, FALSE, FALSE, 0 );
+  gtk_container_add( GTK_CONTAINER( registers_frame ), register_display );
 
   for( i = 0; i < 18; i++ ) {
     PangoAttrList *list;
@@ -561,8 +576,9 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
 }
 
 static int
-create_memory_map( GtkBox *parent )
+create_memory_map( GtkBox *parent, PangoFontDescription *font )
 {
+  size_t i, j;
   GtkWidget *label_address, *label_source, *label_writable, *label_contended;
   GtkWidget *search_label, *search_box, *search_offset, *vbox;
 
@@ -570,6 +586,9 @@ create_memory_map( GtkBox *parent )
   label_source    = gtk_label_new( "Source" );
   label_writable  = gtk_label_new( "W?" );
   label_contended = gtk_label_new( "C?" );
+
+  gtk_widget_set_tooltip_text( GTK_WIDGET( label_writable ), "Writable" ); 
+  gtk_widget_set_tooltip_text( GTK_WIDGET( label_contended ), "Contended" ); 
 
   vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
   gtk_box_pack_start( parent, vbox, TRUE, TRUE, 0 );
@@ -635,7 +654,7 @@ create_memory_map( GtkBox *parent )
 }
 
 static void
-create_breakpoints( GtkBox *parent )
+create_breakpoints( GtkBox *parent, PangoFontDescription *font )
 {
   size_t i;
 
@@ -648,10 +667,13 @@ create_breakpoints( GtkBox *parent )
   for( i = 0; i < BREAKPOINTS_COLUMN_COUNT; i++ ) {
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes( titles[i], renderer, "text", i, NULL );
+    g_object_set( G_OBJECT( renderer ), "font-desc", font, "height", 18, NULL );
     gtk_tree_view_append_column( GTK_TREE_VIEW( breakpoints ), column );
   }
 
   gtk_box_pack_start( parent, breakpoints, TRUE, TRUE, 0 );
+
+  g_signal_connect( G_OBJECT( breakpoints ), "row-activated", G_CALLBACK( breakpoints_activate ), NULL );
 }
 
 // command, foreground, background
@@ -810,7 +832,46 @@ stack_activate( GtkTreeView *tree_view, GtkTreePath *path,
 }
 
 static void
-create_events( GtkBox *parent )
+breakpoints_activate( GtkTreeView *tree_view, GtkTreePath *path,
+	        GtkTreeViewColumn *column GCC_UNUSED,
+		gpointer user_data GCC_UNUSED )
+{
+  GtkTreeIter it;
+  GtkTreeModel *model = gtk_tree_view_get_model( tree_view );
+
+  if( model && gtk_tree_model_get_iter( model, &it, path ) ) {
+    GValue value;
+    gchar *type, *address, *endptr;
+    int base_num, offset;
+
+    debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ];
+
+    bzero ( &value, sizeof (value) );
+    gtk_tree_model_get_value( model, &it, BREAKPOINTS_COLUMN_TYPE, &value );
+    type = g_value_dup_string( &value );
+    if ( type ) {
+      if ( strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ] ) == 0 ||
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_READ ] ) == 0 || 
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_WRITE ] ) == 0) {
+        bzero ( &value, sizeof (value) );
+        gtk_tree_model_get_value( model, &it, BREAKPOINTS_COLUMN_VALUE, &value );
+        address = g_value_dup_string( &value );
+        if ( address ) {
+          base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
+          offset = strtol( address, &endptr, base_num );
+          g_free( address );
+
+          ui_debugger_disassemble( offset );
+          ui_debugger_update();
+        }
+      }
+    }
+    g_free( type );
+  }
+}
+
+static void
+create_events( GtkBox *parent, PangoFontDescription *font )
 {
   static const gchar *const titles[] = { "Time", "Type" };
   size_t i;
@@ -823,6 +884,7 @@ create_events( GtkBox *parent )
   for( i = 0; i < EVENTS_COLUMN_COUNT; i++ ) {
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes( titles[i], renderer, "text", i, NULL );
+    g_object_set( G_OBJECT( renderer ), "font-desc", font, "height", 18, NULL );
     gtk_tree_view_append_column( GTK_TREE_VIEW( events ), column );
   }
 
@@ -1051,6 +1113,7 @@ update_memory_map( void )
   int source, page_num, writable, contended;
   libspectrum_word offset;
   size_t i, j, block, row;
+  PangoFontDescription *font;
 
   for( i = 0; i < MEMORY_PAGES_IN_64K; i++ ) {
     if( map_label[i][0] ) {
@@ -1064,6 +1127,8 @@ update_memory_map( void )
   source = page_num = writable = contended = -1;
   offset = 0;
   row = 0;
+
+  font = monospaced_font(); if( font == NULL ) return;
 
   for( block = 0; block < MEMORY_PAGES_IN_64K; block++ ) {
     memory_page *page = &memory_map_read[block];
@@ -1089,6 +1154,14 @@ update_memory_map( void )
       row_labels[3] = gtk_label_new( page->contended ? "Y" : "N" );
 
       for( i = 0; i < 4; i++ ) {
+        PangoAttrList *list;
+        PangoAttribute *attr;
+
+        list = pango_attr_list_new();
+        attr = pango_attr_font_desc_new( font );
+        pango_attr_list_insert( list, attr );
+        gtk_label_set_attributes( GTK_LABEL( row_labels[i] ), list );
+        pango_attr_list_unref( list );
 
 #if GTK_CHECK_VERSION( 3, 0, 0 )
         gtk_grid_attach( GTK_GRID( memory_map_table ), row_labels[i],
@@ -1112,6 +1185,8 @@ update_memory_map( void )
     /* We expect the next page to have an increased offset */
     offset += MEMORY_PAGE_SIZE;
   }
+
+  gtkui_free_font( font );
 
   gtk_widget_show_all( GTK_WIDGET( memory_map_table ) );
 }
