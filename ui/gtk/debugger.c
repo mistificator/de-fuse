@@ -113,6 +113,7 @@ static GtkCheckMenuItem* get_pane_menu_item( debugger_pane pane );
 static GtkWidget* get_pane( debugger_pane pane );
 static int create_menu_bar( GtkBox *parent, GtkAccelGroup **accel_group );
 static void toggle_display( GtkToggleAction* action, debugger_pane pane );
+static void toggle_colorize_disassembly( GtkToggleAction* action, gpointer data );
 static void toggle_display_registers( GtkToggleAction* action, gpointer data );
 static void toggle_display_memory_map( GtkToggleAction* action, gpointer data );
 static void toggle_display_breakpoints( GtkToggleAction* action,
@@ -167,7 +168,7 @@ static GtkWidget *dialog,		/* The debugger dialog box */
   *memory_map,				/* The memory map display */
   *memory_map_table,                    /* The table for the memory map */
   *map_label[MEMORY_PAGES_IN_64K][4],   /* Labels in the memory map */
-  *breakpoints,				/* The breakpoint display */
+  *breakpoints = NULL,				/* The breakpoint display */
   *disassembly_box,			/* A box to hold the disassembly */
   *disassembly,				/* The actual disassembly widget */
   *stack,				/* The stack display */
@@ -193,10 +194,15 @@ static int debugger_active;
 /* The UIManager used to create the menu bar */
 static GtkUIManager *ui_manager_debugger = NULL;
 
+static int colorize_disassembly = 1;
+
 /* The debugger's menu bar */
 const gchar debugger_menu[] =
 "<menubar name='DebuggerMenu'>"
 "  <menu name='View' action='VIEW'>"
+"    <menuitem name='Colorize disassembly' action='VIEW_COLORIZE_DISASSEMBLY'/>"  
+"  </menu>"
+"  <menu name='Window' action='WINDOW'>"
 "    <menuitem name='Registers' action='VIEW_REGISTERS'/>"
 "    <menuitem name='Memory Map' action='VIEW_MEMORY_MAP'/>"
 "    <menuitem name='Breakpoints' action='VIEW_BREAKPOINTS'/>"
@@ -208,13 +214,13 @@ const gchar debugger_menu[] =
 
 /* The debugger's menu actions */
 static GtkActionEntry menu_data[] = {
-
   { "VIEW", NULL, "_View", NULL, NULL, NULL },
-
+  { "WINDOW", NULL, "_Window", NULL, NULL, NULL },
 };
 
 static GtkToggleActionEntry menu_toggles[] = {
 
+  { "VIEW_COLORIZE_DISASSEMBLY", NULL, "_Colorize disassembly", NULL, NULL, G_CALLBACK( toggle_colorize_disassembly ), TRUE },
   { "VIEW_REGISTERS", NULL, "_Registers", NULL, NULL, G_CALLBACK( toggle_display_registers ), TRUE },
   { "VIEW_MEMORY_MAP", NULL, "_Memory Map", NULL, NULL, G_CALLBACK( toggle_display_memory_map ), TRUE },
   { "VIEW_BREAKPOINTS", NULL, "_Breakpoints", NULL, NULL, G_CALLBACK( toggle_display_breakpoints ), TRUE },
@@ -259,7 +265,8 @@ ui_debugger_activate( void )
 void
 ui_breakpoints_updated( void )
 {
-  /* TODO: Refresh debugger list here */
+  if ( breakpoints == NULL ) return;
+  update_breakpoints();
 }
 
 static int
@@ -291,12 +298,12 @@ get_pane_menu_item( debugger_pane pane )
   path = NULL;
 
   switch( pane ) {
-  case DEBUGGER_PANE_REGISTERS: path = "/View/Registers"; break;
-  case DEBUGGER_PANE_MEMORYMAP: path = "/View/Memory Map"; break;
-  case DEBUGGER_PANE_BREAKPOINTS: path = "/View/Breakpoints"; break;
-  case DEBUGGER_PANE_DISASSEMBLY: path = "/View/Disassembly"; break;
-  case DEBUGGER_PANE_STACK: path = "/View/Stack"; break;
-  case DEBUGGER_PANE_EVENTS: path = "/View/Events"; break;
+  case DEBUGGER_PANE_REGISTERS: path = "/Window/Registers"; break;
+  case DEBUGGER_PANE_MEMORYMAP: path = "/Window/Memory Map"; break;
+  case DEBUGGER_PANE_BREAKPOINTS: path = "/Window/Breakpoints"; break;
+  case DEBUGGER_PANE_DISASSEMBLY: path = "/Window/Disassembly"; break;
+  case DEBUGGER_PANE_STACK: path = "/Window/Stack"; break;
+  case DEBUGGER_PANE_EVENTS: path = "/Window/Events"; break;
 
   case DEBUGGER_PANE_END: break;
   }
@@ -464,6 +471,13 @@ toggle_display( GtkToggleAction* action, debugger_pane pane_id )
 }
 
 static void
+toggle_colorize_disassembly( GtkToggleAction* action, gpointer data GCC_UNUSED )
+{
+  colorize_disassembly = gtk_toggle_action_get_active( action );
+  update_disassembly();
+}
+
+static void
 toggle_display_registers( GtkToggleAction* action, gpointer data GCC_UNUSED )
 {
   toggle_display( action, DEBUGGER_PANE_REGISTERS );
@@ -608,6 +622,61 @@ create_breakpoints( GtkBox *parent )
   gtk_box_pack_start( parent, breakpoints, TRUE, TRUE, 0 );
 }
 
+// command, foreground, background
+const char * disassembly_color_table[] = {
+  "JP",   "Brown",        "",
+  "JR",   "Dark Orange",  "",
+  "CALL", "Blue",         "",
+  "DJNZ", "Dark Cyan",    "",
+  "NOP",  "Light Gray",   "",
+  "RET",  "Green",        "",
+  "CP",   "Dark Magenta", "",
+  "RST",  "Red",          "Black",
+  "OUT",  "Light Green",  "Black",
+  "IN ",  "Yellow",       "Black",
+  "HALT", "Pink",         "Black",
+  "DI",   "White",        "Pink",
+  "EI",   "White",        "Pink",
+  "EX",   "White",        "Dark Blue",
+  "IM",   "White",        "Dark Greem",
+  ""
+};
+
+void
+disassembly_cell_data( GtkTreeViewColumn *col,
+                        GtkCellRenderer   *renderer,
+                        GtkTreeModel      *model,
+                        GtkTreeIter       *iter,
+                        gpointer           user_data )
+{
+  GValue value;
+  gchar * instr;
+  int offset;
+
+  g_object_set( renderer, "foreground-set", FALSE, NULL ); 
+  g_object_set( renderer, "background-set", FALSE, NULL ); 
+
+  if ( colorize_disassembly > 0 ) {
+
+    bzero ( &value, sizeof (value) );
+    gtk_tree_model_get_value( model, iter, DISASSEMBLY_COLUMN_INSTRUCTION, &value );
+    instr = g_value_dup_string( &value );
+
+    offset = 0;
+    while ( strlen( disassembly_color_table[offset] ) > 0 )
+    {
+      if ( strncmp( instr, disassembly_color_table[offset], strlen(disassembly_color_table[offset] ) ) == 0 ) {
+        if ( strlen( disassembly_color_table[offset + 1] ) > 0 ) g_object_set( renderer, "foreground", disassembly_color_table[offset + 1], "foreground-set", TRUE, NULL );
+        if ( strlen( disassembly_color_table[offset + 2] ) > 0 ) g_object_set( renderer, "background", disassembly_color_table[offset + 2], "background-set", TRUE, NULL );
+      }    
+      offset = offset + 3;
+    }
+
+    g_free( instr );
+
+  }
+}
+
 static void
 create_disassembly( GtkBox *parent, PangoFontDescription *font )
 {
@@ -630,6 +699,10 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes( titles[i], renderer, "text", i, NULL );
     g_object_set( G_OBJECT( renderer ), "font-desc", font, "height", 18, NULL );
+
+    /* connect a cell data function */
+    gtk_tree_view_column_set_cell_data_func(column, renderer, disassembly_cell_data, NULL, NULL);
+        
     gtk_tree_view_append_column( GTK_TREE_VIEW( disassembly ), column );
   }
 
