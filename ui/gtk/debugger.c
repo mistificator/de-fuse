@@ -151,6 +151,9 @@ disassembly_wheel_scroll( GtkTreeView *list GCC_UNUSED, GdkEvent *event,
                           gpointer user_data );
 
 static void move_disassembly( GtkAdjustment *adjustment, gpointer user_data );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+static void debugger_goto_offset( GtkWidget *widget, gpointer user_data );
+#endif
 
 static void evaluate_command( GtkWidget *widget, gpointer user_data );
 static void gtkui_debugger_done_step( GtkWidget *widget, gpointer user_data );
@@ -561,14 +564,18 @@ static int
 create_memory_map( GtkBox *parent )
 {
   GtkWidget *label_address, *label_source, *label_writable, *label_contended;
+  GtkWidget *search_label, *search_box, *search_offset, *vbox;
 
   label_address   = gtk_label_new( "Address" );
   label_source    = gtk_label_new( "Source" );
   label_writable  = gtk_label_new( "W?" );
   label_contended = gtk_label_new( "C?" );
 
+  vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+  gtk_box_pack_start( parent, vbox, TRUE, TRUE, 0 );
+
   memory_map = gtk_frame_new( "Memory Map" );
-  gtk_box_pack_start( parent, memory_map, FALSE, FALSE, 0 );
+  gtk_box_pack_start( GTK_BOX( vbox ), memory_map, TRUE, TRUE, 0 );
 
 #if GTK_CHECK_VERSION( 3, 0, 0 )
 
@@ -582,6 +589,31 @@ create_memory_map( GtkBox *parent )
   gtk_grid_attach( GTK_GRID( memory_map_table ), label_source, 1, 0, 1, 1 );
   gtk_grid_attach( GTK_GRID( memory_map_table ), label_writable, 2, 0, 1, 1 );
   gtk_grid_attach( GTK_GRID( memory_map_table ), label_contended, 3, 0, 1, 1 );
+
+  /* Go to offset */
+  search_box = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 8 );
+#if GTK_CHECK_VERSION( 3, 6, 0 )
+  search_offset = gtk_search_entry_new();
+#else
+  search_offset = gtk_entry_new();
+#endif
+
+  /*
+   * Entry is max 6 chars wide ("0xXXXX") but the GTK widget adds
+   * a search icon and "clear contents" icon, which between them
+   * take up about 6 char's widths. So it needs to be wider.
+   */
+  gtk_entry_set_width_chars( GTK_ENTRY( search_offset ), 15 );
+  gtk_entry_set_max_length( GTK_ENTRY( search_offset ), 6 );
+  gtk_box_pack_end( GTK_BOX( search_box ), search_offset, FALSE, FALSE, 0 );
+
+  search_label = gtk_label_new( "Go to offset" );
+  gtk_box_pack_end( GTK_BOX( search_box ), search_label, FALSE, FALSE, 0 );
+
+  gtk_box_pack_start( GTK_BOX( vbox ), search_box, FALSE, FALSE, 8 );
+
+  g_signal_connect( G_OBJECT( search_offset ), "activate",
+                    G_CALLBACK( debugger_goto_offset ), NULL );
 
 #else                /* #if GTK_CHECK_VERSION( 3, 0, 0 ) */
 
@@ -846,9 +878,11 @@ create_command_entry( GtkBox *parent, GtkAccelGroup *accel_group )
   gtk_box_pack_start( GTK_BOX( hbox ), eval_button, FALSE, FALSE, 0 );
 
   /* Return is equivalent to clicking on 'evaluate' */
+  // conflicts with "Go to offset"
+#if 0  
   gtk_widget_add_accelerator( eval_button, "clicked", accel_group,
 			      GDK_KEY_Return, 0, 0 );
-
+#endif
   return 0;
 }
 
@@ -1421,6 +1455,36 @@ disassembly_wheel_scroll( GtkTreeView *list GCC_UNUSED, GdkEvent *event,
 
   return FALSE;
 }
+
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+static void
+debugger_goto_offset( GtkWidget *widget, gpointer user_data GCC_UNUSED )
+{
+  long offset;
+  const gchar *entry;
+  char *endptr;
+  int base_num;
+
+  if( gtk_entry_get_text_length( GTK_ENTRY( widget ) ) == 0 ) {
+    ui_debugger_disassemble( PC );  
+    return;
+  }
+
+  /* Parse address */
+  entry = gtk_entry_get_text( GTK_ENTRY( widget ) );
+  errno = 0;
+  base_num = ( g_str_has_prefix( entry, "0x" ) )? 16 : 10;
+  offset = strtol( entry, &endptr, base_num );
+
+  /* Validate address */
+  if( errno || offset < 0 || offset > 65535 || endptr == entry ||
+      *endptr != '\0' ) {
+    return;
+  }
+
+  ui_debugger_disassemble( offset );  
+}
+#endif
 
 /* Evaluate the command currently in the entry box */
 static void
