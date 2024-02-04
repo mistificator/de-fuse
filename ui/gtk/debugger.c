@@ -3,6 +3,7 @@
    Copyright (c) 2013 Sergio Baldoví
    Copyright (c) 2015 Stuart Brady
    Copyright (c) 2016 BogDan Vatra
+   Copyright (c) 2024 M.P.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -733,6 +734,83 @@ disassembly_cell_data( GtkTreeViewColumn *col,
   }
 }
 
+static void disassembly_popup_menu_breakpoint( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  int cursor_row;
+  GtkTreePath * path;
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( disassembly ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &disassembly_model,
+    &iter
+  ) ) {
+
+    GValue value;
+    gchar *type, *address, *endptr;
+    int base_num, offset;
+
+    bzero ( &value, sizeof ( value ) );
+    gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_ADDRESS, &value );
+    address = g_value_dup_string( &value );
+    if ( address ) {
+      base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
+      offset = strtol( address, &endptr, base_num );
+      g_free( address );
+
+      debugger_breakpoint_add_address(
+        DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, offset, 0,
+        DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
+      );
+
+      update_disassembly();
+    }
+  }
+}
+
+static gboolean
+disassembly_popup_menu (
+  GtkWidget* widget,
+  GdkEventButton * event,
+  gpointer user_data GCC_UNUSED
+)  {
+  const int RIGHT_CLICK = 3;
+  if (event->button != RIGHT_CLICK) return FALSE;
+
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( widget ) );
+
+  /* Note: gtk_tree_selection_count_selected_rows() does not
+    *   exist in gtk+-2.0, only in gtk+ >= v2.2 ! */
+  if (gtk_tree_selection_count_selected_rows( selection )  <= 1) {
+      GtkTreePath *path;
+
+      /* Get tree path for row that was clicked */
+      if (gtk_tree_view_get_path_at_pos( GTK_TREE_VIEW( widget ),
+                                        event->x, event->y,
+                                        &path, NULL, NULL, NULL ) ) {
+        gtk_tree_selection_unselect_all( selection) ;
+        gtk_tree_selection_select_path( selection, path );
+        gtk_tree_path_free( path );
+      }
+  }    
+
+  GtkWidget *menu, *menuitem;
+  menu = gtk_menu_new();
+
+  menuitem = gtk_menu_item_new_with_label("Set breakpoint");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_breakpoint ), widget );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  gtk_widget_show_all( menu );
+  gtk_menu_popup( GTK_MENU( menu ), NULL, NULL, NULL, NULL, event->button, gdk_event_get_time( ( GdkEvent* )event ) );
+
+  return TRUE;
+}
+
 static void
 create_disassembly( GtkBox *parent, PangoFontDescription *font )
 {
@@ -783,6 +861,8 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
   g_signal_connect( GTK_TREE_VIEW( disassembly ), "scroll-event",
                     G_CALLBACK( disassembly_wheel_scroll ),
                     disassembly_scrollbar_adjustment );
+
+   g_signal_connect( GTK_TREE_VIEW( disassembly ), "button-press-event", G_CALLBACK( disassembly_popup_menu ), NULL );
 }
 
 static void
@@ -825,7 +905,7 @@ stack_activate( GtkTreeView *tree_view, GtkTreePath *path,
 
     error = debugger_breakpoint_add_address(
       DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, address, 0,
-      DEBUGGER_BREAKPOINT_LIFE_ONESHOT, NULL
+      DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
     );
     if( error ) return;
 
@@ -909,7 +989,7 @@ events_activate( GtkTreeView *tree_view, GtkTreePath *path,
 
     error = debugger_breakpoint_add_time(
       DEBUGGER_BREAKPOINT_TYPE_TIME, event_tstates, 0,
-      DEBUGGER_BREAKPOINT_LIFE_ONESHOT, NULL
+      DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
     );
     if( error ) return;
 
