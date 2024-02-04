@@ -116,6 +116,7 @@ static int hide_hidden_panes( void );
 static GtkCheckMenuItem* get_pane_menu_item( debugger_pane pane );
 static GtkWidget* get_pane( debugger_pane pane );
 static int create_menu_bar( GtkBox *parent, GtkAccelGroup **accel_group );
+static void do_selection( GtkWidget* widget, GdkEventButton *event );
 static void toggle_display( GtkToggleAction* action, debugger_pane pane );
 static void toggle_colorize_disassembly( GtkToggleAction* action, gpointer data );
 static void toggle_display_registers( GtkToggleAction* action, gpointer data );
@@ -171,7 +172,7 @@ static gboolean delete_dialog( GtkWidget *widget, GdkEvent *event,
 static void gtkui_debugger_done_close( GtkWidget *widget, gpointer user_data );
 
 static GtkWidget *dialog,		/* The debugger dialog box */
-  *continue_button, *break_button,	/* Two of its buttons */
+  *step_button, *continue_button, *break_button,	/* buttons */
   *register_display,			/* The register display */
   *registers_frame, 
   *registers[18],			/* Individual registers */
@@ -656,6 +657,54 @@ create_memory_map( GtkBox *parent, PangoFontDescription *font )
   return 0;
 }
 
+static void breakpoints_popup_menu_delete( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( breakpoints ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &breakpoints_model,
+    &iter
+  ) ) {
+
+    int id;
+    gtk_tree_model_get( breakpoints_model, &iter, BREAKPOINTS_COLUMN_ID, &id, -1 );
+
+    if ( id > 0 ) {
+      char cmd[40];
+      snprintf( cmd, sizeof( cmd ), "del %i", id );
+      debugger_command_evaluate( cmd );
+    }
+
+    update_disassembly();
+  }
+}
+
+static gboolean breakpoints_popup_menu (
+  GtkWidget* widget,
+  GdkEventButton *event,
+  gpointer user_data GCC_UNUSED
+)  {
+  const int RIGHT_CLICK = 3;
+  if (event->button != RIGHT_CLICK) return FALSE;
+
+  do_selection( widget, event );
+
+  GtkWidget *menu, *menuitem;
+  menu = gtk_menu_new();
+
+  menuitem = gtk_menu_item_new_with_label("Delete breakpoint");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( breakpoints_popup_menu_delete ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  gtk_widget_show_all( menu );
+  gtk_menu_popup( GTK_MENU( menu ), NULL, NULL, NULL, NULL, event->button, gdk_event_get_time( ( GdkEvent* )event ) );
+
+  return TRUE;
+}
+
 static void
 create_breakpoints( GtkBox *parent, PangoFontDescription *font )
 {
@@ -677,6 +726,8 @@ create_breakpoints( GtkBox *parent, PangoFontDescription *font )
   gtk_box_pack_start( parent, breakpoints, TRUE, TRUE, 0 );
 
   g_signal_connect( G_OBJECT( breakpoints ), "row-activated", G_CALLBACK( breakpoints_activate ), NULL );
+
+  g_signal_connect( GTK_TREE_VIEW( breakpoints ), "button-press-event", G_CALLBACK( breakpoints_popup_menu ), NULL );
 }
 
 // command, foreground, background
@@ -735,8 +786,6 @@ disassembly_cell_data( GtkTreeViewColumn *col,
 }
 
 static void disassembly_popup_menu_breakpoint( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
-  int cursor_row;
-  GtkTreePath * path;
   GtkTreeIter iter;
   GtkTreeSelection *selection;
 
@@ -749,36 +798,106 @@ static void disassembly_popup_menu_breakpoint( GtkWidget *menuitem GCC_UNUSED, g
   ) ) {
 
     GValue value;
-    gchar *type, *address, *endptr;
-    int base_num, offset;
+    gchar *str, *endptr;
+    int base_num, offset, id;
 
     bzero ( &value, sizeof ( value ) );
-    gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_ADDRESS, &value );
-    address = g_value_dup_string( &value );
-    if ( address ) {
-      base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
-      offset = strtol( address, &endptr, base_num );
-      g_free( address );
+    gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_BREAKPOINT, &value );
+    str = g_value_dup_string( &value );
+    id = strtol( str, &endptr, base_num );
+    g_free( str );
 
-      debugger_breakpoint_add_address(
-        DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, offset, 0,
-        DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
-      );
+    if ( id == 0 ) {
+      bzero ( &value, sizeof ( value ) );
+      gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_ADDRESS, &value );
+      str = g_value_dup_string( &value );
+      if ( str ) {
+        base_num = ( g_str_has_prefix( str, "0x" ) )? 16 : 10;
+        offset = strtol( str, &endptr, base_num );
+        g_free( str );
 
-      update_disassembly();
+        debugger_breakpoint_add_address(
+          DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, offset, 0,
+          DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
+        );
+      }
+    } else if ( id > 0 ) {
+      char cmd[40];
+      snprintf( cmd, sizeof( cmd ), "del %i", id );
+      debugger_command_evaluate( cmd );
+    }
+
+    update_disassembly();
+  }
+}
+
+static void disassembly_popup_menu_goto_pc( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  ui_debugger_disassemble( PC ); 
+}
+
+static void disassembly_popup_menu_goto_instr_addr( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( disassembly ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &disassembly_model,
+    &iter
+  ) ) {
+
+    GValue value;
+    gchar *str, *endptr, *addr_substr;
+    int addr;
+
+    bzero ( &value, sizeof ( value ) );
+    gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_INSTRUCTION, &value );
+    str = g_value_dup_string( &value );
+    if ( str ) {
+      addr_substr = strstr(str, ",");
+      if ( addr_substr ) {
+        if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' ) {
+          addr_substr = 0;
+        }
+      }
+      if ( addr_substr == 0 || addr_substr[1] == '(' ) {
+        addr_substr = strstr(str, "(");
+        if ( addr_substr )
+        {
+          if ( addr_substr[5] != ')' ) {
+            addr_substr = 0;
+            g_free( str );
+            return;
+          }
+        }
+      }
+      if ( addr_substr == 0 ) {
+        addr_substr = strstr(str, " ");
+        if ( addr_substr ) {
+          if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' || addr_substr[2] == ',' || addr_substr[3] == ',' ) {
+            if ( ! ( toupper( str[0] ) == 'R' && toupper( str[1] ) == 'S' && toupper( str[2] ) == 'T' ) ) {
+              addr_substr = 0;
+              g_free( str );
+              return;
+            }
+          }
+        }
+      }
+      if ( addr_substr ) {
+        addr_substr++;
+        addr_substr[4] = 0;
+        addr = strtol( addr_substr, &endptr, 16 );
+        if ( addr >= 0 && addr < 65536 ) {
+          ui_debugger_disassemble( addr ); 
+        }
+      }
+      g_free( str );
     }
   }
 }
 
-static gboolean
-disassembly_popup_menu (
-  GtkWidget* widget,
-  GdkEventButton * event,
-  gpointer user_data GCC_UNUSED
-)  {
-  const int RIGHT_CLICK = 3;
-  if (event->button != RIGHT_CLICK) return FALSE;
-
+static void do_selection( GtkWidget* widget, GdkEventButton *event ) {
   GtkTreeSelection *selection;
 
   selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( widget ) );
@@ -796,13 +915,32 @@ disassembly_popup_menu (
         gtk_tree_selection_select_path( selection, path );
         gtk_tree_path_free( path );
       }
-  }    
+  }      
+}
+
+static gboolean disassembly_popup_menu (
+  GtkWidget* widget,
+  GdkEventButton *event,
+  gpointer user_data GCC_UNUSED
+)  {
+  const int RIGHT_CLICK = 3;
+  if (event->button != RIGHT_CLICK) return FALSE;
+
+  do_selection( widget, event );
 
   GtkWidget *menu, *menuitem;
   menu = gtk_menu_new();
 
-  menuitem = gtk_menu_item_new_with_label("Set breakpoint");
-  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_breakpoint ), widget );
+  menuitem = gtk_menu_item_new_with_label("Toggle breakpoint");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_breakpoint ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  menuitem = gtk_menu_item_new_with_label("Go to address in instruction");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_goto_instr_addr ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  menuitem = gtk_menu_item_new_with_label("Go to current program counter (PC)");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_goto_pc ), NULL );
   gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
 
   gtk_widget_show_all( menu );
@@ -1019,6 +1157,9 @@ create_command_entry( GtkBox *parent, GtkAccelGroup *accel_group )
 			    G_OBJECT( entry ) );
   gtk_box_pack_start( GTK_BOX( hbox ), eval_button, FALSE, FALSE, 0 );
 
+  gtk_button_set_always_show_image( eval_button, TRUE );
+  gtk_button_set_image ( eval_button, gtk_image_new_from_stock( "gtk-execute", 1 ) );
+
   /* Return is equivalent to clicking on 'evaluate' */
   // conflicts with "Go to offset"
 #if 0  
@@ -1037,13 +1178,21 @@ create_buttons( GtkDialog *parent, GtkAccelGroup *accel_group )
     brk   = { "Break", G_CALLBACK( gtkui_debugger_break ), NULL, NULL, 0, 0, 0, 0, GTK_RESPONSE_NONE };
 
   /* Create the action buttons for the dialog box */
-  gtkstock_create_button( GTK_WIDGET( parent ), accel_group, &step );
+  step_button = gtkstock_create_button( GTK_WIDGET( parent ), accel_group, &step );
   continue_button = gtkstock_create_button( GTK_WIDGET( parent ), accel_group,
 					    &cont );
   break_button = gtkstock_create_button( GTK_WIDGET( parent ), accel_group,
 					 &brk );
   gtkstock_create_close( GTK_WIDGET( parent ), accel_group,
 			 G_CALLBACK( gtkui_debugger_done_close ), TRUE );
+
+  gtk_button_set_always_show_image( step_button, TRUE );
+  gtk_button_set_always_show_image( continue_button, TRUE );
+  gtk_button_set_always_show_image( break_button, TRUE );
+
+  gtk_button_set_image ( step_button, gtk_image_new_from_stock( "gtk-media-next", 1 ) );
+  gtk_button_set_image ( continue_button, gtk_image_new_from_stock( "gtk-media-play", 1 ) );
+  gtk_button_set_image ( break_button, gtk_image_new_from_stock( "gtk-media-pause", 1 ) );
 
   return 0;
 }
