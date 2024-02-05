@@ -131,6 +131,8 @@ static int create_register_display( GtkBox *parent, PangoFontDescription *font )
 static int create_memory_map( GtkBox *parent, PangoFontDescription *font );
 static void create_breakpoints( GtkBox *parent, PangoFontDescription *font );
 static void create_disassembly( GtkBox *parent, PangoFontDescription *font );
+static void disassembly_activate( GtkTreeView *tree_view, GtkTreePath *path,
+			    GtkTreeViewColumn *column, gpointer user_data );
 static void create_stack_display( GtkBox *parent, PangoFontDescription *font );
 static void stack_activate( GtkTreeView *tree_view, GtkTreePath *path,
 			    GtkTreeViewColumn *column, gpointer user_data );
@@ -560,6 +562,7 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
     PangoAttribute *attr;
 
     registers[i] = gtk_label_new( "" );
+    gtk_label_set_selectable( registers[i], TRUE );
 
     list = pango_attr_list_new();
     attr = pango_attr_font_desc_new( font );
@@ -657,6 +660,39 @@ create_memory_map( GtkBox *parent, PangoFontDescription *font )
   return 0;
 }
 
+static void breakpoints_popup_menu_offset( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( breakpoints ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &breakpoints_model,
+    &iter
+  ) ) {
+
+    GValue value;
+    gchar *address, *endptr;
+    int base_num, offset;
+
+    bzero ( &value, sizeof (value) );
+    gtk_tree_model_get_value( breakpoints_model, &iter, BREAKPOINTS_COLUMN_VALUE, &value );
+    address = g_value_dup_string( &value );
+    if ( address ) {
+      base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
+      offset = strtol( address, &endptr, base_num );
+      g_free( address );
+
+      ui_debugger_disassemble( offset );
+      ui_debugger_update();
+
+    }
+  }
+
+}
+
 static void breakpoints_popup_menu_delete( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
   GtkTreeIter iter;
   GtkTreeSelection *selection;
@@ -682,6 +718,13 @@ static void breakpoints_popup_menu_delete( GtkWidget *menuitem GCC_UNUSED, gpoin
   }
 }
 
+static void breakpoints_popup_menu_delete_all( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+
+  debugger_command_evaluate( "del" );
+  update_disassembly();
+
+}
+
 static gboolean breakpoints_popup_menu (
   GtkWidget* widget,
   GdkEventButton *event,
@@ -695,8 +738,16 @@ static gboolean breakpoints_popup_menu (
   GtkWidget *menu, *menuitem;
   menu = gtk_menu_new();
 
+  menuitem = gtk_menu_item_new_with_label("Go to offset");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( breakpoints_popup_menu_offset ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
   menuitem = gtk_menu_item_new_with_label("Delete breakpoint");
   g_signal_connect( menuitem, "activate", G_CALLBACK( breakpoints_popup_menu_delete ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  menuitem = gtk_menu_item_new_with_label("Delete all breakpoints");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( breakpoints_popup_menu_delete_all ), NULL );
   gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
 
   gtk_widget_show_all( menu );
@@ -785,6 +836,40 @@ disassembly_cell_data( GtkTreeViewColumn *col,
   }
 }
 
+static void disassembly_toggle_breakpoint( GtkTreeIter * iter ) {
+  GValue value;
+  gchar *str, *endptr;
+  int base_num, offset, id;
+
+  bzero ( &value, sizeof ( value ) );
+  gtk_tree_model_get_value( disassembly_model, iter, DISASSEMBLY_COLUMN_BREAKPOINT, &value );
+  str = g_value_dup_string( &value );
+  id = strtol( str, &endptr, base_num );
+  g_free( str );
+
+  if ( id == 0 ) {
+    bzero ( &value, sizeof ( value ) );
+    gtk_tree_model_get_value( disassembly_model, iter, DISASSEMBLY_COLUMN_ADDRESS, &value );
+    str = g_value_dup_string( &value );
+    if ( str ) {
+      base_num = ( g_str_has_prefix( str, "0x" ) )? 16 : 10;
+      offset = strtol( str, &endptr, base_num );
+      g_free( str );
+
+      debugger_breakpoint_add_address(
+        DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, offset, 0,
+        DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
+      );
+    }
+  } else if ( id > 0 ) {
+    char cmd[40];
+    snprintf( cmd, sizeof( cmd ), "del %i", id );
+    debugger_command_evaluate( cmd );
+  }
+
+  update_disassembly();
+}
+
 static void disassembly_popup_menu_breakpoint( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
   GtkTreeIter iter;
   GtkTreeSelection *selection;
@@ -797,37 +882,8 @@ static void disassembly_popup_menu_breakpoint( GtkWidget *menuitem GCC_UNUSED, g
     &iter
   ) ) {
 
-    GValue value;
-    gchar *str, *endptr;
-    int base_num, offset, id;
+    disassembly_toggle_breakpoint( &iter );
 
-    bzero ( &value, sizeof ( value ) );
-    gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_BREAKPOINT, &value );
-    str = g_value_dup_string( &value );
-    id = strtol( str, &endptr, base_num );
-    g_free( str );
-
-    if ( id == 0 ) {
-      bzero ( &value, sizeof ( value ) );
-      gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_ADDRESS, &value );
-      str = g_value_dup_string( &value );
-      if ( str ) {
-        base_num = ( g_str_has_prefix( str, "0x" ) )? 16 : 10;
-        offset = strtol( str, &endptr, base_num );
-        g_free( str );
-
-        debugger_breakpoint_add_address(
-          DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, offset, 0,
-          DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
-        );
-      }
-    } else if ( id > 0 ) {
-      char cmd[40];
-      snprintf( cmd, sizeof( cmd ), "del %i", id );
-      debugger_command_evaluate( cmd );
-    }
-
-    update_disassembly();
   }
 }
 
@@ -935,7 +991,7 @@ static gboolean disassembly_popup_menu (
   g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_breakpoint ), NULL );
   gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
 
-  menuitem = gtk_menu_item_new_with_label("Go to address in instruction");
+  menuitem = gtk_menu_item_new_with_label("Go to offset in instruction");
   g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_goto_instr_addr ), NULL );
   gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
 
@@ -1000,7 +1056,21 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
                     G_CALLBACK( disassembly_wheel_scroll ),
                     disassembly_scrollbar_adjustment );
 
-   g_signal_connect( GTK_TREE_VIEW( disassembly ), "button-press-event", G_CALLBACK( disassembly_popup_menu ), NULL );
+  g_signal_connect( GTK_TREE_VIEW( disassembly ), "button-press-event", G_CALLBACK( disassembly_popup_menu ), NULL );
+
+  g_signal_connect( G_OBJECT( disassembly ), "row-activated", G_CALLBACK( disassembly_activate ), NULL );
+}
+
+static void disassembly_activate( GtkTreeView *tree_view, GtkTreePath *path,
+			    GtkTreeViewColumn *column, gpointer user_data ) {
+  GtkTreeIter iter;
+  GtkTreeModel *model = gtk_tree_view_get_model( tree_view );
+
+  if( model && gtk_tree_model_get_iter( model, &iter, path ) ) {
+
+    disassembly_toggle_breakpoint( &iter );
+
+  }
 }
 
 static void
@@ -1047,7 +1117,8 @@ stack_activate( GtkTreeView *tree_view, GtkTreePath *path,
     );
     if( error ) return;
 
-    debugger_run();
+  update_disassembly();
+//    debugger_run();
   }
 }
 
@@ -1131,7 +1202,7 @@ events_activate( GtkTreeView *tree_view, GtkTreePath *path,
     );
     if( error ) return;
 
-    debugger_run();
+ //    debugger_run();
   }
 }
 
