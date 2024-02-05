@@ -673,13 +673,10 @@ static void breakpoints_popup_menu_offset( GtkWidget *menuitem GCC_UNUSED, gpoin
     &iter
   ) ) {
 
-    GValue value;
     gchar *address, *endptr;
     int base_num, offset;
 
-    bzero ( &value, sizeof (value) );
-    gtk_tree_model_get_value( breakpoints_model, &iter, BREAKPOINTS_COLUMN_VALUE, &value );
-    address = g_value_dup_string( &value );
+    gtk_tree_model_get( breakpoints_model, &iter, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
     if ( address ) {
       base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
       offset = strtol( address, &endptr, base_num );
@@ -808,7 +805,6 @@ disassembly_cell_data( GtkTreeViewColumn *col,
                         GtkTreeIter       *iter,
                         gpointer           user_data )
 {
-  GValue value;
   gchar * instr;
   int offset;
 
@@ -817,9 +813,7 @@ disassembly_cell_data( GtkTreeViewColumn *col,
 
   if ( colorize_disassembly > 0 ) {
 
-    bzero ( &value, sizeof (value) );
-    gtk_tree_model_get_value( model, iter, DISASSEMBLY_COLUMN_INSTRUCTION, &value );
-    instr = g_value_dup_string( &value );
+    gtk_tree_model_get( model, iter, DISASSEMBLY_COLUMN_INSTRUCTION, &instr, -1 );
 
     offset = 0;
     while ( strlen( disassembly_color_table[offset] ) > 0 )
@@ -837,20 +831,15 @@ disassembly_cell_data( GtkTreeViewColumn *col,
 }
 
 static void disassembly_toggle_breakpoint( GtkTreeIter * iter ) {
-  GValue value;
   gchar *str, *endptr;
   int base_num, offset, id;
 
-  bzero ( &value, sizeof ( value ) );
-  gtk_tree_model_get_value( disassembly_model, iter, DISASSEMBLY_COLUMN_BREAKPOINT, &value );
-  str = g_value_dup_string( &value );
+  gtk_tree_model_get( disassembly_model, iter, DISASSEMBLY_COLUMN_BREAKPOINT, &str, -1 );
   id = strtol( str, &endptr, base_num );
   g_free( str );
 
   if ( id == 0 ) {
-    bzero ( &value, sizeof ( value ) );
-    gtk_tree_model_get_value( disassembly_model, iter, DISASSEMBLY_COLUMN_ADDRESS, &value );
-    str = g_value_dup_string( &value );
+    gtk_tree_model_get( disassembly_model, iter, DISASSEMBLY_COLUMN_ADDRESS, &str, -1 );
     if ( str ) {
       base_num = ( g_str_has_prefix( str, "0x" ) )? 16 : 10;
       offset = strtol( str, &endptr, base_num );
@@ -903,13 +892,10 @@ static void disassembly_popup_menu_goto_instr_addr( GtkWidget *menuitem GCC_UNUS
     &iter
   ) ) {
 
-    GValue value;
     gchar *str, *endptr, *addr_substr;
     int addr;
 
-    bzero ( &value, sizeof ( value ) );
-    gtk_tree_model_get_value( disassembly_model, &iter, DISASSEMBLY_COLUMN_INSTRUCTION, &value );
-    str = g_value_dup_string( &value );
+    gtk_tree_model_get( disassembly_model, &iter, DISASSEMBLY_COLUMN_INSTRUCTION, &str, -1 );
     if ( str ) {
       addr_substr = strstr(str, ",");
       if ( addr_substr ) {
@@ -1131,20 +1117,15 @@ breakpoints_activate( GtkTreeView *tree_view, GtkTreePath *path,
   GtkTreeModel *model = gtk_tree_view_get_model( tree_view );
 
   if( model && gtk_tree_model_get_iter( model, &it, path ) ) {
-    GValue value;
     gchar *type, *address, *endptr;
     int base_num, offset;
 
-    bzero ( &value, sizeof (value) );
-    gtk_tree_model_get_value( model, &it, BREAKPOINTS_COLUMN_TYPE, &value );
-    type = g_value_dup_string( &value );
+    gtk_tree_model_get( model, &it, BREAKPOINTS_COLUMN_TYPE, &type, -1 );
     if ( type ) {
       if ( strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ] ) == 0 ||
           strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_READ ] ) == 0 || 
           strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_WRITE ] ) == 0) {
-        bzero ( &value, sizeof (value) );
-        gtk_tree_model_get_value( model, &it, BREAKPOINTS_COLUMN_VALUE, &value );
-        address = g_value_dup_string( &value );
+        gtk_tree_model_get( model, &it, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
         if ( address ) {
           base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
           offset = strtol( address, &endptr, base_num );
