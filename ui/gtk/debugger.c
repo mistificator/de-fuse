@@ -673,18 +673,23 @@ static void breakpoints_popup_menu_offset( GtkWidget *menuitem GCC_UNUSED, gpoin
     &iter
   ) ) {
 
-    gchar *address, *endptr;
+    gchar *type, *address, *endptr;
     int base_num, offset;
 
-    gtk_tree_model_get( breakpoints_model, &iter, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
-    if ( address ) {
-      base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
-      offset = strtol( address, &endptr, base_num );
+    gtk_tree_model_get( breakpoints_model, &iter, BREAKPOINTS_COLUMN_TYPE, &type, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
+    if ( type && address ) {
+      if ( strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ] ) == 0 ||
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_READ ] ) == 0 || 
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_WRITE ] ) == 0) {
+
+        base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
+        offset = strtol( address, &endptr, base_num );
+
+        ui_debugger_disassemble( offset );
+        ui_debugger_update();
+      }
+      g_free( type );
       g_free( address );
-
-      ui_debugger_disassemble( offset );
-      ui_debugger_update();
-
     }
   }
 
@@ -1120,23 +1125,21 @@ breakpoints_activate( GtkTreeView *tree_view, GtkTreePath *path,
     gchar *type, *address, *endptr;
     int base_num, offset;
 
-    gtk_tree_model_get( model, &it, BREAKPOINTS_COLUMN_TYPE, &type, -1 );
-    if ( type ) {
+    gtk_tree_model_get( model, &it, BREAKPOINTS_COLUMN_TYPE, &type, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
+    if ( type && address ) {
       if ( strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ] ) == 0 ||
           strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_READ ] ) == 0 || 
           strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_WRITE ] ) == 0) {
-        gtk_tree_model_get( model, &it, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
-        if ( address ) {
-          base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
-          offset = strtol( address, &endptr, base_num );
-          g_free( address );
+        base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
+        offset = strtol( address, &endptr, base_num );
+        g_free( address );
 
-          ui_debugger_disassemble( offset );
-          ui_debugger_update();
-        }
+        ui_debugger_disassemble( offset );
+        ui_debugger_update();
       }
+      g_free( type );
+      g_free( address );
     }
-    g_free( type );
   }
 }
 
