@@ -137,7 +137,7 @@ create_dialog( void )
   GtkWidget *hbox, *vbox, *label, *entry, *content_area;
   GtkAccelGroup *accel_group;
 
-  dialog = gtkstock_dialog_new( "Fuse - Poke Finder",
+  dialog = gtkstock_dialog_new( "De-Fuse - Poke Finder",
 				G_CALLBACK( delete_dialog ) );
 
   hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );

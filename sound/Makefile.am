@@ -20,9 +20,9 @@
 ##
 ## E-mail: philip-fuse@shadowmagic.org.uk
 
-fuse_SOURCES += sound/blipbuffer.c
+de_fuse_SOURCES += sound/blipbuffer.c
 
-EXTRA_fuse_SOURCES += \
+EXTRA_de_fuse_SOURCES += \
                       sound/alsasound.c \
                       sound/aosound.c \
                       sound/coreaudiosound.c \
@@ -41,5 +41,5 @@ noinst_HEADERS += \
                   sound/blipbuffer.h \
                   sound/sfifo.h
 
-fuse_DEPENDENCIES += $(SOUND_LIBADD)
-fuse_LDADD += $(SOUND_LIBS) $(SOUND_LIBADD)
+de_fuse_DEPENDENCIES += $(SOUND_LIBADD)
+de_fuse_LDADD += $(SOUND_LIBS) $(SOUND_LIBADD)

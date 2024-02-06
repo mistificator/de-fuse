@@ -44,7 +44,7 @@ win32ui_confirm( const char *string )
 
   confirm = 0;
 
-  result = MessageBox( fuse_hWnd, string, "Fuse - Confirm",
+  result = MessageBox( fuse_hWnd, string, "De-Fuse - Confirm",
                        MB_OKCANCEL | MB_ICONQUESTION );
   if( result == IDOK ) confirm = 1;
 
@@ -65,7 +65,7 @@ ui_confirm_save_specific( const char *message )
 
   confirm = UI_CONFIRM_SAVE_CANCEL;
 
-  result = MessageBox( fuse_hWnd, message, "Fuse - Confirm",
+  result = MessageBox( fuse_hWnd, message, "De-Fuse - Confirm",
                        MB_YESNOCANCEL | MB_ICONQUESTION );
   switch( result )
   {

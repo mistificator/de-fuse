@@ -316,7 +316,7 @@ settings_info settings_default = {
   /* zxmmc_enabled */ 0,
   /* zxmmc_file */ (char *)NULL,
   /* zxprinter */ 1,
-#line 121"./settings.pl"
+#line 122"./settings.pl"
   /* show_help */ 0,
   /* show_version */ 0,
 };
@@ -2260,7 +2260,7 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
-#line 257"./settings.pl"
+#line 260"./settings.pl"
     if( !strcmp( (const char*)node->name, "text" ) ) {
       /* Do nothing */
     } else {
@@ -2710,7 +2710,7 @@ settings_write_config( settings_info *settings )
   if( settings->zxmmc_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"zxmmcfile", (const xmlChar*)settings->zxmmc_file );
   xmlNewTextChild( root, NULL, (const xmlChar*)"zxprinter", (const xmlChar*)(settings->zxprinter ? "1" : "0") );
-#line 314"./settings.pl"
+#line 317"./settings.pl"
 
   xmlSaveFormatFile( path, doc, 1 );
 
@@ -3833,7 +3833,7 @@ parse_ini( utils_file *file, settings_info *settings )
     while( ( cpos < ( file->buffer + file->length ) ) &&
            ( *cpos == '\r' || *cpos == '\n' ) ) cpos++;
 
-#line 459"./settings.pl"
+#line 462"./settings.pl"
   }
 
   return 0;
@@ -4627,7 +4627,7 @@ settings_write_config( settings_info *settings )
   if( settings_boolean_write( doc, "zxprinter",
                               settings->zxprinter ) )
     goto error;
-#line 551"./settings.pl"
+#line 554"./settings.pl"
 
   compat_file_close( doc );
 
@@ -4972,7 +4972,7 @@ settings_command_line( settings_info *settings, int *first_arg,
     { "zxmmc-file", 1, NULL, 421 },
     {    "zxprinter", 0, &(settings->zxprinter), 1 },
     { "no-zxprinter", 0, &(settings->zxprinter), 0 },
-#line 606"./settings.pl"
+#line 609"./settings.pl"
 
     { "help", 0, NULL, 'h' },
     { "version", 0, NULL, 'V' },
@@ -5172,7 +5172,7 @@ settings_command_line( settings_info *settings, int *first_arg,
     case 419: settings_set_string( &settings->zxatasp_slave_file, optarg ); break;
     case 420: settings_set_string( &settings->zxcf_pri_file, optarg ); break;
     case 421: settings_set_string( &settings->zxmmc_file, optarg ); break;
-#line 656"./settings.pl"
+#line 659"./settings.pl"
 
     case 'h': settings->show_help = 1; break;
     case 'V': settings->show_version = 1; break;
@@ -5804,7 +5804,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
     dest->zxmmc_file = utils_safe_strdup( src->zxmmc_file );
   }
   dest->zxprinter = src->zxprinter;
-#line 703"./settings.pl"
+#line 706"./settings.pl"
 }
 
 /* Copy one settings object to another */
@@ -6014,7 +6014,7 @@ settings_free( settings_info *settings )
   if( settings->zxatasp_slave_file ) libspectrum_free( settings->zxatasp_slave_file );
   if( settings->zxcf_pri_file ) libspectrum_free( settings->zxcf_pri_file );
   if( settings->zxmmc_file ) libspectrum_free( settings->zxmmc_file );
-#line 802"./settings.pl"
+#line 805"./settings.pl"
 
   return 0;
 }

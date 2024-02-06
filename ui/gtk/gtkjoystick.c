@@ -196,7 +196,7 @@ menu_options_joysticks_select( GtkAction *gtk_action GCC_UNUSED,
 
   setup_info( &info, callback_action );
 
-  dialog = gtkstock_dialog_new( "Fuse - Configure Joystick", NULL );
+  dialog = gtkstock_dialog_new( "De-Fuse - Configure Joystick", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
   hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 4 );

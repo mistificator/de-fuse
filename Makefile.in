@@ -90,7 +90,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = fuse$(EXEEXT)
+bin_PROGRAMS = de-fuse$(EXEEXT)
 noinst_PROGRAMS = z80/coretest$(EXEEXT)
 @USE_SDL_TRUE@am__append_1 = $(SDL_LIBS)
 @USE_SDL_TRUE@am__append_2 = $(SDL_CFLAGS)
@@ -216,7 +216,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(mimeicons64dir)" "$(DESTDIR)$(fusemimedir)" \
 	"$(DESTDIR)$(pkgdatadir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
-am__fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
+am__de_fuse_SOURCES_DIST = display.c event.c fuse.c input.c keyboard.c \
 	loader.c machine.c memory_pages.c mempool.c menu.c movie.c \
 	module.c periph.c phantom_typist.c profile.c psg.c rectangle.c \
 	rzx.c screenshot.c settings.c slt.c snapshot.c sound.c \
@@ -416,7 +416,7 @@ am__objects_34 = ui/xlib/keysyms.$(OBJEXT) ui/xlib/xdisplay.$(OBJEXT) \
 	ui/xlib/xerror.$(OBJEXT) ui/xlib/xjoystick.$(OBJEXT) \
 	ui/xlib/xkeyboard.$(OBJEXT) ui/xlib/xui.$(OBJEXT)
 @UI_X_TRUE@am__objects_35 = $(am__objects_34)
-am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
+am_de_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	input.$(OBJEXT) keyboard.$(OBJEXT) loader.$(OBJEXT) \
 	machine.$(OBJEXT) memory_pages.$(OBJEXT) mempool.$(OBJEXT) \
 	menu.$(OBJEXT) movie.$(OBJEXT) module.$(OBJEXT) \
@@ -478,7 +478,7 @@ am_fuse_OBJECTS = display.$(OBJEXT) event.$(OBJEXT) fuse.$(OBJEXT) \
 	$(am__objects_35) unittests/unittests.$(OBJEXT) \
 	z80/z80.$(OBJEXT) z80/z80_debugger_variables.$(OBJEXT) \
 	z80/z80_ops.$(OBJEXT)
-fuse_OBJECTS = $(am_fuse_OBJECTS)
+de_fuse_OBJECTS = $(am_de_fuse_OBJECTS)
 am__DEPENDENCIES_1 =
 @USE_SDL_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -694,9 +694,9 @@ AM_V_YACC = $(am__v_YACC_@AM_V@)
 am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
 am__v_YACC_0 = @echo "  YACC    " $@;
 am__v_YACC_1 = 
-SOURCES = $(fuse_SOURCES) $(EXTRA_fuse_SOURCES) \
+SOURCES = $(de_fuse_SOURCES) $(EXTRA_de_fuse_SOURCES) \
 	$(z80_coretest_SOURCES)
-DIST_SOURCES = $(am__fuse_SOURCES_DIST) $(EXTRA_fuse_SOURCES) \
+DIST_SOURCES = $(am__de_fuse_SOURCES_DIST) $(EXTRA_de_fuse_SOURCES) \
 	$(z80_coretest_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -796,9 +796,9 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/compat/Makefile.am \
 	$(srcdir)/unittests/Makefile.am $(srcdir)/z80/Makefile.am \
 	$(top_srcdir)/data/win32/fuse.manifest.in \
 	$(top_srcdir)/data/win32/installer.nsi.in AUTHORS COPYING \
-	ChangeLog INSTALL README THANKS compile config.guess \
-	config.sub debugger/commandl.c debugger/commandy.c depcomp \
-	install-sh ltmain.sh missing ylwrap
+	ChangeLog INSTALL THANKS compile config.guess config.sub \
+	debugger/commandl.c debugger/commandy.c depcomp install-sh \
+	ltmain.sh missing ylwrap
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -988,7 +988,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
-fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
+de_fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	machine.c memory_pages.c mempool.c menu.c movie.c module.c \
 	periph.c phantom_typist.c profile.c psg.c rectangle.c rzx.c \
 	screenshot.c settings.c slt.c snapshot.c sound.c spectrum.c \
@@ -1032,13 +1032,13 @@ fuse_SOURCES = display.c event.c fuse.c input.c keyboard.c loader.c \
 	$(am__append_36) $(am__append_38) $(am__append_40) \
 	unittests/unittests.c z80/z80.c z80/z80_debugger_variables.c \
 	z80/z80_ops.c
-fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPECTRUM_LIBS) $(GTK_LIBS) \
+de_fuse_LDADD = $(PTHREAD_LIBS) $(LIBSPECTRUM_LIBS) $(GTK_LIBS) \
 	$(GLIB_LIBS) $(PNG_LIBS) $(X_LIBS) $(XML_LIBS) $(am__append_1) \
 	$(am__append_4) $(SOUND_LIBS) $(SOUND_LIBADD) $(TIMER_LIBADD) \
 	ui/scaler/scalers16.o ui/scaler/scalers32.o
-fuse_DEPENDENCIES = $(am__append_5) $(SOUND_LIBADD) $(TIMER_LIBADD) \
+de_fuse_DEPENDENCIES = $(am__append_5) $(SOUND_LIBADD) $(TIMER_LIBADD) \
 	ui/scaler/scalers16.o ui/scaler/scalers32.o
-EXTRA_fuse_SOURCES = sound/alsasound.c sound/aosound.c \
+EXTRA_de_fuse_SOURCES = sound/alsasound.c sound/aosound.c \
 	sound/coreaudiosound.c sound/dxsound.c sound/hpsound.c \
 	sound/nullsound.c sound/osssound.c sound/pulsesound.c \
 	sound/sdlsound.c sound/sfifo.c sound/sunsound.c \
@@ -2089,9 +2089,9 @@ timer/native.$(OBJEXT): timer/$(am__dirstamp) \
 timer/sdl.$(OBJEXT): timer/$(am__dirstamp) \
 	timer/$(DEPDIR)/$(am__dirstamp)
 
-fuse$(EXEEXT): $(fuse_OBJECTS) $(fuse_DEPENDENCIES) $(EXTRA_fuse_DEPENDENCIES) 
-	@rm -f fuse$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(fuse_OBJECTS) $(fuse_LDADD) $(LIBS)
+de-fuse$(EXEEXT): $(de_fuse_OBJECTS) $(de_fuse_DEPENDENCIES) $(EXTRA_de_fuse_DEPENDENCIES) 
+	@rm -f de-fuse$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(de_fuse_OBJECTS) $(de_fuse_LDADD) $(LIBS)
 z80/coretest-coretest.$(OBJEXT): z80/$(am__dirstamp) \
 	z80/$(DEPDIR)/$(am__dirstamp)
 z80/coretest-z80.$(OBJEXT): z80/$(am__dirstamp) \

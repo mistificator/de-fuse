@@ -390,7 +390,7 @@ create_dialog( void )
 
   font = monospaced_font(); if( font == NULL ) return -1;
 
-  dialog = gtkstock_dialog_new( "Fuse - Debugger",
+  dialog = gtkstock_dialog_new( "De-Fuse - Debugger",
 				G_CALLBACK( delete_dialog ) );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 

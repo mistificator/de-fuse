@@ -25,7 +25,7 @@
 #include "debugger.h"
 		
 IDD_DBG DIALOGEX DISCARDABLE 6, 5, 555, 279
-CAPTION "Fuse - Debugger"
+CAPTION "De-Fuse - Debugger"
 FONT 8,"MS Sans Serif"
 MENU IDM_MENU
 STYLE WS_POPUP | WS_CAPTION | WS_VISIBLE | WS_SYSMENU

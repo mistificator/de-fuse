@@ -739,7 +739,7 @@ ui_tape_write( void )
 
   fuse_emulation_pause();
 
-  filename = ui_get_save_filename( "Fuse - Write Tape" );
+  filename = ui_get_save_filename( "De-Fuse - Write Tape" );
   if( !filename ) { fuse_emulation_unpause(); return 1; }
 
   tape_write( filename );
@@ -759,7 +759,7 @@ ui_mdr_write( int which, int saveas )
 
   fuse_emulation_pause();
 
-  snprintf( title, 80, "Fuse - Write Microdrive Cartridge %i", which + 1 );
+  snprintf( title, 80, "De-Fuse - Write Microdrive Cartridge %i", which + 1 );
 
   if( saveas ) {
     filename = ui_get_save_filename( title );

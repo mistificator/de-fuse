@@ -449,7 +449,7 @@ menu_file_exit( int action )
   if( menu_exit_open ) return;
 
   menu_exit_open = 1;
-  if( widget_do_query( "Exit Fuse?" ) || !widget_query.confirm ) {
+  if( widget_do_query( "Exit De-Fuse?" ) || !widget_query.confirm ) {
     menu_exit_open = 0;
     return;
   }

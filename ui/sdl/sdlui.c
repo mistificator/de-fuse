@@ -159,7 +159,7 @@ int
 ui_statusbar_update_speed( float speed )
 {
   char buffer[15];
-  const char fuse[] = "Fuse";
+  const char fuse[] = "De-Fuse (based on Fuse)";
 
   snprintf( buffer, 15, "%s - %3.0f%%", fuse, speed );
 

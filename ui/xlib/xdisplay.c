@@ -1,7 +1,7 @@
 /* xdisplay.c: Routines for dealing with drawing the Speccy's screen via Xlib
-   Copyright (c) 2000-2005 Philip Kendall, Darren Salt, Gergely Szász
+   Copyright (c) 2000-2005 Philip Kendall, Darren Salt, Gergely Szï¿½sz
    Copyright (c) 2015 Stuart Brady
-   Copyright (c) 2015 Sergio Baldoví
+   Copyright (c) 2015 Sergio Baldovï¿½
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1201,7 +1201,7 @@ ui_statusbar_update_speed( float speed )
 
   list[0] = buffer;
   list[1] = 0;
-  snprintf( buffer, 16, "Fuse - %4.0f%%", speed );
+  snprintf( buffer, 16, "De-Fuse - %4.0f%%", speed );
 
   XStringListToTextProperty( list, 1, &text);
   XSetWMName( display, xui_mainWindow, &text );

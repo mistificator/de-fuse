@@ -65,7 +65,7 @@ menu_select_roms_with_title( const char *title, size_t start, size_t n,
   /* Firstly, stop emulation */
   fuse_emulation_pause();
 
-  _sntprintf( info.title, 256, "Fuse - Select ROMs - %s", title );
+  _sntprintf( info.title, 256, "De-Fuse - Select ROMs - %s", title );
   info.start = start;
   info.n = n;
   info.is_peripheral = is_peripheral;
@@ -238,7 +238,7 @@ select_new_rom( HWND hedit )
 {
   TCHAR *filename;
 
-  filename = ui_get_open_filename( "Fuse - Select ROM" );
+  filename = ui_get_open_filename( "De-Fuse - Select ROM" );
   if( !filename ) return;
 
   SendMessage( hedit, WM_SETTEXT, 0, ( LPARAM ) filename );

@@ -51,7 +51,7 @@ gtkui_confirm( const char *string )
 
   confirm = 0;
 
-  dialog = gtkstock_dialog_new( "Fuse - Confirm", NULL );
+  dialog = gtkstock_dialog_new( "De-Fuse - Confirm", NULL );
 
   label = gtk_label_new( string );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
@@ -90,7 +90,7 @@ ui_confirm_save_specific( const char *message )
 
   confirm = UI_CONFIRM_SAVE_CANCEL;
 
-  dialog = gtkstock_dialog_new( "Fuse - Confirm", NULL );
+  dialog = gtkstock_dialog_new( "De-Fuse - Confirm", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
   label = gtk_label_new( message );

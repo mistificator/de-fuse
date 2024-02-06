@@ -105,7 +105,7 @@ create_dialog( void )
   GtkWidget *hbox, *vbox, *label, *scroll;
   GtkAccelGroup *accel_group;
 
-  dialog = gtkstock_dialog_new( "Fuse - Poke Memory",
+  dialog = gtkstock_dialog_new( "De-Fuse - Poke Memory",
                                 G_CALLBACK( pokemem_close ) );
 
   vbox = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );

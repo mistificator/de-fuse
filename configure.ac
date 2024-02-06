@@ -30,11 +30,11 @@ m4_define([fuse_full_version], [fuse_major_version.fuse_minor_version.fuse_micro
 m4_define([fuse_rc_version], [fuse_major_version,fuse_minor_version,fuse_micro_version,fuse_nano_version])
 
 dnl Package info
-m4_define([fuse_copyright], ["(c) 1999-2024 Philip Kendall and respected others, and M.P."])
+m4_define([fuse_copyright], ["(c) 1999-2024 Philip Kendall and respected others, and ZXLDR"])
 m4_define([fuse_url], [https://github.com/mistificator/de-fuse])
 m4_define([fuse_bugreport], [https://github.com/mistificator/de-fuse/issues])
 
-AC_INIT([fuse],[fuse_version],[fuse_bugreport],[fuse],[fuse_url])
+AC_INIT([de-fuse],[fuse_version],[fuse_bugreport],[de-fuse],[fuse_url])
 AC_CONFIG_SRCDIR(fuse.c)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
@@ -71,7 +71,7 @@ case "$host_os" in
   mingw32*)
     AC_CHECK_TOOL([WINDRES], [windres])
     if test -z "$WINDRES" ; then
-      AC_MSG_ERROR([windres is required to compile Fuse for $host hosts])
+      AC_MSG_ERROR([windres is required to compile De-Fuse for $host hosts])
     fi
     AC_CHECK_PROGS([MAN2HTML], [man2html])
     AC_CHECK_PROGS([GROFF], [groff])
@@ -1106,5 +1106,5 @@ echo "SpeccyBoot support: ${linux_tap:-no}"
 echo "TTX2000 S support: ${build_ttx2000s}"
 echo "Desktop integration: ${desktopintegration}"
 echo ""
-echo "Type 'make' to compile Fuse"
+echo "Type 'make' to compile De-Fuse"
 echo ""

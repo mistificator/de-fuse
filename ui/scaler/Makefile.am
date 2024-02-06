@@ -20,13 +20,13 @@
 ##
 ## E-mail: philip-fuse@shadowmagic.org.uk
 
-fuse_SOURCES += ui/scaler/scaler.c
+de_fuse_SOURCES += ui/scaler/scaler.c
 
-fuse_LDADD += \
+de_fuse_LDADD += \
               ui/scaler/scalers16.o \
               ui/scaler/scalers32.o
 
-fuse_DEPENDENCIES += \
+de_fuse_DEPENDENCIES += \
                      ui/scaler/scalers16.o \
                      ui/scaler/scalers32.o
 

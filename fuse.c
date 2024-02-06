@@ -434,7 +434,7 @@ creator_init( void *context )
 
   fuse_creator = libspectrum_creator_alloc();
 
-  error = libspectrum_creator_set_program( fuse_creator, "Fuse" );
+  error = libspectrum_creator_set_program( fuse_creator, "De-Fuse" );
   if( error ) { libspectrum_creator_free( fuse_creator ); return error; }
 
   error = libspectrum_creator_set_major( fuse_creator,

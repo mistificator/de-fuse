@@ -74,7 +74,7 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - General Options", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - General Options", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
@@ -314,7 +314,7 @@ menu_options_internals_loaders( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Loaders, traps and hooks", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - Loaders, traps and hooks", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
@@ -485,7 +485,7 @@ menu_options_peripherals_devices( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Peripheral devices", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - Peripheral devices", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
@@ -735,7 +735,7 @@ menu_options_peripherals_storages( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Peripheral storages", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - Peripheral storages", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
@@ -958,7 +958,7 @@ menu_options_recording_rzx( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - RZX Options", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - RZX Options", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
@@ -1106,7 +1106,7 @@ menu_options_internals_sound( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Sound Options", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - Sound Options", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
@@ -1552,7 +1552,7 @@ menu_options_internals_diskettes( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Drives Setup", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - Drives Setup", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */
@@ -2118,7 +2118,7 @@ menu_options_recording_movie( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Movie Options", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - Movie Options", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */

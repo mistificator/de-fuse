@@ -319,7 +319,7 @@ ui_init( int *argc, char ***argv )
   WNDCLASS wc;
 
   if( !fuse_hPrevInstance ) {
-    wc.lpszClassName = "Fuse";
+    wc.lpszClassName = "De-Fuse";
     wc.lpfnWndProc = fuse_window_proc;
     wc.style = CS_OWNDC;
     wc.hInstance = fuse_hInstance;
@@ -335,7 +335,7 @@ ui_init( int *argc, char ***argv )
   }
 
   /* create the window */
-  fuse_hWnd = CreateWindow( "Fuse", "Fuse", WS_OVERLAPPED | WS_CAPTION |
+  fuse_hWnd = CreateWindow( "De-Fuse (based on Fuse)", "De-Fuse (based on Fuse)", WS_OVERLAPPED | WS_CAPTION |
     WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
     NULL, NULL, fuse_hInstance, NULL );
@@ -438,16 +438,16 @@ ui_error_specific( ui_error_level severity, const char *message )
   switch( severity ) {
 
   case UI_ERROR_INFO:
-    MessageBox( fuse_hWnd, message, "Fuse - Info", MB_ICONINFORMATION | MB_OK );
+    MessageBox( fuse_hWnd, message, "De-Fuse - Info", MB_ICONINFORMATION | MB_OK );
     break;
   case UI_ERROR_WARNING:
-    MessageBox( fuse_hWnd, message, "Fuse - Warning", MB_ICONWARNING | MB_OK );
+    MessageBox( fuse_hWnd, message, "De-Fuse - Warning", MB_ICONWARNING | MB_OK );
     break;
   case UI_ERROR_ERROR:
-    MessageBox( fuse_hWnd, message, "Fuse - Error", MB_ICONERROR | MB_OK );
+    MessageBox( fuse_hWnd, message, "De-Fuse - Error", MB_ICONERROR | MB_OK );
     break;
   default:
-    MessageBox( fuse_hWnd, message, "Fuse - (Unknown Error Level)",
+    MessageBox( fuse_hWnd, message, "De-Fuse - (Unknown Error Level)",
                 MB_ICONINFORMATION | MB_OK );
     break;
 
@@ -478,7 +478,7 @@ void
 menu_file_exit( int action )
 {
  /* FIXME: this should really be sending WM_CLOSE, not duplicate code */
-  if( win32ui_confirm( "Exit Fuse?" ) ) {
+  if( win32ui_confirm( "Exit De-Fuse?" ) ) {
 
     if( menu_check_media_changed() ) return;
 
@@ -610,7 +610,7 @@ menu_machine_select( int action )
   fuse_emulation_pause();
 
   /* Populate win32ui_select_info */
-  items.dialog_title = TEXT( "Fuse - Select Machine" );
+  items.dialog_title = TEXT( "De-Fuse - Select Machine" );
   items.labels = malloc( machine_count * sizeof( char * ) );
   items.length = machine_count; 
 
@@ -735,7 +735,7 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type, int inputs )
 
   /* Populate win32ui_select_info */
   /* FIXME: libspectrum_joystick_name is not unicode compliant */
-  _sntprintf( title, ARRAY_SIZE( title ), _T( "Fuse - Configure %s Joystick" ),
+  _sntprintf( title, ARRAY_SIZE( title ), _T( "De-Fuse - Configure %s Joystick" ),
 	    libspectrum_joystick_name( libspectrum_type ) );
   items.dialog_title = title;
   items.length = JOYSTICK_CONN_COUNT; 

@@ -238,7 +238,7 @@ drive_save( const ui_media_drive_info_t *drive, int saveas )
 
   fuse_emulation_pause();
 
-  snprintf( title, sizeof( title ), "Fuse - Write %s", drive->name );
+  snprintf( title, sizeof( title ), "De-Fuse - Write %s", drive->name );
   if( saveas ) {
     filename = ui_get_save_filename( title );
     if( !filename ) {

@@ -26,7 +26,7 @@
 !define SETUP_FILENAME "@PACKAGE@-${FUSE_VERSION}-win32-setup"
 !define SETUP_FILE "${SETUP_FILENAME}.exe"
 !define HKLM_REG_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\Fuse"
-!define PROG_ID "Fuse.Files.1"
+!define PROG_ID "De-Fuse.Files.1"
 
 ;Include Modern UI
 !include "MUI2.nsh"
@@ -87,10 +87,10 @@ SetCompressor lzma
   VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" ""
   VIAddVersionKey /LANG=${LANG_ENGLISH} "InternalName" "${SETUP_FILENAME}"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "@FUSE_COPYRIGHT@"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Fuse"
+  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "De-Fuse"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "${FUSE_VERSION}"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "OriginalFilename" "${SETUP_FILE}"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Fuse - the Free Unix Spectrum Emulator"
+  VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "De-Fuse is based on Fuse - the Free Unix Spectrum Emulator"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "${FUSE_VERSION}"
 
 ;--------------------------------

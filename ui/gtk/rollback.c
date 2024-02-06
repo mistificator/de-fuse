@@ -93,7 +93,7 @@ create_dialog( void )
 {
   GtkWidget *content_area;
 
-  dialog = gtkstock_dialog_new( "Fuse - Select Rollback Point", NULL );
+  dialog = gtkstock_dialog_new( "De-Fuse - Select Rollback Point", NULL );
 
   list = create_rollback_list();
 

@@ -174,7 +174,7 @@ ui_init( int *argc, char ***argv )
 
   settings = gtk_widget_get_settings( GTK_WIDGET( gtkui_window ) );
   g_object_set( settings, "gtk-menu-bar-accel", "F1", NULL );
-  gtk_window_set_title( GTK_WINDOW(gtkui_window), "Fuse" );
+  gtk_window_set_title( GTK_WINDOW(gtkui_window), "De-Fuse (based on Fuse)" );
 
   g_signal_connect(G_OBJECT(gtkui_window), "delete-event",
 		   G_CALLBACK(gtkui_delete), NULL);
@@ -332,10 +332,10 @@ ui_error_specific( ui_error_level severity, const char *message )
 
   /* Set the appropriate title */
   switch( severity ) {
-  case UI_ERROR_INFO:	 title = "Fuse - Info"; break;
-  case UI_ERROR_WARNING: title = "Fuse - Warning"; break;
-  case UI_ERROR_ERROR:	 title = "Fuse - Error"; break;
-  default:		 title = "Fuse - (Unknown Error Level)"; break;
+  case UI_ERROR_INFO:	 title = "De-Fuse - Info"; break;
+  case UI_ERROR_WARNING: title = "De-Fuse - Warning"; break;
+  case UI_ERROR_ERROR:	 title = "De-Fuse - Error"; break;
+  default:		 title = "De-Fuse - (Unknown Error Level)"; break;
   }
 
   /* Create the dialog box */
@@ -394,7 +394,7 @@ gtkui_delete( GtkWidget *widget GCC_UNUSED, GdkEvent *event GCC_UNUSED,
 void
 menu_file_exit( GtkAction *gtk_action GCC_UNUSED, gpointer data GCC_UNUSED )
 {
-  if( gtkui_confirm( "Exit Fuse?" ) ) {
+  if( gtkui_confirm( "Exit De-Fuse?" ) ) {
 
     if( menu_check_media_changed() ) return;
 
@@ -585,7 +585,7 @@ menu_machine_select( GtkAction *gtk_action GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - Select Machine", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - Select Machine", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   dialog.buttons[0] =
@@ -671,8 +671,8 @@ void
 menu_help_about( GtkAction *gtk_action GCC_UNUSED, gpointer data GCC_UNUSED )
 {
   gtk_show_about_dialog( GTK_WINDOW( gtkui_window ),
-                         "program-name", "Fuse",
-                         "comments", "The Free Unix Spectrum Emulator",
+                         "program-name", "De-Fuse",
+                         "comments", "Based on Fuse - the Free Unix Spectrum Emulator",
                          "copyright", FUSE_COPYRIGHT,
 #ifdef FUSE_ICON_AVAILABLE
                          "logo-icon-name", "fuse",
@@ -759,7 +759,7 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  snprintf( title, sizeof( title ), "Fuse - Configure %s Joystick",
+  snprintf( title, sizeof( title ), "De-Fuse - Configure %s Joystick",
 	    libspectrum_joystick_name( libspectrum_type ) );
   dialog.dialog = gtkstock_dialog_new( title, NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );

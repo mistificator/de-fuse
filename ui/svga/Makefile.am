@@ -22,7 +22,7 @@
 
 if UI_SVGA
 
-fuse_SOURCES += $(ui_svga_files)
+de_fuse_SOURCES += $(ui_svga_files)
 
 BUILT_SOURCES += $(ui_svga_built)
 

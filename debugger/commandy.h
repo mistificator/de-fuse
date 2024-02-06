@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -30,6 +31,10 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
 #ifndef YY_YY_DEBUGGER_COMMANDY_H_INCLUDED
 # define YY_YY_DEBUGGER_COMMANDY_H_INCLUDED
 /* Debug traces.  */
@@ -40,47 +45,56 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    LOGICAL_OR = 258,
-    LOGICAL_AND = 259,
-    COMPARISON = 260,
-    EQUALITY = 261,
-    NEGATE = 262,
-    BASE = 263,
-    BREAK = 264,
-    TBREAK = 265,
-    CLEAR = 266,
-    COMMANDS = 267,
-    CONDITION = 268,
-    CONTINUE = 269,
-    DEBUGGER_DELETE = 270,
-    DISASSEMBLE = 271,
-    DEBUGGER_END = 272,
-    EVENT = 273,
-    EXIT = 274,
-    FINISH = 275,
-    IF = 276,
-    DEBUGGER_IGNORE = 277,
-    NEXT = 278,
-    DEBUGGER_OUT = 279,
-    PORT = 280,
-    DEBUGGER_PRINT = 281,
-    READ = 282,
-    SET = 283,
-    STEP = 284,
-    TIME = 285,
-    WRITE = 286,
-    NUMBER = 287,
-    STRING = 288,
-    VARIABLE = 289,
-    DEBUGGER_ERROR = 290
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    LOGICAL_OR = 258,              /* LOGICAL_OR  */
+    LOGICAL_AND = 259,             /* LOGICAL_AND  */
+    COMPARISON = 260,              /* COMPARISON  */
+    EQUALITY = 261,                /* EQUALITY  */
+    NEGATE = 262,                  /* NEGATE  */
+    BASE = 263,                    /* BASE  */
+    BREAK = 264,                   /* BREAK  */
+    TBREAK = 265,                  /* TBREAK  */
+    CLEAR = 266,                   /* CLEAR  */
+    COMMANDS = 267,                /* COMMANDS  */
+    CONDITION = 268,               /* CONDITION  */
+    CONTINUE = 269,                /* CONTINUE  */
+    DEBUGGER_DELETE = 270,         /* DEBUGGER_DELETE  */
+    DISASSEMBLE = 271,             /* DISASSEMBLE  */
+    DEBUGGER_END = 272,            /* DEBUGGER_END  */
+    EVENT = 273,                   /* EVENT  */
+    EXIT = 274,                    /* EXIT  */
+    FINISH = 275,                  /* FINISH  */
+    IF = 276,                      /* IF  */
+    DEBUGGER_IGNORE = 277,         /* DEBUGGER_IGNORE  */
+    NEXT = 278,                    /* NEXT  */
+    DEBUGGER_OUT = 279,            /* DEBUGGER_OUT  */
+    PORT = 280,                    /* PORT  */
+    DEBUGGER_PRINT = 281,          /* DEBUGGER_PRINT  */
+    READ = 282,                    /* READ  */
+    SET = 283,                     /* SET  */
+    STEP = 284,                    /* STEP  */
+    TIME = 285,                    /* TIME  */
+    WRITE = 286,                   /* WRITE  */
+    NUMBER = 287,                  /* NUMBER  */
+    STRING = 288,                  /* STRING  */
+    VARIABLE = 289,                /* VARIABLE  */
+    DEBUGGER_ERROR = 290           /* DEBUGGER_ERROR  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Tokens.  */
+/* Token kinds.  */
+#define YYEMPTY -2
+#define YYEOF 0
+#define YYerror 256
+#define YYUNDEF 257
 #define LOGICAL_OR 258
 #define LOGICAL_AND 259
 #define COMPARISON 260
@@ -117,10 +131,9 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
 union YYSTYPE
 {
-#line 45 "debugger/commandy.y" /* yacc.c:1909  */
+#line 45 "debugger/commandy.y"
 
 
   int token;
@@ -136,9 +149,9 @@ union YYSTYPE
   debugger_expression* exp;
 
 
-#line 140 "debugger/commandy.h" /* yacc.c:1909  */
-};
+#line 153 "debugger/commandy.h"
 
+};
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -147,6 +160,8 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
+
 int yyparse (void);
+
 
 #endif /* !YY_YY_DEBUGGER_COMMANDY_H_INCLUDED  */
