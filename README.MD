@@ -1,5 +1,6 @@
 Dirty patched fork of old Fuse version for Debian
 
+![image](https://github.com/mistificator/de-fuse/assets/2280081/0ec9ef12-54d7-4eb2-84d2-81cd1323199b)
 ![image](https://github.com/mistificator/de-fuse/assets/2280081/85439232-fa05-4c1b-a452-b2757a83fffe)
 
 Original Fuse README goes below
