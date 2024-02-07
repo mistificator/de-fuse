@@ -6,7 +6,8 @@
         * New features:
           * Added new DivMMC firmware partial support (ZXLDR).
             https://github.com/mprato/DivMMC/blob/master/docs/Divmmc_allram_manual.txt
-            
+          * Added kind of gigascreen mode (ZXLDR).
+
         * UI improvements:
           * GTK UI: Heavily refactored debugger, now with context menus,
           breakpoints toggling and disassembly colorization (ZXLDR).
