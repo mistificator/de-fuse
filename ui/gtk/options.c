@@ -172,6 +172,12 @@ menu_options_general( GtkWidget *widget GCC_UNUSED,
                                 settings_current.bw_tv );
   gtk_container_add( GTK_CONTAINER( content_area ), dialog.bw_tv );
 
+  dialog.pretty_gigascreen =
+    gtk_check_button_new_with_label( "Pretty Gigascreen" );
+  gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.pretty_gigascreen ),
+                                settings_current.pretty_gigascreen );
+  gtk_container_add( GTK_CONTAINER( content_area ), dialog.pretty_gigascreen );
+
   dialog.pal_tv2x =
     gtk_check_button_new_with_label( "PAL-TV use TV2x effect" );
   gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( dialog.pal_tv2x ),
@@ -255,6 +261,9 @@ menu_options_general_done( GtkWidget *widget GCC_UNUSED,
 
   settings_current.bw_tv =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->bw_tv ) );
+
+  settings_current.pretty_gigascreen =
+    gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->pretty_gigascreen ) );
 
   settings_current.pal_tv2x =
     gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( ptr->pal_tv2x ) );

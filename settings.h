@@ -160,6 +160,7 @@ typedef struct settings_info {
   char *plus3disk_file;
    int plusd;
   char *plusddisk_file;
+   int pretty_gigascreen;
    int printer;
   char *printer_graphics_filename;
   char *printer_text_filename;

@@ -199,6 +199,7 @@ settings_info settings_default = {
   /* plus3disk_file */ (char *)NULL,
   /* plusd */ 0,
   /* plusddisk_file */ (char *)NULL,
+  /* pretty_gigascreen */ 0,
   /* printer */ 0,
   /* printer_graphics_filename */ (char *)"printout.pbm",
   /* printer_text_filename */ (char *)"printout.txt",
@@ -1357,6 +1358,13 @@ parse_xml( xmlDocPtr doc, settings_info *settings )
         xmlFree( xmlstring );
       }
     } else
+    if( !strcmp( (const char*)node->name, "prettygigascreen" ) ) {
+      xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
+      if( xmlstring ) {
+        settings->pretty_gigascreen = atoi( (char*)xmlstring );
+        xmlFree( xmlstring );
+      }
+    } else
     if( !strcmp( (const char*)node->name, "printer" ) ) {
       xmlstring = xmlNodeListGetString( doc, node->xmlChildrenNode, 1 );
       if( xmlstring ) {
@@ -2506,6 +2514,7 @@ settings_write_config( settings_info *settings )
   xmlNewTextChild( root, NULL, (const xmlChar*)"plusd", (const xmlChar*)(settings->plusd ? "1" : "0") );
   if( settings->plusddisk_file )
     xmlNewTextChild( root, NULL, (const xmlChar*)"plusddisk", (const xmlChar*)settings->plusddisk_file );
+  xmlNewTextChild( root, NULL, (const xmlChar*)"prettygigascreen", (const xmlChar*)(settings->pretty_gigascreen ? "1" : "0") );
   xmlNewTextChild( root, NULL, (const xmlChar*)"printer", (const xmlChar*)(settings->printer ? "1" : "0") );
   if( settings->printer_graphics_filename )
     xmlNewTextChild( root, NULL, (const xmlChar*)"graphicsfile", (const xmlChar*)settings->printer_graphics_filename );
@@ -3308,6 +3317,10 @@ settings_var( settings_info *settings, unsigned char *name, unsigned char *last,
   }
   if( n == 9 && !strncmp( (const char *)name, "plusddisk", n ) ) {
     *val_char = &settings->plusddisk_file;
+    return 0;
+  }
+  if( n == 16 && !strncmp( (const char *)name, "prettygigascreen", n ) ) {
+    *val_int = &settings->pretty_gigascreen;
     return 0;
   }
   if( n == 7 && !strncmp( (const char *)name, "printer", n ) ) {
@@ -4276,6 +4289,9 @@ settings_write_config( settings_info *settings )
   if( settings_string_write( doc, "plusddisk",
                              settings->plusddisk_file ) )
     goto error;
+  if( settings_boolean_write( doc, "prettygigascreen",
+                              settings->pretty_gigascreen ) )
+    goto error;
   if( settings_boolean_write( doc, "printer",
                               settings->printer ) )
     goto error;
@@ -4825,6 +4841,8 @@ settings_command_line( settings_info *settings, int *first_arg,
     {    "plusd", 0, &(settings->plusd), 1 },
     { "no-plusd", 0, &(settings->plusd), 0 },
     { "plusddisk", 1, NULL, 339 },
+    {    "pretty-gigascreen", 0, &(settings->pretty_gigascreen), 1 },
+    { "no-pretty-gigascreen", 0, &(settings->pretty_gigascreen), 0 },
     {    "printer", 0, &(settings->printer), 1 },
     { "no-printer", 0, &(settings->printer), 0 },
     { "graphicsfile", 1, NULL, 340 },
@@ -5453,6 +5471,7 @@ settings_copy_internal( settings_info *dest, settings_info *src )
   if( src->plusddisk_file ) {
     dest->plusddisk_file = utils_safe_strdup( src->plusddisk_file );
   }
+  dest->pretty_gigascreen = src->pretty_gigascreen;
   dest->printer = src->printer;
   dest->printer_graphics_filename = NULL;
   if( src->printer_graphics_filename ) {
