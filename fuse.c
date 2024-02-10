@@ -499,7 +499,7 @@ static void fuse_show_copyright(void)
 
 static void fuse_show_version( void )
 {
-  printf( "The Free Unix Spectrum Emulator (Fuse) version " VERSION ".\n" );
+  printf( "De-Fuse (based on the Free Unix Spectrum Emulator, Fuse) version " VERSION ".\n" );
 }
 
 static void fuse_show_help( void )

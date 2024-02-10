@@ -388,28 +388,32 @@ uidisplay_area( int x, int y, int w, int h )
   /* Create the RGB image */
   for( yy = y; yy < y + h; yy++ ) {
 
-    libspectrum_dword* rgb[3]; libspectrum_word *display;
+    libspectrum_dword *rgb[3], *rgb_0, *rgb_1, *rgb_f, *rgb_i; libspectrum_word *display;
 
     for ( i = 0; i < 3; i++) {
       rgb[i] = ( libspectrum_dword* )( rgb_image[i] + ( yy + 2 ) * rgb_pitch );
       rgb[i] += x + 1;
     }
-
+    rgb_f = rgb[FINAL_RGB_IMAGE];
+    
     display = &gtkdisplay_image[yy][x];
 
     if ( settings_current.pretty_gigascreen ) {
-      for( i = 0; i < w; i++, display++ ) {
-        rgb[ rgb_index ][ i ] = palette[ *display ];
+      rgb_0 = rgb[0];
+      rgb_1 = rgb[1];
+      rgb_i = rgb[ rgb_index ];
+      for( i = 0; i < w; ++i, ++display, ++rgb_i ) {
+        *rgb_i = palette[ *display ];
       }
       if ( rgb_index == 1 ) {
-        for( i = 0; i < w; i++, rgb[FINAL_RGB_IMAGE]++, rgb[0]++, rgb[1]++) {
-          ((libspectrum_byte *)rgb[FINAL_RGB_IMAGE])[0] = ((unsigned short)((libspectrum_byte *)rgb[0])[0] + ((libspectrum_byte *)rgb[1])[0]) >> 1 ;
-          ((libspectrum_byte *)rgb[FINAL_RGB_IMAGE])[1] = ((unsigned short)((libspectrum_byte *)rgb[0])[1] + ((libspectrum_byte *)rgb[1])[1]) >> 1 ;
-          ((libspectrum_byte *)rgb[FINAL_RGB_IMAGE])[2] = ((unsigned short)((libspectrum_byte *)rgb[0])[2] + ((libspectrum_byte *)rgb[1])[2]) >> 1 ;
+        for( i = 0; i < w; ++i, ++rgb_f, ++rgb_0, ++rgb_1 ) {
+          ((libspectrum_byte *)rgb_f)[0] = ((unsigned short)((libspectrum_byte *)rgb_0)[0] + ((libspectrum_byte *)rgb_1)[0]) >> 1 ;
+          ((libspectrum_byte *)rgb_f)[1] = ((unsigned short)((libspectrum_byte *)rgb_0)[1] + ((libspectrum_byte *)rgb_1)[1]) >> 1 ;
+          ((libspectrum_byte *)rgb_f)[2] = ((unsigned short)((libspectrum_byte *)rgb_0)[2] + ((libspectrum_byte *)rgb_1)[2]) >> 1 ;
         }
       }
     } else {
-      for( i = 0; i < w; i++, display++, rgb[FINAL_RGB_IMAGE]++ ) *rgb[ FINAL_RGB_IMAGE ] = palette[ *display ];
+      for( i = 0; i < w; ++i, ++display, ++rgb_f ) *rgb_f = palette[ *display ];
     }
 
   }

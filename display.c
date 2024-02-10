@@ -898,7 +898,8 @@ update_ui_screen( void )
       movie_start_frame();
     }
 
-    if ( settings_current.pretty_gigascreen ) display_redraw_all = 1; // disable partial redraw for gigascreen
+    if ( settings_current.pretty_gigascreen && rectangle_inactive ) 
+      display_redraw_all = 1; // disable partial redraw for gigascreen
 
     if( display_redraw_all ) {
       if( movie_recording ) {
