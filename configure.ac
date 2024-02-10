@@ -36,7 +36,7 @@ m4_define([fuse_bugreport], [https://github.com/mistificator/de-fuse/issues])
 
 AC_INIT([de-fuse],[fuse_version],[fuse_bugreport],[de-fuse],[fuse_url])
 AC_CONFIG_SRCDIR(fuse.c)
-AC_CONFIG_MACRO_DIR([m4])
+dnl AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
 AC_CANONICAL_HOST
 
