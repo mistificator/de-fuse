@@ -141,6 +141,7 @@ MENU_CALLBACK( menu_options_internals_loaders );
 MENU_CALLBACK( menu_options_internals_sound );
 MENU_CALLBACK( menu_options_peripherals_devices );
 MENU_CALLBACK( menu_options_peripherals_storages );
+MENU_CALLBACK( menu_options_peripherals_sound );
 MENU_CALLBACK( menu_options_recording_rzx );
 MENU_CALLBACK( menu_options_recording_movie );
 MENU_CALLBACK( menu_options_internals_diskettes );
