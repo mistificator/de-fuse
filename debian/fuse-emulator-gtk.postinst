@@ -1,8 +1,0 @@
-#!/bin/sh
-
-set -e
-
-update-alternatives --install /usr/bin/fuse \
-   fuse /usr/bin/fuse-gtk 8
-
-#DEBHELPER#

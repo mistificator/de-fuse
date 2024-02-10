@@ -1,3 +1,27 @@
+2021-??-??  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+
+        * Fuse 1.?.? released.
+
+        * New features:
+          * Add Currah µSpeech emulation (Stuart Brady, Vic Chwe and Sergio
+            Baldoví).
+
+        * Emulation core improvements:
+          * Speed up reading emulated memory locations (Jindřich Makovička).
+
+        * UI improvements:
+          * Timex: don't abort if the Timex dock cartridge image is not
+            found (Alberto Garcia).
+          * WidgetUI: rearrange AY register and Z80 flags in the debugger
+            (Gergely Szasz).
+          * GTK UI: Fix loading binary data from deleted files (thanks, Crisis)
+            (Sergio Baldoví).
+
+        * Miscellaneous improvements:
+          * Add ZIP files to the bash completion script (Alberto Garcia).
+          * Prevent potential segmentation fault due to overflow when emulation
+            speed is set very high (Pete Moore)
+
 2021-02-27  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
 2024-02-xx  ZXLDR  <ZXLDR@yandex.ru>
 

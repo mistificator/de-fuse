@@ -88,6 +88,7 @@ spectranet, boolean, 0
 spectranet_disable, boolean, 0
 ttx2000s, boolean, 0
 usource, boolean, 0
+uspeech, boolean, 0
 zxprinter, boolean, 1
 covox, boolean, 0
 phantom_typist_mode, string, "Auto"
@@ -103,6 +104,7 @@ volume_ay, numeric, 100
 volume_beeper, numeric, 100
 volume_specdrum, numeric, 100
 volume_covox, numeric, 100
+volume_uspeech, numeric, 100
 
 joystick_1, string, NULL, 'j'
 joystick_1_output, numeric, 0
@@ -202,7 +204,7 @@ printer_text_filename, string, "printout.txt",, textfile
 aspect_hint, boolean, 1
 strict_aspect_hint, boolean, 0
 fb_mode, numeric, 320, 'v', fbmode
-svga_modes, string, NULL
+svga_modes, null, 0
 sdl_fullscreen_mode, string, NULL
 doublescan_mode, numeric, 1, 'D', doublescan-mode
 
@@ -259,9 +261,11 @@ rom_multiface1, string, "mf1.rom",
 rom_multiface128, string, "mf128.rom",
 rom_multiface3, string, "mf3.rom",
 rom_opus, string, "opus.rom",
+rom_sp0256, string, "sp0256-al2.rom",
 rom_speccyboot, string, "speccyboot-1.4.rom",
 rom_ttx2000s, string, "ttx2000s.rom",
 rom_usource, string, "usource.rom",
+rom_uspeech, string, "uspeech.rom",
 
 drive_plus3a_type, string, NULL
 drive_plus3b_type, string, NULL

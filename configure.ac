@@ -57,6 +57,23 @@ AC_DEFINE([FUSE_RC_VERSION], [fuse_rc_version],
           [Define version information for win32 executables])
 AC_DEFINE([FUSE_COPYRIGHT], [fuse_copyright], [Define copyright of Fuse])
 
+dnl Configure option to specify testing build info
+AC_MSG_CHECKING(testing build information)
+AC_ARG_WITH(test-build,
+[  --with-test-build=INFO  specify testing build information],
+  ,
+  unset withval
+)
+if test "$withval" = ""; then
+  echo 'not a testing build'
+else
+  withval=${withval//#NOW#/`date -u`}
+  echo "$withval"
+  AC_DEFINE_UNQUOTED([FUSE_TEST_LINE], ["This is a special build for testing purposes:"], [Testing warning line])
+  AC_DEFINE_UNQUOTED([FUSE_TEST_BUILD], ["$withval"], [Testing build information])
+  test_build="$withval"
+fi
+
 dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
@@ -85,16 +102,6 @@ AC_SUBST(YFLAGS)
 
 dnl Check for big endianness
 AC_C_BIGENDIAN
-
-dnl Checks for header files.
-m4_warn([obsolete],
-[The preprocessor macro `STDC_HEADERS' is obsolete.
-  Except in unusual embedded environments, you can safely include all
-  ISO C90 headers unconditionally.])dnl
-# Autoupdate added the next two lines to ensure that your configure
-# script's behavior did not change.  They are probably safe to remove.
-AC_CHECK_INCLUDES_DEFAULT
-AC_PROG_EGREP
 
 AC_CHECK_HEADERS(
   libgen.h \
@@ -204,25 +211,6 @@ if test "$win32" = yes; then
                   AC_DEFINE([UI_WIN32], 1, [Defined if Win32 UI in use])
                   UI=win32,
                   AC_MSG_ERROR([Win32 UI not found]))
-fi
-
-dnl Look for svgalib (default=no)
-if test -z "$UI"; then
-  AC_MSG_CHECKING(whether svgalib UI requested)
-  AC_ARG_WITH(svgalib,
-  [  --with-svgalib          use svgalib for user interface],
-  if test "$withval" = no; then svgalib=no; else svgalib=yes; fi,
-  svgalib=no)
-  AC_MSG_RESULT($svgalib)
-  if test "$svgalib" = yes; then
-    AC_CHECK_HEADER(vga.h,
-                    LIBS="$LIBS -lvga";
-                    AC_DEFINE([UI_SVGA], 1, [Defined if svgalib UI in use])
-                    AC_DEFINE([USE_WIDGET], 1,
-                              [Defined if we're using a widget-based UI])
-                    UI=svga; WIDGET=widget,
-                    AC_MSG_ERROR([svgalib not found]))
-  fi
 fi
 
 dnl Look for framebuffer interface for SA1110 (default=no)
@@ -432,7 +420,7 @@ fi
 dnl Look for Xlib UI (default=yes)
 if test -z "$UI"; then
   if test "$with_x" = no; then
-    AC_MSG_ERROR([Please specify --with-svgalib or --with-fb, not --without-x.])
+    AC_MSG_ERROR([Please specify --with-fb, not --without-x.])
   fi
   AC_PATH_XTRA
   CFLAGS="$CFLAGS $X_CFLAGS";
@@ -470,7 +458,6 @@ AM_CONDITIONAL(UI_FB, test "$UI" = fb)
 AM_CONDITIONAL(UI_GTK, test "$UI" = gtk)
 AM_CONDITIONAL(UI_NULL, test "$UI" = null)
 AM_CONDITIONAL(UI_SDL, test "$UI" = sdl)
-AM_CONDITIONAL(UI_SVGA, test "$UI" = svga)
 AM_CONDITIONAL(UI_WII, test "$UI" = wii)
 AM_CONDITIONAL(UI_WIN32, test "$UI" = win32)
 AM_CONDITIONAL(UI_X, test "$UI" = xlib)
@@ -764,10 +751,9 @@ AC_MSG_RESULT($stick)
 if test "$stick" = yes; then
   dnl We prefer to use UI-specific joystick code. (Default.)
   dnl If there is none, or you override this here, we use libjsw.
-  dnl (svgalib appears to dislike switched joysticks on the parallel port...)
   case "$UI" in
-    svga|sdl|win32)
-      dnl Libraries such as svgalib provide their own joystick code.
+    sdl|win32)
+      dnl Libraries provide their own joystick code
       AC_MSG_CHECKING([whether to use $UI's joystick support])
       AC_ARG_ENABLE(ui-joystick,
       AS_HELP_STRING([--disable-ui-joystick], [use libjsw joystick code (where supported)]),
@@ -1105,6 +1091,18 @@ echo "Spectranet support: ${build_spectranet}"
 echo "SpeccyBoot support: ${linux_tap:-no}"
 echo "TTX2000 S support: ${build_ttx2000s}"
 echo "Desktop integration: ${desktopintegration}"
+
+if test "${test_build}" != ""; then
 echo ""
 echo "Type 'make' to compile De-Fuse"
+  echo "*********************"
+  echo "*** Testing build ***"
+  echo "*********************"
+  echo "This build will display the following information"
+  echo "  to distinguish it from official version:"
+  echo -e $test_build
+fi
+
+echo ""
+echo "Type 'make' to compile Fuse"
 echo ""

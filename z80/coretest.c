@@ -21,7 +21,7 @@
 
 */
 
-#include <config.h>
+#include "config.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -523,6 +523,15 @@ int usource_active = 0;
 
 void
 usource_toggle( void )
+{
+  abort();
+}
+
+int uspeech_available = 0;
+int uspeech_active = 0;
+
+void
+uspeech_toggle( void )
 {
   abort();
 }

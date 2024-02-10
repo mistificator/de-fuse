@@ -22,12 +22,12 @@
 
 */
 
-#include <config.h>
+#include "config.h"
 
 #include <stdio.h>
 #include <string.h>
 
-#include <libspectrum.h>
+#include "libspectrum.h"
 
 #include "machine.h"
 #include "machines.h"
@@ -78,6 +78,7 @@ ensure_empty_mapping( void )
   for( i = 0; i < MEMORY_PAGES_IN_16K; i++ ) {
     memory_page *page = &empty_mapping[i];
     page->page = empty_chunk + i * MEMORY_PAGE_SIZE;
+    page->offset = i * MEMORY_PAGE_SIZE;
     page->writable = 0;
     page->contended = 0;
     page->source = memory_source_none;
