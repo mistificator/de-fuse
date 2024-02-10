@@ -25,7 +25,7 @@
 #ifndef FUSE_PERIPH_H
 #define FUSE_PERIPH_H
 
-#include <libspectrum.h>
+#include "libspectrum.h"
 
 /* The types of peripheral Fuse knows about */
 typedef enum periph_type {
@@ -76,6 +76,7 @@ typedef enum periph_type {
   PERIPH_TYPE_ULA_FULL_DECODE,/* Standard ULA responding only to 0xfe */
   PERIPH_TYPE_UPD765,         /* +3 uPD765 FDC */
   PERIPH_TYPE_USOURCE,        /* Currah uSource interface */
+  PERIPH_TYPE_USPEECH,        /* Currah uSpeech interface */
   PERIPH_TYPE_ZXATASP,        /* ZXATASP IDE interface */
   PERIPH_TYPE_ZXCF,           /* ZXCF IDE interface */
   PERIPH_TYPE_ZXMMC,          /* ZXMMC interface */

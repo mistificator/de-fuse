@@ -21,7 +21,7 @@
 
 */
 
-#include <config.h>
+#include "config.h"
 
 #include <errno.h>
 #include <limits.h>
@@ -46,7 +46,8 @@
 #endif /* #if defined UI_SDL || (defined USE_JOYSTICK && !defined HAVE_JSW_H && (defined UI_X || defined UI_GTK) ) */
 
 #ifdef GEKKO
-#include <fat.h>
+/* #include <fat.h>
+ that requires disc_io.h which does not exist for wii? */
 #endif				/* #ifdef GEKKO */
 
 #ifdef HAVE_LIB_XML2
@@ -65,12 +66,13 @@
 #include "module.h"
 #include "movie.h"
 #include "mempool.h"
-#include "peripherals/ay.h"
 #include "peripherals/dck.h"
+#include "peripherals/sound/ay.h"
+#include "peripherals/sound/fuller.h"
+#include "peripherals/sound/melodik.h"
 #include "peripherals/disk/beta.h"
 #include "peripherals/disk/didaktik.h"
 #include "peripherals/disk/fdd.h"
-#include "peripherals/fuller.h"
 #include "peripherals/ide/divide.h"
 #include "peripherals/ide/divmmc.h"
 #include "peripherals/ide/simpleide.h"
@@ -81,10 +83,10 @@
 #include "peripherals/if1.h"
 #include "peripherals/if2.h"
 #include "peripherals/kempmouse.h"
-#include "peripherals/melodik.h"
 #include "peripherals/multiface.h"
 #include "peripherals/printer.h"
 #include "peripherals/scld.h"
+#include "peripherals/sound/uspeech.h"
 #include "peripherals/speccyboot.h"
 #include "peripherals/spectranet.h"
 #include "peripherals/ttx2000s.h"
@@ -161,6 +163,7 @@ static void creator_register_startup( void );
 
 static void fuse_show_copyright(void);
 static void fuse_show_version( void );
+static void fuse_show_test_build_info( void );
 static void fuse_show_help( void );
 
 static int setup_start_files( start_files_t *start_files );
@@ -274,7 +277,7 @@ setuid_init( void *context )
 }
 
 static void
-setuid_register_startup()
+setuid_register_startup( void )
 {
   startup_manager_module dependencies[] = {
     STARTUP_MANAGER_MODULE_DISPLAY,
@@ -343,6 +346,7 @@ run_startup_manager( int *argc, char ***argv )
   timer_register_startup();
   ula_register_startup();
   usource_register_startup();
+  uspeech_register_startup();
   z80_register_startup();
   zxatasp_register_startup();
   zxcf_register_startup();
@@ -408,6 +412,14 @@ static int fuse_init(int argc, char **argv)
 
   fuse_emulation_paused = 0;
   movie_init();
+
+#ifdef FUSE_TEST_BUILD
+  /* Show warning in case of test build */
+  ui_error( UI_ERROR_WARNING,
+    FUSE_TEST_LINE "\n"
+    FUSE_TEST_BUILD
+  );
+#endif
 
   return 0;
 }
@@ -500,6 +512,20 @@ static void fuse_show_copyright(void)
 static void fuse_show_version( void )
 {
   printf( "The Free Unix Spectrum Emulator (Fuse) version " VERSION ".\n" );
+
+  fuse_show_test_build_info();
+}
+
+static void fuse_show_test_build_info( void )
+{
+#ifdef FUSE_TEST_BUILD
+  printf(
+    "\n"
+    FUSE_TEST_LINE "\n"
+    FUSE_TEST_BUILD "\n"
+    "\n"
+    );
+#endif
 }
 
 static void fuse_show_help( void )

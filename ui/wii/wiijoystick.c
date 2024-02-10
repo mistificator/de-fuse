@@ -21,13 +21,12 @@
 
 */
 
-#include <config.h>
+#include "config.h"
 #include "fuse.h"
 #include "input.h"
 #include "ui/ui.h"
 #include "ui/uijoystick.h"
 
-#define GEKKO
 #include <wiiuse/wpad.h>
 
 typedef enum {

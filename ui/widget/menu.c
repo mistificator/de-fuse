@@ -22,7 +22,7 @@
 
 */
 
-#include <config.h>
+#include "config.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -481,6 +481,12 @@ void
 menu_options_peripherals_general( int action )
 {
   widget_do_peripherals_general();
+}
+
+void
+menu_options_peripherals_sound( int action )
+{
+  widget_do_peripherals_sound();
 }
 
 void

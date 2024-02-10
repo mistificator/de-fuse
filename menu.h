@@ -24,9 +24,9 @@
 #ifndef FUSE_MENU_H
 #define FUSE_MENU_H
 
-#include <libspectrum.h>
+#include "libspectrum.h"
 
-#include <config.h>
+#include "config.h"
 
 #include "ui/scaler/scaler.h"
 
@@ -139,6 +139,7 @@ MENU_CALLBACK( menu_options_general );
 MENU_CALLBACK( menu_options_media );
 MENU_CALLBACK( menu_options_sound );
 MENU_CALLBACK( menu_options_peripherals_general );
+MENU_CALLBACK( menu_options_peripherals_sound );
 MENU_CALLBACK( menu_options_peripherals_disk );
 MENU_CALLBACK( menu_options_rzx );
 MENU_CALLBACK( menu_options_movie );

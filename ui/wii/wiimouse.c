@@ -21,7 +21,7 @@
 
 */
 
-#include <config.h>
+#include "config.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -31,8 +31,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
-
-#define GEKKO
 
 #include <wiiuse/wpad.h>
 
