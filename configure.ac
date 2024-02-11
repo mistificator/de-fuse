@@ -186,6 +186,43 @@ dnl we like, and then don't look at the other options
 
 AC_PATH_XTRA
 
+dnl Look for Qt UI (default=no)
+if test -z "$UI"; then
+  AC_MSG_CHECKING(whether Qt UI requested)
+  AC_ARG_WITH(qt,
+  [  --with-qt               use Qt for user interface],
+  if test "$withval" = no; then qt=no; else qt=yes; fi,
+  qt=no)
+  AC_MSG_RESULT($qt)
+  if test "$qt" = yes; then
+
+    AC_PROG_CXX
+
+    AX_HAVE_QT
+
+    CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS -fpermissive"
+
+    # Check for Qt libraries
+    #PKG_CHECK_MODULES(QT, [Qt5Core, Qt5Gui, Qt5Network], [], [AC_MSG_ERROR([Qt libraries are required.])])
+
+    # Retrieve Qt compilation and linker flags
+    #CPPFLAGS="`$PKG_CONFIG --cflags-only-I Qt5Core Qt5Gui Qt5Network` $CPPFLAGS"
+    #LDFLAGS="`$PKG_CONFIG --libs-only-L Qt5Core Qt5Gui Qt5Network` $LDFLAGS"
+    #LIBS="`$PKG_CONFIG --libs-only-l Qt5Core Qt5Gui Qt5Network` $LIBS"
+
+    #AC_CHECK_PROGS(QT_MOC, [moc])
+    #AC_CHECK_PROGS(QT_UIC, [uic])
+    #AC_CHECK_PROGS(QT_RCC, [rcc])
+    #if test -z "$QT_MOC" || test -z "$QT_UIC" || test -z "$QT_RCC"; then
+    #  AC_MSG_ERROR([Qt utility programs moc, uic, and rcc are required.])
+    #fi
+
+    AC_DEFINE([UI_QT], 1, [Defined if Qt UI in use])
+    UI=qt; 
+
+  fi
+fi
+
 dnl Look for Win32 UI (default=no)
 AC_MSG_CHECKING(whether Win32 UI requested)
 AC_ARG_WITH(win32,
@@ -454,6 +491,7 @@ if test -z "$UI"; then
   AC_DEFINE([USE_WIDGET], 1, [Defined if we're using a widget-based UI])
 fi
 
+AM_CONDITIONAL(UI_QT, test "$UI" = qt)
 AM_CONDITIONAL(UI_FB, test "$UI" = fb)
 AM_CONDITIONAL(UI_GTK, test "$UI" = gtk)
 AM_CONDITIONAL(UI_NULL, test "$UI" = null)
@@ -967,6 +1005,9 @@ AM_CONDITIONAL(COMPAT_WIN32, test "$COMPAT_OSNAME" = 'win32')
 dnl This tells the Makefile to use SDL_CFLAGS and SDL_LIBS during the build
 AM_CONDITIONAL(USE_SDL, test "$use_sdl" = "yes")
 
+dnl This tells the Makefile to use Qt during the build
+AM_CONDITIONAL(USE_QT, test "$qt" = "yes")
+
 dnl Decide whether to install desktop and mime files
 AC_ARG_ENABLE(desktop-integration,
 AS_HELP_STRING([--enable-desktop-integration], [add menu entry and file associations]),
@@ -1064,9 +1105,9 @@ echo "zlib support: ${LIBSPEC_HAVE_ZLIB:-no}"
 echo "bzip2 support: ${LIBSPEC_HAVE_BZ2:-no}"
 echo "audiofile support: ${LIBSPEC_HAVE_AUDIOFILE:-no}"
 echo ""
-echo "********************"
-echo "*** Fuse options ***"
-echo "********************"
+echo "***********************"
+echo "*** De-Fuse options ***"
+echo "***********************"
 echo ""
 echo "User interface: ${UI}"
 if test "${UI}" = "gtk"; then
@@ -1104,5 +1145,5 @@ echo "Type 'make' to compile De-Fuse"
 fi
 
 echo ""
-echo "Type 'make' to compile Fuse"
+echo "Type 'make' to compile De-Fuse"
 echo ""

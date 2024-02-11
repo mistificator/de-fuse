@@ -69,6 +69,10 @@ if USE_SDL
 de_fuse_LDADD += $(SDL_LIBS)
 endif
 
+if USE_QT
+de_fuse_LDADD += $(QT_LIBS)
+endif
+
 de_fuse_DEPENDENCIES =
 
 EXTRA_de_fuse_SOURCES =
@@ -185,6 +189,7 @@ include pokefinder/Makefile.am
 include sound/Makefile.am
 include timer/Makefile.am
 include ui/Makefile.am
+include ui/qt/Makefile.am
 include ui/fb/Makefile.am
 include ui/gtk/Makefile.am
 include ui/null/Makefile.am

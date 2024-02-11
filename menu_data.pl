@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # menu_data.pl: generate the menu structure from menu_data.dat
-# Copyright (c) 2004-2015 Philip Kendall, Stuart Brady, Marek Januszewski
+# Copyright (c) 2004-2024 Philip Kendall, Stuart Brady, Marek Januszewski, ZXLDR
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ sub dump_gtk ($$);
 sub _dump_gtk ($$$$$);
 sub dump_win32 ($$);
 sub _dump_win32 ($$$$);
+sub dump_qt ($$);
+sub _dump_qt ($$$$);
 
 die "usage: $0 <ui>" unless @ARGV >= 1;
 
@@ -53,6 +55,11 @@ if( $ui eq 'win32' ) {
 
   $mode = shift;
   $filename = 'menu_data.' . $mode;
+} elsif( $ui eq 'qt' ) {
+  die "$0: dump_qt: which mode -- c, or ui?" unless @ARGV >= 1;
+
+  $mode = shift;
+  $filename = 'menu_data.' . $mode;  
 } else {
   $filename = 'menu_data.c';
 }
@@ -114,6 +121,8 @@ if( $ui eq 'gtk' ) {
     dump_widget( \%menus );
 } elsif( $ui eq 'win32' ) {
     dump_win32( $mode, \%menus );
+} elsif( $ui eq 'qt' ) {
+    dump_qt( $mode, \%menus );
 } else {
     die "$0: unknown ui: $ui";
 }
@@ -213,6 +222,135 @@ sub _dump_widget ($$) {
 
     print $s;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+sub dump_qt ($$) {
+
+  my( $mode, $menu ) = @_;
+
+  if( $mode eq 'c' ) {
+  } elsif( $mode eq 'ui' ) {
+
+    print << "XML";
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>DeFuseWindow</class>
+  <widget class="QMainWindow" name="window">
+    <property name="geometry">
+    <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>800</width>
+      <height>600</height>
+    </rect>
+    </property>  
+    <property name="windowTitle">
+      <string>De-Fuse</string>
+    </property>
+    <widget class="QWidget" name="centralwidget"/>
+    <widget class="QMenuBar" name="menubar">
+XML
+
+    _dump_qt( $mode, $menu, 'menu', '      ' );
+
+    print << "XML";
+    </widget>
+    <widget class="QStatusBar" name="statusbar"/>
+XML
+
+    _dump_qt( 'actions', $menu, 'menu', '  ' );
+
+    print << "XML";
+  </widget>
+  <resources/>
+  <connections/>
+</ui>
+XML
+
+  }
+
+}
+
+sub _dump_qt ($$$$) {
+
+  my( $mode, $menu, $path, $spaces ) = @_;
+
+  my $menu_name = $menu->{name};
+  $menu_name =~ s/_//;
+
+  if( $mode eq 'actions' ) {
+    foreach my $item ( @{ $menu->{submenu} } ) {
+      if( $item->{type} eq 'Separator' ) {
+        next;
+      }
+
+      my $name = $item->{name};
+      $name =~ s/_/&/;
+      my $cname = cname( $name );
+      $name =~ s/&/&amp;/;
+
+      if( $item->{submenu} ) {
+        _dump_qt( $mode, $item, "${path}_$cname", $spaces . "  " );
+      } else {
+            print << "XML";
+    <action name="action_${cname}">
+      <property name="text">
+        <string>$name</string>
+      </property>
+    </action>            
+XML
+
+      }
+    }
+  } elsif( $mode eq 'ui' ) {
+    foreach my $item ( @{ $menu->{submenu} } ) {
+
+      if( $item->{type} eq 'Separator' ) {
+        print "${spaces}<addaction name=\"separator\"/>\n";
+        next;
+      }
+
+      my $name = $item->{name};
+      $name =~ s/_/&/;
+      my $cname = cname( $name );
+      $name =~ s/&/&amp;/;
+
+      if( $item->{submenu} ) {
+            print << "XML";
+${spaces}<widget class="QMenu" name="menu_${cname}">
+${spaces}  <property name="title">
+${spaces}    <string>$name</string>
+${spaces}  </property>
+XML
+
+            _dump_qt( $mode, $item, "${path}_$cname", $spaces . "  " );
+
+            print "${spaces}</widget>\n";
+            print "${spaces}<addaction name=\"menu_${cname}\"/>\n";
+      } else {
+          print "${spaces}<addaction name=\"action_${cname}\"/>\n";
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
 
 sub dump_gtk ($$) {
 
