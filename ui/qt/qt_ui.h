@@ -11,11 +11,14 @@ class DeFuseWindow: public QMainWindow
 {
     Q_OBJECT
 public:
-    DeFuseWindow(QWidget * _parent = nullptr);
+    static DeFuseWindow * instance();
+    int ask(char *);
 protected:
-    void closeEvent(QCloseEvent *);    
+    DeFuseWindow(QWidget * _parent = nullptr);
+    void closeEvent(QCloseEvent *) override;    
 private:
     Ui::DeFuseWindow * ui;    
+    void menu_data_init(); // body is generated from menu_data.pl
 };
 
 #endif

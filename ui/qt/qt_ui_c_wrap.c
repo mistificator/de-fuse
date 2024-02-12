@@ -5,6 +5,8 @@
 
 #include "../uijoystick.c"
 
+#include "fuse.h"
+
 keysyms_map_t keysyms_map[] = {
   { 0, 0 } /* End marker */
 };
@@ -73,7 +75,6 @@ ui_debugger_update( void )
 int
 ui_end( void )
 {
-  qApp->quit();
   return 0;
 }
 
@@ -202,7 +203,7 @@ uidisplay_end( void )
 void
 uidisplay_frame_end( void )
 {
-  /* Do nothing */
+    qApp->processEvents();
 }
 
 int
@@ -215,8 +216,7 @@ uidisplay_hotswap_gfx_mode( void )
 int
 uidisplay_init( int width, int height )
 {
-    DeFuseWindow * w = new DeFuseWindow();
-    w->show();
+    DeFuseWindow::instance()->show();
     return 0;
 }
 
@@ -238,4 +238,153 @@ void
 uidisplay_putpixel( int x, int y, int colour )
 {
   /* Do nothing */
+}
+
+void
+menu_file_loadbinarydata( int action )
+{
+
+}
+
+void
+menu_file_savebinarydata( int action )
+{
+
+}
+
+void
+menu_file_exit( int )
+{
+    if ( fuse_exiting )
+    {
+        return;
+    }
+    if( DeFuseWindow::instance()->ask( "Exit De-Fuse?" ) ) 
+    {
+
+        if( menu_check_media_changed() ) 
+        {
+            return;
+        }
+        fuse_exiting = 1;
+    }
+}
+
+void
+menu_options_general( int action )
+{
+
+}
+
+void
+menu_options_internals_sound( int action )
+{
+
+}
+
+void
+menu_options_internals_diskettes( int action )
+{
+
+}
+
+void
+menu_options_internals_loaders( int action )
+{
+
+}
+
+void
+menu_options_peripherals_devices( int action )
+{
+
+}
+
+void
+menu_options_peripherals_storages( int action )
+{
+
+}
+
+void
+menu_options_peripherals_sound( int action )
+{
+
+}
+
+void
+menu_options_joysticks_select( int action )
+{
+
+}
+
+void
+menu_options_recording_rzx( int action )
+{
+
+}
+
+void
+menu_options_recording_movie( int action )
+{
+
+}
+
+void
+menu_machine_pause( int action )
+{
+
+}
+
+void
+menu_machine_reset( int action )
+{
+
+}
+
+void
+menu_machine_select( int action )
+{
+
+}
+
+void
+menu_debug_debugger( int action )
+{
+
+}
+
+void
+menu_debug_memorybrowser( int action )
+{
+
+}
+
+void
+menu_debug_pokefinder( int action )
+{
+
+}
+
+void
+menu_debug_pokememory( int action )
+{
+
+}
+
+void
+menu_media_tape_browse( int action )
+{
+
+}
+
+void
+menu_help_keyboard( int action )
+{
+
+}
+
+void
+menu_help_about( int action )
+{
 }
