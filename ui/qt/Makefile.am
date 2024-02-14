@@ -31,15 +31,14 @@ CLEANFILES += $(ui_qt_built)
 
 ui_qt_files = \
                 ui/qt/moc_qt_ui.cpp \
-                ui/qt/qt_ui.cpp \
-                ui/qt/options.c
+                ui/qt/qt_ui.cpp
 
 ui_qt_built = \
                ui/qt/moc_qt_ui.cpp \
                ui/qt/ui_qt_ui.h \
                ui/qt/menu_data.ui \
                ui/qt/menu_data.cpp \
-               ui/qt/options.c \
+               ui/qt/options.cpp \
                ui/qt/options_internals.h
 EXTRA_DIST += \
               ui/qt/options.pl \
@@ -53,7 +52,7 @@ ui/qt/menu_data.cpp: $(srcdir)/perl/cpp-perl.pl $(srcdir)/menu_data.pl $(srcdir)
 	@$(MKDIR_P) ui/qt
 	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/menu_data.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/menu_data.pl qt cpp > $@.tmp && mv $@.tmp $@
 
-ui/qt/options.c: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/qt/options.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
+ui/qt/options.cpp: $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/qt/options.pl $(srcdir)/ui/options.dat $(srcdir)/perl/Fuse.pm $(srcdir)/perl/Fuse/Dialog.pm
 	@$(MKDIR_P) ui/qt
 	$(AM_V_GEN)$(PERL) $(srcdir)/perl/cpp-perl.pl config.h $(srcdir)/ui/options.dat | $(PERL) -I$(srcdir)/perl $(srcdir)/ui/qt/options.pl - > $@.tmp && mv $@.tmp $@
 

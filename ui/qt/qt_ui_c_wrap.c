@@ -261,7 +261,6 @@ menu_file_exit( int )
     }
     if( DeFuseWindow::instance()->ask( "Exit De-Fuse?" ) ) 
     {
-
         if( menu_check_media_changed() ) 
         {
             return;
@@ -271,63 +270,9 @@ menu_file_exit( int )
 }
 
 void
-menu_options_general( int action )
-{
-
-}
-
-void
-menu_options_internals_sound( int action )
-{
-
-}
-
-void
-menu_options_internals_diskettes( int action )
-{
-
-}
-
-void
-menu_options_internals_loaders( int action )
-{
-
-}
-
-void
-menu_options_peripherals_devices( int action )
-{
-
-}
-
-void
-menu_options_peripherals_storages( int action )
-{
-
-}
-
-void
-menu_options_peripherals_sound( int action )
-{
-
-}
-
-void
 menu_options_joysticks_select( int action )
 {
-
-}
-
-void
-menu_options_recording_rzx( int action )
-{
-
-}
-
-void
-menu_options_recording_movie( int action )
-{
-
+    
 }
 
 void

@@ -4,6 +4,11 @@
 #include <QMessageBox>
 
 #include "menu_data.cpp"
+#include "options.cpp"
+extern "C"
+{
+    #include "qt_ui_c_wrap.c"
+}
 
 DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::DeFuseWindow)
 {
@@ -27,11 +32,3 @@ int DeFuseWindow::ask(char * text)
     return QMessageBox::question(this, "Question", text) == QMessageBox::Yes;
 }
 
-// -----------------------------------------------------------------------
-
-extern "C"
-{
-
-    #include "qt_ui_c_wrap.c"
-
-}
