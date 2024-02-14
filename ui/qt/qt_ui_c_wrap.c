@@ -11,11 +11,77 @@ keysyms_map_t keysyms_map[] = {
   { 0, 0 } /* End marker */
 };
 
+static void
+register_scalers( int force_scaler )
+{
+  scaler_type scaler;
+  float drawing_area_scale, scaling_factor;
+
+  scaler_register_clear();
+
+  if( machine_current->timex ) {
+    scaler_register( SCALER_HALF );
+    scaler_register( SCALER_HALFSKIP );
+    scaler_register( SCALER_TIMEXTV );
+    scaler_register( SCALER_TIMEX1_5X );
+    scaler_register( SCALER_TIMEX2X );
+  } else {
+    scaler_register( SCALER_DOUBLESIZE );
+    scaler_register( SCALER_TRIPLESIZE );
+    scaler_register( SCALER_QUADSIZE );
+    scaler_register( SCALER_TV2X );
+    scaler_register( SCALER_TV3X );
+    scaler_register( SCALER_TV4X );
+    scaler_register( SCALER_PALTV2X );
+    scaler_register( SCALER_PALTV3X );
+    scaler_register( SCALER_PALTV4X );
+    scaler_register( SCALER_HQ2X );
+    scaler_register( SCALER_HQ3X );
+    scaler_register( SCALER_HQ4X );
+    scaler_register( SCALER_ADVMAME2X );
+    scaler_register( SCALER_ADVMAME3X );
+    scaler_register( SCALER_2XSAI );
+    scaler_register( SCALER_SUPER2XSAI );
+    scaler_register( SCALER_SUPEREAGLE );
+    scaler_register( SCALER_DOTMATRIX );
+  }
+  scaler_register( SCALER_NORMAL );
+  scaler_register( SCALER_PALTV );
+
+  scaler =
+    scaler_is_supported( current_scaler ) ? current_scaler : SCALER_NORMAL;
+
+  int current_size = 1, image_scale = 1; // temporary
+  drawing_area_scale = (float)current_size / image_scale;
+  scaling_factor = scaler_get_scaling_factor( current_scaler );
+
+  /* Override scaler if the image doesn't fit well in the drawing area */
+  if( force_scaler && drawing_area_scale != scaling_factor ) {
+
+    switch( current_size ) {
+    case 1: scaler = machine_current->timex ? SCALER_HALF : SCALER_NORMAL;
+      break;
+    case 2: scaler = machine_current->timex ? SCALER_NORMAL : SCALER_DOUBLESIZE;
+      break;
+    case 3: scaler = machine_current->timex ? SCALER_TIMEX1_5X :
+                                              SCALER_TRIPLESIZE;
+      break;
+    case 4: scaler = machine_current->timex ? SCALER_TIMEX2X :
+                                              SCALER_QUADSIZE;
+      break;
+    }
+  }
+
+  scaler_select_scaler( scaler );
+}
+
 scaler_type
 menu_get_scaler( scaler_available_fn selector )
 {
   /* No scaler selected */
-  return SCALER_NUM;
+//  return SCALER_NUM;
+    DeFuseWindow::instance()->selectScaler( [=](int i)->int { return selector(i); } );
+    return current_scaler;
 }
 
 int
@@ -217,6 +283,7 @@ int
 uidisplay_init( int width, int height )
 {
     DeFuseWindow::instance()->show();
+    register_scalers(0);
     return 0;
 }
 
@@ -272,7 +339,7 @@ menu_file_exit( int )
 void
 menu_options_joysticks_select( int action )
 {
-    
+
 }
 
 void
@@ -290,7 +357,13 @@ menu_machine_reset( int action )
 void
 menu_machine_select( int action )
 {
+    /* Stop emulation */
+    fuse_emulation_pause();
 
+    DeFuseWindow::instance()->selectMachine();
+
+  /* And then carry on with emulation again */
+    fuse_emulation_unpause();
 }
 
 void
@@ -326,10 +399,11 @@ menu_media_tape_browse( int action )
 void
 menu_help_keyboard( int action )
 {
-
+    DeFuseWindow::instance()->showKeyboard();
 }
 
 void
 menu_help_about( int action )
 {
+    DeFuseWindow::instance()->about();
 }

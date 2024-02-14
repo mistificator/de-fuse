@@ -221,14 +221,7 @@ CODE
     print << "CODE";
   /* Create the OK and Cancel buttons */
 
-  QHBoxLayout * _hbox = new QHBoxLayout();
-  _hbox->addSpacerItem( new QSpacerItem( 10, 1 ) );
-  QPushButton * _cancel = new QPushButton( "Cancel ");
-  QObject::connect( _cancel, &QPushButton::clicked, _dialog, &QDialog::reject );
-  _hbox->addWidget( _cancel );
-  QPushButton * _ok = new QPushButton( "OK ");
-  _ok->setDefault(true);
-  QObject::connect( _ok, &QPushButton::clicked, _dialog, &QDialog::accept );
+  QPushButton * _ok = DeFuseWindow::addOkCancelButtons( _dialog );
   QObject::connect( _ok, &QPushButton::clicked, [=]() {
     menu_options_$_->{name}_t *ptr = & dialog;
 CODE
@@ -299,13 +292,10 @@ CODE
 
   });
 
-
-  _hbox->addWidget( _ok );
-  _vbox->addLayout( _hbox );
-
   /* Display the window */
   /* Process events until the window is done with */
   _dialog->exec();
+  delete _dialog;
 
   /* And then carry on with emulation again */
   fuse_emulation_unpause();

@@ -31,10 +31,12 @@ CLEANFILES += $(ui_qt_built)
 
 ui_qt_files = \
                 ui/qt/moc_qt_ui.cpp \
+                ui/qt/qrc_qt_ui.cpp \
                 ui/qt/qt_ui.cpp
 
 ui_qt_built = \
                ui/qt/moc_qt_ui.cpp \
+               ui/qt/qrc_qt_ui.cpp \
                ui/qt/ui_qt_ui.h \
                ui/qt/menu_data.ui \
                ui/qt/menu_data.cpp \
@@ -73,3 +75,6 @@ ui/qt/ui_qt_ui.h: $(srcdir)/ui/qt/menu_data.ui
 
 ui/qt/moc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.h
 	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/qt_ui.h > $@.tmp && mv $@.tmp $@
+
+ui/qt/qrc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.qrc
+	$(AM_V_GEN)$(RCC) $(srcdir)/ui/qt/qt_ui.qrc > $@.tmp && mv $@.tmp $@
