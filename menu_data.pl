@@ -275,7 +275,35 @@ CODE
     <property name="windowTitle">
       <string>De-Fuse</string>
     </property>
-    <widget class="QWidget" name="centralwidget"/>
+    <widget class="QWidget" name="centralwidget">
+      <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+          <number>0</number>
+        </property>
+        <property name="topMargin">
+          <number>0</number>
+        </property>
+        <property name="rightMargin">
+          <number>0</number>
+        </property>
+        <property name="bottomMargin">
+          <number>0</number>
+        </property>
+        <property name="spacing">
+          <number>0</number>
+        </property>
+        <item row="0" column="0">
+          <widget class="QLabel" name="screenWidget">
+            <property name="text">
+              <string/>
+            </property>
+            <property name="alignment">
+              <set>Qt::AlignCenter</set>
+            </property>
+          </widget>
+        </item>
+      </layout>    
+    </widget>
     <widget class="QMenuBar" name="menubar">
 XML
 

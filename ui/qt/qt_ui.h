@@ -4,7 +4,14 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
+#include <QImage>
 #include <functional>
+
+extern "C"
+{
+    #include <libspectrum.h>
+    #include <display.h>
+}
 
 QT_BEGIN_NAMESPACE
     namespace Ui { class DeFuseWindow; }
@@ -20,13 +27,23 @@ public:
     void about();
     void selectMachine();
     void selectScaler( std::function<int(int)> selector );
-    static QPushButton * addOkCancelButtons(QDialog *); 
+    static QPushButton * addOkCancelButtons(QDialog *);
+    struct Screen_t 
+    {
+        enum { AddX = 3, AddY = 4, Pitch = DISPLAY_SCREEN_WIDTH + AddX, Size = (2 * DISPLAY_SCREEN_HEIGHT + AddY) * Pitch };
+        QImage * image = nullptr;
+    };
+    Screen_t getScreen(int w, int h);
+    Screen_t getScreen();
+    void drawScreen();
 protected:
     DeFuseWindow(QWidget * _parent = nullptr);
     void closeEvent(QCloseEvent *) override;    
 private:
     Ui::DeFuseWindow * ui = nullptr;    
     QLabel * keyboard = nullptr;
+    QImage screen_image;
+    Screen_t screen;
     void menu_data_init(); // body is generated from menu_data.pl
     void selectSomething(QString title, int current, int count, std::function<QPair<int, QString>(int)> label_fn, std::function<int(int, bool)> apply_fn);
 };

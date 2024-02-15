@@ -11,6 +11,65 @@ keysyms_map_t keysyms_map[] = {
   { 0, 0 } /* End marker */
 };
 
+/* A copy of every pixel on the screen, replaceable by plotting directly into
+   rgb_image below */
+libspectrum_word
+  qtdisplay_image[ 2 * DISPLAY_SCREEN_HEIGHT ][ DISPLAY_SCREEN_WIDTH ];
+
+const int rgb_pitch = DeFuseWindow::Screen_t::Pitch;
+
+short qtdisplay_updated = 0;
+
+/* The color palette */
+static const unsigned char rgb_colors[16][3] = {
+
+  {   0,   0,   0 },
+  {   0,   0, 192 },
+  { 192,   0,   0 },
+  { 192,   0, 192 },
+  {   0, 192,   0 },
+  {   0, 192, 192 },
+  { 192, 192,   0 },
+  { 192, 192, 192 },
+  {   0,   0,   0 },
+  {   0,   0, 255 },
+  { 255,   0,   0 },
+  { 255,   0, 255 },
+  {   0, 255,   0 },
+  {   0, 255, 255 },
+  { 255, 255,   0 },
+  { 255, 255, 255 },
+
+};
+
+/* And the colors (and black and white 'colors') in 32-bit format */
+libspectrum_dword qtdisplay_colors[16];
+static libspectrum_dword bw_colors[16];
+
+static int
+init_colors()
+{
+  size_t i;
+
+  for( i = 0; i < 16; i++ ) {
+
+
+    libspectrum_dword red, green, blue, grey;
+
+    red   = rgb_colors[i][0];
+    green = rgb_colors[i][1];
+    blue  = rgb_colors[i][2];
+
+    /* Addition of 0.5 is to avoid rounding errors */
+    grey = ( 0.299 * red + 0.587 * green + 0.114 * blue ) + 0.5;
+
+    qtdisplay_colors[i] =  red << 16 | green << 8 | blue;
+    bw_colors[i] = grey << 16 |  grey << 8 | grey;
+  }
+
+  return 0;
+}
+
 static void
 register_scalers( int force_scaler )
 {
@@ -186,7 +245,8 @@ ui_init( int *argc, char ***argv )
     {
         return -1;
     }
-    new QApplication(* argc, * argv);
+    QApplication * app = new QApplication(* argc, * argv);
+    app->setWindowIcon(QIcon(":/fuse.png"));
     return 0;
 }
 
@@ -256,7 +316,13 @@ ui_widgets_reset( void )
 void
 uidisplay_area( int x, int y, int w, int h )
 {
-  /* Do nothing */
+    QImage * image = DeFuseWindow::instance()->getScreen().image;
+    libspectrum_dword * palette = settings_current.bw_tv ? bw_colors : qtdisplay_colors;
+    for(int yy = y; yy < y + h; yy++ ) {
+        libspectrum_word *display = &qtdisplay_image[yy][x];
+        for(int i = 0; i < w; ++i, ++display ) image->setPixel( x + i + 2, yy + 2, palette[ *display ]);
+    }
+    qtdisplay_updated = 1;
 }
 
 int
@@ -269,6 +335,11 @@ uidisplay_end( void )
 void
 uidisplay_frame_end( void )
 {
+    if (qtdisplay_updated)
+    {
+        DeFuseWindow::instance()->drawScreen();
+        qtdisplay_updated = 0;
+    }
     qApp->processEvents();
 }
 
@@ -282,29 +353,99 @@ uidisplay_hotswap_gfx_mode( void )
 int
 uidisplay_init( int width, int height )
 {
-    DeFuseWindow::instance()->show();
     register_scalers(0);
+    init_colors();
+    ::memset(qtdisplay_image, 0 , 2 * DISPLAY_SCREEN_HEIGHT * DISPLAY_SCREEN_WIDTH * sizeof(libspectrum_word));
+    DeFuseWindow::instance()->getScreen(width + DeFuseWindow::Screen_t::AddX, height + DeFuseWindow::Screen_t::AddY);
+    DeFuseWindow::instance()->show();
+    qtdisplay_updated = 1;
     return 0;
 }
 
+/* Set one pixel in the display */
 void
-uidisplay_plot16( int x, int y, libspectrum_word data,
-    libspectrum_byte ink, libspectrum_byte paper )
+uidisplay_putpixel( int x, int y, int color )
 {
-  /* Do nothing */
+  if( machine_current->timex ) {
+    x <<= 1; y <<= 1;
+    qtdisplay_image[y  ][x  ] = color;
+    qtdisplay_image[y  ][x+1] = color;
+    qtdisplay_image[y+1][x  ] = color;
+    qtdisplay_image[y+1][x+1] = color;
+  } else {
+    qtdisplay_image[y][x] = color;
+  }
 }
 
+/* Print the 8 pixels in `data' using ink color `ink' and paper
+   color `paper' to the screen at ( (8*x) , y ) */
 void
 uidisplay_plot8( int x, int y, libspectrum_byte data,
-    libspectrum_byte ink, libspectrum_byte paper )
+                 libspectrum_byte ink, libspectrum_byte paper )
 {
-  /* Do nothing */
+  x <<= 3;
+
+  if( machine_current->timex ) {
+    int i;
+
+    x <<= 1; y <<= 1;
+    for( i=0; i<2; i++,y++ ) {
+      qtdisplay_image[y][x+ 0] = ( data & 0x80 ) ? ink : paper;
+      qtdisplay_image[y][x+ 1] = ( data & 0x80 ) ? ink : paper;
+      qtdisplay_image[y][x+ 2] = ( data & 0x40 ) ? ink : paper;
+      qtdisplay_image[y][x+ 3] = ( data & 0x40 ) ? ink : paper;
+      qtdisplay_image[y][x+ 4] = ( data & 0x20 ) ? ink : paper;
+      qtdisplay_image[y][x+ 5] = ( data & 0x20 ) ? ink : paper;
+      qtdisplay_image[y][x+ 6] = ( data & 0x10 ) ? ink : paper;
+      qtdisplay_image[y][x+ 7] = ( data & 0x10 ) ? ink : paper;
+      qtdisplay_image[y][x+ 8] = ( data & 0x08 ) ? ink : paper;
+      qtdisplay_image[y][x+ 9] = ( data & 0x08 ) ? ink : paper;
+      qtdisplay_image[y][x+10] = ( data & 0x04 ) ? ink : paper;
+      qtdisplay_image[y][x+11] = ( data & 0x04 ) ? ink : paper;
+      qtdisplay_image[y][x+12] = ( data & 0x02 ) ? ink : paper;
+      qtdisplay_image[y][x+13] = ( data & 0x02 ) ? ink : paper;
+      qtdisplay_image[y][x+14] = ( data & 0x01 ) ? ink : paper;
+      qtdisplay_image[y][x+15] = ( data & 0x01 ) ? ink : paper;
+    }
+  } else {
+    qtdisplay_image[y][x+ 0] = ( data & 0x80 ) ? ink : paper;
+    qtdisplay_image[y][x+ 1] = ( data & 0x40 ) ? ink : paper;
+    qtdisplay_image[y][x+ 2] = ( data & 0x20 ) ? ink : paper;
+    qtdisplay_image[y][x+ 3] = ( data & 0x10 ) ? ink : paper;
+    qtdisplay_image[y][x+ 4] = ( data & 0x08 ) ? ink : paper;
+    qtdisplay_image[y][x+ 5] = ( data & 0x04 ) ? ink : paper;
+    qtdisplay_image[y][x+ 6] = ( data & 0x02 ) ? ink : paper;
+    qtdisplay_image[y][x+ 7] = ( data & 0x01 ) ? ink : paper;
+  }
 }
 
+/* Print the 16 pixels in `data' using ink color `ink' and paper
+   color `paper' to the screen at ( (16*x) , y ) */
 void
-uidisplay_putpixel( int x, int y, int colour )
+uidisplay_plot16( int x, int y, libspectrum_word data,
+                 libspectrum_byte ink, libspectrum_byte paper )
 {
-  /* Do nothing */
+  int i;
+  x <<= 4; y <<= 1;
+
+  for( i=0; i<2; i++,y++ ) {
+    qtdisplay_image[y][x+ 0] = ( data & 0x8000 ) ? ink : paper;
+    qtdisplay_image[y][x+ 1] = ( data & 0x4000 ) ? ink : paper;
+    qtdisplay_image[y][x+ 2] = ( data & 0x2000 ) ? ink : paper;
+    qtdisplay_image[y][x+ 3] = ( data & 0x1000 ) ? ink : paper;
+    qtdisplay_image[y][x+ 4] = ( data & 0x0800 ) ? ink : paper;
+    qtdisplay_image[y][x+ 5] = ( data & 0x0400 ) ? ink : paper;
+    qtdisplay_image[y][x+ 6] = ( data & 0x0200 ) ? ink : paper;
+    qtdisplay_image[y][x+ 7] = ( data & 0x0100 ) ? ink : paper;
+    qtdisplay_image[y][x+ 8] = ( data & 0x0080 ) ? ink : paper;
+    qtdisplay_image[y][x+ 9] = ( data & 0x0040 ) ? ink : paper;
+    qtdisplay_image[y][x+10] = ( data & 0x0020 ) ? ink : paper;
+    qtdisplay_image[y][x+11] = ( data & 0x0010 ) ? ink : paper;
+    qtdisplay_image[y][x+12] = ( data & 0x0008 ) ? ink : paper;
+    qtdisplay_image[y][x+13] = ( data & 0x0004 ) ? ink : paper;
+    qtdisplay_image[y][x+14] = ( data & 0x0002 ) ? ink : paper;
+    qtdisplay_image[y][x+15] = ( data & 0x0001 ) ? ink : paper;
+  }
 }
 
 void

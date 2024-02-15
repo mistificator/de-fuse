@@ -114,3 +114,24 @@ QPushButton * DeFuseWindow::addOkCancelButtons(QDialog * _dialog)
   dynamic_cast<QBoxLayout *>(_dialog->layout())->addLayout( _hbox );
   return _ok;
 } 
+
+DeFuseWindow::Screen_t DeFuseWindow::getScreen(int w, int h)
+{
+    if (screen_image.size() != QSize(w, h))
+    {
+        screen_image = QImage(w, h, QImage::Format_RGB32);
+        screen_image.fill(Qt::black);
+        screen.image = & screen_image;
+    }
+    return screen;
+}
+
+DeFuseWindow::Screen_t DeFuseWindow::getScreen()
+{
+    return screen;
+}
+
+void DeFuseWindow::drawScreen()
+{
+    ui->screenWidget->setPixmap(QPixmap::fromImage(screen_image));
+}

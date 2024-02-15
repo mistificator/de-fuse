@@ -206,7 +206,7 @@ CODE
     for( int i = 0; i < $_->{name}_$widget->{value}_combo_count; i++ ) {
       _combo->addItem( $_->{name}_$widget->{value}_combo[i] );
     }
-    _combo->setCurrentText( $combo_default{$widget->{value}} );
+    _combo->setCurrentIndex( $combo_default{$widget->{value}} );
     _hbox->addWidget( dialog.$widget->{value} = _combo );
     _vbox->addLayout( _hbox );
   }

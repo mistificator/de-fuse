@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file alias="keyboard.png">../../lib/keyboard.png</file>
+        <file alias="fuse.png">../../data/icons/256x256/fuse.png</file>
     </qresource>
 </RCC>
