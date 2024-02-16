@@ -18,8 +18,6 @@ libspectrum_word
 
 const int rgb_pitch = DeFuseWindow::Screen_t::Pitch;
 
-short qtdisplay_updated = 0;
-
 /* The color palette */
 static const unsigned char rgb_colors[16][3] = {
 
@@ -79,33 +77,12 @@ register_scalers( int force_scaler )
   scaler_register_clear();
 
   if( machine_current->timex ) {
-    scaler_register( SCALER_HALF );
-    scaler_register( SCALER_HALFSKIP );
-    scaler_register( SCALER_TIMEXTV );
-    scaler_register( SCALER_TIMEX1_5X );
-    scaler_register( SCALER_TIMEX2X );
   } else {
     scaler_register( SCALER_DOUBLESIZE );
     scaler_register( SCALER_TRIPLESIZE );
     scaler_register( SCALER_QUADSIZE );
-    scaler_register( SCALER_TV2X );
-    scaler_register( SCALER_TV3X );
-    scaler_register( SCALER_TV4X );
-    scaler_register( SCALER_PALTV2X );
-    scaler_register( SCALER_PALTV3X );
-    scaler_register( SCALER_PALTV4X );
-    scaler_register( SCALER_HQ2X );
-    scaler_register( SCALER_HQ3X );
-    scaler_register( SCALER_HQ4X );
-    scaler_register( SCALER_ADVMAME2X );
-    scaler_register( SCALER_ADVMAME3X );
-    scaler_register( SCALER_2XSAI );
-    scaler_register( SCALER_SUPER2XSAI );
-    scaler_register( SCALER_SUPEREAGLE );
-    scaler_register( SCALER_DOTMATRIX );
   }
   scaler_register( SCALER_NORMAL );
-  scaler_register( SCALER_PALTV );
 
   scaler =
     scaler_is_supported( current_scaler ) ? current_scaler : SCALER_NORMAL;
@@ -114,32 +91,15 @@ register_scalers( int force_scaler )
   drawing_area_scale = (float)current_size / image_scale;
   scaling_factor = scaler_get_scaling_factor( current_scaler );
 
-  /* Override scaler if the image doesn't fit well in the drawing area */
-  if( force_scaler && drawing_area_scale != scaling_factor ) {
-
-    switch( current_size ) {
-    case 1: scaler = machine_current->timex ? SCALER_HALF : SCALER_NORMAL;
-      break;
-    case 2: scaler = machine_current->timex ? SCALER_NORMAL : SCALER_DOUBLESIZE;
-      break;
-    case 3: scaler = machine_current->timex ? SCALER_TIMEX1_5X :
-                                              SCALER_TRIPLESIZE;
-      break;
-    case 4: scaler = machine_current->timex ? SCALER_TIMEX2X :
-                                              SCALER_QUADSIZE;
-      break;
-    }
-  }
-
   scaler_select_scaler( scaler );
 }
 
 scaler_type
 menu_get_scaler( scaler_available_fn selector )
 {
-  /* No scaler selected */
 //  return SCALER_NUM;
     DeFuseWindow::instance()->selectScaler( [=](int i)->int { return selector(i); } );
+    DeFuseWindow::instance()->needToRepaint();
     return current_scaler;
 }
 
@@ -294,7 +254,7 @@ ui_statusbar_update( ui_statusbar_item item, ui_statusbar_state state )
 int
 ui_statusbar_update_speed( float speed )
 {
-  /* No error */
+  DeFuseWindow::instance()->setSpeed(speed);
   return 0;
 }
 
@@ -320,9 +280,9 @@ uidisplay_area( int x, int y, int w, int h )
     libspectrum_dword * palette = settings_current.bw_tv ? bw_colors : qtdisplay_colors;
     for(int yy = y; yy < y + h; yy++ ) {
         libspectrum_word *display = &qtdisplay_image[yy][x];
-        for(int i = 0; i < w; ++i, ++display ) image->setPixel( x + i + 2, yy + 2, palette[ *display ]);
+        for(int i = 0; i < w; ++i, ++display ) image->setPixel( x + i, yy, palette[ *display ]);
     }
-    qtdisplay_updated = 1;
+    DeFuseWindow::instance()->needToRepaint();
 }
 
 int
@@ -335,11 +295,7 @@ uidisplay_end( void )
 void
 uidisplay_frame_end( void )
 {
-    if (qtdisplay_updated)
-    {
-        DeFuseWindow::instance()->drawScreen();
-        qtdisplay_updated = 0;
-    }
+    DeFuseWindow::instance()->drawScreen();
     qApp->processEvents();
 }
 
@@ -358,7 +314,7 @@ uidisplay_init( int width, int height )
     ::memset(qtdisplay_image, 0 , 2 * DISPLAY_SCREEN_HEIGHT * DISPLAY_SCREEN_WIDTH * sizeof(libspectrum_word));
     DeFuseWindow::instance()->getScreen(width + DeFuseWindow::Screen_t::AddX, height + DeFuseWindow::Screen_t::AddY);
     DeFuseWindow::instance()->show();
-    qtdisplay_updated = 1;
+    DeFuseWindow::instance()->needToRepaint();
     return 0;
 }
 

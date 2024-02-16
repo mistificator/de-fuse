@@ -14,6 +14,7 @@ extern "C"
 DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::DeFuseWindow)
 {
     ui->setupUi(this);
+    ui->statusbar->addPermanentWidget(speed_status = new QLabel());
     menu_data_init();
 }
 
@@ -133,5 +134,27 @@ DeFuseWindow::Screen_t DeFuseWindow::getScreen()
 
 void DeFuseWindow::drawScreen()
 {
-    ui->screenWidget->setPixmap(QPixmap::fromImage(screen_image));
+    if (need_to_repaint)
+    {
+        // extremely stupid way to update screen
+        ui->screenWidget->setPixmap(QPixmap::fromImage(
+            screen_image.scaled(
+                screen_image.width() * scaler_get_scaling_factor(current_scaler),
+                screen_image.height() * scaler_get_scaling_factor(current_scaler),
+                Qt::KeepAspectRatio,
+                Qt::FastTransformation
+                )
+            ));
+        need_to_repaint = false;
+    }
+}
+
+void DeFuseWindow::needToRepaint()
+{
+    need_to_repaint = true;
+}
+
+void DeFuseWindow::setSpeed(float speed)
+{
+    speed_status->setText(QString::number(speed, 'f', 1) + "%");
 }
