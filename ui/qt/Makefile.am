@@ -32,7 +32,8 @@ CLEANFILES += $(ui_qt_built)
 ui_qt_files = \
                 ui/qt/moc_qt_ui.cpp \
                 ui/qt/qrc_qt_ui.cpp \
-                ui/qt/qt_ui.cpp
+                ui/qt/qt_ui.cpp \
+                ui/qt/keysyms.cpp
 
 ui_qt_built = \
                ui/qt/moc_qt_ui.cpp \
@@ -41,10 +42,16 @@ ui_qt_built = \
                ui/qt/menu_data.ui \
                ui/qt/menu_data.cpp \
                ui/qt/options.cpp \
-               ui/qt/options_internals.h
+               ui/qt/options_internals.h \
+               ui/qt/keysyms.cpp
+
 EXTRA_DIST += \
               ui/qt/options.pl \
               ui/qt/options-header.pl
+
+ui/qt/keysyms.cpp: $(srcdir)/keysyms.pl $(srcdir)/keysyms.dat
+	@$(MKDIR_P) ui/qt
+	$(AM_V_GEN)$(PERL) -I$(srcdir)/perl $(srcdir)/keysyms.pl qt $(srcdir)/keysyms.dat > $@.tmp && mv $@.tmp $@
 
 ui/qt/menu_data.ui: $(srcdir)/perl/cpp-perl.pl $(srcdir)/menu_data.pl $(srcdir)/menu_data.dat config.h
 	@$(MKDIR_P) ui/qt

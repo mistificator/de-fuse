@@ -7,10 +7,6 @@
 
 #include "fuse.h"
 
-keysyms_map_t keysyms_map[] = {
-  { 0, 0 } /* End marker */
-};
-
 /* A copy of every pixel on the screen, replaceable by plotting directly into
    rgb_image below */
 libspectrum_word

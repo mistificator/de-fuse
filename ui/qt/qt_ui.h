@@ -41,6 +41,8 @@ public:
 protected:
     DeFuseWindow(QWidget * _parent = nullptr);
     void closeEvent(QCloseEvent *) override;    
+    void keyPressEvent(QKeyEvent *) override;
+    void keyReleaseEvent(QKeyEvent *) override;
 private:
     Ui::DeFuseWindow * ui = nullptr;    
     QLabel * keyboard = nullptr;

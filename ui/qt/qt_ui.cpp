@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QButtonGroup>
+#include <QKeyEvent>
 
 #include "menu_data.cpp"
 #include "options.cpp"
@@ -16,6 +17,7 @@ DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::
     ui->setupUi(this);
     ui->statusbar->addPermanentWidget(speed_status = new QLabel());
     menu_data_init();
+    grabKeyboard();
 }
 
 DeFuseWindow * DeFuseWindow::instance()
@@ -157,4 +159,20 @@ void DeFuseWindow::needToRepaint()
 void DeFuseWindow::setSpeed(float speed)
 {
     speed_status->setText(QString::number(speed, 'f', 1) + "%");
+}
+
+void DeFuseWindow::keyPressEvent(QKeyEvent * ke)
+{
+    input_event_t fuse_event;
+    fuse_event.type = INPUT_EVENT_KEYPRESS;
+    fuse_event.types.key.spectrum_key = fuse_event.types.key.native_key = keysyms_remap( ke->key() );
+    input_event( &fuse_event );
+}
+
+void DeFuseWindow::keyReleaseEvent(QKeyEvent * ke)
+{
+    input_event_t fuse_event;
+    fuse_event.type = INPUT_EVENT_KEYRELEASE;
+    fuse_event.types.key.spectrum_key = fuse_event.types.key.native_key = keysyms_remap( ke->key() );
+    input_event( &fuse_event );
 }
