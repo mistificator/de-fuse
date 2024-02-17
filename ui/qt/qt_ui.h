@@ -48,10 +48,11 @@ protected:
 private:
     Ui::DeFuseWindow * ui = nullptr;    
     QLabel * keyboard = nullptr;
-    QImage screen_image;
+    QImage screen_image[2];
     Screen_t screen;
     QLabel * speed_status = nullptr;
     bool need_to_repaint = false;
+    long long frame = 0;
     void menu_data_init(); // body is generated from menu_data.pl
     void selectSomething(QString title, int current, int count, std::function<QPair<int, QString>(int)> label_fn, std::function<int(int, bool)> apply_fn);
 };

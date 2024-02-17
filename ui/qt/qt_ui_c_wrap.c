@@ -42,7 +42,7 @@ static const unsigned char rgb_colors[16][3] = {
 };
 
 /* And the colors (and black and white 'colors') in 32-bit format */
-libspectrum_dword qtdisplay_colors[16];
+libspectrum_dword qtdisplay_colors[16], qtdisplay_gigascreen_halfcolors[16];
 static libspectrum_dword bw_colors[16];
 
 static int
@@ -63,6 +63,7 @@ init_colors()
     grey = ( 0.299 * red + 0.587 * green + 0.114 * blue ) + 0.5;
 
     qtdisplay_colors[i] =  red << 16 | green << 8 | blue;
+    qtdisplay_gigascreen_halfcolors[i] = (red >> 1) << 16 | (green >> 1) << 8 | (blue >> 1);
     bw_colors[i] = grey << 16 |  grey << 8 | grey;
   }
 
@@ -183,6 +184,7 @@ ui_error_specific( ui_error_level severity, const char *message )
   case UI_ERROR_ERROR:	 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - Error", message); break;
   default:		 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - (Unknown Error Level)", message); break;
   }
+  return 0;
 }
 
 int
@@ -308,7 +310,7 @@ void
 uidisplay_area( int x, int y, int w, int h )
 {
     QImage * image = DeFuseWindow::instance()->getScreen().image;
-    libspectrum_dword * palette = settings_current.bw_tv ? bw_colors : qtdisplay_colors;
+    libspectrum_dword * palette = settings_current.bw_tv ? bw_colors : settings_current.pretty_gigascreen ? qtdisplay_gigascreen_halfcolors : qtdisplay_colors;
     for(int yy = y; yy < y + h; yy++ ) {
         libspectrum_word *display = &qtdisplay_image[yy][x];
         for(int i = 0; i < w; ++i, ++display ) image->setPixel( x + i, yy, palette[ *display ]);

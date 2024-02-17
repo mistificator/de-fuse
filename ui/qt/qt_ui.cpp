@@ -170,17 +170,20 @@ QPushButton * DeFuseWindow::addOkCancelButtons(QDialog * _dialog)
 
 DeFuseWindow::Screen_t DeFuseWindow::getScreen(int w, int h)
 {
-    if (screen_image.size() != QSize(w, h))
+    for (int i = 0; i < 2; ++i)
     {
-        screen_image = QImage(w, h, QImage::Format_RGB32);
-        screen_image.fill(Qt::black);
-        screen.image = & screen_image;
+        if (screen_image[i].size() != QSize(w, h))
+        {
+            screen_image[i] = QImage(w, h, QImage::Format_RGB32);
+            screen_image[i].fill(Qt::black);
+        }
     }
-    return screen;
+    return getScreen();
 }
 
 DeFuseWindow::Screen_t DeFuseWindow::getScreen()
 {
+    screen.image = & screen_image[settings_current.pretty_gigascreen ? (frame & 0x01) : 0];
     return screen;
 }
 
@@ -188,17 +191,35 @@ void DeFuseWindow::drawScreen()
 {
     if (need_to_repaint)
     {
-        // extremely stupid way to update screen
-        ui->screenWidget->setPixmap(QPixmap::fromImage(
-            screen_image.scaled(
-                screen_image.width() * scaler_get_scaling_factor(current_scaler),
-                screen_image.height() * scaler_get_scaling_factor(current_scaler),
-                Qt::KeepAspectRatio,
-                Qt::FastTransformation
-                )
-            ));
-        need_to_repaint = false;
+        if (!settings_current.pretty_gigascreen || (frame & 0x01) == 1)
+        {
+            auto image = &screen_image[0];
+            const int w = image->width();
+            const int h = image->height();
+            if (settings_current.pretty_gigascreen)
+            {
+                auto frame0 = (unsigned int *)image->constBits();
+                auto frame1 = (unsigned int *)screen_image[1].constBits();
+                const int sz = w * h;
+                for (int i = 0; i < sz; ++i, ++frame0, ++frame1)
+                {
+                    *frame0 += *frame1 & 0x00FFFFFF;
+                }
+            }            
+            auto scale = scaler_get_scaling_factor(current_scaler);
+            // extremely stupid way to update screen
+            ui->screenWidget->setPixmap(QPixmap::fromImage(
+                image->scaled(
+                    w * scale,
+                    h * scale,
+                    Qt::KeepAspectRatio,
+                    Qt::FastTransformation
+                    )
+                ));
+            need_to_repaint = false;
+        }
     }
+    frame++;
 }
 
 void DeFuseWindow::needToRepaint()
