@@ -273,7 +273,7 @@ CODE
     </rect>
     </property>  
     <property name="windowTitle">
-      <string>De-Fuse</string>
+      <string>De-Fuse (based on Fuse)</string>
     </property>
     <widget class="QWidget" name="centralwidget">
       <layout class="QGridLayout" name="gridLayout">

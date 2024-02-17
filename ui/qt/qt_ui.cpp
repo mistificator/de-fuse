@@ -1,9 +1,12 @@
 #include "qt_ui.h"
 #include "ui_qt_ui.h"
+
 #include <QApplication>
 #include <QMessageBox>
 #include <QButtonGroup>
 #include <QKeyEvent>
+#include <QFileDialog>
+#include <QDebug>
 
 #include "menu_data.cpp"
 #include "options.cpp"
@@ -17,7 +20,12 @@ DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::
     ui->setupUi(this);
     ui->statusbar->addPermanentWidget(speed_status = new QLabel());
     menu_data_init();
-    grabKeyboard();
+//    grabKeyboard();
+    setFocusPolicy(Qt::WheelFocus);
+
+    ui->menu_help->addAction("About Qt", []() {
+        QMessageBox::aboutQt(DeFuseWindow::instance());
+    });
 }
 
 DeFuseWindow * DeFuseWindow::instance()
@@ -59,7 +67,7 @@ void DeFuseWindow::selectMachine()
 {
     selectSomething("De-Fuse - Select Machine", machine_current->machine, machine_count,
         [](int i)->QPair<int, QString> { return qMakePair(machine_types[i]->machine, libspectrum_machine_name( machine_types[i]->machine )); },
-        [](int machine, bool not_test)->int { if (not_test) { machine_select( machine ); } return machine; });    
+        [](int machine, bool not_test)->int { if (not_test) { machine_select( machine ); } return machine; });
 }
 
 void DeFuseWindow::selectScaler( std::function<int(int)> selector )
@@ -93,13 +101,55 @@ void  DeFuseWindow::selectSomething(QString title, int current, int count, std::
         }
     }   
 
-    QPushButton * _ok = DeFuseWindow::addOkCancelButtons( _dialog );
-    QObject::connect( _ok, &QPushButton::clicked, [=]() {
-        apply_fn( _bg->checkedId(), true ); // apply selected
-    });
+    DeFuseWindow::addOkCancelButtons( _dialog );
 
   /* Process events until the window is done with */
-    _dialog->exec();
+    if (_dialog->exec() == QDialog::Accepted)
+    {
+        apply_fn( _bg->checkedId(), true ); // apply selected
+    }
+    delete _dialog;
+}
+
+void DeFuseWindow::selectRom( const char *title, size_t start, size_t count, int is_peripheral )
+{
+    QDialog * _dialog = new QDialog(DeFuseWindow::instance());
+    _dialog->setWindowTitle(QString("De-Fuse - Select ROMs - %1").arg(title));
+
+    QVBoxLayout * _vbox = new QVBoxLayout();
+    _dialog->setLayout(_vbox);
+
+    QList<QLineEdit *> lines;
+    for( int i = 0; i < count; i++ ) 
+    {
+        QHBoxLayout * _hbox = new QHBoxLayout();
+        QLineEdit * _le = new QLineEdit( *settings_get_rom_setting( &settings_current, start + i, is_peripheral ) );
+        _hbox->addWidget(_le);
+        lines << _le;
+        QPushButton * _btn = new QPushButton( "Select..." );
+        _hbox->addWidget(_btn);
+        QGroupBox * _gb = new QGroupBox(QString("ROM %1").arg(i));
+        _gb->setLayout(_hbox);
+        _vbox->addWidget(_gb);
+
+        QObject::connect(_btn, &QPushButton::clicked, [=]() {
+            const char * filename = ui_get_open_filename( "De-Fuse - Select ROM" );
+            if( !filename ) return;
+            _le->setText( filename );
+        });
+    }   
+
+    DeFuseWindow::addOkCancelButtons( _dialog );
+
+  /* Process events until the window is done with */
+    if (_dialog->exec() == QDialog::Accepted)
+    {
+        for( int i = 0; i < count; i++ ) {
+            char **setting = settings_get_rom_setting( &settings_current, start + i, is_peripheral );
+            settings_set_string( setting, lines.at(i)->text().toLocal8Bit().constData() );
+        }
+    }
+
     delete _dialog;
 }
 
@@ -163,6 +213,10 @@ void DeFuseWindow::setSpeed(float speed)
 
 void DeFuseWindow::keyPressEvent(QKeyEvent * ke)
 {
+    if (ke->modifiers().testFlag(Qt::AltModifier))
+    {
+        return;
+    }
     input_event_t fuse_event;
     fuse_event.type = INPUT_EVENT_KEYPRESS;
     fuse_event.types.key.spectrum_key = fuse_event.types.key.native_key = keysyms_remap( ke->key() );
@@ -171,8 +225,27 @@ void DeFuseWindow::keyPressEvent(QKeyEvent * ke)
 
 void DeFuseWindow::keyReleaseEvent(QKeyEvent * ke)
 {
+    if (ke->modifiers().testFlag(Qt::AltModifier))
+    {
+        return;
+    }
     input_event_t fuse_event;
     fuse_event.type = INPUT_EVENT_KEYRELEASE;
     fuse_event.types.key.spectrum_key = fuse_event.types.key.native_key = keysyms_remap( ke->key() );
     input_event( &fuse_event );
+}
+
+void DeFuseWindow::setMenuActive(const char * path, int state)
+{
+    QString action_name = QString(path).toLower().replace(QRegExp("[\\/]+"), "_").replace(QRegExp("[\\W]+"), "");
+    if (auto action = findChild<QAction *>("action" + action_name))
+    {
+        action->setEnabled(state);
+        return;
+    }
+    if (auto menu = findChild<QMenu *>("menu" + action_name))
+    {
+        menu->setEnabled(state);
+        return;
+    }
 }

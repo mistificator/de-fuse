@@ -19,7 +19,7 @@
 ##
 ## E-mail: ZXLDR@yandex.ru
 
-if UI_QT
+if USE_QT
 
 de_fuse_SOURCES += $(ui_qt_files)
 
@@ -85,3 +85,4 @@ ui/qt/moc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.h
 
 ui/qt/qrc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.qrc
 	$(AM_V_GEN)$(RCC) $(srcdir)/ui/qt/qt_ui.qrc > $@.tmp && mv $@.tmp $@
+

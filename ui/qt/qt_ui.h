@@ -26,6 +26,7 @@ public:
     void showKeyboard();
     void about();
     void selectMachine();
+    void selectRom( const char *title, size_t start, size_t count, int is_peripheral );
     void selectScaler( std::function<int(int)> selector );
     static QPushButton * addOkCancelButtons(QDialog *);
     struct Screen_t 
@@ -38,6 +39,7 @@ public:
     void drawScreen();
     void needToRepaint();
     void setSpeed(float);
+    void setMenuActive(const char * path, int state);
 protected:
     DeFuseWindow(QWidget * _parent = nullptr);
     void closeEvent(QCloseEvent *) override;    

@@ -2,10 +2,15 @@
 
 #include "keyboard.h"
 #include "ui/ui.h"
-
 #include "../uijoystick.c"
-
 #include "fuse.h"
+#include "timer/timer.h"
+#include "rzx.h"
+#include "sound.h"
+#include "settings.h"
+
+/* True if we were paused via the Machine/Pause menu item */
+static int paused = 0;
 
 /* A copy of every pixel on the screen, replaceable by plotting directly into
    rgb_image below */
@@ -103,8 +108,14 @@ int
 menu_select_roms_with_title( const char *title, size_t start, size_t count,
     int is_peripheral )
 {
-  /* No error */
-  return 0;
+    /* Firstly, stop emulation */
+    fuse_emulation_pause();
+
+    DeFuseWindow::instance()->selectRom(title, start, count, is_peripheral);
+
+    /* And then carry on with emulation again */
+    fuse_emulation_unpause();
+    return 0;
 }
 
 void
@@ -162,22 +173,37 @@ ui_end( void )
 int
 ui_error_specific( ui_error_level severity, const char *message )
 {
-  /* No error */
-  return 0;
+  /* If we don't have a UI yet, we can't output widgets */
+  if( !display_ui_initialised ) return 0;
+
+  /* Set the appropriate title */
+  switch( severity ) {
+  case UI_ERROR_INFO:	 QMessageBox::information(DeFuseWindow::instance(), "De-Fuse - Info", message); break;
+  case UI_ERROR_WARNING: QMessageBox::warning(DeFuseWindow::instance(), "De-Fuse - Warning", message); break;
+  case UI_ERROR_ERROR:	 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - Error", message); break;
+  default:		 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - (Unknown Error Level)", message); break;
+  }
 }
 
 int
 ui_event( void )
 {
-  qApp->processEvents();
-  return 0;
+    qApp->processEvents();
+    return 0;
 }
 
 char*
 ui_get_open_filename( const char *title )
 {
-  /* No filename */
-  return NULL;
+    QString _filename = QFileDialog::getOpenFileName(DeFuseWindow::instance(), title);
+    if (_filename.isEmpty())
+    {
+        return nullptr;
+    }
+    char * filename = libspectrum_malloc(_filename.length() + 1);
+    ::memset(filename, 0, _filename.length() + 1);
+    ::strncpy(filename, _filename.toLocal8Bit().constData(), _filename.length());
+    return filename;
 }
 
 int
@@ -190,8 +216,15 @@ ui_get_rollback_point( GSList *points )
 char*
 ui_get_save_filename( const char *title )
 {
-  /* No filename */
-  return NULL;
+    QString _filename = QFileDialog::getSaveFileName(DeFuseWindow::instance(), title);
+    if (_filename.isEmpty())
+    {
+        return nullptr;
+    }
+    char * filename = libspectrum_malloc(_filename.length() + 1);
+    ::memset(filename, 0, _filename.length() + 1);
+    ::strncpy(filename, _filename.toLocal8Bit().constData(), _filename.length());
+    return filename;
 }
 
 int
@@ -203,28 +236,31 @@ ui_init( int *argc, char ***argv )
     }
     QApplication * app = new QApplication(* argc, * argv);
     app->setWindowIcon(QIcon(":/fuse.png"));
+    DeFuseWindow::instance()->show();
     return 0;
 }
 
 int
 ui_menu_item_set_active( const char *path, int active )
 {
-  /* No error */
+  DeFuseWindow::instance()->setMenuActive(path, active);
   return 0;
 }
 
 int
 ui_mouse_grab( int startup )
 {
-  /* Successful grab */
-  return 1;
+    DeFuseWindow::instance()->grabMouse();
+    ui_statusbar_update( UI_STATUSBAR_ITEM_MOUSE, UI_STATUSBAR_STATE_ACTIVE );
+    return 0;
 }
 
 int
 ui_mouse_release( int suspend )
 {
-  /* No error */
-  return 0;
+    DeFuseWindow::instance()->releaseMouse();
+    ui_statusbar_update( UI_STATUSBAR_ITEM_MOUSE, UI_STATUSBAR_STATE_INACTIVE );
+    return 0;
 }
 
 void
@@ -236,8 +272,7 @@ ui_pokemem_selector( const char *filename )
 int
 ui_query( const char *message )
 {
-  /* Query confirmed */
-  return 1;
+    return DeFuseWindow::instance()->ask( message ) != QDialog::Accepted;
 }
 
 int
@@ -284,8 +319,8 @@ uidisplay_area( int x, int y, int w, int h )
 int
 uidisplay_end( void )
 {
-  /* No error */
-  return 0;
+    qApp->processEvents();
+    return 0;
 }
 
 void
@@ -298,8 +333,8 @@ uidisplay_frame_end( void )
 int
 uidisplay_hotswap_gfx_mode( void )
 {
-  /* No error */
-  return 0;
+    qApp->processEvents();
+    return 0;
 }
 
 int
@@ -309,7 +344,6 @@ uidisplay_init( int width, int height )
     init_colors();
     ::memset(qtdisplay_image, 0 , 2 * DISPLAY_SCREEN_HEIGHT * DISPLAY_SCREEN_WIDTH * sizeof(libspectrum_word));
     DeFuseWindow::instance()->getScreen(width + DeFuseWindow::Screen_t::AddX, height + DeFuseWindow::Screen_t::AddY);
-    DeFuseWindow::instance()->show();
     DeFuseWindow::instance()->needToRepaint();
     return 0;
 }
@@ -438,25 +472,61 @@ menu_options_joysticks_select( int action )
 void
 menu_machine_pause( int action )
 {
+  int error;
 
+  if( paused ) {
+    paused = 0;
+    ui_statusbar_update( UI_STATUSBAR_ITEM_PAUSED,
+			 UI_STATUSBAR_STATE_INACTIVE );
+    timer_estimate_reset();
+  } else {
+
+    /* Stop recording any competition mode RZX file */
+    if( rzx_recording && rzx_competition_mode ) {
+      ui_error( UI_ERROR_INFO, "Stopping competition mode RZX recording" );
+      error = rzx_stop_recording(); if( error ) return;
+    }
+
+    paused = 1;
+    ui_statusbar_update( UI_STATUSBAR_ITEM_PAUSED, UI_STATUSBAR_STATE_ACTIVE );
+  }
 }
 
 void
 menu_machine_reset( int action )
 {
+  int hard_reset = action;
+  const char *message = "Reset?";
 
+  if( hard_reset )
+    message = "Hard reset?";
+
+  if( !DeFuseWindow::instance()->ask( message ) )
+    return;
+
+  /* Stop any ongoing RZX */
+  rzx_stop_recording();
+  rzx_stop_playback( 1 );
+
+  if( machine_reset( hard_reset ) ) {
+    ui_error( UI_ERROR_ERROR, "couldn't reset machine: giving up!" );
+
+    /* FIXME: abort() seems a bit extreme here, but it'll do for now */
+    fuse_abort();
+  }
 }
 
 void
 menu_machine_select( int action )
 {
-    /* Stop emulation */
+    /* Firstly, stop emulation */
     fuse_emulation_pause();
 
     DeFuseWindow::instance()->selectMachine();
 
-  /* And then carry on with emulation again */
+    /* And then carry on with emulation again */
     fuse_emulation_unpause();
+    event_reset(); // HACK: hangs without it
 }
 
 void

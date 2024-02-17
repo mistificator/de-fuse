@@ -186,6 +186,9 @@ dnl we like, and then don't look at the other options
 
 AC_PATH_XTRA
 
+dnl Check C++ globally, because autoconf can't handle conditional compiler check '
+AC_PROG_CXX
+
 dnl Look for Qt UI (default=no)
 if test -z "$UI"; then
   AC_MSG_CHECKING(whether Qt UI requested)
@@ -196,27 +199,10 @@ if test -z "$UI"; then
   AC_MSG_RESULT($qt)
   if test "$qt" = yes; then
 
-    AC_PROG_CXX
-
+dnl It'll be better to check C++ compiler here, but it's impossible ''
+dnl    AC_PROG_CXX
     AX_HAVE_QT
-
     CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS -fpermissive"
-
-    # Check for Qt libraries
-    #PKG_CHECK_MODULES(QT, [Qt5Core, Qt5Gui, Qt5Network], [], [AC_MSG_ERROR([Qt libraries are required.])])
-
-    # Retrieve Qt compilation and linker flags
-    #CPPFLAGS="`$PKG_CONFIG --cflags-only-I Qt5Core Qt5Gui Qt5Network` $CPPFLAGS"
-    #LDFLAGS="`$PKG_CONFIG --libs-only-L Qt5Core Qt5Gui Qt5Network` $LDFLAGS"
-    #LIBS="`$PKG_CONFIG --libs-only-l Qt5Core Qt5Gui Qt5Network` $LIBS"
-
-    #AC_CHECK_PROGS(QT_MOC, [moc])
-    #AC_CHECK_PROGS(QT_UIC, [uic])
-    #AC_CHECK_PROGS(QT_RCC, [rcc])
-    #if test -z "$QT_MOC" || test -z "$QT_UIC" || test -z "$QT_RCC"; then
-    #  AC_MSG_ERROR([Qt utility programs moc, uic, and rcc are required.])
-    #fi
-
     AC_DEFINE([UI_QT], 1, [Defined if Qt UI in use])
     UI=qt; 
 
