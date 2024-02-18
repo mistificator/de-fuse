@@ -40,6 +40,8 @@ public:
     void needToRepaint();
     void setSpeed(float);
     void setMenuActive(const char * path, int state);
+    int setStatusBar( int item, int state );
+    void reset();
 protected:
     DeFuseWindow(QWidget * _parent = nullptr);
     void closeEvent(QCloseEvent *) override;    
@@ -51,10 +53,14 @@ private:
     QImage screen_image[2];
     Screen_t screen;
     QLabel * speed_status = nullptr;
+    QLabel * disk_status = nullptr, * mdr_status = nullptr, * mouse_status = nullptr, * pause_status = nullptr, * tape_status = nullptr;
+    QLabel * machine_status = nullptr;
     bool need_to_repaint = false;
     long long frame = 0;
     void menu_data_init(); // body is generated from menu_data.pl
     void selectSomething(QString title, int current, int count, std::function<QPair<int, QString>(int)> label_fn, std::function<int(int, bool)> apply_fn);
+    void checkForWindowResize(QPixmap & new_px);
+    QPixmap pixmapWithTransparency(QPixmap px);
 };
 
 #endif

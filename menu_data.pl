@@ -361,7 +361,10 @@ CODE
     <action name="action_${prefix}${cname}">
       <property name="text">
         <string>$name</string>
-      </property>
+      </property>    
+      <property name="shortcut">
+        <string>$item->{hotkey}</string>
+      </property>      
     </action>            
 XML
 

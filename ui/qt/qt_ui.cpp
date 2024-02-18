@@ -6,6 +6,7 @@
 #include <QButtonGroup>
 #include <QKeyEvent>
 #include <QFileDialog>
+#include <QBitmap>
 #include <QDebug>
 
 #include "menu_data.cpp"
@@ -18,14 +19,37 @@ extern "C"
 DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::DeFuseWindow)
 {
     ui->setupUi(this);
-    ui->statusbar->addPermanentWidget(speed_status = new QLabel());
+
+    int offs = 0;
+    ui->statusbar->insertPermanentWidget(offs++, machine_status = new QLabel()); machine_status->setToolTip("Emulated machine name");
+    ui->statusbar->insertPermanentWidget(offs++, disk_status = new QLabel());    disk_status->setToolTip("Disk operations status");
+    ui->statusbar->insertPermanentWidget(offs++, mdr_status = new QLabel());     mdr_status->setToolTip("Microdrive operations status");
+    ui->statusbar->insertPermanentWidget(offs++, mouse_status = new QLabel());   mouse_status->setToolTip("Mouse activity status");
+    ui->statusbar->insertPermanentWidget(offs++, pause_status = new QLabel());   pause_status->setToolTip("Emulation pause status");
+    ui->statusbar->insertPermanentWidget(offs++, tape_status = new QLabel());    tape_status->setToolTip("Tape operations status");
+    ui->statusbar->insertPermanentWidget(offs++, speed_status = new QLabel());   speed_status->setToolTip("Emulation speed");
+
+    setStatusBar(UI_STATUSBAR_ITEM_DISK, UI_STATUSBAR_STATE_NOT_AVAILABLE);
+    setStatusBar(UI_STATUSBAR_ITEM_MICRODRIVE, UI_STATUSBAR_STATE_NOT_AVAILABLE);
+    setStatusBar(UI_STATUSBAR_ITEM_MOUSE, UI_STATUSBAR_STATE_NOT_AVAILABLE);
+    setStatusBar(UI_STATUSBAR_ITEM_PAUSED, UI_STATUSBAR_STATE_NOT_AVAILABLE);
+    setStatusBar(UI_STATUSBAR_ITEM_TAPE, UI_STATUSBAR_STATE_NOT_AVAILABLE);
+
     menu_data_init();
 //    grabKeyboard();
     setFocusPolicy(Qt::WheelFocus);
 
-    ui->menu_help->addAction("About Qt", []() {
+    ui->menu_help->addAction("About Qt...", []() {
         QMessageBox::aboutQt(DeFuseWindow::instance());
     });
+}
+
+void DeFuseWindow::reset()
+{
+    if (machine_current)
+    {
+        machine_status->setText( libspectrum_machine_name( machine_current->machine ) );
+    }
 }
 
 DeFuseWindow * DeFuseWindow::instance()
@@ -41,7 +65,7 @@ void DeFuseWindow::closeEvent(QCloseEvent *)
 
 int DeFuseWindow::ask(char * text)
 {
-    return QMessageBox::question(this, "Question", text) == QMessageBox::Yes;
+    return settings_current.confirm_actions ? QMessageBox::question(this, "Question", text) == QMessageBox::Yes : 1;
 }
 
 void DeFuseWindow::showKeyboard()
@@ -58,9 +82,9 @@ void DeFuseWindow::showKeyboard()
 
 void DeFuseWindow::about()
 {
-    QMessageBox::about(this, "De-Fuse",
-    (QStringList()  << "De-Fuse" << "Based on Fuse - the Free Unix Spectrum Emulator" 
-                    << "" << FUSE_COPYRIGHT << "" << "version " VERSION << PACKAGE_URL).join("\n\n")); 
+    QMessageBox::about(this, "About De-Fuse",
+    (QStringList()  << "<div><h1><b>De-Fuse</b></h1>" << "Based on <b>Fuse</b> - the Free Unix Spectrum Emulator" 
+                    << "" << FUSE_COPYRIGHT << "" << "version " VERSION << "<a href='" PACKAGE_URL "'>De-Fuse on Github</a>" << "</div>").join("<br/>")); 
 }
 
 void DeFuseWindow::selectMachine()
@@ -68,6 +92,8 @@ void DeFuseWindow::selectMachine()
     selectSomething("De-Fuse - Select Machine", machine_current->machine, machine_count,
         [](int i)->QPair<int, QString> { return qMakePair(machine_types[i]->machine, libspectrum_machine_name( machine_types[i]->machine )); },
         [](int machine, bool not_test)->int { if (not_test) { machine_select( machine ); } return machine; });
+
+    machine_status->setText( libspectrum_machine_name( machine_current->machine ) );
 }
 
 void DeFuseWindow::selectScaler( std::function<int(int)> selector )
@@ -103,7 +129,7 @@ void  DeFuseWindow::selectSomething(QString title, int current, int count, std::
 
     DeFuseWindow::addOkCancelButtons( _dialog );
 
-  /* Process events until the window is done with */
+    /* Process events until the window is done with */
     if (_dialog->exec() == QDialog::Accepted)
     {
         apply_fn( _bg->checkedId(), true ); // apply selected
@@ -141,7 +167,7 @@ void DeFuseWindow::selectRom( const char *title, size_t start, size_t count, int
 
     DeFuseWindow::addOkCancelButtons( _dialog );
 
-  /* Process events until the window is done with */
+    /* Process events until the window is done with */
     if (_dialog->exec() == QDialog::Accepted)
     {
         for( int i = 0; i < count; i++ ) {
@@ -155,17 +181,17 @@ void DeFuseWindow::selectRom( const char *title, size_t start, size_t count, int
 
 QPushButton * DeFuseWindow::addOkCancelButtons(QDialog * _dialog)
 {
-  QHBoxLayout * _hbox = new QHBoxLayout();
-  _hbox->addSpacerItem( new QSpacerItem( 10, 1 ) );
-  QPushButton * _cancel = new QPushButton( "Cancel ");
-  QObject::connect( _cancel, &QPushButton::clicked, _dialog, &QDialog::reject );
-  _hbox->addWidget( _cancel );
-  QPushButton * _ok = new QPushButton( "OK ");
-  _ok->setDefault(true);
-  QObject::connect( _ok, &QPushButton::clicked, _dialog, &QDialog::accept );
-  _hbox->addWidget( _ok );
-  dynamic_cast<QBoxLayout *>(_dialog->layout())->addLayout( _hbox );
-  return _ok;
+    QHBoxLayout * _hbox = new QHBoxLayout();
+    _hbox->addSpacerItem( new QSpacerItem( 10, 1 ) );
+    QPushButton * _cancel = new QPushButton( "Cancel ");
+    QObject::connect( _cancel, &QPushButton::clicked, _dialog, &QDialog::reject );
+    _hbox->addWidget( _cancel );
+    QPushButton * _ok = new QPushButton( "OK ");
+    _ok->setDefault(true);
+    QObject::connect( _ok, &QPushButton::clicked, _dialog, &QDialog::accept );
+    _hbox->addWidget( _ok );
+    dynamic_cast<QBoxLayout *>(_dialog->layout())->addLayout( _hbox );
+    return _ok;
 } 
 
 DeFuseWindow::Screen_t DeFuseWindow::getScreen(int w, int h)
@@ -206,20 +232,38 @@ void DeFuseWindow::drawScreen()
                     *frame0 += *frame1 & 0x00FFFFFF;
                 }
             }            
-            auto scale = scaler_get_scaling_factor(current_scaler);
-            // extremely stupid way to update screen
-            ui->screenWidget->setPixmap(QPixmap::fromImage(
-                image->scaled(
-                    w * scale,
-                    h * scale,
-                    Qt::KeepAspectRatio,
-                    Qt::FastTransformation
+            const auto scale = scaler_get_scaling_factor(current_scaler);
+            QPixmap px =
+                QPixmap::fromImage(
+                    image->scaled(
+                        w * scale,
+                        h * scale,
+                        Qt::KeepAspectRatio,
+                        Qt::FastTransformation
                     )
-                ));
+                );
+            checkForWindowResize(px);
+            // extremely stupid way to update screen
+            ui->screenWidget->setPixmap(px);
             need_to_repaint = false;
         }
     }
     frame++;
+}
+
+void DeFuseWindow::checkForWindowResize(QPixmap & new_px)
+{
+    if (const auto prev_px = ui->screenWidget->pixmap())
+    {
+        if (new_px.size() != prev_px->size())
+        {
+            ui->screenWidget->setPixmap(QPixmap());
+            const auto mw = maximumWidth(), mh = maximumHeight();
+            setMaximumWidth(1); qApp->sendPostedEvents(); qApp->processEvents();
+            setMaximumHeight(1); qApp->sendPostedEvents(); qApp->processEvents();
+            setMaximumWidth(mw); setMaximumHeight(mh);
+        }
+    }
 }
 
 void DeFuseWindow::needToRepaint()
@@ -269,4 +313,57 @@ void DeFuseWindow::setMenuActive(const char * path, int state)
         menu->setEnabled(state);
         return;
     }
+}
+
+QPixmap DeFuseWindow::pixmapWithTransparency(QPixmap px)
+{
+    px.setMask(px.createMaskFromColor(Qt::black));
+    return px;
+}
+
+int DeFuseWindow::setStatusBar( /*ui_statusbar_item*/ int item, /*ui_statusbar_state*/ int state )
+{
+  switch( item ) {
+
+  case UI_STATUSBAR_ITEM_MOUSE:
+    switch( state ) {
+        case UI_STATUSBAR_STATE_ACTIVE:     mouse_status->setPixmap(pixmapWithTransparency(QPixmap(":/mouse_active.bmp"))); break;
+        default:                            mouse_status->setPixmap(pixmapWithTransparency(QPixmap(":/mouse_inactive.bmp"))); break;
+    }      
+    return 0;
+
+  case UI_STATUSBAR_ITEM_PAUSED:
+    switch( state ) {
+        case UI_STATUSBAR_STATE_ACTIVE:     pause_status->setPixmap(pixmapWithTransparency(QPixmap(":/pause_active.bmp"))); break;
+        default:                            pause_status->setPixmap(pixmapWithTransparency(QPixmap(":/pause_inactive.bmp"))); break;
+    }      
+    return 0;
+
+  case UI_STATUSBAR_ITEM_TAPE:
+    switch( state ) {
+        case UI_STATUSBAR_STATE_ACTIVE:     tape_status->setPixmap(pixmapWithTransparency(QPixmap(":/tape_active.bmp"))); break;
+        default:                            tape_status->setPixmap(pixmapWithTransparency(QPixmap(":/tape_inactive.bmp"))); break;
+    }      
+    return 0;
+
+  case UI_STATUSBAR_ITEM_MICRODRIVE:
+    switch( state ) {
+        case UI_STATUSBAR_STATE_NOT_AVAILABLE:  mdr_status->hide(); break;
+        case UI_STATUSBAR_STATE_ACTIVE:         mdr_status->show(); mdr_status->setPixmap(pixmapWithTransparency(QPixmap(":/mdr_active.bmp"))); break;
+        default: mdr_status->show();            mdr_status->setPixmap(pixmapWithTransparency(QPixmap(":/mdr_inactive.bmp"))); break;
+    }      
+    return 0;
+
+  case UI_STATUSBAR_ITEM_DISK:
+    switch( state ) {
+        case UI_STATUSBAR_STATE_NOT_AVAILABLE:  disk_status->hide(); break;
+        case UI_STATUSBAR_STATE_ACTIVE:         disk_status->show(); disk_status->setPixmap(pixmapWithTransparency(QPixmap(":/disk_active.bmp"))); break;
+        default:                                disk_status->show(); disk_status->setPixmap(pixmapWithTransparency(QPixmap(":/disk_inactive.bmp"))); break;
+    }      
+    return 0;
+
+  }
+
+  ui_error( UI_ERROR_ERROR, "Attempt to update unknown statusbar item %d", item );
+  return 1;
 }

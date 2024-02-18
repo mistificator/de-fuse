@@ -99,7 +99,6 @@ register_scalers( int force_scaler )
 scaler_type
 menu_get_scaler( scaler_available_fn selector )
 {
-//  return SCALER_NUM;
     DeFuseWindow::instance()->selectScaler( [=](int i)->int { return selector(i); } );
     DeFuseWindow::instance()->needToRepaint();
     return current_scaler;
@@ -179,10 +178,10 @@ ui_error_specific( ui_error_level severity, const char *message )
 
   /* Set the appropriate title */
   switch( severity ) {
-  case UI_ERROR_INFO:	 QMessageBox::information(DeFuseWindow::instance(), "De-Fuse - Info", message); break;
-  case UI_ERROR_WARNING: QMessageBox::warning(DeFuseWindow::instance(), "De-Fuse - Warning", message); break;
-  case UI_ERROR_ERROR:	 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - Error", message); break;
-  default:		 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - (Unknown Error Level)", message); break;
+    case UI_ERROR_INFO:	 QMessageBox::information(DeFuseWindow::instance(), "De-Fuse - Info", message); break;
+    case UI_ERROR_WARNING: QMessageBox::warning(DeFuseWindow::instance(), "De-Fuse - Warning", message); break;
+    case UI_ERROR_ERROR:	 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - Error", message); break;
+    default:		 QMessageBox::critical(DeFuseWindow::instance(), "De-Fuse - (Unknown Error Level)", message); break;
   }
   return 0;
 }
@@ -245,8 +244,8 @@ ui_init( int *argc, char ***argv )
 int
 ui_menu_item_set_active( const char *path, int active )
 {
-  DeFuseWindow::instance()->setMenuActive(path, active);
-  return 0;
+    DeFuseWindow::instance()->setMenuActive(path, active);
+    return 0;
 }
 
 int
@@ -280,8 +279,7 @@ ui_query( const char *message )
 int
 ui_statusbar_update( ui_statusbar_item item, ui_statusbar_state state )
 {
-  /* No error */
-  return 0;
+  return DeFuseWindow::instance()->setStatusBar( item, state );
 }
 
 int
@@ -302,7 +300,7 @@ ui_tape_browser_update( ui_tape_browser_update_type change,
 int
 ui_widgets_reset( void )
 {
-  /* No error */
+  DeFuseWindow::instance()->reset();
   return 0;
 }
 
@@ -481,6 +479,7 @@ menu_machine_pause( int action )
     ui_statusbar_update( UI_STATUSBAR_ITEM_PAUSED,
 			 UI_STATUSBAR_STATE_INACTIVE );
     timer_estimate_reset();
+    fuse_emulation_unpause();
   } else {
 
     /* Stop recording any competition mode RZX file */
@@ -491,6 +490,7 @@ menu_machine_pause( int action )
 
     paused = 1;
     ui_statusbar_update( UI_STATUSBAR_ITEM_PAUSED, UI_STATUSBAR_STATE_ACTIVE );
+    fuse_emulation_pause();
   }
 }
 
