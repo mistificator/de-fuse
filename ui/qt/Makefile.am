@@ -33,7 +33,9 @@ ui_qt_files = \
                 ui/qt/moc_qt_ui.cpp \
                 ui/qt/qrc_qt_ui.cpp \
                 ui/qt/qt_ui.cpp \
-                ui/qt/keysyms.cpp
+                ui/qt/keysyms.cpp \
+                ui/qt/moc_debugger.cpp \
+                ui/qt/debugger.cpp
 
 ui_qt_built = \
                ui/qt/moc_qt_ui.cpp \
@@ -43,7 +45,9 @@ ui_qt_built = \
                ui/qt/menu_data.cpp \
                ui/qt/options.cpp \
                ui/qt/options_internals.h \
-               ui/qt/keysyms.cpp
+               ui/qt/keysyms.cpp \
+               ui/qt/moc_debugger.cpp \
+               ui/qt/ui_debugger.h
 
 EXTRA_DIST += \
               ui/qt/options.pl \
@@ -86,3 +90,8 @@ ui/qt/moc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.h
 ui/qt/qrc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.qrc
 	$(AM_V_GEN)$(RCC) $(srcdir)/ui/qt/qt_ui.qrc > $@.tmp && mv $@.tmp $@
 
+ui/qt/ui_debugger.h: $(srcdir)/ui/qt/debugger.ui
+	$(AM_V_GEN)$(UIC) $(srcdir)/ui/qt/debugger.ui > $@.tmp && mv $@.tmp $@
+
+ui/qt/moc_debugger.cpp: $(srcdir)/ui/qt/debugger.h
+	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/debugger.h > $@.tmp && mv $@.tmp $@

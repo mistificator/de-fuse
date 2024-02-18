@@ -275,6 +275,10 @@ CODE
     <property name="windowTitle">
       <string>De-Fuse (based on Fuse)</string>
     </property>
+    <property name="windowIcon">
+    <iconset resource="qt_ui.qrc">
+      <normaloff>:/fuse.png</normaloff>:/fuse.png</iconset>
+    </property>    
     <widget class="QWidget" name="centralwidget">
       <layout class="QGridLayout" name="gridLayout">
         <property name="leftMargin">
@@ -318,7 +322,9 @@ XML
 
     print << "XML";
   </widget>
-  <resources/>
+  <resources>
+    <include location="qt_ui.qrc"/>
+  </resources>
   <connections/>
 </ui>
 XML
