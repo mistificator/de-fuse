@@ -534,7 +534,7 @@ menu_machine_select( int action )
 void
 menu_debug_debugger( int action )
 {
-
+    DeFuseWindow::instance()->debugger()->show();
 }
 
 void

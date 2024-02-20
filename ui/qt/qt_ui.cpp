@@ -19,6 +19,9 @@ extern "C"
 DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::DeFuseWindow)
 {
     ui->setupUi(this);
+    ui->screenWidget->setPixmap(QPixmap());
+
+    dbg = new DeFuseDebugger(this);
 
     int offs = 0;
     ui->statusbar->insertPermanentWidget(offs++, machine_status = new QLabel()); machine_status->setToolTip("Emulated machine name");
@@ -253,8 +256,9 @@ void DeFuseWindow::drawScreen()
 
 void DeFuseWindow::checkForWindowResize(QPixmap & new_px)
 {
-    if (const auto prev_px = ui->screenWidget->pixmap())
+    if (!isMaximized())
     {
+        QPixmap * prev_px = ui->screenWidget->pixmap();
         if (new_px.size() != prev_px->size())
         {
             ui->screenWidget->setPixmap(QPixmap());
@@ -366,4 +370,9 @@ int DeFuseWindow::setStatusBar( /*ui_statusbar_item*/ int item, /*ui_statusbar_s
 
   ui_error( UI_ERROR_ERROR, "Attempt to update unknown statusbar item %d", item );
   return 1;
+}
+
+DeFuseDebugger * DeFuseWindow::debugger() const
+{
+    return dbg;
 }

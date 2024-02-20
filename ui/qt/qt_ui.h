@@ -7,6 +7,8 @@
 #include <QImage>
 #include <functional>
 
+#include "debugger.h"
+
 extern "C"
 {
     #include <libspectrum.h>
@@ -42,6 +44,7 @@ public:
     void setMenuActive(const char * path, int state);
     int setStatusBar( int item, int state );
     void reset();
+    DeFuseDebugger * debugger() const;
 protected:
     DeFuseWindow(QWidget * _parent = nullptr);
     void closeEvent(QCloseEvent *) override;    
@@ -55,6 +58,7 @@ private:
     QLabel * speed_status = nullptr;
     QLabel * disk_status = nullptr, * mdr_status = nullptr, * mouse_status = nullptr, * pause_status = nullptr, * tape_status = nullptr;
     QLabel * machine_status = nullptr;
+    DeFuseDebugger * dbg = nullptr;
     bool need_to_repaint = false;
     long long frame = 0;
     void menu_data_init(); // body is generated from menu_data.pl

@@ -1,191 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DeFuseDebugger</class>
- <widget class="QWidget" name="DeFuseDebugger">
+ <widget class="QDialog" name="DeFuseDebugger">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1024</width>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DeFuse - Debugger</string>
+   <string>De-Fuse - Debugger</string>
   </property>
   <property name="windowIcon">
    <iconset resource="qt_ui.qrc">
     <normaloff>:/fuse.png</normaloff>:/fuse.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="8" colspan="2">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>Break</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="6" colspan="2">
-    <widget class="QPushButton" name="pushButton_4">
-     <property name="text">
-      <string>Continue</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="4">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>154</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0" colspan="11">
-    <widget class="QMenuBar" name="menuBar">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>20</height>
-      </size>
-     </property>
-     <widget class="QMenu" name="menuView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="title">
-       <string>View</string>
-      </property>
-      <addaction name="actionColorize_disassembly"/>
-     </widget>
-     <widget class="QMenu" name="menuWindow">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="title">
-       <string>Window</string>
-      </property>
-      <addaction name="actionRegisters"/>
-      <addaction name="actionMemory_Map"/>
-      <addaction name="actionBreakpoints"/>
-      <addaction name="actionDisassembly"/>
-      <addaction name="actionStack"/>
-      <addaction name="actionEvents"/>
-     </widget>
-     <addaction name="menuView"/>
-     <addaction name="menuWindow"/>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="10">
-    <widget class="QLineEdit" name="lineEdit_2"/>
-   </item>
-   <item row="1" column="1" colspan="4">
-    <widget class="QGroupBox" name="gbMemoryMap">
-     <property name="title">
-      <string>Memory Map</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QTableWidget" name="tableWidget_4">
-        <attribute name="horizontalHeaderDefaultSectionSize">
-         <number>100</number>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>Bank</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Address</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Size</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="5">
-    <widget class="QGroupBox" name="gbBreakpoints">
-     <property name="title">
-      <string>Breakpoints</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QTableWidget" name="tableWidget_5">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <attribute name="horizontalHeaderDefaultSectionSize">
-         <number>80</number>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>ID</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Type</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Value</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Ignore</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Life</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Condition</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
+  <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,5,0,1,0" columnstretch="3,2,3,2,2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <item row="1" column="0" rowspan="2">
     <widget class="QGroupBox" name="gbRegisters">
      <property name="title">
-      <string>Registers, flags, states...</string>
+      <string>Registers, states, flags</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="QTableWidget" name="tableWidget">
+       <widget class="QTableWidget" name="tbRegisters">
         <attribute name="horizontalHeaderDefaultSectionSize">
          <number>60</number>
         </attribute>
@@ -252,9 +110,19 @@
           <string>PC</string>
          </property>
         </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
         <item row="0" column="2">
          <property name="text">
           <string>SP</string>
+         </property>
+        </item>
+        <item row="0" column="3">
+         <property name="text">
+          <string>0000</string>
          </property>
         </item>
         <item row="1" column="0">
@@ -262,9 +130,19 @@
           <string>AF</string>
          </property>
         </item>
+        <item row="1" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
         <item row="1" column="2">
          <property name="text">
           <string>AF'</string>
+         </property>
+        </item>
+        <item row="1" column="3">
+         <property name="text">
+          <string>0000</string>
          </property>
         </item>
         <item row="2" column="0">
@@ -272,9 +150,19 @@
           <string>BC</string>
          </property>
         </item>
+        <item row="2" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
         <item row="2" column="2">
          <property name="text">
           <string>BC'</string>
+         </property>
+        </item>
+        <item row="2" column="3">
+         <property name="text">
+          <string>0000</string>
          </property>
         </item>
         <item row="3" column="0">
@@ -282,9 +170,19 @@
           <string>DE</string>
          </property>
         </item>
+        <item row="3" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
         <item row="3" column="2">
          <property name="text">
           <string>DE'</string>
+         </property>
+        </item>
+        <item row="3" column="3">
+         <property name="text">
+          <string>0000</string>
          </property>
         </item>
         <item row="4" column="0">
@@ -292,9 +190,19 @@
           <string>HL</string>
          </property>
         </item>
+        <item row="4" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
         <item row="4" column="2">
          <property name="text">
           <string>HL'</string>
+         </property>
+        </item>
+        <item row="4" column="3">
+         <property name="text">
+          <string>0000</string>
          </property>
         </item>
         <item row="5" column="0">
@@ -302,9 +210,19 @@
           <string>IX</string>
          </property>
         </item>
+        <item row="5" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
         <item row="5" column="2">
          <property name="text">
           <string>IY</string>
+         </property>
+        </item>
+        <item row="5" column="3">
+         <property name="text">
+          <string>0000</string>
          </property>
         </item>
         <item row="6" column="0">
@@ -312,15 +230,25 @@
           <string>I</string>
          </property>
         </item>
+        <item row="6" column="1">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
         <item row="6" column="2">
          <property name="text">
           <string>R</string>
          </property>
         </item>
+        <item row="6" column="3">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
-       <widget class="QTableWidget" name="tableWidget_3">
+       <widget class="QTableWidget" name="tbStates">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -369,6 +297,52 @@
           <string>IFF2</string>
          </property>
         </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>00000</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="3">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="4">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="tbStates2">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>80</height>
+         </size>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>60</number>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
         <column>
          <property name="text">
           <string>ULA</string>
@@ -399,10 +373,40 @@
           <string>TmxHsr</string>
          </property>
         </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
+        <item row="0" column="3">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
+        <item row="0" column="4">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
+        <item row="0" column="5">
+         <property name="text">
+          <string>00</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
-       <widget class="QTableWidget" name="tableWidget_2">
+       <widget class="QTableWidget" name="tbFlags">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -412,11 +416,14 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>80</height>
+          <height>60</height>
          </size>
         </property>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>20</number>
+        </attribute>
         <attribute name="horizontalHeaderDefaultSectionSize">
-         <number>30</number>
+         <number>20</number>
         </attribute>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
@@ -490,12 +497,118 @@
           <string>Carry happened</string>
          </property>
         </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="3">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="4">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="5">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="6">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="7">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="5" rowspan="3" colspan="2">
+   <item row="1" column="1">
+    <widget class="QGroupBox" name="gbMemoryMap">
+     <property name="title">
+      <string>Memory Map</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QTableWidget" name="tbMemory">
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>60</number>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>Bank</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Address</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Size</string>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>ROM0</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="text">
+          <string>16K</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="2" rowspan="3">
     <widget class="QGroupBox" name="gbDisassembly">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -507,11 +620,31 @@
       <string>Disassembly</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="QTableWidget" name="tableWidget_6">
+       <widget class="QTableWidget" name="tbDisassembly">
         <attribute name="horizontalHeaderStretchLastSection">
          <bool>true</bool>
         </attribute>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
         <column>
          <property name="text">
           <string>PC</string>
@@ -532,44 +665,32 @@
           <string>Instruction</string>
          </property>
         </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>-&gt;</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
+        <item row="0" column="3">
+         <property name="text">
+          <string>HALT</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="9" rowspan="3" colspan="2">
-    <widget class="QGroupBox" name="gbEvents">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Events</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
-       <widget class="QTableWidget" name="tableWidget_8">
-        <attribute name="horizontalHeaderStretchLastSection">
-         <bool>true</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>T-State</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Type</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="7" rowspan="3" colspan="2">
+   <item row="1" column="3" rowspan="3">
     <widget class="QGroupBox" name="gbStack">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -581,11 +702,31 @@
       <string>Stack</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="QTableWidget" name="tableWidget_7">
+       <widget class="QTableWidget" name="tbStack">
         <attribute name="horizontalHeaderStretchLastSection">
          <bool>true</bool>
         </attribute>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
         <column>
          <property name="text">
           <string>Address</string>
@@ -593,58 +734,325 @@
         </column>
         <column>
          <property name="text">
-          <string>Instruction</string>
+          <string>Value</string>
          </property>
         </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>0000</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="5" column="5">
-    <widget class="QPushButton" name="pushButton_5">
-     <property name="text">
-      <string>Single step</string>
+   <item row="1" column="4" rowspan="3">
+    <widget class="QGroupBox" name="gbEvents">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
+     <property name="title">
+      <string>Events</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QTableWidget" name="tbEvents">
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>T-State</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>00000</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="4" column="10">
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Evaluate</string>
+   <item row="2" column="1">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Go to offset</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="sbGoto">
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="prefix">
+        <string>0x</string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="displayIntegerBase">
+        <number>16</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QGroupBox" name="gbBreakpoints">
+     <property name="title">
+      <string>Breakpoints</string>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QTableWidget" name="tbBreakpoints">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>80</number>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Value</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Ignore</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Life</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Condition</string>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="5" column="10">
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="text">
-      <string>Close</string>
-     </property>
-    </widget>
+   <item row="4" column="0" colspan="5">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0" rowspan="2" colspan="4">
+      <widget class="QLineEdit" name="lineEdit_2"/>
+     </item>
+     <item row="0" column="4">
+      <widget class="QPushButton" name="bEvaluate">
+       <property name="text">
+        <string>Evaluate</string>
+       </property>
+       <property name="icon">
+        <iconset theme="process-working">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" rowspan="2">
+      <widget class="QPushButton" name="bStep">
+       <property name="text">
+        <string>Single step</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-skip-forward">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" rowspan="2">
+      <widget class="QPushButton" name="bContinue">
+       <property name="text">
+        <string>Continue</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-playback-start">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3" rowspan="2">
+      <widget class="QPushButton" name="bBreak">
+       <property name="text">
+        <string>Break</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-playback-pause">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4" rowspan="2">
+      <widget class="QPushButton" name="bClose">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>154</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
-   <item row="2" column="4">
-    <widget class="QSpinBox" name="spinBox">
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   <item row="0" column="0" colspan="5">
+    <widget class="QMenuBar" name="menuBar">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="maximum">
-      <number>65535</number>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>20</height>
+      </size>
      </property>
-     <property name="displayIntegerBase">
-      <number>16</number>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2" colspan="2">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Go to offset</string>
-     </property>
+     <widget class="QMenu" name="menuView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>View</string>
+      </property>
+      <addaction name="actionColorize_disassembly"/>
+     </widget>
+     <widget class="QMenu" name="menuWindow">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Window</string>
+      </property>
+      <addaction name="actionRegisters"/>
+      <addaction name="actionMemory_Map"/>
+      <addaction name="actionBreakpoints"/>
+      <addaction name="actionDisassembly"/>
+      <addaction name="actionStack"/>
+      <addaction name="actionEvents"/>
+     </widget>
+     <addaction name="menuView"/>
+     <addaction name="menuWindow"/>
     </widget>
    </item>
   </layout>
   <action name="actionColorize_disassembly">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -655,12 +1063,18 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Registers</string>
    </property>
   </action>
   <action name="actionMemory_Map">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -671,12 +1085,18 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Breakpoints</string>
    </property>
   </action>
   <action name="actionDisassembly">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -687,12 +1107,18 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Stack</string>
    </property>
   </action>
   <action name="actionEvents">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">

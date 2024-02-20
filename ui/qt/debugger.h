@@ -1,20 +1,28 @@
 #ifndef DEFUSE_DEBUGGER_H
 #define DEFUSE_DEBUGGER_H
 
-#include <QWidget>
+#include <QDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DeFuseDebugger; }
 QT_END_NAMESPACE
 
-class DeFuseDebugger : public QWidget
+class DeFuseDebugger : public QDialog
 {
     Q_OBJECT
 
 public:
     explicit DeFuseDebugger(QWidget *parent = nullptr);
     ~DeFuseDebugger();
-
+private slots:    
+    void on_bEvaluate_clicked();
+    void on_bStep_clicked();
+    void on_bContinue_clicked();
+    void on_bBreak_clicked();
+    void on_bClose_clicked();
+protected:
+    void showEvent(QShowEvent *) override;
+    void closeEvent(QCloseEvent *) override;    
 private:
     Ui::DeFuseDebugger *ui;
 };
