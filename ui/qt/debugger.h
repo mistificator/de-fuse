@@ -15,11 +15,13 @@ public:
     explicit DeFuseDebugger(QWidget *parent = nullptr);
     ~DeFuseDebugger();
 private slots:    
+    void updateDisassembly();
     void on_bEvaluate_clicked();
     void on_bStep_clicked();
     void on_bContinue_clicked();
     void on_bBreak_clicked();
     void on_bClose_clicked();
+    void on_scDisassembly_valueChanged(int value);
 protected:
     void showEvent(QShowEvent *) override;
     void closeEvent(QCloseEvent *) override;    

@@ -2,8 +2,14 @@
 #include "ui_debugger.h"
 
 extern "C"
-{
+{    
+    #include <glib.h> // for GSList
+
     #include "fuse.h"
+    #include "debugger/debugger.h"
+    #include "debugger/breakpoint.h"
+    #include "z80/z80.h"
+    #include "z80/z80_macros.h"
 }
 
 DeFuseDebugger::DeFuseDebugger(QWidget *parent) :
@@ -59,9 +65,62 @@ void DeFuseDebugger::showEvent(QShowEvent *)
 
     ui->bContinue->setEnabled(false);
     ui->bBreak->setEnabled(true);
+
+    ui->scDisassembly->setValue(PC);
+    updateDisassembly();
 }
 
 void DeFuseDebugger::closeEvent(QCloseEvent *)
 {
     fuse_emulation_unpause();
 } 
+
+void DeFuseDebugger::updateDisassembly()
+{
+    ui->tbDisassembly->setRowCount(20);
+    for( int i = 0; i < ui->tbDisassembly->rowCount() ; i++ ) 
+    {
+        for (int j = 0; j < ui->tbDisassembly->columnCount(); j++)
+        {
+            ui->tbDisassembly->setItem(i, j, new QTableWidgetItem());
+        }
+    }
+    for( int i = 0, address = ui->scDisassembly->value(); i < ui->tbDisassembly->rowCount() && address <= 0xFFFF; i++ ) 
+    {
+        if (address == PC)
+        {
+            ui->tbDisassembly->item(i, 0)->setText("->");
+        }
+        for(GSList * ptr = debugger_breakpoints; ptr; ptr = ptr->next ) 
+        {
+            debugger_breakpoint *bp = ptr->data;
+
+            switch( bp->type ) 
+            {
+
+            case DEBUGGER_BREAKPOINT_TYPE_EXECUTE:
+            case DEBUGGER_BREAKPOINT_TYPE_READ:
+            case DEBUGGER_BREAKPOINT_TYPE_WRITE:
+                if ( bp->value.address.offset == address ) 
+                {
+                    ui->tbDisassembly->item(i, 1)->setText(QString::number(bp->id));
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        ui->tbDisassembly->item(i, 2)->setText(QString::number(address, 16).rightJustified(4, '0').toUpper());
+
+        QByteArray instr(128, 0);
+        size_t length = 0;
+        debugger_disassemble(instr.data(), instr.size(), &length, address);
+        ui->tbDisassembly->item(i, 3)->setText(instr);
+        address += length;
+    }
+}
+
+void DeFuseDebugger::on_scDisassembly_valueChanged(int value)
+{
+    updateDisassembly();
+}
