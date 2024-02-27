@@ -22,11 +22,14 @@ private slots:
     void on_bBreak_clicked();
     void on_bClose_clicked();
     void on_scDisassembly_valueChanged(int value);
+    void on_actionColorize_disassembly_toggled(bool);
 protected:
     void showEvent(QShowEvent *) override;
-    void closeEvent(QCloseEvent *) override;    
+    void closeEvent(QCloseEvent *) override;   
+    void resizeEvent(QResizeEvent *) override; 
 private:
     Ui::DeFuseDebugger *ui;
+    void colorizeDisassembly(int row, const QByteArray &);
 };
 
 #endif // DEFUSE_DEBUGGER_H

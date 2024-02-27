@@ -807,6 +807,9 @@
         <property name="showDropIndicator" stdset="0">
          <bool>false</bool>
         </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::NoSelection</enum>
         </property>
