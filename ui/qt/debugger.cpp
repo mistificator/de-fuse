@@ -21,12 +21,12 @@ DeFuseDebugger::DeFuseDebugger(QWidget *parent) :
     ui->tbBreakpoints->resizeColumnsToContents();   ui->tbBreakpoints->setRowCount(0);
     ui->tbDisassembly->resizeColumnsToContents();   ui->tbDisassembly->setRowCount(0);
     ui->tbEvents->resizeColumnsToContents();        ui->tbEvents->setRowCount(0);
-    ui->tbFlags->resizeColumnsToContents();         ui->tbFlags->setRowCount(0);
+    ui->tbFlags->resizeColumnsToContents();         //ui->tbFlags->setRowCount(0);
     ui->tbMemory->resizeColumnsToContents();        ui->tbMemory->setRowCount(0);
-    ui->tbRegisters->resizeColumnsToContents();     ui->tbRegisters->setRowCount(0);
+    ui->tbRegisters->resizeColumnsToContents();     //ui->tbRegisters->setRowCount(0);
     ui->tbStack->resizeColumnsToContents();         ui->tbStack->setRowCount(0);
-    ui->tbStates->resizeColumnsToContents();        ui->tbStates->setRowCount(0);
-    ui->tbStates2->resizeColumnsToContents();       ui->tbStates2->setRowCount(0);
+    ui->tbStates->resizeColumnsToContents();        //ui->tbStates->setRowCount(0);
+    ui->tbStates2->resizeColumnsToContents();       //ui->tbStates2->setRowCount(0);
 }
 
 DeFuseDebugger::~DeFuseDebugger()
@@ -51,7 +51,7 @@ void DeFuseDebugger::on_bContinue_clicked()
 
 void DeFuseDebugger::on_bBreak_clicked()
 {
-
+    updateAll();
 }
 
 void DeFuseDebugger::on_bClose_clicked()
@@ -67,7 +67,7 @@ void DeFuseDebugger::showEvent(QShowEvent *)
     ui->bBreak->setEnabled(true);
 
     ui->scDisassembly->setValue(PC);
-    updateDisassembly();
+    updateAll();
 }
 
 void DeFuseDebugger::closeEvent(QCloseEvent *)
@@ -102,31 +102,33 @@ const std::array<std::tuple<QByteArray, QColor, QColor>, 15> disassembly_color_t
 
 void DeFuseDebugger::colorizeDisassembly(int row, const QByteArray & instr)
 {
-    if (ui->actionColorize_disassembly->isChecked())
+    if (!ui->actionColorize_disassembly->isChecked()) 
     {
-        for (auto c: disassembly_color_table)
+        return;
+    }
+    for (auto c: disassembly_color_table)
+    {
+        if (!instr.startsWith(std::get<QByteArray>(c)))
         {
-            if (instr.startsWith(std::get<QByteArray>(c)))
+            continue;
+        }
+        for (int col = 0; col < ui->tbDisassembly->columnCount(); ++col)
+        {
+            if (auto item = ui->tbDisassembly->item(row, col))
             {
-                for (int col = 0; col < ui->tbDisassembly->columnCount(); ++col)
+                QColor fg = std::get<1>(c);
+                if (fg != Qt::transparent)
                 {
-                    if (auto item = ui->tbDisassembly->item(row, col))
-                    {
-                        QColor fg = std::get<1>(c);
-                        if (fg != Qt::transparent)
-                        {
-                            item->setForeground(fg);
-                        }
-                        QColor bg = std::get<2>(c);
-                        if (bg != Qt::transparent)
-                        {
-                            item->setBackground(bg);
-                        }     
-                    }
+                    item->setForeground(fg);
                 }
-                break;               
+                QColor bg = std::get<2>(c);
+                if (bg != Qt::transparent)
+                {
+                    item->setBackground(bg);
+                }     
             }
         }
+        break;               
     }
 }
 
@@ -185,4 +187,72 @@ void DeFuseDebugger::on_scDisassembly_valueChanged(int value)
 void DeFuseDebugger::on_actionColorize_disassembly_toggled(bool)
 {
     updateDisassembly();
+}
+
+void DeFuseDebugger::updateStack()
+{
+
+}
+
+void DeFuseDebugger::updateEvents()
+{
+
+}
+
+void DeFuseDebugger::updateBreakpoints()
+{
+
+}
+
+void DeFuseDebugger::updateMemoryMap()
+{
+    memory_page prev_page = { nullptr, -1, -1, -1, -1, -1, 0 };
+    int offset = 0;
+    int row = 0;
+
+    ui->tbMemory->setRowCount(0);
+    for(int block = 0; block < MEMORY_PAGES_IN_64K; block++) 
+    {
+        const memory_page & page = memory_map_read[block];
+
+        if( page.source     != prev_page.source ||
+            page.page_num   != prev_page.page_num ||
+//            page.offset     != prev_page.offset ||
+            page.writable   != prev_page.writable ||
+            page.contended  != prev_page.contended ) 
+        {
+
+            ui->tbMemory->setRowCount(row + 1);
+            for (int j = 0; j < ui->tbDisassembly->columnCount(); j++)
+            {
+                ui->tbMemory->setItem(row, j, new QTableWidgetItem());
+            }
+            ui->tbMemory->item(row, 0)->setText(QString("%1%2").arg(memory_source_description( page.source )).arg(page.page_num));
+            ui->tbMemory->item(row, 1)->setText(QString::number(block * MEMORY_PAGE_SIZE, 16).rightJustified(4, '0').toUpper());
+            ui->tbMemory->item(row, 2)->setText(page.writable ? "Y" : "N");
+            ui->tbMemory->item(row, 3)->setText(page.contended ? "Y" : "N");
+
+            row++;
+
+            prev_page = page;
+        }
+
+        /* We expect the next page to have an increased offset */
+        offset += MEMORY_PAGE_SIZE;
+    }
+}
+
+void DeFuseDebugger::updateRegisters()
+{
+
+}
+
+void DeFuseDebugger::updateAll()
+{
+    updateDisassembly();
+    updateBreakpoints();
+    updateEvents();
+    updateMemoryMap();
+    updateRegisters();
+    updateStack();
 }

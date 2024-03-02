@@ -16,6 +16,12 @@ public:
     ~DeFuseDebugger();
 private slots:    
     void updateDisassembly();
+    void updateStack();
+    void updateEvents();
+    void updateBreakpoints();
+    void updateMemoryMap();
+    void updateRegisters();
+    void updateAll();
     void on_bEvaluate_clicked();
     void on_bStep_clicked();
     void on_bContinue_clicked();
