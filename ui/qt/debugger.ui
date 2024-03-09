@@ -192,7 +192,7 @@
    <item row="4" column="0" colspan="5">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0" rowspan="2" colspan="4">
-      <widget class="QLineEdit" name="lineEdit_2"/>
+      <widget class="QLineEdit" name="leEvaluate"/>
      </item>
      <item row="0" column="4">
       <widget class="QPushButton" name="bEvaluate">

@@ -36,7 +36,7 @@ DeFuseDebugger::~DeFuseDebugger()
 
 void DeFuseDebugger::on_bEvaluate_clicked()
 {
-
+    debugger_command_evaluate(ui->leEvaluate->text().toLocal8Bit());
 }
 
 void DeFuseDebugger::on_bStep_clicked()
@@ -201,7 +201,69 @@ void DeFuseDebugger::updateEvents()
 
 void DeFuseDebugger::updateBreakpoints()
 {
+    int row = 0;
+    ui->tbBreakpoints->setRowCount(0);
+    for(GSList * ptr = debugger_breakpoints; ptr; ptr = ptr->next ) 
+    {
 
+        debugger_breakpoint *bp = ptr->data;
+        
+        QString buffer;
+
+        switch( bp->type ) 
+        {
+            case DEBUGGER_BREAKPOINT_TYPE_EXECUTE:
+            case DEBUGGER_BREAKPOINT_TYPE_READ:
+            case DEBUGGER_BREAKPOINT_TYPE_WRITE:
+                if( bp->value.address.source == memory_source_any ) 
+                {
+                    buffer = QString::number(bp->value.address.offset, 16).rightJustified(4, '0').toUpper();
+                } 
+                else 
+                {
+                    buffer = QString("%1:%2:%3")
+                        .arg(memory_source_description( bp->value.address.source ))
+                        .arg(bp->value.address.page)
+                        .arg(QString::number(bp->value.address.offset, 16).rightJustified(4, '0').toUpper());
+                }
+                break;
+
+            case DEBUGGER_BREAKPOINT_TYPE_PORT_READ:
+            case DEBUGGER_BREAKPOINT_TYPE_PORT_WRITE:
+                buffer = QString("%1:%2").arg(bp->value.port.mask).arg(bp->value.port.port);
+                break;
+
+            case DEBUGGER_BREAKPOINT_TYPE_TIME:
+                buffer = QString::number(bp->value.time.tstates).rightJustified(5, '0');
+                break;
+
+            case DEBUGGER_BREAKPOINT_TYPE_EVENT:
+                buffer = QString("%1:%2").arg(bp->value.event.type).arg(bp->value.event.detail);
+                break;
+            default:
+                break;
+        }
+
+        ui->tbBreakpoints->setRowCount(row + 1);
+        for (int j = 0; j < ui->tbBreakpoints->columnCount(); j++)
+        {
+            ui->tbBreakpoints->setItem(row, j, new QTableWidgetItem());
+        }
+        ui->tbBreakpoints->item(row, 0)->setText(QString::number(bp->id));
+        ui->tbBreakpoints->item(row, 1)->setText(debugger_breakpoint_type_text[ bp->type ]);
+        ui->tbBreakpoints->item(row, 2)->setText(buffer);
+        ui->tbBreakpoints->item(row, 3)->setText(QString::number(bp->ignore));
+        ui->tbBreakpoints->item(row, 4)->setText(debugger_breakpoint_life_text[ bp->life ]);
+
+        if( bp->condition ) {
+            char buffer2[80];
+            debugger_expression_deparse( buffer2, sizeof( buffer2 ), bp->condition );
+            ui->tbBreakpoints->item(row, 5)->setText(buffer2);
+        }
+
+        row++;
+
+    }
 }
 
 void DeFuseDebugger::updateMemoryMap()
@@ -223,7 +285,7 @@ void DeFuseDebugger::updateMemoryMap()
         {
 
             ui->tbMemory->setRowCount(row + 1);
-            for (int j = 0; j < ui->tbDisassembly->columnCount(); j++)
+            for (int j = 0; j < ui->tbMemory->columnCount(); j++)
             {
                 ui->tbMemory->setItem(row, j, new QTableWidgetItem());
             }
