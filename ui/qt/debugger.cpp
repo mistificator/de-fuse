@@ -315,7 +315,20 @@ void DeFuseDebugger::updateMemoryMap()
 
 void DeFuseDebugger::updateRegisters()
 {
-
+    ui->tbRegisters->setItem(0, 1, new QTableWidgetItem(QString::number(PC, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(0, 3, new QTableWidgetItem(QString::number(SP, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(1, 1, new QTableWidgetItem(QString::number(AF, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(1, 3, new QTableWidgetItem(QString::number(AF_, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(2, 1, new QTableWidgetItem(QString::number(BC, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(2, 3, new QTableWidgetItem(QString::number(BC_, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(3, 1, new QTableWidgetItem(QString::number(DE, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(3, 3, new QTableWidgetItem(QString::number(DE_, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(4, 1, new QTableWidgetItem(QString::number(HL, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(4, 3, new QTableWidgetItem(QString::number(HL_, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(5, 1, new QTableWidgetItem(QString::number(IX, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(5, 3, new QTableWidgetItem(QString::number(IY, 16).rightJustified(4, '0').toUpper()));
+    ui->tbRegisters->setItem(6, 1, new QTableWidgetItem(QString::number(I, 16).rightJustified(2, '0').toUpper()));
+    ui->tbRegisters->setItem(6, 3, new QTableWidgetItem(QString::number(R, 16).rightJustified(2, '0').toUpper()));
 }
 
 void DeFuseDebugger::updateAll()
