@@ -37,6 +37,13 @@ DeFuseDebugger::~DeFuseDebugger()
 void DeFuseDebugger::on_bEvaluate_clicked()
 {
     debugger_command_evaluate(ui->leEvaluate->text().toLocal8Bit());
+    ui->leEvaluate->setText("");
+    updateBreakpoints();
+}
+
+void DeFuseDebugger::on_leEvaluate_returnPressed()
+{
+    ui->bEvaluate->click();
 }
 
 void DeFuseDebugger::on_bStep_clicked()
@@ -264,6 +271,8 @@ void DeFuseDebugger::updateBreakpoints()
         row++;
 
     }
+
+    ui->tbBreakpoints->resizeColumnsToContents();
 }
 
 void DeFuseDebugger::updateMemoryMap()

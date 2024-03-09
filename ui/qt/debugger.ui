@@ -139,6 +139,9 @@
         <attribute name="horizontalHeaderDefaultSectionSize">
          <number>80</number>
         </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
         <row>
          <property name="text">
           <string>1</string>

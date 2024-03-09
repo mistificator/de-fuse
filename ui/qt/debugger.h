@@ -23,6 +23,7 @@ private slots:
     void updateRegisters();
     void updateAll();
     void on_bEvaluate_clicked();
+    void on_leEvaluate_returnPressed();
     void on_bStep_clicked();
     void on_bContinue_clicked();
     void on_bBreak_clicked();
