@@ -1,4 +1,5 @@
 #include "debugger.h"
+#include "settings.h"
 #include "ui_debugger.h"
 
 extern "C"
@@ -10,7 +11,20 @@ extern "C"
     #include "debugger/breakpoint.h"
     #include "z80/z80.h"
     #include "z80/z80_macros.h"
+    #include "event.h"
+    #include "spectrum.h"
+    #include "machine.h"
+    #include "peripherals/ula.h"
+    #include "peripherals/scld.h"
+    #include "peripherals/ide/zxcf.h"
+    #include "settings.h"
 }
+
+static QString strhex(int address, int width)
+{
+    return QString::number(address, 16).rightJustified(width, '0').toUpper();
+}
+
 
 DeFuseDebugger::DeFuseDebugger(QWidget *parent) :
     QDialog(parent, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowMinMaxButtonsHint),
@@ -27,6 +41,13 @@ DeFuseDebugger::DeFuseDebugger(QWidget *parent) :
     ui->tbStack->resizeColumnsToContents();         ui->tbStack->setRowCount(0);
     ui->tbStates->resizeColumnsToContents();        //ui->tbStates->setRowCount(0);
     ui->tbStates2->resizeColumnsToContents();       //ui->tbStates2->setRowCount(0);
+
+    connect(ui->actionBreakpoints,  &QAction::toggled, this, [&](bool state) { ui->gbBreakpoints->setVisible(state); });
+    connect(ui->actionDisassembly,  &QAction::toggled, this, [&](bool state) { ui->gbDisassembly->setVisible(state); });
+    connect(ui->actionEvents,       &QAction::toggled, this, [&](bool state) { ui->gbEvents->setVisible(state); });
+    connect(ui->actionMemory_Map,   &QAction::toggled, this, [&](bool state) { ui->gbMemoryMap->setVisible(state); });
+    connect(ui->actionRegisters,    &QAction::toggled, this, [&](bool state) { ui->gbRegisters->setVisible(state); });
+    connect(ui->actionStack,        &QAction::toggled, this, [&](bool state) { ui->gbStack->setVisible(state); });
 }
 
 DeFuseDebugger::~DeFuseDebugger()
@@ -61,9 +82,14 @@ void DeFuseDebugger::on_bBreak_clicked()
     updateAll();
 }
 
-void DeFuseDebugger::on_bClose_clicked()
+void DeFuseDebugger::on_actionClose_triggered()
 {
     close();
+}
+
+void DeFuseDebugger::on_bClose_clicked()
+{
+    ui->actionClose->trigger();
 }
 
 void DeFuseDebugger::showEvent(QShowEvent *)
@@ -157,7 +183,7 @@ void DeFuseDebugger::updateDisassembly()
         }
         for(GSList * ptr = debugger_breakpoints; ptr; ptr = ptr->next ) 
         {
-            debugger_breakpoint *bp = ptr->data;
+            debugger_breakpoint *bp = reinterpret_cast<debugger_breakpoint *>(ptr->data);
 
             switch( bp->type ) 
             {
@@ -174,7 +200,7 @@ void DeFuseDebugger::updateDisassembly()
                 break;
             }
         }
-        ui->tbDisassembly->item(i, 2)->setText(QString::number(address, 16).rightJustified(4, '0').toUpper());
+        ui->tbDisassembly->item(i, 2)->setText(strhex(address, 4));
 
         QByteArray instr(128, 0);
         size_t length = 0;
@@ -186,7 +212,7 @@ void DeFuseDebugger::updateDisassembly()
     }
 }
 
-void DeFuseDebugger::on_scDisassembly_valueChanged(int value)
+void DeFuseDebugger::on_scDisassembly_valueChanged(int)
 {
     updateDisassembly();
 }
@@ -198,12 +224,36 @@ void DeFuseDebugger::on_actionColorize_disassembly_toggled(bool)
 
 void DeFuseDebugger::updateStack()
 {
-
+    ui->tbStack->setRowCount(ui->tbStack->height() / ui->tbStack->verticalHeader()->defaultSectionSize());
+    for( int i = 0; i < ui->tbStack->rowCount() ; i++ )
+    {
+        for (int j = 0; j < ui->tbStack->columnCount(); j++)
+        {
+            ui->tbStack->setItem(i, j, new QTableWidgetItem());
+        }
+    }
+    for( int i = 0, address = SP + 38; i < ui->tbStack->rowCount(); i++, address -= 2 )
+    {
+        libspectrum_word contents = readbyte_internal( address ) +
+                                    0x100 * readbyte_internal( address + 1 );
+        ui->tbStack->item(i, 0)->setText(strhex(address, 4));
+        ui->tbStack->item(i, 1)->setText(strhex(contents, 4));
+    }
 }
 
 void DeFuseDebugger::updateEvents()
 {
+    ui->tbEvents->setRowCount(0);
+    event_foreach([](gpointer data, gpointer user_data)
+    {
+        QTableWidget * tbEvents = reinterpret_cast<QTableWidget *>(user_data);
+        event_t * event = reinterpret_cast<event_t *>(data);
 
+        int row = tbEvents->rowCount();
+        tbEvents->setRowCount(row + 1);
+        tbEvents->setItem(row, 0, new QTableWidgetItem(QString::number(event->tstates)));
+        tbEvents->setItem(row, 1, new QTableWidgetItem(event_name(event->type)));
+    }, ui->tbEvents);
 }
 
 void DeFuseDebugger::updateBreakpoints()
@@ -213,7 +263,7 @@ void DeFuseDebugger::updateBreakpoints()
     for(GSList * ptr = debugger_breakpoints; ptr; ptr = ptr->next ) 
     {
 
-        debugger_breakpoint *bp = ptr->data;
+        debugger_breakpoint *bp = reinterpret_cast<debugger_breakpoint *>(ptr->data);
         
         QString buffer;
 
@@ -224,14 +274,14 @@ void DeFuseDebugger::updateBreakpoints()
             case DEBUGGER_BREAKPOINT_TYPE_WRITE:
                 if( bp->value.address.source == memory_source_any ) 
                 {
-                    buffer = QString::number(bp->value.address.offset, 16).rightJustified(4, '0').toUpper();
+                    buffer = strhex(bp->value.address.offset, 4);
                 } 
                 else 
                 {
                     buffer = QString("%1:%2:%3")
                         .arg(memory_source_description( bp->value.address.source ))
                         .arg(bp->value.address.page)
-                        .arg(QString::number(bp->value.address.offset, 16).rightJustified(4, '0').toUpper());
+                        .arg(strhex(bp->value.address.offset, 4));
                 }
                 break;
 
@@ -299,7 +349,7 @@ void DeFuseDebugger::updateMemoryMap()
                 ui->tbMemory->setItem(row, j, new QTableWidgetItem());
             }
             ui->tbMemory->item(row, 0)->setText(QString("%1%2").arg(memory_source_description( page.source )).arg(page.page_num));
-            ui->tbMemory->item(row, 1)->setText(QString::number(block * MEMORY_PAGE_SIZE, 16).rightJustified(4, '0').toUpper());
+            ui->tbMemory->item(row, 1)->setText(strhex(block * MEMORY_PAGE_SIZE, 4));
             ui->tbMemory->item(row, 2)->setText(page.writable ? "Y" : "N");
             ui->tbMemory->item(row, 3)->setText(page.contended ? "Y" : "N");
 
@@ -315,20 +365,105 @@ void DeFuseDebugger::updateMemoryMap()
 
 void DeFuseDebugger::updateRegisters()
 {
-    ui->tbRegisters->setItem(0, 1, new QTableWidgetItem(QString::number(PC, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(0, 3, new QTableWidgetItem(QString::number(SP, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(1, 1, new QTableWidgetItem(QString::number(AF, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(1, 3, new QTableWidgetItem(QString::number(AF_, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(2, 1, new QTableWidgetItem(QString::number(BC, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(2, 3, new QTableWidgetItem(QString::number(BC_, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(3, 1, new QTableWidgetItem(QString::number(DE, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(3, 3, new QTableWidgetItem(QString::number(DE_, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(4, 1, new QTableWidgetItem(QString::number(HL, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(4, 3, new QTableWidgetItem(QString::number(HL_, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(5, 1, new QTableWidgetItem(QString::number(IX, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(5, 3, new QTableWidgetItem(QString::number(IY, 16).rightJustified(4, '0').toUpper()));
-    ui->tbRegisters->setItem(6, 1, new QTableWidgetItem(QString::number(I, 16).rightJustified(2, '0').toUpper()));
-    ui->tbRegisters->setItem(6, 3, new QTableWidgetItem(QString::number(R, 16).rightJustified(2, '0').toUpper()));
+    ui->tbRegisters->item(0, 1)->setText(strhex(PC, 4));
+    ui->tbRegisters->item(0, 3)->setText(strhex(SP, 4));
+    ui->tbRegisters->item(1, 1)->setText(strhex(AF, 4));
+    ui->tbRegisters->item(1, 3)->setText(strhex(AF_, 4));
+    ui->tbRegisters->item(2, 1)->setText(strhex(BC, 4));
+    ui->tbRegisters->item(2, 3)->setText(strhex(BC_, 4));
+    ui->tbRegisters->item(3, 1)->setText(strhex(DE, 4));
+    ui->tbRegisters->item(3, 3)->setText(strhex(DE_, 4));
+    ui->tbRegisters->item(4, 1)->setText(strhex(HL, 4));
+    ui->tbRegisters->item(4, 3)->setText(strhex(HL_, 4));
+    ui->tbRegisters->item(5, 1)->setText(strhex(IX, 4));
+    ui->tbRegisters->item(5, 3)->setText(strhex(IY, 4));
+    ui->tbRegisters->item(6, 1)->setText(strhex(I, 2));
+    ui->tbRegisters->item(6, 3)->setText(strhex(( R & 0x7f ) | ( R7 & 0x80 ), 2));
+
+    ui->tbStates->item(0, 0)->setText(QString::number(tstates));
+    ui->tbStates->item(0, 1)->setText(QString::number(z80.halted));
+    ui->tbStates->item(0, 2)->setText(QString::number(IM));
+    ui->tbStates->item(0, 3)->setText(QString::number(IFF1));
+    ui->tbStates->item(0, 4)->setText(QString::number(IFF2));
+
+    for (int i = 0; i < 8; ++i)
+    {
+        ui->tbFlags->item(0, i)->setText((F & ( 0x80 >> i ) ) ? "1" : "0");
+    }
+
+    int state2_col = 0;
+    auto capabilities = libspectrum_machine_capabilities( machine_current->machine );
+    ui->tbStates2->item(0, state2_col)->setText(strhex(ula_last_byte(), 2));
+    ++state2_col;
+    if( capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_AY )
+    {
+        ui->tbStates2->setColumnHidden(state2_col, false);
+        ui->tbStates2->item(0, state2_col)->setText(strhex(machine_current->ay.current_register, 2));
+    }
+    else
+    {
+        ui->tbStates2->setColumnHidden(state2_col, true);
+    }
+    ++state2_col;
+
+    if( capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_128_MEMORY )
+    {
+        ui->tbStates2->setColumnHidden(state2_col, false);
+        ui->tbStates2->item(0, state2_col)->setText(strhex(machine_current->ram.last_byte, 2));
+    }
+    else
+    {
+        ui->tbStates2->setColumnHidden(state2_col, true);
+    }
+    ++state2_col;
+
+    if( capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_MEMORY )
+    {
+        ui->tbStates2->setColumnHidden(state2_col, false);
+        ui->tbStates2->item(0, state2_col)->setText(strhex(machine_current->ram.last_byte2, 2));
+    }
+    else
+    {
+        ui->tbStates2->setColumnHidden(state2_col, true);
+    }
+    ++state2_col;
+
+    if( capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_VIDEO  ||
+        capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_MEMORY ||
+        capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_SE_MEMORY       )
+    {
+        ui->tbStates2->setColumnHidden(state2_col, false);
+        ui->tbStates2->item(0, state2_col)->setText(strhex(scld_last_dec.byte, 2));
+    }
+    else
+    {
+        ui->tbStates2->setColumnHidden(state2_col, true);
+    }
+    ++state2_col;
+
+    if( capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_MEMORY ||
+        capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_SE_MEMORY       )
+    {
+        ui->tbStates2->setColumnHidden(state2_col, false);
+        ui->tbStates2->item(0, state2_col)->setText(strhex(scld_last_hsr, 2));
+    }
+    else
+    {
+        ui->tbStates2->setColumnHidden(state2_col, true);
+    }
+    ++state2_col;
+
+    if( settings_current.zxcf_active )
+    {
+        ui->tbStates2->setColumnHidden(state2_col, false);
+        ui->tbStates2->item(0, state2_col)->setText(strhex(zxcf_last_memctl(), 2));
+    }
+    else
+    {
+        ui->tbStates2->setColumnHidden(state2_col, true);
+    }
+    ++state2_col;
+
 }
 
 void DeFuseDebugger::updateAll()

@@ -27,6 +27,7 @@ private slots:
     void on_bStep_clicked();
     void on_bContinue_clicked();
     void on_bBreak_clicked();
+    void on_actionClose_triggered();
     void on_bClose_clicked();
     void on_scDisassembly_valueChanged(int value);
     void on_actionColorize_disassembly_toggled(bool);

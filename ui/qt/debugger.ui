@@ -97,6 +97,13 @@
       <addaction name="actionStack"/>
       <addaction name="actionEvents"/>
      </widget>
+     <widget class="QMenu" name="menuFile">
+      <property name="title">
+       <string>File</string>
+      </property>
+      <addaction name="actionClose"/>
+     </widget>
+     <addaction name="menuFile"/>
      <addaction name="menuView"/>
      <addaction name="menuWindow"/>
     </widget>
@@ -606,12 +613,12 @@
         </column>
         <column>
          <property name="text">
-          <string>128 Mem</string>
+          <string>128Mem</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>+3 Mem</string>
+          <string>+3Mem</string>
          </property>
         </column>
         <column>
@@ -1275,6 +1282,11 @@
    </property>
    <property name="text">
     <string>Events</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
    </property>
   </action>
  </widget>
