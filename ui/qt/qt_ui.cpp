@@ -42,7 +42,8 @@ DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::
 //    grabKeyboard();
     setFocusPolicy(Qt::WheelFocus);
 
-    ui->menu_help->addAction("About Qt...", []() {
+    ui->menu_help->addAction("About Qt...", []()
+    {
         QMessageBox::aboutQt(DeFuseWindow::instance());
     });
 }
@@ -103,7 +104,7 @@ void DeFuseWindow::selectScaler( std::function<int(int)> selector )
 {
     selectSomething("De-Fuse - Screen filter", current_scaler, SCALER_NUM,
         [](int i)->QPair<int, QString> { return qMakePair(i, scaler_name( i )); },
-        [=](int scaler, bool not_test)->int { if (!not_test) { return selector(scaler) ? scaler : -1; } return (current_scaler = scaler); });    
+        [=](int scaler, bool not_test)->int { if (!not_test) { return selector(scaler) ? scaler : -1; } scaler_select_scaler( scaler ); return (current_scaler = scaler); });
 }
 
 void  DeFuseWindow::selectSomething(QString title, int current, int count, std::function<QPair<int, QString>(int)> label_fn, std::function<int(int, bool)> apply_fn)

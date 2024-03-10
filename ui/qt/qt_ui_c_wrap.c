@@ -345,6 +345,10 @@ uidisplay_init( int width, int height )
     ::memset(qtdisplay_image, 0 , 2 * DISPLAY_SCREEN_HEIGHT * DISPLAY_SCREEN_WIDTH * sizeof(libspectrum_word));
     DeFuseWindow::instance()->getScreen(width + DeFuseWindow::Screen_t::AddX, height + DeFuseWindow::Screen_t::AddY);
     DeFuseWindow::instance()->needToRepaint();
+    if ( scaler_select_scaler( current_scaler ) )
+    {
+        scaler_select_scaler( SCALER_NORMAL );
+    }
     return 0;
 }
 
