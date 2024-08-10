@@ -125,6 +125,23 @@ if test x"$ac_cv_string_strcasecmp" = "xno" ; then
   AX_STRINGS_STRCASECMP
 fi
 
+dnl Check whether to use zlib (the UNIX version is called z, Win32 zdll)
+AC_MSG_CHECKING(whether to use zlib)
+AC_ARG_WITH(zlib,
+[  --without-zlib          don't use zlib],
+if test "$withval" = no; then zlib=no; else zlib=yes; fi,
+zlib=yes)
+AC_MSG_RESULT($zlib)
+have_zlib="no"
+if test "$zlib" = yes; then
+  AC_CHECK_HEADERS(
+    zlib.h,
+    [AC_SEARCH_LIBS(compress2, z zdll)
+     have_zlib="yes"]
+  )
+fi
+AM_CONDITIONAL([HAVE_ZLIB], [test "$ac_cv_header_zlib_h" = yes])
+
 dnl Allow the user to say that various libraries are in one place
 AC_ARG_WITH(local-prefix,
 [  --with-local-prefix=PFX local libraries installed in PFX (optional)],

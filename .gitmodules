@@ -1,0 +1,3 @@
+[submodule "libspectrum"]
+	path = libspectrum
+	url = https://github.com/mistificator/libspectrum.git
