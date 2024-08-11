@@ -150,24 +150,18 @@ if test "$prefix" != "NONE"; then
   CPPFLAGS="$CPPFLAGS -I$prefix/include"; LDFLAGS="$LDFLAGS -L$prefix/lib"
 fi)
 
-dnl Check that libspectrum is available and that it is new enough
-PKG_CHECK_MODULES([LIBSPECTRUM], [libspectrum >= 1.5.0])
+dnl Check if supplied libspectrum should have its own internal GLib replacement
+AC_ARG_WITH(fake-glib,
+[  --with-fake-glib        use internal GLib replacement],
+if test "$withval" = no; then fakeglib=no; else fakeglib=yes; fi,
+fakeglib=no)
+AC_MSG_RESULT($fakeglib)
 
-dnl Check if supplied libspectrum has its own internal GLib replacement
-AC_MSG_CHECKING(whether libspectrum has its own internal GLib replacement)
+dnl Check that libspectrum is available and that it is new
 ac_save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $LIBSPECTRUM_CFLAGS"
-AC_PREPROC_IFELSE(
-  [AC_LANG_SOURCE([
-#include <libspectrum.h>
-#if LIBSPECTRUM_HAS_GLIB_REPLACEMENT == 0
-#error "GLib replacement not found"
-#endif
-  ])],
-  [fakeglib=yes; AC_MSG_RESULT(yes)],
-  [fakeglib=no; AC_MSG_RESULT(no)]
-)
+AX_SUBDIRS_CONFIGURE([libspectrum], [--with-fake-glib="$fakeglib"])
 CPPFLAGS="$ac_save_CPPFLAGS"
+CPPFLAGS="$CPPFLAGS -I./libspectrum/"; LDFLAGS="$LDFLAGS -L./libspectrum/.libs/ -lspectrum"
 
 # If we're not libspectrum's own internal GLib replacement, we must use the
 # real thing
@@ -179,6 +173,7 @@ AS_IF([test "$fakeglib" = no], [
     [AC_MSG_ERROR([GLib not found, and libspectrum has no internal replacement])]
   )
 ])
+CPPFLAGS="$CPPFLAGS -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include"
 
 dnl Check if supplied libspectrum has support for compressed szx files
 AC_MSG_CHECKING(whether libspectrum supports compressed szx snaps)
@@ -595,6 +590,16 @@ dnl Drivers are added to this list in order of preference, so the
 dnl first one will be selected unless one is chosen explicitly.
 audio_driver_list=""
 
+dnl Check if pulseaudio is available (experimental)
+AC_CHECK_LIB( pulse-simple, pa_simple_new,
+  [AC_CHECK_HEADER(
+    pulse/simple.h,
+    [audio_driver_list="$audio_driver_list pulseaudio"],
+    [AC_MSG_WARN(pulse/simple.h not found - no pulseaudio output)]
+  )],
+  [AC_MSG_WARN(pa_simple_new not found - no pulseaudio output)]
+)
+
 dnl Check if a version of libasound which supplies pcm is available
 AC_CHECK_LIB( asound, snd_pcm_hw_params_set_period_size_near,
   [AC_CHECK_HEADER(
@@ -673,16 +678,6 @@ dnl Nintendo Wii
 if test "$wii" = yes; then
   audio_driver_list="$audio_driver_list wii"
 fi
-
-dnl Check if pulseaudio is available (experimental)
-AC_CHECK_LIB( pulse-simple, pa_simple_new,
-  [AC_CHECK_HEADER(
-    pulse/simple.h,
-    [audio_driver_list="$audio_driver_list pulseaudio"],
-    [AC_MSG_WARN(pulse/simple.h not found - no pulseaudio output)]
-  )],
-  [AC_MSG_WARN(pa_simple_new not found - no pulseaudio output)]
-)
 
 dnl No audio driver - this is the last one of the list
 audio_driver_list="$audio_driver_list null"
