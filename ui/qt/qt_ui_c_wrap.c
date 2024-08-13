@@ -8,6 +8,10 @@
 #include "rzx.h"
 #include "sound.h"
 #include "settings.h"
+#include "z80/z80.h"
+#include "z80/z80_macros.h"
+#include "debugger/debugger.h"
+
 
 /* True if we were paused via the Machine/Pause menu item */
 static int paused = 0;
@@ -139,28 +143,31 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type, int inputs )
 int
 ui_debugger_activate( void )
 {
-  /* No error */
+  DeFuseWindow::instance()->debugger()->enterDebugging();
   return 0;
 }
 
 int
 ui_debugger_deactivate( int interruptable )
 {
-  /* No error */
+  auto _mode = debugger_mode;
+  DeFuseWindow::instance()->debugger()->exitDebugging();
+  if (!interruptable)
+  {
+      debugger_mode = _mode;
+  }
   return 0;
 }
 
 int
 ui_debugger_disassemble( libspectrum_word addr )
 {
-  /* No error */
   return 0;
 }
 
 int
 ui_debugger_update( void )
 {
-  /* No error */
   return 0;
 }
 
@@ -273,7 +280,7 @@ ui_pokemem_selector( const char *filename )
 int
 ui_query( const char *message )
 {
-    return DeFuseWindow::instance()->ask( message ) != QDialog::Accepted;
+    return DeFuseWindow::instance()->ask( message );
 }
 
 int

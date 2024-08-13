@@ -62,9 +62,13 @@ DeFuseWindow * DeFuseWindow::instance()
     return w;
 }
 
-void DeFuseWindow::closeEvent(QCloseEvent *)
+void DeFuseWindow::closeEvent(QCloseEvent * ce)
 {
     menu_file_exit(0);
+    if (fuse_exiting != 1)
+    {
+        ce->ignore();
+    }
 }
 
 int DeFuseWindow::ask(char * text)

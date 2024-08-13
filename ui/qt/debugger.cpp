@@ -2,6 +2,8 @@
 #include "settings.h"
 #include "ui_debugger.h"
 
+#include <QMenu>
+
 extern "C"
 {    
     #include <glib.h> // for GSList
@@ -19,6 +21,49 @@ extern "C"
     #include "peripherals/ide/zxcf.h"
     #include "settings.h"
 }
+
+/* The columns used in the breakpoints pane */
+
+enum {
+    BREAKPOINTS_COLUMN_ID,
+    BREAKPOINTS_COLUMN_TYPE,
+    BREAKPOINTS_COLUMN_VALUE,
+    BREAKPOINTS_COLUMN_IGNORE,
+    BREAKPOINTS_COLUMN_LIFE,
+    BREAKPOINTS_COLUMN_CONDITION,
+
+    BREAKPOINTS_COLUMN_COUNT
+};
+
+/* The columns used in the disassembly pane */
+
+enum {
+    DISASSEMBLY_COLUMN_PC,
+    DISASSEMBLY_COLUMN_BREAKPOINT,
+    DISASSEMBLY_COLUMN_ADDRESS,
+    DISASSEMBLY_COLUMN_INSTRUCTION,
+
+    DISASSEMBLY_COLUMN_COUNT
+};
+
+/* The columns used in the stack pane */
+
+enum {
+    STACK_COLUMN_ADDRESS,
+    STACK_COLUMN_VALUE_TEXT,
+    STACK_COLUMN_VALUE_INT,
+
+    STACK_COLUMN_COUNT
+};
+
+/* The columns used in the events pane */
+
+enum {
+    EVENTS_COLUMN_TIME,
+    EVENTS_COLUMN_TYPE,
+
+    EVENTS_COLUMN_COUNT
+};
 
 static QString strhex(int address, int width)
 {
@@ -69,17 +114,17 @@ void DeFuseDebugger::on_leEvaluate_returnPressed()
 
 void DeFuseDebugger::on_bStep_clicked()
 {
-
+    debugger_step();
 }
 
 void DeFuseDebugger::on_bContinue_clicked()
 {
-
+    debugger_run();
 }
 
 void DeFuseDebugger::on_bBreak_clicked()
 {
-    updateAll();
+    debugger_step();
 }
 
 void DeFuseDebugger::on_actionClose_triggered()
@@ -94,18 +139,13 @@ void DeFuseDebugger::on_bClose_clicked()
 
 void DeFuseDebugger::showEvent(QShowEvent *)
 {
-    fuse_emulation_pause();
-
-    ui->bContinue->setEnabled(false);
-    ui->bBreak->setEnabled(true);
-
-    ui->scDisassembly->setValue(PC);
     updateAll();
+    QMetaObject::invokeMethod(this, &DeFuseDebugger::exitDebugging, Qt::QueuedConnection);
 }
 
 void DeFuseDebugger::closeEvent(QCloseEvent *)
 {
-    fuse_emulation_unpause();
+    exitDebugging();
 } 
 
 void DeFuseDebugger::resizeEvent(QResizeEvent *)
@@ -165,6 +205,52 @@ void DeFuseDebugger::colorizeDisassembly(int row, const QByteArray & instr)
     }
 }
 
+void DeFuseDebugger::on_tbDisassembly_customContextMenuRequested(const QPoint & pt)
+{
+    auto click_item = ui->tbDisassembly->itemAt(pt);
+    if (!click_item)
+    {
+        return;
+    }
+    QMenu menu;
+    connect(menu.addAction("Toggle breakpoint"), &QAction::triggered, this, [this, click_item]()
+    {
+        auto brk_num = ui->tbDisassembly->item(click_item->row(), DISASSEMBLY_COLUMN_BREAKPOINT)->text();
+        if (brk_num.isEmpty())
+        {
+            auto addr = ui->tbDisassembly->item(click_item->row(), DISASSEMBLY_COLUMN_ADDRESS)->text();
+            debugger_breakpoint_add_address(
+                DEBUGGER_BREAKPOINT_TYPE_EXECUTE,
+                memory_source_any,
+                0,
+                addr.toUInt(nullptr, 16),
+                0,
+                DEBUGGER_BREAKPOINT_LIFE_PERMANENT,
+                nullptr
+                );
+        }
+        else
+        {
+            debugger_command_evaluate( QString("del %1").arg(brk_num).toUtf8() );
+        }
+        updateBreakpoints();
+        updateDisassembly();
+    });
+    connect(menu.addAction("Go to offset in instruction"), &QAction::triggered, this, [&]()
+    {
+    });
+    connect(menu.addAction("Go to current program counter (PC)"), &QAction::triggered, this, [this]()
+    {
+        setPC(PC);
+    });
+    menu.exec(ui->tbDisassembly->viewport()->mapToGlobal(pt));
+}
+
+void DeFuseDebugger::setPC(libspectrum_word address)
+{
+    ui->scDisassembly->setValue(PC);
+}
+
 void DeFuseDebugger::updateDisassembly()
 {
     ui->tbDisassembly->setRowCount(ui->tbDisassembly->height() / ui->tbDisassembly->verticalHeader()->defaultSectionSize());
@@ -179,7 +265,7 @@ void DeFuseDebugger::updateDisassembly()
     {
         if (address == PC)
         {
-            ui->tbDisassembly->item(i, 0)->setText("->");
+            ui->tbDisassembly->item(i, DISASSEMBLY_COLUMN_PC)->setText("->");
         }
         for(GSList * ptr = debugger_breakpoints; ptr; ptr = ptr->next ) 
         {
@@ -193,19 +279,19 @@ void DeFuseDebugger::updateDisassembly()
             case DEBUGGER_BREAKPOINT_TYPE_WRITE:
                 if ( bp->value.address.offset == address ) 
                 {
-                    ui->tbDisassembly->item(i, 1)->setText(QString::number(bp->id));
+                    ui->tbDisassembly->item(i, DISASSEMBLY_COLUMN_BREAKPOINT)->setText(QString::number(bp->id));
                 }
                 break;
             default:
                 break;
             }
         }
-        ui->tbDisassembly->item(i, 2)->setText(strhex(address, 4));
+        ui->tbDisassembly->item(i, DISASSEMBLY_COLUMN_ADDRESS)->setText(strhex(address, 4));
 
         QByteArray instr(128, 0);
         size_t length = 0;
         debugger_disassemble(instr.data(), instr.size(), &length, address);
-        ui->tbDisassembly->item(i, 3)->setText(instr);
+        ui->tbDisassembly->item(i, DISASSEMBLY_COLUMN_INSTRUCTION)->setText(instr);
         colorizeDisassembly(i, instr);
 
         address += length;
@@ -236,8 +322,8 @@ void DeFuseDebugger::updateStack()
     {
         libspectrum_word contents = readbyte_internal( address ) +
                                     0x100 * readbyte_internal( address + 1 );
-        ui->tbStack->item(i, 0)->setText(strhex(address, 4));
-        ui->tbStack->item(i, 1)->setText(strhex(contents, 4));
+        ui->tbStack->item(i, STACK_COLUMN_ADDRESS)->setText(strhex(address, 4));
+        ui->tbStack->item(i, STACK_COLUMN_VALUE_TEXT)->setText(strhex(contents, 4));
     }
 }
 
@@ -251,8 +337,8 @@ void DeFuseDebugger::updateEvents()
 
         int row = tbEvents->rowCount();
         tbEvents->setRowCount(row + 1);
-        tbEvents->setItem(row, 0, new QTableWidgetItem(QString::number(event->tstates)));
-        tbEvents->setItem(row, 1, new QTableWidgetItem(event_name(event->type)));
+        tbEvents->setItem(row, EVENTS_COLUMN_TIME, new QTableWidgetItem(QString::number(event->tstates)));
+        tbEvents->setItem(row, EVENTS_COLUMN_TYPE, new QTableWidgetItem(event_name(event->type)));
     }, ui->tbEvents);
 }
 
@@ -306,16 +392,16 @@ void DeFuseDebugger::updateBreakpoints()
         {
             ui->tbBreakpoints->setItem(row, j, new QTableWidgetItem());
         }
-        ui->tbBreakpoints->item(row, 0)->setText(QString::number(bp->id));
-        ui->tbBreakpoints->item(row, 1)->setText(debugger_breakpoint_type_text[ bp->type ]);
-        ui->tbBreakpoints->item(row, 2)->setText(buffer);
-        ui->tbBreakpoints->item(row, 3)->setText(QString::number(bp->ignore));
-        ui->tbBreakpoints->item(row, 4)->setText(debugger_breakpoint_life_text[ bp->life ]);
+        ui->tbBreakpoints->item(row, BREAKPOINTS_COLUMN_ID)->setText(QString::number(bp->id));
+        ui->tbBreakpoints->item(row, BREAKPOINTS_COLUMN_TYPE)->setText(debugger_breakpoint_type_text[ bp->type ]);
+        ui->tbBreakpoints->item(row, BREAKPOINTS_COLUMN_VALUE)->setText(buffer);
+        ui->tbBreakpoints->item(row, BREAKPOINTS_COLUMN_IGNORE)->setText(QString::number(bp->ignore));
+        ui->tbBreakpoints->item(row, BREAKPOINTS_COLUMN_LIFE)->setText(debugger_breakpoint_life_text[ bp->life ]);
 
         if( bp->condition ) {
             char buffer2[80];
             debugger_expression_deparse( buffer2, sizeof( buffer2 ), bp->condition );
-            ui->tbBreakpoints->item(row, 5)->setText(buffer2);
+            ui->tbBreakpoints->item(row, BREAKPOINTS_COLUMN_CONDITION)->setText(buffer2);
         }
 
         row++;
@@ -475,3 +561,30 @@ void DeFuseDebugger::updateAll()
     updateRegisters();
     updateStack();
 }
+
+void DeFuseDebugger::enterDebugging()
+{
+    debugger_mode = DEBUGGER_MODE_HALTED;
+    fuse_emulation_pause();
+
+    ui->bContinue->setEnabled(true);
+    ui->bBreak->setEnabled(false);
+
+    setPC(PC);
+    updateAll();
+
+    loop.exec();
+}
+
+void DeFuseDebugger::exitDebugging()
+{
+    debugger_mode = debugger_breakpoints ? DEBUGGER_MODE_ACTIVE : DEBUGGER_MODE_INACTIVE;
+    fuse_emulation_unpause();
+
+    ui->bContinue->setEnabled(false);
+    ui->bBreak->setEnabled(true);
+
+    loop.quit();
+}
+
+

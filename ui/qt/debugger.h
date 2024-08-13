@@ -2,6 +2,8 @@
 #define DEFUSE_DEBUGGER_H
 
 #include <QDialog>
+#include <QEventLoop>
+#include <libspectrum.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DeFuseDebugger; }
@@ -14,7 +16,8 @@ class DeFuseDebugger : public QDialog
 public:
     explicit DeFuseDebugger(QWidget *parent = nullptr);
     ~DeFuseDebugger();
-private slots:    
+public slots:
+    void setPC(libspectrum_word address);
     void updateDisassembly();
     void updateStack();
     void updateEvents();
@@ -22,6 +25,9 @@ private slots:
     void updateMemoryMap();
     void updateRegisters();
     void updateAll();
+    void enterDebugging();
+    void exitDebugging();
+private slots:
     void on_bEvaluate_clicked();
     void on_leEvaluate_returnPressed();
     void on_bStep_clicked();
@@ -31,12 +37,14 @@ private slots:
     void on_bClose_clicked();
     void on_scDisassembly_valueChanged(int value);
     void on_actionColorize_disassembly_toggled(bool);
+    void on_tbDisassembly_customContextMenuRequested(const QPoint &pt);
 protected:
     void showEvent(QShowEvent *) override;
     void closeEvent(QCloseEvent *) override;   
     void resizeEvent(QResizeEvent *) override; 
 private:
     Ui::DeFuseDebugger *ui;
+    QEventLoop loop;
     void colorizeDisassembly(int row, const QByteArray &);
 };
 
