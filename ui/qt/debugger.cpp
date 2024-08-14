@@ -3,13 +3,12 @@
 #include "ui_debugger.h"
 
 #include <QMenu>
+#include <QWheelEvent>
+#include <QKeyEvent>
 
 extern "C"
 {    
-    #include <glib.h> // for GSList
-
     #include "fuse.h"
-    #include "debugger/debugger.h"
     #include "debugger/breakpoint.h"
     #include "z80/z80.h"
     #include "z80/z80_macros.h"
@@ -77,6 +76,9 @@ DeFuseDebugger::DeFuseDebugger(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    installEventFilter(this);
+    ui->tbDisassembly->viewport()->installEventFilter(this);
+
     ui->tbBreakpoints->resizeColumnsToContents();   ui->tbBreakpoints->setRowCount(0);
     ui->tbDisassembly->resizeColumnsToContents();   ui->tbDisassembly->setRowCount(0);
     ui->tbEvents->resizeColumnsToContents();        ui->tbEvents->setRowCount(0);
@@ -140,7 +142,7 @@ void DeFuseDebugger::on_bClose_clicked()
 void DeFuseDebugger::showEvent(QShowEvent *)
 {
     updateAll();
-    QMetaObject::invokeMethod(this, &DeFuseDebugger::exitDebugging, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, &DeFuseDebugger::enterDebugging, Qt::QueuedConnection);
 }
 
 void DeFuseDebugger::closeEvent(QCloseEvent *)
@@ -151,6 +153,87 @@ void DeFuseDebugger::closeEvent(QCloseEvent *)
 void DeFuseDebugger::resizeEvent(QResizeEvent *)
 {
     updateDisassembly();
+}
+
+void DeFuseDebugger::scrollDisassemblyByOffset(int offset)
+{
+    if (ui->tbDisassembly->currentRow() + offset >= 0 &&
+        ui->tbDisassembly->currentRow() + offset < ui->tbDisassembly->rowCount())
+    {
+        return;
+    }
+
+    size_t length = 0;
+    int address = ui->scDisassembly->value();
+    if (offset > 0)
+    {
+        while (offset--)
+        {
+            disassembleAt(address, &length);
+            address += length;
+        }
+    }
+    else
+    if (offset < 0)
+    {
+        auto fwd_instr = disassembleAt(address, &length);
+        while (offset++)
+        {
+            auto instr = fwd_instr;
+            auto prev_address = address;
+            while (address-- >= 0 && instr == fwd_instr)
+            {
+                instr = disassembleAt(address, &length);
+                if (address + length == prev_address)
+                {
+                    break;
+                }
+            }
+            fwd_instr = instr;
+        }
+    }
+    setPC(address, false);
+}
+
+bool DeFuseDebugger::eventFilter(QObject * o, QEvent * e)
+{
+    if (o == ui->tbDisassembly->viewport())
+    {
+        switch(e->type())
+        {
+        case QEvent::Wheel:
+            qApp->postEvent(ui->scDisassembly, new QWheelEvent(* dynamic_cast<QWheelEvent *>(e)));
+        break;
+        default:
+            break;
+        }
+    }
+    if (o == this)
+    {
+        switch(e->type())
+        {
+        case QEvent::KeyRelease:
+            if (ui->tbDisassembly->viewport()->hasFocus())
+            {
+                auto ke = dynamic_cast<QKeyEvent *>(e);
+                int offset = 0;
+                switch (ke->key())
+                {
+                case Qt::Key_Up: --offset; break;
+                case Qt::Key_PageUp: offset -= 10; break;
+                case Qt::Key_Down: ++offset; break;
+                case Qt::Key_PageDown: offset += 10; break;
+                }
+
+                scrollDisassemblyByOffset(offset);
+            }
+            break;
+        default:
+            break;
+        }
+
+    }
+    return QDialog::eventFilter(o, e);
 }
 
 // command, foreground, background
@@ -238,6 +321,46 @@ void DeFuseDebugger::on_tbDisassembly_customContextMenuRequested(const QPoint & 
     });
     connect(menu.addAction("Go to offset in instruction"), &QAction::triggered, this, [&]()
     {
+        char *endptr = nullptr, *addr_substr = nullptr;
+        int addr = 0;
+        char str[128] = {0};
+
+        strcpy(str, ui->tbDisassembly->item(click_item->row(), DISASSEMBLY_COLUMN_INSTRUCTION)->text().toUtf8());
+        addr_substr = strstr(str, ",");
+        if ( addr_substr ) {
+            if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' ) {
+                addr_substr = 0;
+            }
+        }
+        if ( addr_substr == 0 || addr_substr[1] == '(' ) {
+            addr_substr = strstr(str, "(");
+            if ( addr_substr )
+            {
+                if ( addr_substr[5] != ')' ) {
+                    addr_substr = 0;
+                    return;
+                }
+            }
+        }
+        if ( addr_substr == 0 ) {
+            addr_substr = strstr(str, " ");
+            if ( addr_substr ) {
+                if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' || addr_substr[2] == ',' || addr_substr[3] == ',' ) {
+                    if ( ! ( toupper( str[0] ) == 'R' && toupper( str[1] ) == 'S' && toupper( str[2] ) == 'T' ) ) {
+                        addr_substr = 0;
+                        return;
+                    }
+                }
+            }
+        }
+        if ( addr_substr ) {
+            addr_substr++;
+            addr_substr[4] = 0;
+            addr = strtol( addr_substr, &endptr, 16 );
+            if ( addr >= 0 && addr < 65536 ) {
+                setPC( addr );
+            }
+        }
     });
     connect(menu.addAction("Go to current program counter (PC)"), &QAction::triggered, this, [this]()
     {
@@ -246,9 +369,25 @@ void DeFuseDebugger::on_tbDisassembly_customContextMenuRequested(const QPoint & 
     menu.exec(ui->tbDisassembly->viewport()->mapToGlobal(pt));
 }
 
-void DeFuseDebugger::setPC(libspectrum_word address)
+void DeFuseDebugger::setPC(libspectrum_word address, bool move_selection)
 {
-    ui->scDisassembly->setValue(PC);
+    ui->scDisassembly->setValue(address);
+    if (move_selection)
+    {
+        ui->tbDisassembly->selectRow(0);
+    }
+}
+
+QByteArray DeFuseDebugger::disassembleAt(libspectrum_word address, size_t * length)
+{
+    QByteArray instr(128, 0);
+    size_t length_ = 0;
+    debugger_disassemble(instr.data(), instr.size(), &length_, address);
+    if (length)
+    {
+        * length = length_;
+    }
+    return instr;
 }
 
 void DeFuseDebugger::updateDisassembly()
@@ -261,7 +400,8 @@ void DeFuseDebugger::updateDisassembly()
             ui->tbDisassembly->setItem(i, j, new QTableWidgetItem());
         }
     }
-    for( int i = 0, address = ui->scDisassembly->value(); i < ui->tbDisassembly->rowCount() && address <= 0xFFFF; i++ ) 
+    libspectrum_word address = ui->scDisassembly->value();
+    for( int i = 0; i < ui->tbDisassembly->rowCount(); i++ )
     {
         if (address == PC)
         {
@@ -288,9 +428,8 @@ void DeFuseDebugger::updateDisassembly()
         }
         ui->tbDisassembly->item(i, DISASSEMBLY_COLUMN_ADDRESS)->setText(strhex(address, 4));
 
-        QByteArray instr(128, 0);
         size_t length = 0;
-        debugger_disassemble(instr.data(), instr.size(), &length, address);
+        auto instr = disassembleAt(address, &length);
         ui->tbDisassembly->item(i, DISASSEMBLY_COLUMN_INSTRUCTION)->setText(instr);
         colorizeDisassembly(i, instr);
 
@@ -576,9 +715,16 @@ void DeFuseDebugger::enterDebugging()
     loop.exec();
 }
 
-void DeFuseDebugger::exitDebugging()
+void DeFuseDebugger::exitDebugging(debugger_mode_t mode)
 {
-    debugger_mode = debugger_breakpoints ? DEBUGGER_MODE_ACTIVE : DEBUGGER_MODE_INACTIVE;
+    if (mode != DEBUGGER_MODE_HALTED)
+    {
+        debugger_mode = debugger_breakpoints ? DEBUGGER_MODE_ACTIVE : DEBUGGER_MODE_INACTIVE;
+    }
+    else
+    {
+        debugger_mode = DEBUGGER_MODE_HALTED;
+    }
     fuse_emulation_unpause();
 
     ui->bContinue->setEnabled(false);

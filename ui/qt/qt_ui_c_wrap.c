@@ -150,18 +150,16 @@ ui_debugger_activate( void )
 int
 ui_debugger_deactivate( int interruptable )
 {
-  auto _mode = debugger_mode;
-  DeFuseWindow::instance()->debugger()->exitDebugging();
-  if (!interruptable)
-  {
-      debugger_mode = _mode;
-  }
+  DeFuseWindow::instance()->debugger()->exitDebugging(
+      !interruptable ? DEBUGGER_MODE_HALTED : DEBUGGER_MODE_ACTIVE
+      );
   return 0;
 }
 
 int
 ui_debugger_disassemble( libspectrum_word addr )
 {
+  DeFuseWindow::instance()->debugger()->setPC(addr);
   return 0;
 }
 

@@ -5,6 +5,12 @@
 #include <QEventLoop>
 #include <libspectrum.h>
 
+extern "C"
+{
+    #include <glib.h> // for GSList
+    #include "debugger/debugger.h"
+}
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class DeFuseDebugger; }
 QT_END_NAMESPACE
@@ -17,7 +23,7 @@ public:
     explicit DeFuseDebugger(QWidget *parent = nullptr);
     ~DeFuseDebugger();
 public slots:
-    void setPC(libspectrum_word address);
+    void setPC(libspectrum_word address, bool move_selection = true);
     void updateDisassembly();
     void updateStack();
     void updateEvents();
@@ -26,7 +32,7 @@ public slots:
     void updateRegisters();
     void updateAll();
     void enterDebugging();
-    void exitDebugging();
+    void exitDebugging(debugger_mode_t mode = DEBUGGER_MODE_ACTIVE);
 private slots:
     void on_bEvaluate_clicked();
     void on_leEvaluate_returnPressed();
@@ -41,11 +47,14 @@ private slots:
 protected:
     void showEvent(QShowEvent *) override;
     void closeEvent(QCloseEvent *) override;   
-    void resizeEvent(QResizeEvent *) override; 
+    void resizeEvent(QResizeEvent *) override;
+    bool eventFilter(QObject * o, QEvent * e) override;
 private:
     Ui::DeFuseDebugger *ui;
     QEventLoop loop;
     void colorizeDisassembly(int row, const QByteArray &);
+    QByteArray disassembleAt(libspectrum_word address, size_t * length = nullptr);
+    void scrollDisassemblyByOffset(int offset);
 };
 
 #endif // DEFUSE_DEBUGGER_H
