@@ -5,6 +5,7 @@
 #include <QMenu>
 #include <QWheelEvent>
 #include <QKeyEvent>
+#include <QDebug>
 
 extern "C"
 {    
@@ -321,44 +322,16 @@ void DeFuseDebugger::on_tbDisassembly_customContextMenuRequested(const QPoint & 
     });
     connect(menu.addAction("Go to offset in instruction"), &QAction::triggered, this, [&]()
     {
-        char *endptr = nullptr, *addr_substr = nullptr;
-        int addr = 0;
-        char str[128] = {0};
-
-        strcpy(str, ui->tbDisassembly->item(click_item->row(), DISASSEMBLY_COLUMN_INSTRUCTION)->text().toUtf8());
-        addr_substr = strstr(str, ",");
-        if ( addr_substr ) {
-            if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' ) {
-                addr_substr = 0;
-            }
-        }
-        if ( addr_substr == 0 || addr_substr[1] == '(' ) {
-            addr_substr = strstr(str, "(");
-            if ( addr_substr )
+        QRegularExpression rx("[\\,\\(\\s)][0-9a-fA-F]{4}");
+        auto i = rx.globalMatch(ui->tbDisassembly->item(click_item->row(), DISASSEMBLY_COLUMN_INSTRUCTION)->text());
+        while (i.hasNext())
+        {
+            bool ok;
+            auto addr = i.next().captured().mid(1).toUInt(& ok, 16);
+            if (ok && addr <= 0xFFFF)
             {
-                if ( addr_substr[5] != ')' ) {
-                    addr_substr = 0;
-                    return;
-                }
-            }
-        }
-        if ( addr_substr == 0 ) {
-            addr_substr = strstr(str, " ");
-            if ( addr_substr ) {
-                if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' || addr_substr[2] == ',' || addr_substr[3] == ',' ) {
-                    if ( ! ( toupper( str[0] ) == 'R' && toupper( str[1] ) == 'S' && toupper( str[2] ) == 'T' ) ) {
-                        addr_substr = 0;
-                        return;
-                    }
-                }
-            }
-        }
-        if ( addr_substr ) {
-            addr_substr++;
-            addr_substr[4] = 0;
-            addr = strtol( addr_substr, &endptr, 16 );
-            if ( addr >= 0 && addr < 65536 ) {
-                setPC( addr );
+                setPC(addr);
+                break;
             }
         }
     });
