@@ -35,7 +35,9 @@ ui_qt_files = \
                 ui/qt/qt_ui.cpp \
                 ui/qt/keysyms.cpp \
                 ui/qt/moc_debugger.cpp \
-                ui/qt/debugger.cpp
+                ui/qt/debugger.cpp \
+                ui/qt/moc_hexview.cpp \
+                ui/qt/hexview.cpp
 
 ui_qt_built = \
                ui/qt/moc_qt_ui.cpp \
@@ -47,7 +49,9 @@ ui_qt_built = \
                ui/qt/options_internals.h \
                ui/qt/keysyms.cpp \
                ui/qt/moc_debugger.cpp \
-               ui/qt/ui_debugger.h
+               ui/qt/ui_debugger.h \
+               ui/qt/moc_hexview.cpp \
+               ui/qt/ui_hexview.h
 
 EXTRA_DIST += \
               ui/qt/options.pl \
@@ -95,3 +99,9 @@ ui/qt/ui_debugger.h: $(srcdir)/ui/qt/debugger.ui
 
 ui/qt/moc_debugger.cpp: $(srcdir)/ui/qt/debugger.h
 	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/debugger.h > $@.tmp && mv $@.tmp $@
+
+ui/qt/ui_hexview.h: $(srcdir)/ui/qt/hexview.ui
+	$(AM_V_GEN)$(UIC) $(srcdir)/ui/qt/hexview.ui > $@.tmp && mv $@.tmp $@
+
+ui/qt/moc_hexview.cpp: $(srcdir)/ui/qt/hexview.h
+	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/hexview.h > $@.tmp && mv $@.tmp $@

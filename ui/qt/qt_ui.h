@@ -8,6 +8,7 @@
 #include <functional>
 
 #include "debugger.h"
+#include "hexview.h"
 
 extern "C"
 {
@@ -45,6 +46,7 @@ public:
     int setStatusBar( int item, int state );
     void reset();
     DeFuseDebugger * debugger() const;
+    DeFuseHexView * hexview() const;
 protected:
     DeFuseWindow(QWidget * _parent = nullptr);
     void closeEvent(QCloseEvent *) override;    
@@ -59,6 +61,7 @@ private:
     QLabel * disk_status = nullptr, * mdr_status = nullptr, * mouse_status = nullptr, * pause_status = nullptr, * tape_status = nullptr;
     QLabel * machine_status = nullptr;
     DeFuseDebugger * dbg = nullptr;
+    DeFuseHexView * hex = nullptr;
     bool need_to_repaint = false;
     long long frame = 0;
     void menu_data_init(); // body is generated from menu_data.pl

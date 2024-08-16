@@ -22,6 +22,7 @@ DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::
     ui->screenWidget->setPixmap(QPixmap());
 
     dbg = new DeFuseDebugger(this);
+    hex = new DeFuseHexView(this);
 
     int offs = 0;
     ui->statusbar->insertPermanentWidget(offs++, machine_status = new QLabel()); machine_status->setToolTip("Emulated machine name");
@@ -380,4 +381,9 @@ int DeFuseWindow::setStatusBar( /*ui_statusbar_item*/ int item, /*ui_statusbar_s
 DeFuseDebugger * DeFuseWindow::debugger() const
 {
     return dbg;
+}
+
+DeFuseHexView * DeFuseWindow::hexview() const
+{
+    return hex;
 }

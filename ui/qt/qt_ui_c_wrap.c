@@ -549,7 +549,7 @@ menu_debug_debugger( int action )
 void
 menu_debug_memorybrowser( int action )
 {
-
+    DeFuseWindow::instance()->hexview()->exec();
 }
 
 void
