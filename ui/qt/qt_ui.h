@@ -9,6 +9,7 @@
 
 #include "debugger.h"
 #include "hexview.h"
+#include "tapebrowser.h"
 
 extern "C"
 {
@@ -26,6 +27,7 @@ class DeFuseWindow: public QMainWindow
 public:
     static DeFuseWindow * instance();
     int ask(char *);
+    void message(char *);
     void showKeyboard();
     void about();
     void selectMachine();
@@ -47,6 +49,7 @@ public:
     void reset();
     DeFuseDebugger * debugger() const;
     DeFuseHexView * hexview() const;
+    DeFuseTapeBrowser * tapeBrowser() const;
 protected:
     DeFuseWindow(QWidget * _parent = nullptr);
     void closeEvent(QCloseEvent *) override;    
@@ -62,6 +65,7 @@ private:
     QLabel * machine_status = nullptr;
     DeFuseDebugger * dbg = nullptr;
     DeFuseHexView * hex = nullptr;
+    DeFuseTapeBrowser * tape = nullptr;
     bool need_to_repaint = false;
     long long frame = 0;
     void menu_data_init(); // body is generated from menu_data.pl

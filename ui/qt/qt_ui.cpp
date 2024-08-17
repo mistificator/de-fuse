@@ -23,6 +23,7 @@ DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::
 
     dbg = new DeFuseDebugger(this);
     hex = new DeFuseHexView(this);
+    tape = new DeFuseTapeBrowser(this);
 
     int offs = 0;
     ui->statusbar->insertPermanentWidget(offs++, machine_status = new QLabel()); machine_status->setToolTip("Emulated machine name");
@@ -75,6 +76,11 @@ void DeFuseWindow::closeEvent(QCloseEvent * ce)
 int DeFuseWindow::ask(char * text)
 {
     return settings_current.confirm_actions ? QMessageBox::question(this, "Question", text) == QMessageBox::Yes : 1;
+}
+
+void DeFuseWindow::message(char * text)
+{
+    QMessageBox::information(this, "Information", text);
 }
 
 void DeFuseWindow::showKeyboard()
@@ -386,4 +392,9 @@ DeFuseDebugger * DeFuseWindow::debugger() const
 DeFuseHexView * DeFuseWindow::hexview() const
 {
     return hex;
+}
+
+DeFuseTapeBrowser * DeFuseWindow::tapeBrowser() const
+{
+    return tape;
 }

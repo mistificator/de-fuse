@@ -37,7 +37,9 @@ ui_qt_files = \
                 ui/qt/moc_debugger.cpp \
                 ui/qt/debugger.cpp \
                 ui/qt/moc_hexview.cpp \
-                ui/qt/hexview.cpp
+                ui/qt/hexview.cpp \
+                ui/qt/moc_tapebrowser.cpp \
+                ui/qt/tapebrowser.cpp
 
 ui_qt_built = \
                ui/qt/moc_qt_ui.cpp \
@@ -51,7 +53,9 @@ ui_qt_built = \
                ui/qt/moc_debugger.cpp \
                ui/qt/ui_debugger.h \
                ui/qt/moc_hexview.cpp \
-               ui/qt/ui_hexview.h
+               ui/qt/ui_hexview.h \
+               ui/qt/moc_tapebrowser.cpp \
+               ui/qt/ui_tapebrowser.h
 
 EXTRA_DIST += \
               ui/qt/options.pl \
@@ -105,3 +109,9 @@ ui/qt/ui_hexview.h: $(srcdir)/ui/qt/hexview.ui
 
 ui/qt/moc_hexview.cpp: $(srcdir)/ui/qt/hexview.h
 	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/hexview.h > $@.tmp && mv $@.tmp $@
+
+ui/qt/ui_tapebrowser.h: $(srcdir)/ui/qt/tapebrowser.ui
+	$(AM_V_GEN)$(UIC) $(srcdir)/ui/qt/tapebrowser.ui > $@.tmp && mv $@.tmp $@
+
+ui/qt/moc_tapebrowser.cpp: $(srcdir)/ui/qt/tapebrowser.h
+	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/tapebrowser.h > $@.tmp && mv $@.tmp $@

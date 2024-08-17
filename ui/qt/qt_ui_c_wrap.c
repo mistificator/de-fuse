@@ -298,7 +298,7 @@ int
 ui_tape_browser_update( ui_tape_browser_update_type change,
     libspectrum_tape_block *block )
 {
-  /* No error */
+  DeFuseWindow::instance()->tapeBrowser()->update(change, block);
   return 0;
 }
 
@@ -446,13 +446,13 @@ uidisplay_plot16( int x, int y, libspectrum_word data,
 void
 menu_file_loadbinarydata( int action )
 {
-
+    DeFuseWindow::instance()->message("Load binary data not implemented yet");
 }
 
 void
 menu_file_savebinarydata( int action )
 {
-
+    DeFuseWindow::instance()->message("Save binary data not implemented yet");
 }
 
 void
@@ -475,7 +475,7 @@ menu_file_exit( int )
 void
 menu_options_joysticks_select( int action )
 {
-
+    DeFuseWindow::instance()->message("Joysticks select not implemented yet");
 }
 
 void
@@ -555,19 +555,19 @@ menu_debug_memorybrowser( int action )
 void
 menu_debug_pokefinder( int action )
 {
-
+    DeFuseWindow::instance()->message("Poke finder not implemented yet");
 }
 
 void
 menu_debug_pokememory( int action )
 {
-
+    DeFuseWindow::instance()->message("Poke memory not implemented yet");
 }
 
 void
 menu_media_tape_browse( int action )
 {
-
+    DeFuseWindow::instance()->tapeBrowser()->show();
 }
 
 void

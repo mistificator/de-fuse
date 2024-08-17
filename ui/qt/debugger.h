@@ -7,7 +7,7 @@
 
 extern "C"
 {
-    #include <glib.h> // for GSList
+    #include <glib.h>
     #include "debugger/debugger.h"
 }
 
