@@ -114,6 +114,7 @@ qtHaveModule(testlib):           QT += testlib
 qtHaveModule(uitools):           QT += uitools
 qtHaveModule(webkit):            QT += webkit
 qtHaveModule(webkitwidgets):     QT += webkitwidgets
+qtHaveModule(widgets):           QT += widgets
 qtHaveModule(xml):               QT += xml
 qtHaveModule(xmlpatterns):       QT += xmlpatterns
 percent.target = %
@@ -175,7 +176,7 @@ EOF
     AC_CACHE_VAL(ax_cv_qt_test_result,
     [
       cat > ax_qt_test.h << EOF
-#include <qobject.h>
+#include <QObject>
 class Test : public QObject
 {
 Q_OBJECT
@@ -191,10 +192,10 @@ EOF
 
       cat > ax_qt_main.$ac_ext << EOF
 #include "ax_qt_test.h"
-#include <qapplication.h>
+#include <QCoreApplication>
 int main( int argc, char **argv )
 {
-  QApplication app( argc, argv );
+  QCoreApplication app( argc, argv );
   Test t;
   QObject::connect( &t, SIGNAL(send()), &t, SLOT(receive()) );
 }
