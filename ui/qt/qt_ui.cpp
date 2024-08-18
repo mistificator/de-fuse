@@ -13,6 +13,8 @@
 #include "options.cpp"
 extern "C"
 {
+    #include <libspectrum.h>
+    #include <display.h>
     #include "qt_ui_c_wrap.c"
 }
 

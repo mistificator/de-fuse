@@ -11,12 +11,6 @@
 #include "hexview.hpp"
 #include "tapebrowser.hpp"
 
-extern "C"
-{
-    #include <libspectrum.h>
-    #include <display.h>
-}
-
 QT_BEGIN_NAMESPACE
     namespace Ui { class DeFuseWindow; }
 QT_END_NAMESPACE
