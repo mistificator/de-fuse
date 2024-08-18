@@ -1,6 +1,5 @@
-#include "debugger.h"
-#include "settings.h"
-#include "ui_debugger.h"
+#include "debugger.hpp"
+#include "ui_debugger.hpp"
 
 #include <QMenu>
 #include <QWheelEvent>
@@ -8,7 +7,7 @@
 #include <QDebug>
 
 extern "C"
-{    
+{
     #include "fuse.h"
     #include "debugger/breakpoint.h"
     #include "z80/z80.h"

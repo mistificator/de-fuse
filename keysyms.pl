@@ -119,7 +119,7 @@ sub win32_keysym ($) {
 # Parameters for each UI
 my %ui_data = (
 
-    qt   => { headers => [ 'ui/qt/qt_ui.h' ],
+    qt   => { headers => [ 'ui/qt/qt_ui.hpp' ],
 	      # max_length not used
 	      skips => { map { $_ => 1 } 
           ( 'Hyper_L', 'Super_L', 'Super_R', 'Hyper_R',

@@ -7,9 +7,9 @@
 #include <QImage>
 #include <functional>
 
-#include "debugger.h"
-#include "hexview.h"
-#include "tapebrowser.h"
+#include "debugger.hpp"
+#include "hexview.hpp"
+#include "tapebrowser.hpp"
 
 extern "C"
 {

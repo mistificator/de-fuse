@@ -242,8 +242,8 @@ sub dump_qt ($$) {
 
   if( $mode eq 'cpp' ) {
     print << "CODE";
-#include "qt_ui.h"
-#include "ui_qt_ui.h"
+#include "qt_ui.hpp"
+#include "ui_qt_ui.hpp"
 
 extern "C" {
   #include "menu.h"

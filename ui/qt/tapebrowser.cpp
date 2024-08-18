@@ -1,6 +1,10 @@
-#include "tapebrowser.h"
-#include "ui/ui.h"
-#include "ui_tapebrowser.h"
+#include "tapebrowser.hpp"
+#include "ui_tapebrowser.hpp"
+
+extern "C"
+{
+    #include "ui/ui.h"
+}
 
 DeFuseTapeBrowser::DeFuseTapeBrowser(QWidget *parent)
     : QDialog(parent)
