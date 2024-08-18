@@ -202,7 +202,7 @@ int main( int argc, char **argv )
 EOF
 
       ax_cv_qt_test_result="failure"
-      ax_try_1="$QT_MOC ax_qt_test.h -o moc_ax_qt_test.cpp >/dev/null 2>/dev/null"
+      ax_try_1="$QT_MOC ax_qt_test.h > moc_ax_qt_test.cpp 2>/dev/null"
       AC_TRY_EVAL(ax_try_1)
       if test x"$ac_status" != x0; then
         echo "$ax_err_1" >&AS_MESSAGE_LOG_FD
