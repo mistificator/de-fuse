@@ -92,7 +92,7 @@ RCC         = @QT_RCC@
 ui/qt/ui_qt_ui.hpp: $(srcdir)/ui/qt/menu_data.ui
 	$(AM_V_GEN)$(UIC) $(srcdir)/ui/qt/menu_data.ui > $@.tmp && mv $@.tmp $@
 
-ui/qt/moc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.h
+ui/qt/moc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.hpp
 	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/qt_ui.hpp > $@.tmp && mv $@.tmp $@
 
 ui/qt/qrc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.qrc
@@ -101,17 +101,17 @@ ui/qt/qrc_qt_ui.cpp: $(srcdir)/ui/qt/qt_ui.qrc
 ui/qt/ui_debugger.hpp: $(srcdir)/ui/qt/debugger.ui
 	$(AM_V_GEN)$(UIC) $(srcdir)/ui/qt/debugger.ui > $@.tmp && mv $@.tmp $@
 
-ui/qt/moc_debugger.cpp: $(srcdir)/ui/qt/debugger.h
+ui/qt/moc_debugger.cpp: $(srcdir)/ui/qt/debugger.hpp
 	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/debugger.hpp > $@.tmp && mv $@.tmp $@
 
 ui/qt/ui_hexview.hpp: $(srcdir)/ui/qt/hexview.ui
 	$(AM_V_GEN)$(UIC) $(srcdir)/ui/qt/hexview.ui > $@.tmp && mv $@.tmp $@
 
-ui/qt/moc_hexview.cpp: $(srcdir)/ui/qt/hexview.h
+ui/qt/moc_hexview.cpp: $(srcdir)/ui/qt/hexview.hpp
 	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/hexview.hpp > $@.tmp && mv $@.tmp $@
 
 ui/qt/ui_tapebrowser.hpp: $(srcdir)/ui/qt/tapebrowser.ui
 	$(AM_V_GEN)$(UIC) $(srcdir)/ui/qt/tapebrowser.ui > $@.tmp && mv $@.tmp $@
 
-ui/qt/moc_tapebrowser.cpp: $(srcdir)/ui/qt/tapebrowser.h
+ui/qt/moc_tapebrowser.cpp: $(srcdir)/ui/qt/tapebrowser.hpp
 	$(AM_V_GEN)$(MOC) $(srcdir)/ui/qt/tapebrowser.hpp > $@.tmp && mv $@.tmp $@
