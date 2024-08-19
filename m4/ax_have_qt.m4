@@ -49,13 +49,14 @@
 #
 #   Copyright (c) 2008 Bastiaan Veelo <Bastiaan@Veelo.net>
 #   Copyright (c) 2014 Alex Henrie <alexhenrie24@gmail.com>
+#   Copyright (c) 2024 ZXLDR <ZXLDR@yandex.ru>
 #
 #   Copying and distribution of this file, with or without modification, are
 #   permitted in any medium without royalty provided the copyright notice
 #   and this notice are preserved. This file is offered as-is, without any
 #   warranty.
 
-#serial 25
+#serial 26
 
 AU_ALIAS([BNV_HAVE_QT], [AX_HAVE_QT])
 AC_DEFUN([AX_HAVE_QT],
@@ -77,7 +78,8 @@ AC_DEFUN([AX_HAVE_QT],
   if test "$ver" ">" "Qt version 4"; then
     have_qt=yes
     # This pro file dumps qmake's variables, but it only works on Qt 5 or later
-    am_have_qt_dir=`mktemp -d`
+    # We work in current project path to make right include paths when inside MSYS2
+    am_have_qt_dir="."
     am_have_qt_pro="$am_have_qt_dir/test.pro"
     am_have_qt_stash="$am_have_qt_dir/.qmake.stash"
     am_have_qt_makefile="$am_have_qt_dir/Makefile"
@@ -124,8 +126,7 @@ EOF
     $QMAKE $am_have_qt_pro -o $am_have_qt_makefile
     QT_CXXFLAGS=`cd $am_have_qt_dir; make -s -f $am_have_qt_makefile CXXFLAGS INCPATH`
     QT_LIBS=`cd $am_have_qt_dir; make -s -f $am_have_qt_makefile LIBS`
-    rm $am_have_qt_pro $am_have_qt_stash $am_have_qt_makefile
-    rmdir $am_have_qt_dir
+    rm -f $am_have_qt_pro $am_have_qt_stash $am_have_qt_makefile
 
     # Look for specific tools in $PATH
     QT_MOC=`which moc$am_have_qt_qmexe_suff`
