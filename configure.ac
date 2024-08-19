@@ -222,30 +222,32 @@ dnl    AC_PROG_CXX
 fi
 
 dnl Look for Win32 UI (default=no)
-AC_MSG_CHECKING(whether Win32 UI requested)
-AC_ARG_WITH(win32,
-[  --with-win32            use Win32 for user interface],
-if test "$withval" = no; then win32=no; else win32=yes; fi,
-win32=auto)
+if test -z "$UI"; then
+    AC_MSG_CHECKING(whether Win32 UI requested)
+    AC_ARG_WITH(win32,
+    [  --with-win32            use Win32 for user interface],
+    if test "$withval" = no; then win32=no; else win32=yes; fi,
+    win32=auto)
 
-if test "$win32" = auto; then
-case "$host_os" in
-  mingw32*)
-    win32=yes
-    ;;
-  *)
-    win32=no
-    ;;
-esac
-fi
-AC_MSG_RESULT($win32)
+    if test "$win32" = auto; then
+    case "$host_os" in
+      mingw32*)
+        win32=yes
+        ;;
+      *)
+        win32=no
+        ;;
+    esac
+    fi
+    AC_MSG_RESULT($win32)
 
-if test "$win32" = yes; then
-  AC_CHECK_HEADER(windows.h,
-                  LIBS="$LIBS -mwindows -lcomctl32 -lwinmm";
-                  AC_DEFINE([UI_WIN32], 1, [Defined if Win32 UI in use])
-                  UI=win32,
-                  AC_MSG_ERROR([Win32 UI not found]))
+    if test "$win32" = yes; then
+      AC_CHECK_HEADER(windows.h,
+                      LIBS="$LIBS -mwindows -lcomctl32 -lwinmm";
+                      AC_DEFINE([UI_WIN32], 1, [Defined if Win32 UI in use])
+                      UI=win32,
+                      AC_MSG_ERROR([Win32 UI not found]))
+    fi
 fi
 
 dnl Look for framebuffer interface for SA1110 (default=no)
