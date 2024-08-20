@@ -29,6 +29,86 @@
 #include <commdlg.h>
 #include <shellapi.h>
 
+#ifndef _stprintf
+  #ifdef _UNICODE
+    #define _stprintf swprintf
+  #else
+    #define _stprintf sprintf
+  #endif
+#endif
+
+#ifndef _sntprintf
+  #ifdef _UNICODE
+    #define _sntprintf snwprintf
+  #else
+    #define _sntprintf snprintf
+  #endif
+#endif
+
+#ifndef _tcsncat
+  #ifdef _UNICODE
+    #define _tcsncat wcsncat
+  #else
+    #define _tcsncat strncat
+  #endif
+#endif
+
+#ifndef _ttol
+  #ifdef _UNICODE
+    #define _ttol _wtol
+  #else
+    #define _ttol atol
+  #endif
+#endif
+
+#ifndef _ttoi
+  #ifdef _UNICODE
+    #define _ttoi _wtoi
+  #else
+    #define _ttoi atoi
+  #endif
+#endif
+
+#ifndef _tcstol
+  #ifdef _UNICODE
+    #define _tcstol wcstol
+  #else
+    #define _tcstol strtol
+  #endif
+#endif
+
+#ifndef _tcslen
+  #ifdef _UNICODE
+    #define _tcslen wcslen
+  #else
+    #define _tcslen strlen
+  #endif
+#endif
+
+#ifndef _tcscpy
+  #ifdef _UNICODE
+    #define _tcscpy wcscpy
+  #else
+    #define _tcscpy strcpy
+  #endif
+#endif
+
+#ifndef _tcsncpy
+  #ifdef _UNICODE
+    #define _tcsncpy wcsncpy
+  #else
+    #define _tcsncpy strncpy
+  #endif
+#endif
+
+#ifndef _tcsncmp
+  #ifdef _UNICODE
+    #define _tcsncmp wcsncmp
+  #else
+    #define _tcsncmp strncmp
+  #endif
+#endif
+
 /* FIXME: this should be included as part of windows.h, but is not
           because WIN32_LEAN_AND_MEAN is defined along the way somewhere */
 #include <mmsystem.h>

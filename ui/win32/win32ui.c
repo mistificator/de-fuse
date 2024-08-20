@@ -339,7 +339,10 @@ LPSTR* CommandLineToArgvA(LPSTR lpCmdLine, INT *pNumArgs)
     LPSTR buffer = ((LPSTR)result) + numArgs * sizeof(LPSTR);
     for (int i = 0; i < numArgs; ++ i)
     {
-        assert(bufLen > 0);
+        if (bufLen <= 0)
+		{
+			break;
+		}
         BOOL lpUsedDefaultChar = FALSE;
         retval = WideCharToMultiByte(CP_ACP, 0, args[i], -1, buffer, bufLen, NULL, &lpUsedDefaultChar);
         if (!SUCCEEDED(retval))
