@@ -227,23 +227,22 @@ if test -z "$UI"; then
     AC_ARG_WITH(win32,
     [  --with-win32            use Win32 for user interface],
     if test "$withval" = no; then win32=no; else win32=yes; fi,
-    win32=auto)
+    win32=no)
 
-    if test "$win32" = auto; then
-    case "$host_os" in
-      mingw32*)
-        win32=yes
-        ;;
-      *)
-        win32=no
-        ;;
-    esac
-    fi
+dnl    if test "$win32" = auto; then
+dnl    case "$host_os" in
+dnl      mingw32*)
+dnl        win32=yes
+dnl        ;;
+dnl      *)
+dnl        win32=no
+dnl        ;;
+dnl    esac
+dnl    fi
     AC_MSG_RESULT($win32)
 
     if test "$win32" = yes; then
       AC_CHECK_HEADER(windows.h,
-                      LIBS="$LIBS -mwindows -lcomctl32 -lwinmm";
                       AC_DEFINE([UI_WIN32], 1, [Defined if Win32 UI in use])
                       UI=win32,
                       AC_MSG_ERROR([Win32 UI not found]))
@@ -1001,6 +1000,10 @@ AM_CONDITIONAL(COMPAT_MORPHOS, test "$COMPAT_OSNAME" = 'morphos')
 AM_CONDITIONAL(COMPAT_UNIX, test "$COMPAT_OSNAME" = 'unix')
 AM_CONDITIONAL(COMPAT_WII, test "$COMPAT_OSNAME" = 'wii')
 AM_CONDITIONAL(COMPAT_WIN32, test "$COMPAT_OSNAME" = 'win32')
+
+if test "$COMPAT_OSNAME" = 'win32'; then
+    LIBS="$LIBS -mwindows -lcomctl32 -lwinmm";
+fi
 
 dnl This tells the Makefile to use SDL_CFLAGS and SDL_LIBS during the build
 AM_CONDITIONAL(USE_SDL, test "$use_sdl" = "yes")
