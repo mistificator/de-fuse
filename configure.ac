@@ -215,6 +215,7 @@ dnl It'll be better to check C++ compiler here, but it's impossible ''
 dnl    AC_PROG_CXX
     AX_HAVE_QT
     CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS -fpermissive"
+    LIBS="$LIBS $QT_LIBS"
     AC_DEFINE([UI_QT], 1, [Defined if Qt UI in use])
     UI=qt; 
 
