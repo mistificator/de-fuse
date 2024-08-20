@@ -18,6 +18,23 @@ extern "C"
     #include "qt_ui_c_wrap.c"
 }
 
+// very strange piece of sh..
+#if (-1ULL == -1UL) && (defined(WIN32)  && defined(__GNUC__))
+	#include <qarraydata.h>
+	void QArrayData::deallocate(QArrayData *data, size_t objectSize,
+			size_t alignment) Q_DECL_NOTHROW
+	{
+		// Alignment is a power of two
+		Q_ASSERT(alignment >= Q_ALIGNOF(QArrayData)
+				&& !(alignment & (alignment - 1)));
+		Q_UNUSED(objectSize) Q_UNUSED(alignment)
+
+		Q_ASSERT_X(data == 0 || !data->ref.isStatic(), "QArrayData::deallocate",
+				   "Static data can not be deleted");
+		::free(data);
+	}
+#endif
+
 DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::DeFuseWindow)
 {
     ui->setupUi(this);
