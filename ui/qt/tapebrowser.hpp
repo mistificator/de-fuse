@@ -6,7 +6,10 @@
 
 extern "C"
 {
+#ifndef LIBSPECTRUM_HAS_GLIB_REPLACEMENT
     #include <glib.h>
+#endif
+    #include <libspectrum.h>
     #include <fuse.h>
     #include <tape.h>
     #include <ui/ui.h>

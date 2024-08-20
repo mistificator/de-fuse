@@ -3,11 +3,13 @@
 
 #include <QDialog>
 #include <QEventLoop>
-#include <libspectrum.h>
 
 extern "C"
 {
+#ifndef LIBSPECTRUM_HAS_GLIB_REPLACEMENT
     #include <glib.h>
+#endif
+    #include <libspectrum.h>
     #include "debugger/debugger.h"
 }
 
