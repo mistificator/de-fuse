@@ -218,7 +218,6 @@ dnl    AC_PROG_CXX
     LIBS="$LIBS $QT_LIBS"
     AC_DEFINE([UI_QT], 1, [Defined if Qt UI in use])
     UI=qt; 
-
   fi
 fi
 
@@ -592,6 +591,11 @@ dnl Drivers are added to this list in order of preference, so the
 dnl first one will be selected unless one is chosen explicitly.
 audio_driver_list=""
 
+dnl Check if Qt audio is available
+if test "$UI" = qt; then
+  [audio_driver_list="$audio_driver_list qt"]
+fi
+
 dnl Check if pulseaudio is available (experimental)
 AC_CHECK_LIB( pulse-simple, pa_simple_new,
   [AC_CHECK_HEADER(
@@ -750,6 +754,9 @@ case $audio_driver in
     ;;
   pulseaudio)
     SOUND_LIBADD='sound/pulsesound.$(OBJEXT)' SOUND_LIBS='-lpulse-simple -lpulse'
+    ;;
+  qt)
+    SOUND_LIBADD='' SOUND_LIBS=''
     ;;
   null)
     SOUND_LIBADD='sound/nullsound.$(OBJEXT)' SOUND_LIBS=''
