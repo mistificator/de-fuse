@@ -3,20 +3,42 @@ extern "C" {
     #include "config.h"
     #include "settings.h"
     #include "sound.h"
-
-    typedef enum ui_error_level {
-
-      UI_ERROR_INFO,		/* Informational message */
-      UI_ERROR_WARNING,		/* Something is wrong, but it's not that
-                       important */
-      UI_ERROR_ERROR,		/* An actual error */
-
-    } ui_error_level;
-    int ui_error( ui_error_level severity, const char *format, ... );
 }
 
 #include "qtsound.hpp"
 #include <QtMultimedia/QAudioFormat>
+#include <QApplication>
+#include <QDebug>
+
+class AudioStream: public QIODevice
+{
+public:
+    AudioStream(): QIODevice()
+    {
+        open(QIODevice::ReadWrite);
+    }
+    qint64 writePos() const { return write_pos; }
+    qint64 readPos() const { return read_pos; }
+protected:
+    qint64 readData(char *data, qint64 maxSize) override final
+    {
+        const auto sz = qMin<qint64>(maxSize, buffer.count());
+        memcpy(data, buffer.constData(), sz);
+        buffer.remove(0, sz);
+        read_pos += sz;
+        return sz;
+    }
+    qint64 writeData(const char *data, qint64 maxSize) override final
+    {
+        buffer.append(data, maxSize);
+        write_pos += maxSize;
+        return maxSize;
+    }
+private:
+    qint64 write_pos = 0;
+    qint64 read_pos = 0;
+    QByteArray buffer;
+};
 
 static QtSoundDevice * device = nullptr;
 
@@ -28,12 +50,12 @@ QtSoundDevice::QtSoundDevice(int samplerate, bool stereo): QObject()
     format.setSampleSize(settings_current.sound_force_8bit ? 8 : 16);
     format.setCodec("audio/pcm");
     format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setSampleType(QAudioFormat::UnSignedInt);
+    format.setSampleType(QAudioFormat::SignedInt);
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(format))
     {
-        ui_error( UI_ERROR_ERROR, "Raw audio format not supported by backend, cannot play audio." );
+        qCritical() << "Raw audio format not supported by backend, cannot play audio.";
         return;
     }
 
@@ -45,11 +67,12 @@ QtSoundDevice::~QtSoundDevice()
 {
     if (!audio)
     {
-        ui_error( UI_ERROR_ERROR, "Couldn't stop audio." );
+        qCritical() << "Couldn't stop audio.";
         return;
     }
     audio->stop();
-    audio->deleteLater();
+    delete audio;
+    delete stream;
 }
 
 void QtSoundDevice::play(const QByteArray & samples)
@@ -57,8 +80,25 @@ void QtSoundDevice::play(const QByteArray & samples)
     if (!audio)
         return;
     if (!stream)
-        stream = audio->start();
+    {
+        stream = new AudioStream();
+        audio->start(stream);
+    }
     stream->write(samples);
+}
+
+qint64 QtSoundDevice::processed() const
+{
+    if (!audio || !stream)
+        return 0;
+    return stream->readPos() / (audio->format().sampleSize() / 8);
+}
+
+qint64 QtSoundDevice::written() const
+{
+    if (!audio || !stream)
+        return 0;
+    return stream->writePos() / (audio->format().sampleSize() / 8);
 }
 
 bool QtSoundDevice::isOk() const
@@ -68,15 +108,15 @@ bool QtSoundDevice::isOk() const
 
 void QtSoundDevice::handleStateChanged(QAudio::State newState)
 {
+    qDebug() << "QAudio::State" << newState;
     switch (newState)
     {
         case QAudio::IdleState:
             break;
         case QAudio::StoppedState:
             if (audio->error() != QAudio::NoError)
-            {
-                ui_error( UI_ERROR_ERROR, "Audio error" );
-            }
+                qCritical() << "Audio error";
+            delete stream;
             stream = nullptr;
             break;
         default:
@@ -104,8 +144,9 @@ void sound_lowlevel_end( void )
 extern "C"
 void sound_lowlevel_frame( libspectrum_signed_word *data, int len )
 {
-    if (!device || !device->isOk())
+    if (!device)
         return;
+
     QByteArray buf;
     if (!settings_current.sound_force_8bit)
         buf = QByteArray(reinterpret_cast<const char *>(data), len * sizeof(data[0]));
@@ -115,5 +156,9 @@ void sound_lowlevel_frame( libspectrum_signed_word *data, int len )
         for (int i = 0; i < len; ++i)
             buf[i] = data[i] / 256;
     }
+
     device->play(buf);
+
+    while (device->written() - device->processed() > 0)
+        qApp->processEvents();
 }
