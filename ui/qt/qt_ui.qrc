@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="keyboard.png">../../lib/keyboard.png</file>
+        <file alias="fuse.png">../../data/icons/256x256/fuse.png</file>
+        <file alias="disk_active.bmp">../win32/icons/disk_active.bmp</file>
+        <file alias="disk_inactive.bmp">../win32/icons/disk_inactive.bmp</file>
+        <file alias="mdr_active.bmp">../win32/icons/mdr_active.bmp</file>
+        <file alias="mdr_inactive.bmp">../win32/icons/mdr_inactive.bmp</file>
+        <file alias="mouse_active.bmp">../win32/icons/mouse_active.bmp</file>
+        <file alias="mouse_inactive.bmp">../win32/icons/mouse_inactive.bmp</file>
+        <file alias="pause_active.bmp">../win32/icons/pause_active.bmp</file>
+        <file alias="pause_inactive.bmp">../win32/icons/pause_inactive.bmp</file>
+        <file alias="tape_active.bmp">../win32/icons/tape_active.bmp</file>
+        <file alias="tape_inactive.bmp">../win32/icons/tape_inactive.bmp</file>
+        <file alias="tape_marker.bmp">../win32/icons/tape_marker.bmp</file>
+        <file alias="tape_marker_mask.bmp">../win32/icons/tape_marker_mask.bmp</file>
+    </qresource>
+</RCC>

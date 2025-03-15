@@ -484,6 +484,12 @@ menu_options_peripherals_devices( int action )
 }
 
 void
+menu_options_peripherals_sound( int action )
+{
+  widget_do_peripherals_devices();
+}
+
+void
 menu_options_peripherals_storages( int action )
 {
   widget_do_peripherals_storages();
@@ -692,26 +698,26 @@ menu_machine_select( int action )
 }
 
 void
-menu_machine_debugger( int action )
+menu_debug_debugger( int action )
 {
   debugger_mode = DEBUGGER_MODE_HALTED;
   widget_do_debugger();
 }
 
 void
-menu_machine_pokememory( int action )
+menu_debug_pokememory( int action )
 {
   widget_do_pokemem();
 }
 
 void
-menu_machine_pokefinder( int action )
+menu_debug_pokefinder( int action )
 {
   widget_do_pokefinder();
 }
 
 void
-menu_machine_memorybrowser( int action )
+menu_debug_memorybrowser( int action )
 {
   widget_do_memorybrowser();
 }
