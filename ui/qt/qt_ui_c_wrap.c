@@ -4,7 +4,7 @@
 
 #include "keyboard.h"
 #include "ui/ui.h"
-#include "../uijoystick.c"
+//#include "../uijoystick.c" // wtf?
 #include "fuse.h"
 #include "timer/timer.h"
 #include "rzx.h"

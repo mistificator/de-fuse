@@ -14,7 +14,9 @@ add_definitions(-DFUSE_URL="https://github.com/mistificator/de-fuse")
 add_definitions(-DPACKAGE_URL="https://github.com/mistificator/de-fuse")
 add_definitions(-DFUSE_BUGREPORT="https://github.com/mistificator/de-fuse/issues")
 add_definitions(-DFUSEDATADIR="${CMAKE_CURRENT_SOURCE_DIR}/roms")
-add_definitions(-DSCALER_DATA_SIZE=4)
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 17)
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
@@ -28,13 +30,18 @@ target_include_directories(${PROJECT_NAME}
     libspectrum
 )
 
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    libspectrum
+)
+
 include(cmake/config.cmake)
 
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
+#get_cmake_property(_variableNames VARIABLES)
+#list (SORT _variableNames)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/settings.c
@@ -58,6 +65,16 @@ add_custom_command(
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse.pm ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse/Dialog.pm
     VERBATIM
 )
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers_4.c
+    COMMAND ${CMAKE_COMMAND} -E rm -f -- ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers_4.c
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers.c ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers_4.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers.c
+    VERBATIM
+)
+set_source_files_properties(./ui/scaler/scalers.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=2")
+set_source_files_properties(./ui/scaler/scalers_4.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=4")
 
 target_sources(${PROJECT_NAME}
     PRIVATE
@@ -171,6 +188,7 @@ target_sources(${PROJECT_NAME}
     ./timer/timer.c
     ./ui/scaler/scaler.c
     ./ui/scaler/scalers.c
+    ./ui/scaler/scalers_4.c
 #    ./ui/scaler/scaler_hq2x.c
 #    ./ui/scaler/scaler_hq3x.c
 #    ./ui/scaler/scaler_hq4x.c
@@ -187,6 +205,8 @@ target_sources(${PROJECT_NAME}
     ./z80/z80_debugger_variables.c
 #    ./z80/z80_ed.c
     ./z80/z80_ops.c
+
+    ./unittests/unittests.c
 
     ./bitmap.h
     ./compat/getopt.h
@@ -294,19 +314,24 @@ target_sources(${PROJECT_NAME}
     ./z80/z80_macros.h
 )
 
-if (LINUX)
-    target_sources(${PROJECT_NAME}
-        PRIVATE
-        ./compat/linux/relative_paths.c
-    )
-elseif (UNIX)
+if (UNIX)
+    if (LINUX)
+        target_sources(${PROJECT_NAME}
+            PRIVATE
+            ./compat/linux/relative_paths.c
+        )
+    else()
+        target_sources(${PROJECT_NAME}
+            PRIVATE
+            ./compat/unix/relative_paths.c
+        )
+    endif()
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./compat/unix/dir.c
         ./compat/unix/file.c
         ./compat/unix/osname.c
         ./compat/unix/paths.c
-        ./compat/unix/relative_paths.c
         ./compat/unix/socket.c
         ./compat/unix/timer.c
         ./compat/unix/tuntap.c
@@ -388,7 +413,7 @@ if (${SoundDevice} STREQUAL "Qt")
     )
 endif()
 
-if (${HAVE_GTK})
+if (${UI} MATCHES "$Gtk")
     set_define(UI_GTK)
     target_sources(${PROJECT_NAME}
         PRIVATE
@@ -543,8 +568,8 @@ if (${UI} STREQUAL "Qt")
         ./ui/qt/debugger.cpp
         ./ui/qt/hexview.cpp
         ./ui/qt/keysyms.cpp
-        ./ui/qt/menu_data.cpp
-        ./ui/qt/options.cpp
+#        ./ui/qt/menu_data.cpp
+#        ./ui/qt/options.cpp
         ./ui/qt/qt_ui.cpp
         ./ui/qt/tapebrowser.cpp
 
@@ -610,6 +635,20 @@ if (WIN32 AND ${UI} STREQUAL "Generic")
         ./ui/win32/select_template.h
         ./ui/win32/win32internals.h
         ./ui/win32/win32joystick.h
+    )
+endif()
+
+if (HAVE_ZLIB_H)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        z
+    )
+endif()
+
+if (HAVE_LIB_GLIB)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        ${GLIB2_LIBRARIES}
     )
 endif()
 

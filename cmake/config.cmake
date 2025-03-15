@@ -11,7 +11,6 @@ find_package(Qt5 COMPONENTS Core Widgets Gui Multimedia)
 if (Qt5_FOUND)
     set(UIs ${UIs} Qt)
     set(SoundDevices ${SoundDevices} Qt)
-    set_define(HAVE_QT)
     set(OPTIONS_DIR qt)
 endif()
 
