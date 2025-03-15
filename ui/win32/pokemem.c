@@ -32,7 +32,7 @@
 #include "ui/ui.h"
 #include "win32internals.h"
 
-void menu_machine_pokememory( int action );
+void menu_debug_pokememory( int action );
 void initialize_dialog( HWND hwnd_dialog );
 void create_custom_edit( HWND parent, int item, int subitem );
 void move_custom_edit( HWND hwnd_c_edit, HWND hwnd_parent );
@@ -53,7 +53,7 @@ int item_edit, subitem_edit;
 BOOL cancel_edit = FALSE;
 
 void
-menu_machine_pokememory( int action GCC_UNUSED )
+menu_debug_pokememory( int action GCC_UNUSED )
 {
   fuse_emulation_pause();
 

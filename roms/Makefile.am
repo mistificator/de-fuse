@@ -43,7 +43,7 @@ ROMS = \
        roms/se-1.rom \
        roms/speccyboot-1.4.rom
 
-pkgdata_DATA += $(ROMS)
+de_fuse_SOURCES += $(ui_svga_files)
 
 EXTRA_DIST += \
               $(ROMS) \

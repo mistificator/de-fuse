@@ -3,6 +3,7 @@
    Copyright (c) 2013 Sergio Baldoví
    Copyright (c) 2015 Stuart Brady
    Copyright (c) 2016 BogDan Vatra
+   Copyright (c) 2024 M.P.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -82,6 +83,8 @@ enum {
 /* The columns used in the disassembly pane */
 
 enum {
+  DISASSEMBLY_COLUMN_PC,
+  DISASSEMBLY_COLUMN_BREAKPOINT,
   DISASSEMBLY_COLUMN_ADDRESS,
   DISASSEMBLY_COLUMN_INSTRUCTION,
 
@@ -108,11 +111,14 @@ enum {
 };
 
 static int create_dialog( void );
+static PangoFontDescription * monospaced_font( void );
 static int hide_hidden_panes( void );
 static GtkCheckMenuItem* get_pane_menu_item( debugger_pane pane );
 static GtkWidget* get_pane( debugger_pane pane );
 static int create_menu_bar( GtkBox *parent, GtkAccelGroup **accel_group );
+static void do_selection( GtkWidget* widget, GdkEventButton *event );
 static void toggle_display( GtkToggleAction* action, debugger_pane pane );
+static void toggle_colorize_disassembly( GtkToggleAction* action, gpointer data );
 static void toggle_display_registers( GtkToggleAction* action, gpointer data );
 static void toggle_display_memory_map( GtkToggleAction* action, gpointer data );
 static void toggle_display_breakpoints( GtkToggleAction* action,
@@ -122,13 +128,17 @@ static void toggle_display_disassembly( GtkToggleAction* action,
 static void toggle_display_stack( GtkToggleAction* action, gpointer data );
 static void toggle_display_events( GtkToggleAction* action, gpointer data );
 static int create_register_display( GtkBox *parent, PangoFontDescription *font );
-static int create_memory_map( GtkBox *parent );
-static void create_breakpoints( GtkBox *parent );
+static int create_memory_map( GtkBox *parent, PangoFontDescription *font );
+static void create_breakpoints( GtkBox *parent, PangoFontDescription *font );
 static void create_disassembly( GtkBox *parent, PangoFontDescription *font );
+static void disassembly_activate( GtkTreeView *tree_view, GtkTreePath *path,
+			    GtkTreeViewColumn *column, gpointer user_data );
 static void create_stack_display( GtkBox *parent, PangoFontDescription *font );
 static void stack_activate( GtkTreeView *tree_view, GtkTreePath *path,
 			    GtkTreeViewColumn *column, gpointer user_data );
-static void create_events( GtkBox *parent );
+static void breakpoints_activate( GtkTreeView *tree_view, GtkTreePath *path,
+	        GtkTreeViewColumn *column, gpointer user_data );          
+static void create_events( GtkBox *parent, PangoFontDescription *font );
 static void events_activate( GtkTreeView *tree_view, GtkTreePath *path,
 			     GtkTreeViewColumn *column, gpointer user_data );
 static int create_command_entry( GtkBox *parent, GtkAccelGroup *accel_group );
@@ -150,6 +160,9 @@ disassembly_wheel_scroll( GtkTreeView *list GCC_UNUSED, GdkEvent *event,
                           gpointer user_data );
 
 static void move_disassembly( GtkAdjustment *adjustment, gpointer user_data );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+static void debugger_goto_offset( GtkWidget *widget, gpointer user_data );
+#endif
 
 static void evaluate_command( GtkWidget *widget, gpointer user_data );
 static void gtkui_debugger_done_step( GtkWidget *widget, gpointer user_data );
@@ -161,13 +174,15 @@ static gboolean delete_dialog( GtkWidget *widget, GdkEvent *event,
 static void gtkui_debugger_done_close( GtkWidget *widget, gpointer user_data );
 
 static GtkWidget *dialog,		/* The debugger dialog box */
-  *continue_button, *break_button,	/* Two of its buttons */
+  *step_button, *continue_button, *break_button,	/* buttons */
   *register_display,			/* The register display */
+  *registers_frame, 
   *registers[18],			/* Individual registers */
   *memory_map,				/* The memory map display */
+  *memory_box,
   *memory_map_table,                    /* The table for the memory map */
   *map_label[MEMORY_PAGES_IN_64K][4],   /* Labels in the memory map */
-  *breakpoints,				/* The breakpoint display */
+  *breakpoints = NULL,				/* The breakpoint display */
   *disassembly_box,			/* A box to hold the disassembly */
   *disassembly,				/* The actual disassembly widget */
   *stack,				/* The stack display */
@@ -193,10 +208,15 @@ static int debugger_active;
 /* The UIManager used to create the menu bar */
 static GtkUIManager *ui_manager_debugger = NULL;
 
+static int colorize_disassembly = 1;
+
 /* The debugger's menu bar */
 const gchar debugger_menu[] =
 "<menubar name='DebuggerMenu'>"
 "  <menu name='View' action='VIEW'>"
+"    <menuitem name='Colorize disassembly' action='VIEW_COLORIZE_DISASSEMBLY'/>"  
+"  </menu>"
+"  <menu name='Window' action='WINDOW'>"
 "    <menuitem name='Registers' action='VIEW_REGISTERS'/>"
 "    <menuitem name='Memory Map' action='VIEW_MEMORY_MAP'/>"
 "    <menuitem name='Breakpoints' action='VIEW_BREAKPOINTS'/>"
@@ -208,13 +228,13 @@ const gchar debugger_menu[] =
 
 /* The debugger's menu actions */
 static GtkActionEntry menu_data[] = {
-
   { "VIEW", NULL, "_View", NULL, NULL, NULL },
-
+  { "WINDOW", NULL, "_Window", NULL, NULL, NULL },
 };
 
 static GtkToggleActionEntry menu_toggles[] = {
 
+  { "VIEW_COLORIZE_DISASSEMBLY", NULL, "_Colorize disassembly", NULL, NULL, G_CALLBACK( toggle_colorize_disassembly ), TRUE },
   { "VIEW_REGISTERS", NULL, "_Registers", NULL, NULL, G_CALLBACK( toggle_display_registers ), TRUE },
   { "VIEW_MEMORY_MAP", NULL, "_Memory Map", NULL, NULL, G_CALLBACK( toggle_display_memory_map ), TRUE },
   { "VIEW_BREAKPOINTS", NULL, "_Breakpoints", NULL, NULL, G_CALLBACK( toggle_display_breakpoints ), TRUE },
@@ -259,7 +279,8 @@ ui_debugger_activate( void )
 void
 ui_breakpoints_updated( void )
 {
-  /* TODO: Refresh debugger list here */
+  if ( breakpoints == NULL ) return;
+  update_breakpoints();
 }
 
 static int
@@ -291,12 +312,12 @@ get_pane_menu_item( debugger_pane pane )
   path = NULL;
 
   switch( pane ) {
-  case DEBUGGER_PANE_REGISTERS: path = "/View/Registers"; break;
-  case DEBUGGER_PANE_MEMORYMAP: path = "/View/Memory Map"; break;
-  case DEBUGGER_PANE_BREAKPOINTS: path = "/View/Breakpoints"; break;
-  case DEBUGGER_PANE_DISASSEMBLY: path = "/View/Disassembly"; break;
-  case DEBUGGER_PANE_STACK: path = "/View/Stack"; break;
-  case DEBUGGER_PANE_EVENTS: path = "/View/Events"; break;
+  case DEBUGGER_PANE_REGISTERS: path = "/Window/Registers"; break;
+  case DEBUGGER_PANE_MEMORYMAP: path = "/Window/Memory Map"; break;
+  case DEBUGGER_PANE_BREAKPOINTS: path = "/Window/Breakpoints"; break;
+  case DEBUGGER_PANE_DISASSEMBLY: path = "/Window/Disassembly"; break;
+  case DEBUGGER_PANE_STACK: path = "/Window/Stack"; break;
+  case DEBUGGER_PANE_EVENTS: path = "/Window/Events"; break;
 
   case DEBUGGER_PANE_END: break;
   }
@@ -323,8 +344,8 @@ static GtkWidget*
 get_pane( debugger_pane pane )
 {
   switch( pane ) {
-  case DEBUGGER_PANE_REGISTERS: return register_display;
-  case DEBUGGER_PANE_MEMORYMAP: return memory_map;
+  case DEBUGGER_PANE_REGISTERS: return registers_frame;
+  case DEBUGGER_PANE_MEMORYMAP: return memory_box;
   case DEBUGGER_PANE_BREAKPOINTS: return breakpoints;
   case DEBUGGER_PANE_DISASSEMBLY: return disassembly_box;
   case DEBUGGER_PANE_STACK: return stack;
@@ -350,6 +371,14 @@ ui_debugger_deactivate( int interruptable )
   return 0;
 }
 
+static PangoFontDescription * monospaced_font() {
+  PangoFontDescription *font;
+  if ( gtkui_get_monospaced_font( &font ) ) {
+    return NULL;
+  }
+  return font;
+}
+
 static int
 create_dialog( void )
 {
@@ -359,9 +388,9 @@ create_dialog( void )
 
   PangoFontDescription *font;
 
-  error = gtkui_get_monospaced_font( &font ); if( error ) return error;
+  font = monospaced_font(); if( font == NULL ) return -1;
 
-  dialog = gtkstock_dialog_new( "Fuse - Debugger",
+  dialog = gtkstock_dialog_new( "De-Fuse - Debugger",
 				G_CALLBACK( delete_dialog ) );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -386,12 +415,12 @@ create_dialog( void )
   error = create_register_display( GTK_BOX( hbox2 ), font );
   if( error ) return error;
 
-  error = create_memory_map( GTK_BOX( hbox2 ) ); if( error ) return error;
+  error = create_memory_map( GTK_BOX( hbox2 ), font ); if( error ) return error;
 
-  create_breakpoints( GTK_BOX( vbox ) );
+  create_breakpoints( GTK_BOX( vbox ), font );
   create_disassembly( GTK_BOX( hbox ), font );
   create_stack_display( GTK_BOX( hbox ), font );
-  create_events( GTK_BOX( hbox ) );
+  create_events( GTK_BOX( hbox ), font );
 
   error = create_command_entry( GTK_BOX( content_area ), accel_group );
   if( error ) return error;
@@ -464,6 +493,13 @@ toggle_display( GtkToggleAction* action, debugger_pane pane_id )
 }
 
 static void
+toggle_colorize_disassembly( GtkToggleAction* action, gpointer data GCC_UNUSED )
+{
+  colorize_disassembly = gtk_toggle_action_get_active( action );
+  update_disassembly();
+}
+
+static void
 toggle_display_registers( GtkToggleAction* action, gpointer data GCC_UNUSED )
 {
   toggle_display( action, DEBUGGER_PANE_REGISTERS );
@@ -504,6 +540,9 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
 {
   size_t i;
 
+  registers_frame = gtk_frame_new( "Registers, flags, states..." );
+  gtk_box_pack_start( parent, registers_frame, TRUE, TRUE, 0 );
+
 #if GTK_CHECK_VERSION( 3, 0, 0 )
 
   register_display = gtk_grid_new();
@@ -516,13 +555,14 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
 
 #endif
 
-  gtk_box_pack_start( parent, register_display, FALSE, FALSE, 0 );
+  gtk_container_add( GTK_CONTAINER( registers_frame ), register_display );
 
   for( i = 0; i < 18; i++ ) {
     PangoAttrList *list;
     PangoAttribute *attr;
 
     registers[i] = gtk_label_new( "" );
+    gtk_label_set_selectable( registers[i], TRUE );
 
     list = pango_attr_list_new();
     attr = pango_attr_font_desc_new( font );
@@ -544,17 +584,24 @@ create_register_display( GtkBox *parent, PangoFontDescription *font )
 }
 
 static int
-create_memory_map( GtkBox *parent )
+create_memory_map( GtkBox *parent, PangoFontDescription *font )
 {
   GtkWidget *label_address, *label_source, *label_writable, *label_contended;
+  GtkWidget *search_label, *search_box, *search_offset;
 
   label_address   = gtk_label_new( "Address" );
   label_source    = gtk_label_new( "Source" );
   label_writable  = gtk_label_new( "W?" );
   label_contended = gtk_label_new( "C?" );
 
+  gtk_widget_set_tooltip_text( GTK_WIDGET( label_writable ), "Writable" ); 
+  gtk_widget_set_tooltip_text( GTK_WIDGET( label_contended ), "Contended" ); 
+
+  memory_box = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+  gtk_box_pack_start( parent, memory_box, TRUE, TRUE, 0 );
+
   memory_map = gtk_frame_new( "Memory Map" );
-  gtk_box_pack_start( parent, memory_map, FALSE, FALSE, 0 );
+  gtk_box_pack_start( GTK_BOX( memory_box ), memory_map, TRUE, TRUE, 0 );
 
 #if GTK_CHECK_VERSION( 3, 0, 0 )
 
@@ -568,6 +615,31 @@ create_memory_map( GtkBox *parent )
   gtk_grid_attach( GTK_GRID( memory_map_table ), label_source, 1, 0, 1, 1 );
   gtk_grid_attach( GTK_GRID( memory_map_table ), label_writable, 2, 0, 1, 1 );
   gtk_grid_attach( GTK_GRID( memory_map_table ), label_contended, 3, 0, 1, 1 );
+
+  /* Go to offset */
+  search_box = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 8 );
+#if GTK_CHECK_VERSION( 3, 6, 0 )
+  search_offset = gtk_search_entry_new();
+#else
+  search_offset = gtk_entry_new();
+#endif
+
+  /*
+   * Entry is max 6 chars wide ("0xXXXX") but the GTK widget adds
+   * a search icon and "clear contents" icon, which between them
+   * take up about 6 char's widths. So it needs to be wider.
+   */
+  gtk_entry_set_width_chars( GTK_ENTRY( search_offset ), 15 );
+  gtk_entry_set_max_length( GTK_ENTRY( search_offset ), 6 );
+  gtk_box_pack_end( GTK_BOX( search_box ), search_offset, FALSE, FALSE, 0 );
+
+  search_label = gtk_label_new( "Go to offset" );
+  gtk_box_pack_end( GTK_BOX( search_box ), search_label, FALSE, FALSE, 0 );
+
+  gtk_box_pack_start( GTK_BOX( memory_box ), search_box, FALSE, FALSE, 8 );
+
+  g_signal_connect( G_OBJECT( search_offset ), "activate",
+                    G_CALLBACK( debugger_goto_offset ), NULL );
 
 #else                /* #if GTK_CHECK_VERSION( 3, 0, 0 ) */
 
@@ -588,8 +660,106 @@ create_memory_map( GtkBox *parent )
   return 0;
 }
 
+static void breakpoints_popup_menu_offset( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( breakpoints ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &breakpoints_model,
+    &iter
+  ) ) {
+
+    gchar *type, *address, *endptr;
+    int base_num, offset;
+
+    gtk_tree_model_get( breakpoints_model, &iter, BREAKPOINTS_COLUMN_TYPE, &type, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
+    if ( type && address ) {
+      if ( strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ] ) == 0 ||
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_READ ] ) == 0 || 
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_WRITE ] ) == 0) {
+
+        base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
+        offset = strtol( address, &endptr, base_num );
+
+        ui_debugger_disassemble( offset );
+        ui_debugger_update();
+      }
+      g_free( type );
+      g_free( address );
+    }
+  }
+
+}
+
+static void breakpoints_popup_menu_delete( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( breakpoints ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &breakpoints_model,
+    &iter
+  ) ) {
+
+    int id;
+    gtk_tree_model_get( breakpoints_model, &iter, BREAKPOINTS_COLUMN_ID, &id, -1 );
+
+    if ( id > 0 ) {
+      char cmd[40];
+      snprintf( cmd, sizeof( cmd ), "del %i", id );
+      debugger_command_evaluate( cmd );
+    }
+
+    update_disassembly();
+  }
+}
+
+static void breakpoints_popup_menu_delete_all( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+
+  debugger_command_evaluate( "del" );
+  update_disassembly();
+
+}
+
+static gboolean breakpoints_popup_menu (
+  GtkWidget* widget,
+  GdkEventButton *event,
+  gpointer user_data GCC_UNUSED
+)  {
+  const int RIGHT_CLICK = 3;
+  if (event->button != RIGHT_CLICK) return FALSE;
+
+  do_selection( widget, event );
+
+  GtkWidget *menu, *menuitem;
+  menu = gtk_menu_new();
+
+  menuitem = gtk_menu_item_new_with_label("Go to offset");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( breakpoints_popup_menu_offset ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  menuitem = gtk_menu_item_new_with_label("Delete breakpoint");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( breakpoints_popup_menu_delete ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  menuitem = gtk_menu_item_new_with_label("Delete all breakpoints");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( breakpoints_popup_menu_delete_all ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  gtk_widget_show_all( menu );
+  gtk_menu_popup( GTK_MENU( menu ), NULL, NULL, NULL, NULL, event->button, gdk_event_get_time( ( GdkEvent* )event ) );
+
+  return TRUE;
+}
+
 static void
-create_breakpoints( GtkBox *parent )
+create_breakpoints( GtkBox *parent, PangoFontDescription *font )
 {
   size_t i;
 
@@ -602,10 +772,228 @@ create_breakpoints( GtkBox *parent )
   for( i = 0; i < BREAKPOINTS_COLUMN_COUNT; i++ ) {
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes( titles[i], renderer, "text", i, NULL );
+    g_object_set( G_OBJECT( renderer ), "font-desc", font, "height", 18, NULL );
     gtk_tree_view_append_column( GTK_TREE_VIEW( breakpoints ), column );
   }
 
   gtk_box_pack_start( parent, breakpoints, TRUE, TRUE, 0 );
+
+  g_signal_connect( G_OBJECT( breakpoints ), "row-activated", G_CALLBACK( breakpoints_activate ), NULL );
+
+  g_signal_connect( GTK_TREE_VIEW( breakpoints ), "button-press-event", G_CALLBACK( breakpoints_popup_menu ), NULL );
+}
+
+// command, foreground, background
+const char * disassembly_color_table[] = {
+  "JP",   "Brown",        "",
+  "JR",   "Dark Orange",  "",
+  "CALL", "Blue",         "",
+  "DJNZ", "Dark Cyan",    "",
+  "NOP",  "Light Gray",   "",
+  "RET",  "Green",        "",
+  "CP ",  "Dark Magenta", "",
+  "RST",  "Orange",       "Black",
+  "OUT",  "Light Green",  "Black",
+  "IN ",  "Yellow",       "Black",
+  "HALT", "Pink",         "Black",
+  "DI",   "White",        "Pink",
+  "EI",   "White",        "Pink",
+  "EX",   "White",        "Dark Blue",
+  "IM",   "White",        "Dark Green",
+  ""
+};
+
+void
+disassembly_cell_data( GtkTreeViewColumn *col,
+                        GtkCellRenderer   *renderer,
+                        GtkTreeModel      *model,
+                        GtkTreeIter       *iter,
+                        gpointer           user_data )
+{
+  gchar * instr;
+  int offset;
+
+  g_object_set( renderer, "foreground-set", FALSE, NULL ); 
+  g_object_set( renderer, "background-set", FALSE, NULL ); 
+
+  if ( colorize_disassembly > 0 ) {
+
+    gtk_tree_model_get( model, iter, DISASSEMBLY_COLUMN_INSTRUCTION, &instr, -1 );
+
+    offset = 0;
+    while ( strlen( disassembly_color_table[offset] ) > 0 )
+    {
+      if ( strncmp( instr, disassembly_color_table[offset], strlen(disassembly_color_table[offset] ) ) == 0 ) {
+        if ( strlen( disassembly_color_table[offset + 1] ) > 0 ) g_object_set( renderer, "foreground", disassembly_color_table[offset + 1], "foreground-set", TRUE, NULL );
+        if ( strlen( disassembly_color_table[offset + 2] ) > 0 ) g_object_set( renderer, "background", disassembly_color_table[offset + 2], "background-set", TRUE, NULL );
+      }    
+      offset = offset + 3;
+    }
+
+    g_free( instr );
+
+  }
+}
+
+static void disassembly_toggle_breakpoint( GtkTreeIter * iter ) {
+  gchar *str, *endptr;
+  int base_num, offset, id;
+
+  gtk_tree_model_get( disassembly_model, iter, DISASSEMBLY_COLUMN_BREAKPOINT, &str, -1 );
+  id = strtol( str, &endptr, base_num );
+  g_free( str );
+
+  if ( id == 0 ) {
+    gtk_tree_model_get( disassembly_model, iter, DISASSEMBLY_COLUMN_ADDRESS, &str, -1 );
+    if ( str ) {
+      base_num = ( g_str_has_prefix( str, "0x" ) )? 16 : 10;
+      offset = strtol( str, &endptr, base_num );
+      g_free( str );
+
+      debugger_breakpoint_add_address(
+        DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, offset, 0,
+        DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
+      );
+    }
+  } else if ( id > 0 ) {
+    char cmd[40];
+    snprintf( cmd, sizeof( cmd ), "del %i", id );
+    debugger_command_evaluate( cmd );
+  }
+
+  update_disassembly();
+}
+
+static void disassembly_popup_menu_breakpoint( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( disassembly ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &disassembly_model,
+    &iter
+  ) ) {
+
+    disassembly_toggle_breakpoint( &iter );
+
+  }
+}
+
+static void disassembly_popup_menu_goto_pc( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  ui_debugger_disassemble( PC ); 
+}
+
+static void disassembly_popup_menu_goto_instr_addr( GtkWidget *menuitem GCC_UNUSED, gpointer userdata GCC_UNUSED ) {
+  GtkTreeIter iter;
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( disassembly ) );
+
+  if ( gtk_tree_selection_get_selected (
+    selection,
+    &disassembly_model,
+    &iter
+  ) ) {
+
+    gchar *str, *endptr, *addr_substr;
+    int addr;
+
+    gtk_tree_model_get( disassembly_model, &iter, DISASSEMBLY_COLUMN_INSTRUCTION, &str, -1 );
+    if ( str ) {
+      addr_substr = strstr(str, ",");
+      if ( addr_substr ) {
+        if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' ) {
+          addr_substr = 0;
+        }
+      }
+      if ( addr_substr == 0 || addr_substr[1] == '(' ) {
+        addr_substr = strstr(str, "(");
+        if ( addr_substr )
+        {
+          if ( addr_substr[5] != ')' ) {
+            addr_substr = 0;
+            g_free( str );
+            return;
+          }
+        }
+      }
+      if ( addr_substr == 0 ) {
+        addr_substr = strstr(str, " ");
+        if ( addr_substr ) {
+          if ( addr_substr[2] == ' ' || addr_substr[3] == ' ' || addr_substr[2] == ',' || addr_substr[3] == ',' ) {
+            if ( ! ( toupper( str[0] ) == 'R' && toupper( str[1] ) == 'S' && toupper( str[2] ) == 'T' ) ) {
+              addr_substr = 0;
+              g_free( str );
+              return;
+            }
+          }
+        }
+      }
+      if ( addr_substr ) {
+        addr_substr++;
+        addr_substr[4] = 0;
+        addr = strtol( addr_substr, &endptr, 16 );
+        if ( addr >= 0 && addr < 65536 ) {
+          ui_debugger_disassemble( addr ); 
+        }
+      }
+      g_free( str );
+    }
+  }
+}
+
+static void do_selection( GtkWidget* widget, GdkEventButton *event ) {
+  GtkTreeSelection *selection;
+
+  selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( widget ) );
+
+  /* Note: gtk_tree_selection_count_selected_rows() does not
+    *   exist in gtk+-2.0, only in gtk+ >= v2.2 ! */
+  if (gtk_tree_selection_count_selected_rows( selection )  <= 1) {
+      GtkTreePath *path;
+
+      /* Get tree path for row that was clicked */
+      if (gtk_tree_view_get_path_at_pos( GTK_TREE_VIEW( widget ),
+                                        event->x, event->y,
+                                        &path, NULL, NULL, NULL ) ) {
+        gtk_tree_selection_unselect_all( selection) ;
+        gtk_tree_selection_select_path( selection, path );
+        gtk_tree_path_free( path );
+      }
+  }      
+}
+
+static gboolean disassembly_popup_menu (
+  GtkWidget* widget,
+  GdkEventButton *event,
+  gpointer user_data GCC_UNUSED
+)  {
+  const int RIGHT_CLICK = 3;
+  if (event->button != RIGHT_CLICK) return FALSE;
+
+  do_selection( widget, event );
+
+  GtkWidget *menu, *menuitem;
+  menu = gtk_menu_new();
+
+  menuitem = gtk_menu_item_new_with_label("Toggle breakpoint");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_breakpoint ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  menuitem = gtk_menu_item_new_with_label("Go to offset in instruction");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_goto_instr_addr ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  menuitem = gtk_menu_item_new_with_label("Go to current program counter (PC)");
+  g_signal_connect( menuitem, "activate", G_CALLBACK( disassembly_popup_menu_goto_pc ), NULL );
+  gtk_menu_shell_append( GTK_MENU_SHELL( menu ), menuitem );
+
+  gtk_widget_show_all( menu );
+  gtk_menu_popup( GTK_MENU( menu ), NULL, NULL, NULL, NULL, event->button, gdk_event_get_time( ( GdkEvent* )event ) );
+
+  return TRUE;
 }
 
 static void
@@ -615,7 +1003,7 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
 
   GtkWidget *scrollbar;
   static const gchar *const titles[] =
-    { "Address", "Instruction" };
+    { "PC", "ID", "Address", "Instruction" };
 
   /* A box to hold the disassembly listing and the scrollbar */
   disassembly_box = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
@@ -623,13 +1011,17 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
 
   /* The disassembly itself */
   disassembly_model =
-    gtk_list_store_new( DISASSEMBLY_COLUMN_COUNT, G_TYPE_STRING, G_TYPE_STRING );
+    gtk_list_store_new( DISASSEMBLY_COLUMN_COUNT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING );
 
   disassembly = gtk_tree_view_new_with_model( GTK_TREE_MODEL( disassembly_model ) );
   for( i = 0; i < DISASSEMBLY_COLUMN_COUNT; i++ ) {
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes( titles[i], renderer, "text", i, NULL );
     g_object_set( G_OBJECT( renderer ), "font-desc", font, "height", 18, NULL );
+
+    /* connect a cell data function */
+    gtk_tree_view_column_set_cell_data_func(column, renderer, disassembly_cell_data, NULL, NULL);
+        
     gtk_tree_view_append_column( GTK_TREE_VIEW( disassembly ), column );
   }
 
@@ -654,6 +1046,22 @@ create_disassembly( GtkBox *parent, PangoFontDescription *font )
   g_signal_connect( GTK_TREE_VIEW( disassembly ), "scroll-event",
                     G_CALLBACK( disassembly_wheel_scroll ),
                     disassembly_scrollbar_adjustment );
+
+  g_signal_connect( GTK_TREE_VIEW( disassembly ), "button-press-event", G_CALLBACK( disassembly_popup_menu ), NULL );
+
+  g_signal_connect( G_OBJECT( disassembly ), "row-activated", G_CALLBACK( disassembly_activate ), NULL );
+}
+
+static void disassembly_activate( GtkTreeView *tree_view, GtkTreePath *path,
+			    GtkTreeViewColumn *column, gpointer user_data ) {
+  GtkTreeIter iter;
+  GtkTreeModel *model = gtk_tree_view_get_model( tree_view );
+
+  if( model && gtk_tree_model_get_iter( model, &iter, path ) ) {
+
+    disassembly_toggle_breakpoint( &iter );
+
+  }
 }
 
 static void
@@ -696,16 +1104,47 @@ stack_activate( GtkTreeView *tree_view, GtkTreePath *path,
 
     error = debugger_breakpoint_add_address(
       DEBUGGER_BREAKPOINT_TYPE_EXECUTE, memory_source_any, 0, address, 0,
-      DEBUGGER_BREAKPOINT_LIFE_ONESHOT, NULL
+      DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
     );
     if( error ) return;
 
-    debugger_run();
+  update_disassembly();
+//    debugger_run();
   }
 }
 
 static void
-create_events( GtkBox *parent )
+breakpoints_activate( GtkTreeView *tree_view, GtkTreePath *path,
+	        GtkTreeViewColumn *column GCC_UNUSED,
+		gpointer user_data GCC_UNUSED )
+{
+  GtkTreeIter it;
+  GtkTreeModel *model = gtk_tree_view_get_model( tree_view );
+
+  if( model && gtk_tree_model_get_iter( model, &it, path ) ) {
+    gchar *type, *address, *endptr;
+    int base_num, offset;
+
+    gtk_tree_model_get( model, &it, BREAKPOINTS_COLUMN_TYPE, &type, BREAKPOINTS_COLUMN_VALUE, &address, -1 );
+    if ( type && address ) {
+      if ( strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_EXECUTE ] ) == 0 ||
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_READ ] ) == 0 || 
+          strcmp(type, debugger_breakpoint_type_text[ DEBUGGER_BREAKPOINT_TYPE_WRITE ] ) == 0) {
+        base_num = ( g_str_has_prefix( address, "0x" ) )? 16 : 10;
+        offset = strtol( address, &endptr, base_num );
+        g_free( address );
+
+        ui_debugger_disassemble( offset );
+        ui_debugger_update();
+      }
+      g_free( type );
+      g_free( address );
+    }
+  }
+}
+
+static void
+create_events( GtkBox *parent, PangoFontDescription *font )
 {
   static const gchar *const titles[] = { "Time", "Type" };
   size_t i;
@@ -718,6 +1157,7 @@ create_events( GtkBox *parent )
   for( i = 0; i < EVENTS_COLUMN_COUNT; i++ ) {
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes( titles[i], renderer, "text", i, NULL );
+    g_object_set( G_OBJECT( renderer ), "font-desc", font, "height", 18, NULL );
     gtk_tree_view_append_column( GTK_TREE_VIEW( events ), column );
   }
 
@@ -742,11 +1182,11 @@ events_activate( GtkTreeView *tree_view, GtkTreePath *path,
 
     error = debugger_breakpoint_add_time(
       DEBUGGER_BREAKPOINT_TYPE_TIME, event_tstates, 0,
-      DEBUGGER_BREAKPOINT_LIFE_ONESHOT, NULL
+      DEBUGGER_BREAKPOINT_LIFE_PERMANENT, NULL
     );
     if( error ) return;
 
-    debugger_run();
+ //    debugger_run();
   }
 }
 
@@ -772,10 +1212,15 @@ create_command_entry( GtkBox *parent, GtkAccelGroup *accel_group )
 			    G_OBJECT( entry ) );
   gtk_box_pack_start( GTK_BOX( hbox ), eval_button, FALSE, FALSE, 0 );
 
+  gtk_button_set_always_show_image( eval_button, TRUE );
+  gtk_button_set_image ( eval_button, gtk_image_new_from_stock( "gtk-execute", 1 ) );
+
   /* Return is equivalent to clicking on 'evaluate' */
+  // conflicts with "Go to offset"
+#if 0  
   gtk_widget_add_accelerator( eval_button, "clicked", accel_group,
 			      GDK_KEY_Return, 0, 0 );
-
+#endif
   return 0;
 }
 
@@ -788,13 +1233,21 @@ create_buttons( GtkDialog *parent, GtkAccelGroup *accel_group )
     brk   = { "Break", G_CALLBACK( gtkui_debugger_break ), NULL, NULL, 0, 0, 0, 0, GTK_RESPONSE_NONE };
 
   /* Create the action buttons for the dialog box */
-  gtkstock_create_button( GTK_WIDGET( parent ), accel_group, &step );
+  step_button = gtkstock_create_button( GTK_WIDGET( parent ), accel_group, &step );
   continue_button = gtkstock_create_button( GTK_WIDGET( parent ), accel_group,
 					    &cont );
   break_button = gtkstock_create_button( GTK_WIDGET( parent ), accel_group,
 					 &brk );
   gtkstock_create_close( GTK_WIDGET( parent ), accel_group,
 			 G_CALLBACK( gtkui_debugger_done_close ), TRUE );
+
+  gtk_button_set_always_show_image( step_button, TRUE );
+  gtk_button_set_always_show_image( continue_button, TRUE );
+  gtk_button_set_always_show_image( break_button, TRUE );
+
+  gtk_button_set_image ( step_button, gtk_image_new_from_stock( "gtk-media-next", 1 ) );
+  gtk_button_set_image ( continue_button, gtk_image_new_from_stock( "gtk-media-play", 1 ) );
+  gtk_button_set_image ( break_button, gtk_image_new_from_stock( "gtk-media-pause", 1 ) );
 
   return 0;
 }
@@ -821,7 +1274,8 @@ ui_debugger_update( void )
   libspectrum_word address;
   int capabilities; size_t length;
 
-  const char *register_name[] = { "PC", "SP",
+  const char *register_name[] = { 
+          "PC", "SP",
 				  "AF", "AF'",
 				  "BC", "BC'",
 				  "DE", "DE'",
@@ -829,7 +1283,8 @@ ui_debugger_update( void )
 				  "IX", "IY",
                                 };
 
-  libspectrum_word *value_ptr[] = { &PC, &SP,  &AF, &AF_,
+  libspectrum_word *value_ptr[] = { 
+            &PC, &SP,  &AF, &AF_,
 				    &BC, &BC_, &DE, &DE_,
 				    &HL, &HL_, &IX, &IY,
 				  };
@@ -942,6 +1397,7 @@ update_memory_map( void )
   int source, page_num, writable, contended;
   libspectrum_word offset;
   size_t i, j, block, row;
+  PangoFontDescription *font;
 
   for( i = 0; i < MEMORY_PAGES_IN_64K; i++ ) {
     if( map_label[i][0] ) {
@@ -955,6 +1411,8 @@ update_memory_map( void )
   source = page_num = writable = contended = -1;
   offset = 0;
   row = 0;
+
+  font = monospaced_font(); if( font == NULL ) return;
 
   for( block = 0; block < MEMORY_PAGES_IN_64K; block++ ) {
     memory_page *page = &memory_map_read[block];
@@ -980,6 +1438,14 @@ update_memory_map( void )
       row_labels[3] = gtk_label_new( page->contended ? "Y" : "N" );
 
       for( i = 0; i < 4; i++ ) {
+        PangoAttrList *list;
+        PangoAttribute *attr;
+
+        list = pango_attr_list_new();
+        attr = pango_attr_font_desc_new( font );
+        pango_attr_list_insert( list, attr );
+        gtk_label_set_attributes( GTK_LABEL( row_labels[i] ), list );
+        pango_attr_list_unref( list );
 
 #if GTK_CHECK_VERSION( 3, 0, 0 )
         gtk_grid_attach( GTK_GRID( memory_map_table ), row_labels[i],
@@ -1003,6 +1469,8 @@ update_memory_map( void )
     /* We expect the next page to have an increased offset */
     offset += MEMORY_PAGE_SIZE;
   }
+
+  gtkui_free_font( font );
 
   gtk_widget_show_all( GTK_WIDGET( memory_map_table ) );
 }
@@ -1086,18 +1554,48 @@ update_disassembly( void )
 
   for( i = 0, address = disassembly_top; i < 20; i++ ) {
     size_t l, length;
-    char buffer1[40], buffer2[40];
+    char buffer[DISASSEMBLY_COLUMN_COUNT][40];
+    GSList *ptr;
 
-    snprintf( buffer1, sizeof( buffer1 ), format_16_bit(), address );
-    debugger_disassemble( buffer2, sizeof( buffer2 ), &length, address );
+    bzero( buffer[DISASSEMBLY_COLUMN_PC], sizeof( buffer[DISASSEMBLY_COLUMN_PC] ));
+    bzero( buffer[DISASSEMBLY_COLUMN_BREAKPOINT], sizeof( buffer[DISASSEMBLY_COLUMN_BREAKPOINT] ));
+
+    if ( address == PC )
+    {
+      snprintf( buffer[DISASSEMBLY_COLUMN_PC], sizeof( buffer[DISASSEMBLY_COLUMN_PC] ), "->");
+    }
+
+    for( ptr = debugger_breakpoints; ptr; ptr = ptr->next ) {
+
+      debugger_breakpoint *bp = ptr->data;
+
+      switch( bp->type ) {
+
+      case DEBUGGER_BREAKPOINT_TYPE_EXECUTE:
+      case DEBUGGER_BREAKPOINT_TYPE_READ:
+      case DEBUGGER_BREAKPOINT_TYPE_WRITE:
+        if ( bp->value.address.offset == address ) {
+          snprintf( buffer[DISASSEMBLY_COLUMN_BREAKPOINT], sizeof( buffer[DISASSEMBLY_COLUMN_BREAKPOINT] ), "%lu", bp->id);
+        }
+        break;
+      default:
+        break;
+      }
+    }
+
+    snprintf( buffer[DISASSEMBLY_COLUMN_ADDRESS], sizeof( buffer[DISASSEMBLY_COLUMN_ADDRESS] ), format_16_bit(), address );
+    debugger_disassemble( buffer[DISASSEMBLY_COLUMN_INSTRUCTION], sizeof( buffer[DISASSEMBLY_COLUMN_INSTRUCTION] ), &length, address );
 
     /* pad to 16 characters (long instruction) to avoid varying width */
-    l = strlen( buffer2 );
-    while( l < 16 ) buffer2[l++] = ' ';
-    buffer2[l] = 0;
+    l = strlen( buffer[DISASSEMBLY_COLUMN_INSTRUCTION] );
+    while( l < 16 ) buffer[DISASSEMBLY_COLUMN_INSTRUCTION][l++] = ' ';
+    buffer[DISASSEMBLY_COLUMN_INSTRUCTION][l] = 0;
 
     gtk_list_store_append( disassembly_model, &it );
-    gtk_list_store_set( disassembly_model, &it, DISASSEMBLY_COLUMN_ADDRESS, buffer1, DISASSEMBLY_COLUMN_INSTRUCTION, buffer2, -1 );
+    gtk_list_store_set( disassembly_model, &it,
+      DISASSEMBLY_COLUMN_PC, buffer[DISASSEMBLY_COLUMN_PC], DISASSEMBLY_COLUMN_BREAKPOINT, buffer[DISASSEMBLY_COLUMN_BREAKPOINT],
+      DISASSEMBLY_COLUMN_ADDRESS, buffer[DISASSEMBLY_COLUMN_ADDRESS], DISASSEMBLY_COLUMN_INSTRUCTION, buffer[DISASSEMBLY_COLUMN_INSTRUCTION], 
+      -1 );
 
     address += length;
   }
@@ -1346,6 +1844,36 @@ disassembly_wheel_scroll( GtkTreeView *list GCC_UNUSED, GdkEvent *event,
 
   return FALSE;
 }
+
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+static void
+debugger_goto_offset( GtkWidget *widget, gpointer user_data GCC_UNUSED )
+{
+  long offset;
+  const gchar *entry;
+  char *endptr;
+  int base_num;
+
+  if( gtk_entry_get_text_length( GTK_ENTRY( widget ) ) == 0 ) {
+    ui_debugger_disassemble( PC );  
+    return;
+  }
+
+  /* Parse address */
+  entry = gtk_entry_get_text( GTK_ENTRY( widget ) );
+  errno = 0;
+  base_num = ( g_str_has_prefix( entry, "0x" ) )? 16 : 10;
+  offset = strtol( entry, &endptr, base_num );
+
+  /* Validate address */
+  if( errno || offset < 0 || offset > 65535 || endptr == entry ||
+      *endptr != '\0' ) {
+    return;
+  }
+
+  ui_debugger_disassemble( offset );  
+}
+#endif
 
 /* Evaluate the command currently in the entry box */
 static void

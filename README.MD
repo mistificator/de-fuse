@@ -1,3 +1,12 @@
+Dirty patched fork of old Fuse version for Debian
+
+![image](https://github.com/mistificator/de-fuse/assets/2280081/0ec9ef12-54d7-4eb2-84d2-81cd1323199b)
+![image](https://github.com/mistificator/de-fuse/assets/2280081/34f8ea19-b3f0-421b-9a54-5000915d1901)
+![image](https://github.com/mistificator/de-fuse/assets/2280081/61dac719-3acc-4e24-bd7b-5fb1b603fbc4)
+
+Original Fuse README goes below
+============================================
+
 The Free Unix Spectrum Emulator (Fuse) 1.6.0
 ============================================
 

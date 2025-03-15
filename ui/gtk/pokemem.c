@@ -77,7 +77,7 @@ void custom_value_changed( GtkCellRendererText *cell, gchar *path_string,
                            gchar *new_text, gpointer user_data );
 
 void
-menu_machine_pokememory( GtkAction *gtk_action GCC_UNUSED,
+menu_debug_pokememory( GtkAction *gtk_action GCC_UNUSED,
                          gpointer data GCC_UNUSED )
 {
   fuse_emulation_pause();
@@ -105,7 +105,7 @@ create_dialog( void )
   GtkWidget *hbox, *vbox, *label, *scroll;
   GtkAccelGroup *accel_group;
 
-  dialog = gtkstock_dialog_new( "Fuse - Poke Memory",
+  dialog = gtkstock_dialog_new( "De-Fuse - Poke Memory",
                                 G_CALLBACK( pokemem_close ) );
 
   vbox = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );

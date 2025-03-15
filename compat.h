@@ -170,7 +170,7 @@ int compat_get_tap( const char *interface_name );
 
 /* Socket handling */
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(__GNUC__)
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #define COMPAT_ENOTCONN WSAENOTCONN

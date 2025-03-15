@@ -36,8 +36,8 @@
 #include "utils.h"
 
 #define DISK_TRY_MERGE(heads) \
-  ( option_enumerate_diskoptions_disk_try_merge() == 2 || \
-    ( option_enumerate_diskoptions_disk_try_merge() == 1 && heads == 1 ) )
+  ( option_enumerate_internals_diskettes_disk_try_merge() == 2 || \
+    ( option_enumerate_internals_diskettes_disk_try_merge() == 1 && heads == 1 ) )
 
 static GSList *registered_drives = NULL;
 
@@ -238,7 +238,7 @@ drive_save( const ui_media_drive_info_t *drive, int saveas )
 
   fuse_emulation_pause();
 
-  snprintf( title, sizeof( title ), "Fuse - Write %s", drive->name );
+  snprintf( title, sizeof( title ), "De-Fuse - Write %s", drive->name );
   if( saveas ) {
     filename = ui_get_save_filename( title );
     if( !filename ) {

@@ -23,6 +23,20 @@
             speed is set very high (Pete Moore)
 
 2021-02-27  Philip Kendall  <philip-fuse@shadowmagic.org.uk>
+2024-02-xx  ZXLDR  <ZXLDR@yandex.ru>
+
+        * De-Fuse 1.6.0+ in progress.
+
+        * New features:
+          * Added new DivMMC firmware partial support (ZXLDR).
+            https://github.com/mprato/DivMMC/blob/master/docs/Divmmc_allram_manual.txt
+          * Added kind of gigascreen mode (ZXLDR).
+
+        * UI improvements:
+          * GTK UI: Heavily refactored debugger, now with context menus,
+          breakpoints toggling and disassembly colorization (ZXLDR).
+          * GTK UI: Refactored memory browser (ZXLDR).
+          * GTK UI: Refactored main window menu (ZXLDR).
 
         * Fuse 1.6.0 released.
 

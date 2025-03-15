@@ -35,10 +35,15 @@
 static const libspectrum_byte DIVXXX_CONTROL_CONMEM = 0x80;
 static const libspectrum_byte DIVXXX_CONTROL_MAPRAM = 0x40;
 
+static const libspectrum_byte DIVXXX_CONTROL2_ALLRAM = 0x80;
+static const libspectrum_byte DIVXXX_CONTROL2_WRLOCK = 0x40;
+static const libspectrum_byte DIVXXX_CONTROL2_MAPDISABLE = 0x20;
+static const libspectrum_byte DIVXXX_CONTROL2_MAPRAM_PAGE = 0x10;
+
 #define DIVXXX_PAGE_LENGTH 0x2000
 
 struct divxxx_t {
-  libspectrum_byte control;
+  libspectrum_byte control, control2;
 
   int active;
 
@@ -80,6 +85,7 @@ divxxx_alloc( const char *eprom_source_name, size_t ram_page_count,
   divxxx_t *divxxx = libspectrum_new( divxxx_t, 1 );
 
   divxxx->control = 0;
+  divxxx->control2 = 0;
   divxxx->active = 0;
   divxxx->automap = 0;
 
@@ -138,6 +144,12 @@ divxxx_get_control( divxxx_t *divxxx )
   return divxxx->control;
 }
 
+libspectrum_byte
+divxxx_get_control2( divxxx_t *divxxx )
+{
+  return divxxx->control2;
+}
+
 int
 divxxx_get_active( divxxx_t *divxxx )
 {
@@ -188,6 +200,7 @@ divxxx_reset( divxxx_t *divxxx, int hard_reset )
 
   if( hard_reset ) {
     divxxx->control = 0;
+    divxxx->control2 = 0;
 
     if( divxxx->ram ) {
       for( i = 0; i < divxxx->ram_page_count; i++ )
@@ -249,6 +262,19 @@ divxxx_control_write_internal( divxxx_t *divxxx, libspectrum_byte data )
 }
 
 void
+divxxx_control2_write( divxxx_t *divxxx, libspectrum_byte data )
+{
+  divxxx_control2_write_internal( divxxx, data );
+}
+
+void
+divxxx_control2_write_internal( divxxx_t *divxxx, libspectrum_byte data )
+{
+  divxxx->control2 = data;
+  divxxx_refresh_page_state( divxxx );
+}
+
+void
 divxxx_set_automap( divxxx_t *divxxx, int automap )
 {
   divxxx->automap = automap;
@@ -264,7 +290,7 @@ divxxx_refresh_page_state( divxxx_t *divxxx )
   } else if( *divxxx->write_protect
     || ( divxxx->control & DIVXXX_CONTROL_MAPRAM ) ) {
     /* automap in effect */
-    if( divxxx->automap ) {
+    if( divxxx->automap && ( ( divxxx->control2 & DIVXXX_CONTROL2_MAPDISABLE ) == 0) ) {
       divxxx_page( divxxx );
     } else {
       divxxx_unpage( divxxx );
@@ -278,30 +304,31 @@ void
 divxxx_memory_map( divxxx_t *divxxx )
 {
   int i;
-  int upper_ram_page;
+  int lower_ram_page, upper_ram_page;
   int lower_page_writable, upper_page_writable;
   memory_page *lower_page, *upper_page;
 
   if( !divxxx->active ) return;
 
+  lower_ram_page = ( divxxx->control2 & DIVXXX_CONTROL2_MAPRAM_PAGE ) ? divxxx->ram_page_count - 5 : 3;
   upper_ram_page = divxxx->control & (divxxx->ram_page_count - 1);
   
   if( divxxx->control & DIVXXX_CONTROL_CONMEM ) {
     lower_page = divxxx->memory_map_eprom;
-    lower_page_writable = !*divxxx->write_protect;
+    lower_page_writable = !*divxxx->write_protect && ( divxxx->control2 & DIVXXX_CONTROL2_WRLOCK ) == 0;
     upper_page = divxxx->memory_map_ram[ upper_ram_page ];
-    upper_page_writable = 1;
+    upper_page_writable = ( divxxx->control2 & DIVXXX_CONTROL2_WRLOCK ) == 0;
   } else {
     if( divxxx->control & DIVXXX_CONTROL_MAPRAM ) {
-      lower_page = divxxx->memory_map_ram[3];
+      lower_page = divxxx->memory_map_ram[ lower_ram_page ];
       lower_page_writable = 0;
       upper_page = divxxx->memory_map_ram[ upper_ram_page ];
-      upper_page_writable = ( upper_ram_page != 3 );
+      upper_page_writable = ( upper_ram_page != lower_ram_page ) && ( divxxx->control2 & DIVXXX_CONTROL2_WRLOCK ) == 0;
     } else {
       lower_page = divxxx->memory_map_eprom;
       lower_page_writable = 0;
       upper_page = divxxx->memory_map_ram[ upper_ram_page ];
-      upper_page_writable = 1;
+      upper_page_writable = ( divxxx->control2 & DIVXXX_CONTROL2_WRLOCK ) == 0;
     }
   }
 

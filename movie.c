@@ -304,7 +304,7 @@ movie_start_fmf( const char *name )
   fwrite( "FMF_V1e", 7, 1, of );	/* write magic header Fuse Movie File */
 #endif	/* WORDS_BIGENDIAN */
 #ifdef HAVE_ZLIB_H
-  if( option_enumerate_movie_movie_compr() == 0 ) {
+  if( option_enumerate_recording_movie_movie_compr() == 0 ) {
     fmf_compr = 0;
     fwrite( "U", 1, 1, of );		/* not compressed */
   } else {
@@ -404,7 +404,7 @@ void
 movie_init_sound( int f, int s )
 {
   /* initialise sound format */
-  format = option_enumerate_movie_movie_compr() == 2 ? 'A' : 'P';
+  format = option_enumerate_recording_movie_movie_compr() == 2 ? 'A' : 'P';
   freq = f;
   stereo = ( s ? 'S' : 'M' );
   framesiz = ( stereo == 'S' ? 2 : 1 ) * ( format == 'P' ? 2 : 1 );

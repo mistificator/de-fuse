@@ -426,13 +426,13 @@ static const fdd_params_t *
 ui_drive_get_params_a( void )
 {
   /* +1 => there is no `Disabled' */
-  return &fdd_params[ option_enumerate_diskoptions_drive_didaktik80a_type() + 1 ];
+  return &fdd_params[ option_enumerate_internals_diskettes_drive_didaktik80a_type() + 1 ];
 }
 
 static const fdd_params_t *
 ui_drive_get_params_b( void )
 {
-  return &fdd_params[ option_enumerate_diskoptions_drive_didaktik80b_type() ];
+  return &fdd_params[ option_enumerate_internals_diskettes_drive_didaktik80b_type() ];
 }
 
 static ui_media_drive_info_t didaktik_ui_drives[ DIDAKTIK80_NUM_DRIVES ] = {
@@ -544,7 +544,7 @@ didaktik_to_snapshot( libspectrum_snap *snap )
   libspectrum_snap_set_didaktik80_ram( snap, 0, buffer );
 
   drive_count++; /* Drive 1 is not removable */
-  if( option_enumerate_diskoptions_drive_didaktik80b_type() > 0 ) drive_count++;
+  if( option_enumerate_internals_diskettes_drive_didaktik80b_type() > 0 ) drive_count++;
   libspectrum_snap_set_didaktik80_drive_count( snap, drive_count );
 
   libspectrum_snap_set_didaktik80_paged ( snap, didaktik80_active );

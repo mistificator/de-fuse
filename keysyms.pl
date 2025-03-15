@@ -4,6 +4,7 @@
 # Copyright (c) 2000-2013 Philip Kendall, Matan Ziv-Av, Russell Marks,
 #			  Fredrick Meunier, Catalin Mihaila, Stuart Brady
 # Copyright (c) 2015 Sergio Baldoví
+# Copyright (c) 2024 ZXLDR
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +34,20 @@ my $ui = shift;
 $ui = 'gtk' unless defined $ui;
 
 die "$0: unrecognised user interface: $ui\n"
-  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'fb', 'sdl', 'win32', 'wii' );
+  unless 0 < grep { $ui eq $_ } ( 'gtk', 'x', 'fb', 'sdl', 'win32', 'wii', 'qt' );
+
+sub qt_keysym ($) {
+    my $keysym = shift;
+
+#    $keysym =~ tr/a-z/A-Z/;
+
+#    $keysym = lc $keysym;
+    $keysym = join " ", map {ucfirst} split / /, $keysym;
+
+    $keysym = "Qt::Key_$keysym";
+
+    return $keysym;
+}
 
 sub fb_keysym ($) {
 
@@ -104,6 +118,33 @@ sub win32_keysym ($) {
 
 # Parameters for each UI
 my %ui_data = (
+
+    qt   => { headers => [ 'ui/qt/qt_ui.hpp' ],
+	      # max_length not used
+	      skips => { map { $_ => 1 } 
+          ( 'Hyper_L', 'Super_L', 'Super_R', 'Hyper_R',
+          'parenleft', 'parenright', 'bracketleft', 'bracketright', 
+          'asciicircum', 'dead_circumflex', 'braceleft', 'braceright', 'asciitilde' ) },
+	      unicode_skips => { },                     
+	      translations => { 
+            Caps_Lock => 'CapsLock',
+            BackSpace => 'Backspace',
+            quotedbl => 'QuoteDbl',
+            numbersign => 'NumberSign',
+            KP_Enter => 'Enter',
+            Alt_L => 'Alt',
+            Alt_R => 'Alt',
+            Meta_L => 'Meta',
+            Meta_R=> 'Meta',
+            Shift_L => 'Shift',
+            Shift_R => 'Shift',
+            Control_R => 'Control',
+            Control_L => 'Control',
+            Page_Up => 'PageUp',
+            Page_Down => 'PageDown'
+           },
+	      function => \&qt_keysym
+	    },
 
     fb   => { headers => [ ],
 	      # max_length not used

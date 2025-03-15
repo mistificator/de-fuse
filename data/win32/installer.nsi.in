@@ -22,11 +22,11 @@
 
 !define FUSE_VERSION "@PACKAGE_VERSION@" ; could have letters like -RC1
 !define FUSE_FULL_VERSION "@FUSE_FULL_VERSION@" ; must have four numeric tokens
-!define DISPLAY_NAME "the Free Unix Spectrum Emulator (Fuse) ${FUSE_VERSION}"
+!define DISPLAY_NAME "De-Fuse (based on the Free Unix Spectrum Emulator (Fuse)) ${FUSE_VERSION}"
 !define SETUP_FILENAME "@PACKAGE@-${FUSE_VERSION}-win32-setup"
 !define SETUP_FILE "${SETUP_FILENAME}.exe"
-!define HKLM_REG_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\Fuse"
-!define PROG_ID "Fuse.Files.1"
+!define HKLM_REG_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\De-Fuse"
+!define PROG_ID "DeFuse.Files.1"
 
 ;Include Modern UI
 !include "MUI2.nsh"
@@ -40,7 +40,7 @@ Name "${DISPLAY_NAME}"
 outFile "${SETUP_FILE}"
 Caption "${DISPLAY_NAME}"
  
-installDir "$PROGRAMFILES\Fuse"
+installDir "$PROGRAMFILES\De-Fuse"
 
 ; [Additional Installer Settings ]
 XPStyle on
@@ -63,7 +63,7 @@ SetCompressor lzma
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\fuse.exe"
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\de-fuse.exe"
   !define MUI_FINISHPAGE_NOREBOOTSUPPORT
   !insertmacro MUI_PAGE_FINISH
   
@@ -87,10 +87,10 @@ SetCompressor lzma
   VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" ""
   VIAddVersionKey /LANG=${LANG_ENGLISH} "InternalName" "${SETUP_FILENAME}"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "@FUSE_COPYRIGHT@"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Fuse"
+  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "De-Fuse"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "${FUSE_VERSION}"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "OriginalFilename" "${SETUP_FILE}"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Fuse - the Free Unix Spectrum Emulator"
+  VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "De-Fuse is based on Fuse - the Free Unix Spectrum Emulator"
   VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "${FUSE_VERSION}"
 
 ;--------------------------------
@@ -126,7 +126,7 @@ SetCompressor lzma
   Push $0
 
   ReadRegStr $0 HKLM "Software\Classes\$R0" ""
-  ;Select if already associated with FUSE, i.e., reinstallation
+  ;Select if already associated with DE-FUSE, i.e., reinstallation
   StrCmp $0 "${PROG_ID}" Select 0 
   ;Select if available
   StrCmp $0 "" Select NoSelect
@@ -144,7 +144,7 @@ NoSelect:
   Exch $R0 ;extension
   Push $0
 
-  ; Recommend Fuse in the Open With list
+  ; Recommend De-Fuse in the Open With list
   WriteRegStr HKLM "Software\Classes\$R0\OpenWithProgids" "${PROG_ID}" ""
 
   ; Read global file association
@@ -236,10 +236,10 @@ SectionEnd
 ;--------------------------------
 ; start default section
 
-section "!Fuse Core Files (required)" SecCore
+section "!De-Fuse Core Files (required)" SecCore
 
     SectionIn RO
-    DetailPrint "Installing Fuse Core Files..."
+    DetailPrint "Installing De-Fuse Core Files..."
  
     ; set the installation directory as the destination for the following actions
     setOutPath "$INSTDIR"
@@ -248,7 +248,7 @@ section "!Fuse Core Files (required)" SecCore
     File "AUTHORS.txt"
     File "ChangeLog.txt"
     File "COPYING.txt"
-    File "fuse.exe"
+    File "de-fuse.exe"
     File "fuse.html"
     File /nonfatal "LICENSES.txt"
     File /nonfatal "manual*.png"
@@ -283,12 +283,12 @@ sectionEnd
 section "Start Menu and Desktop links" SecShortcuts
 
     DetailPrint "Creating Shortcuts..."
-    CreateDirectory "$SMPROGRAMS\Fuse"
-    CreateShortCut "$SMPROGRAMS\Fuse\Fuse.lnk" "$INSTDIR\fuse.exe"
-    CreateShortCut "$SMPROGRAMS\Fuse\Manual.lnk" "$INSTDIR\fuse.html"
-    CreateShortCut "$SMPROGRAMS\Fuse\Readme.lnk" "$INSTDIR\README.txt"
-    CreateShortCut "$SMPROGRAMS\Fuse\Uninstall.lnk" "$INSTDIR\uninstall.exe"
-    CreateShortCut "$DESKTOP\Fuse.lnk" "$INSTDIR\fuse.exe"
+    CreateDirectory "$SMPROGRAMS\De-Fuse"
+    CreateShortCut "$SMPROGRAMS\De-Fuse\De-Fuse.lnk" "$INSTDIR\de-fuse.exe"
+    CreateShortCut "$SMPROGRAMS\De-Fuse\Manual.lnk" "$INSTDIR\fuse.html"
+    CreateShortCut "$SMPROGRAMS\De-Fuse\Readme.lnk" "$INSTDIR\README.txt"
+    CreateShortCut "$SMPROGRAMS\De-Fuse\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+    CreateShortCut "$DESKTOP\De-Fuse.lnk" "$INSTDIR\de-fuse.exe"
 
 sectionEnd
 
@@ -307,9 +307,9 @@ SectionGroupEnd
 
 Section "-Register Application"
   WriteRegStr HKLM "Software\Classes\${PROG_ID}\shell" "" "open"
-  WriteRegStr HKLM "Software\Classes\${PROG_ID}\DefaultIcon" "" "$INSTDIR\fuse.exe,0"
-  WriteRegStr HKLM "Software\Classes\${PROG_ID}\shell\open\command" "" '"$INSTDIR\fuse.exe" "%1"'
-  WriteRegStr HKLM "Software\Classes\Applications\fuse.exe" "NoOpenWith" ""
+  WriteRegStr HKLM "Software\Classes\${PROG_ID}\DefaultIcon" "" "$INSTDIR\de-fuse.exe,0"
+  WriteRegStr HKLM "Software\Classes\${PROG_ID}\shell\open\command" "" '"$INSTDIR\de-fuse.exe" "%1"'
+  WriteRegStr HKLM "Software\Classes\Applications\de-fuse.exe" "NoOpenWith" ""
 
   System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
 SectionEnd
@@ -342,18 +342,18 @@ section "uninstall"
 
     ; Unregister Application
     DeleteRegKey HKLM "Software\Classes\${PROG_ID}"
-    DeleteRegKey HKLM "Software\Classes\Applications\fuse.exe"
+    DeleteRegKey HKLM "Software\Classes\Applications\de-fuse.exe"
 
     System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
 	
     ; Delete the links
     DetailPrint "Deleting Shortcuts..."
-    Delete "$SMPROGRAMS\Fuse\Fuse.lnk"
-    Delete "$SMPROGRAMS\Fuse\Manual.lnk"
-    Delete "$SMPROGRAMS\Fuse\Readme.lnk"
-    Delete "$SMPROGRAMS\Fuse\Uninstall.lnk"
-    RMDir  "$SMPROGRAMS\Fuse"
-    Delete "$DESKTOP\Fuse.lnk"
+    Delete "$SMPROGRAMS\De-Fuse\De-Fuse.lnk"
+    Delete "$SMPROGRAMS\De-Fuse\Manual.lnk"
+    Delete "$SMPROGRAMS\De-Fuse\Readme.lnk"
+    Delete "$SMPROGRAMS\De-Fuse\Uninstall.lnk"
+    RMDir  "$SMPROGRAMS\De-Fuse"
+    Delete "$DESKTOP\De-Fuse.lnk"
 
     ; Installation files
     DetailPrint "Deleting Files..."
@@ -364,7 +364,7 @@ section "uninstall"
     Delete "$INSTDIR\AUTHORS.txt"
     Delete "$INSTDIR\ChangeLog.txt"
     Delete "$INSTDIR\COPYING.txt"
-    Delete "$INSTDIR\fuse.exe"
+    Delete "$INSTDIR\de-fuse.exe"
     Delete "$INSTDIR\fuse.html"
     Delete "$INSTDIR\manual*.png"
     Delete "$INSTDIR\README.txt"
@@ -375,19 +375,19 @@ section "uninstall"
     ; Delete the uninstaller and remove the uninstall keys for Windows
     DetailPrint "Deleting Uninstaller..."
     Delete "$INSTDIR\uninstall.exe"
-    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Fuse"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\De-Fuse"
 
 sectionEnd
 
 Function un.DeleteConfigFile
-    Delete "$PROFILE\fuse.cfg"
+    Delete "$PROFILE\de-fuse.cfg"
 FunctionEnd
 
 ;--------------------------------
 ;Descriptions
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use Fuse (program, libraries, ROMs, etc.)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use De-Fuse (program, libraries, ROMs, etc.)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} "Adds icons to your start menu and your desktop for easy access"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecFileExt} "Register common file extensions with Fuse: pzx, rzx, sna, szx, tap, tzx and z80"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecFileExt} "Register common file extensions with De-Fuse: pzx, rzx, sna, szx, tap, tzx and z80"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END

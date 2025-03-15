@@ -71,7 +71,7 @@ ui_pokemem_selector( const char *filename )
   fuse_emulation_pause();
 
   pokemem_read_from_file( filename );
-  menu_machine_pokememory( 0 );
+  menu_debug_pokememory( 0 );
 
   fuse_emulation_unpause();
 }

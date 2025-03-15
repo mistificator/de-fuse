@@ -40,8 +40,8 @@
 #include "menu.h"
 #include "ui/ui.h"
 
-#define VIEW_NUM_ROWS 20
-#define VIEW_NUM_COLS 16
+#define VIEW_NUM_ROWS 32
+#define VIEW_NUM_COLS 32
 
 static libspectrum_word memaddr = 0x0000;
 
@@ -79,8 +79,9 @@ textview_wheel_scroll_event( GtkWidget *widget, GdkEvent *event, gpointer user_d
 
       if( gdk_event_get_scroll_deltas( event, &dx, &dy ) ) {
         total_dy += dy;
-        page_size = gtk_adjustment_get_page_size( adjustment );
-        delta = total_dy * pow( page_size, 2.0 / 3.0 );
+//        page_size = gtk_adjustment_get_page_size( adjustment );
+//        delta = total_dy * pow( page_size, 2.0 / 3.0 );
+        delta = total_dy * VIEW_NUM_COLS;
 
         /* Is movement significative? */
         if( delta ) {
@@ -325,7 +326,7 @@ goto_offset( GtkWidget *widget GCC_UNUSED, gpointer user_data GCC_UNUSED )
 #endif
 
 void
-menu_machine_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
+menu_debug_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
                             gpointer data GCC_UNUSED )
 {
   GtkWidget *dialog, *content_area, *scrollbar, *label, *offset;
@@ -337,7 +338,7 @@ menu_machine_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
 
   fuse_emulation_pause();
 
-  dialog = gtkstock_dialog_new( "Fuse - Memory Browser", NULL );
+  dialog = gtkstock_dialog_new( "De-Fuse - Memory Browser", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
   /* Keyboard shortcuts */

@@ -20,9 +20,9 @@
 ##
 ## E-mail: philip-fuse@shadowmagic.org.uk
 
-fuse_SOURCES += sound/blipbuffer.c
+de_fuse_SOURCES += sound/blipbuffer.c
 
-EXTRA_fuse_SOURCES += \
+EXTRA_de_fuse_SOURCES += \
                       sound/alsasound.c \
                       sound/aosound.c \
                       sound/coreaudiosound.c \
@@ -41,5 +41,33 @@ noinst_HEADERS += \
                   sound/blipbuffer.h \
                   sound/sfifo.h
 
-fuse_DEPENDENCIES += $(SOUND_LIBADD)
-fuse_LDADD += $(SOUND_LIBS) $(SOUND_LIBADD)
+de_fuse_DEPENDENCIES += $(SOUND_LIBADD)
+de_fuse_LDADD += $(SOUND_LIBS) $(SOUND_LIBADD)
+
+
+## Qt part
+
+sound_qt_built = \
+                sound/moc_qtsound.cpp
+
+CLEANFILES += $(sound_qt_built)
+
+if USE_QT
+
+de_fuse_SOURCES += $(sound_qt_files)
+
+BUILT_SOURCES += $(sound_qt_built)
+
+sound_qt_files = \
+                sound/moc_qtsound.cpp \
+                sound/qtsound.cpp
+
+## QT_CXXFLAGS = @QT_CXXFLAGS@
+## QT_LIBS     = @QT_LIBS@
+## MOC         = @QT_MOC@
+
+sound/moc_qtsound.cpp: $(srcdir)/sound/qtsound.hpp
+	$(AM_V_GEN)$(MOC) $(srcdir)/sound/qtsound.hpp > $@.tmp && mv $@.tmp $@
+
+endif
+

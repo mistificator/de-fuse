@@ -67,7 +67,7 @@ menu_file_loadbinarydata( int action )
 
   fuse_emulation_pause();
 
-  info.dialog_title = (TCHAR *) TEXT( "Fuse - Load Binary Data" );
+  info.dialog_title = (TCHAR *) TEXT( "De-Fuse - Load Binary Data" );
   
   info.filename = ui_get_open_filename( info.dialog_title );
   if( !info.filename ) { fuse_emulation_unpause(); return; }
@@ -149,7 +149,7 @@ change_load_filename( HWND hwndDlg, LONG_PTR user_data )
   TCHAR buffer[80];
   int error;
 
-  new_filename = ui_get_open_filename( "Fuse - Load Binary Data" );
+  new_filename = ui_get_open_filename( "De-Fuse - Load Binary Data" );
   if( !new_filename ) return;
 
   error = utils_read_file( new_filename, &new_file );
@@ -249,7 +249,7 @@ menu_file_savebinarydata( int action )
 
   fuse_emulation_pause();
 
-  info.dialog_title = (TCHAR *) TEXT( "Fuse - Save Binary Data" );
+  info.dialog_title = (TCHAR *) TEXT( "De-Fuse - Save Binary Data" );
 
   info.filename = ui_get_save_filename( info.dialog_title );
   if( !info.filename ) { fuse_emulation_unpause(); return; }
@@ -273,7 +273,7 @@ change_save_filename( HWND hwndDlg, LONG_PTR user_data )
   struct binary_info *info = ( struct binary_info * ) user_data;
   TCHAR *new_filename;
 
-  new_filename = ui_get_save_filename( "Fuse - Save Binary Data" );
+  new_filename = ui_get_save_filename( "De-Fuse - Save Binary Data" );
   if( !new_filename ) return;
 
   free( info->filename );

@@ -446,7 +446,7 @@ creator_init( void *context )
 
   fuse_creator = libspectrum_creator_alloc();
 
-  error = libspectrum_creator_set_program( fuse_creator, "Fuse" );
+  error = libspectrum_creator_set_program( fuse_creator, "De-Fuse" );
   if( error ) { libspectrum_creator_free( fuse_creator ); return error; }
 
   error = libspectrum_creator_set_major( fuse_creator,
@@ -511,7 +511,7 @@ static void fuse_show_copyright(void)
 
 static void fuse_show_version( void )
 {
-  printf( "The Free Unix Spectrum Emulator (Fuse) version " VERSION ".\n" );
+  printf( "De-Fuse (based on the Free Unix Spectrum Emulator, Fuse) version " VERSION ".\n" );
 
   fuse_show_test_build_info();
 }

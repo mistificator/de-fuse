@@ -154,7 +154,7 @@ menu_options_$_->{name}( GtkWidget *widget GCC_UNUSED,
   fuse_emulation_pause();
 
   /* Create the necessary widgets */
-  dialog.dialog = gtkstock_dialog_new( "Fuse - $_->{title}", NULL );
+  dialog.dialog = gtkstock_dialog_new( "De-Fuse - $_->{title}", NULL );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog.dialog ) );
 
   /* Create the various widgets */

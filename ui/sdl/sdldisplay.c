@@ -300,7 +300,7 @@ uidisplay_init( int width, int height )
 
   if( sdldisplay_load_gfx_mode() ) return 1;
 
-  SDL_WM_SetCaption( "Fuse", "Fuse" );
+  SDL_WM_SetCaption( "De-Fuse (based on Fuse)", "De-Fuse (based on Fuse)" );
 
   /* We can now output error messages to our output device */
   display_ui_initialised = 1;

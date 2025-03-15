@@ -22,7 +22,7 @@
 
 if UI_FB
 
-fuse_SOURCES += $(ui_fb_files)
+de_fuse_SOURCES += $(ui_fb_files)
 
 BUILT_SOURCES += $(ui_fb_built)
 

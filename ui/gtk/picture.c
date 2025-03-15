@@ -100,7 +100,7 @@ gtkui_picture( const char *filename, int border GCC_UNUSED )
       return 1;
     }
 
-    dialog = gtkstock_dialog_new( "Fuse - Keyboard",
+    dialog = gtkstock_dialog_new( "De-Fuse - Keyboard",
 				  G_CALLBACK( gtk_widget_hide ) );
   
     content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );

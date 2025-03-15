@@ -235,8 +235,8 @@ static const struct menu_item_entries menu_item_lookup[] = {
     "/File/Movie/Continue", 1,
   },
   
-  { UI_MENU_ITEM_MACHINE_PROFILER, "/Machine/Profiler/Stop",
-    "/Machine/Profiler/Start", 1 },
+  { UI_MENU_ITEM_MACHINE_PROFILER, "/Debug/Profiler/Stop",
+    "/Debug/Profiler/Start", 1 },
 
   { UI_MENU_ITEM_MACHINE_MULTIFACE, "/Machine/Multiface Red Button" },
 
@@ -345,305 +345,305 @@ static const struct menu_item_entries menu_item_lookup[] = {
   { UI_MENU_ITEM_MEDIA_CARTRIDGE_IF2_EJECT,
     "/Media/Cartridge/Interface 2/Eject" },
 
-  { UI_MENU_ITEM_MEDIA_DISK, "/Media/Disk" },
+  { UI_MENU_ITEM_MEDIA_DISK, "/Media/Diskette" },
 
-  { UI_MENU_ITEM_MEDIA_DISK_PLUS3, "/Media/Disk/+3" },
+  { UI_MENU_ITEM_MEDIA_DISK_PLUS3, "/Media/Diskette/+3" },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUS3_A_EJECT,
-    "/Media/Disk/+3/Drive A:/Eject",
-    "/Media/Disk/+3/Drive A:/Save As...", 0,
-    "/Media/Disk/+3/Drive A:/Save", 0,
-    "/Media/Disk/+3/Drive A:/Flip disk", 0,
-    "/Media/Disk/+3/Drive A:/Write protect", 0 },
+    "/Media/Diskette/+3/Drive A:/Eject",
+    "/Media/Diskette/+3/Drive A:/Save As...", 0,
+    "/Media/Diskette/+3/Drive A:/Save", 0,
+    "/Media/Diskette/+3/Drive A:/Flip disk", 0,
+    "/Media/Diskette/+3/Drive A:/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUS3_A_FLIP_SET,
-    "/Media/Disk/+3/Drive A:/Flip disk/Turn upside down",
-    "/Media/Disk/+3/Drive A:/Flip disk/Turn back", 1 },
+    "/Media/Diskette/+3/Drive A:/Flip disk/Turn upside down",
+    "/Media/Diskette/+3/Drive A:/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUS3_A_WP_SET,
-    "/Media/Disk/+3/Drive A:/Write protect/Enable",
-    "/Media/Disk/+3/Drive A:/Write protect/Disable", 1 },
+    "/Media/Diskette/+3/Drive A:/Write protect/Enable",
+    "/Media/Diskette/+3/Drive A:/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_PLUS3_B, "/Media/Disk/+3/Drive B:" },
+  { UI_MENU_ITEM_MEDIA_DISK_PLUS3_B, "/Media/Diskette/+3/Drive B:" },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUS3_B_EJECT,
-    "/Media/Disk/+3/Drive B:/Eject",
-    "/Media/Disk/+3/Drive B:/Save As...", 0,
-    "/Media/Disk/+3/Drive B:/Save", 0,
-    "/Media/Disk/+3/Drive B:/Flip disk", 0,
-    "/Media/Disk/+3/Drive B:/Write protect", 0 },
+    "/Media/Diskette/+3/Drive B:/Eject",
+    "/Media/Diskette/+3/Drive B:/Save As...", 0,
+    "/Media/Diskette/+3/Drive B:/Save", 0,
+    "/Media/Diskette/+3/Drive B:/Flip disk", 0,
+    "/Media/Diskette/+3/Drive B:/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUS3_B_FLIP_SET,
-    "/Media/Disk/+3/Drive B:/Flip disk/Turn upside down",
-    "/Media/Disk/+3/Drive B:/Flip disk/Turn back", 1 },
+    "/Media/Diskette/+3/Drive B:/Flip disk/Turn upside down",
+    "/Media/Diskette/+3/Drive B:/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUS3_B_WP_SET,
-    "/Media/Disk/+3/Drive B:/Write protect/Enable",
-    "/Media/Disk/+3/Drive B:/Write protect/Disable", 1 },
+    "/Media/Diskette/+3/Drive B:/Write protect/Enable",
+    "/Media/Diskette/+3/Drive B:/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_BETA, "/Media/Disk/Beta" },
+  { UI_MENU_ITEM_MEDIA_DISK_BETA, "/Media/Diskette/Beta" },
 
-  { UI_MENU_ITEM_MEDIA_DISK_BETA_A, "/Media/Disk/Beta/Drive A:" },
+  { UI_MENU_ITEM_MEDIA_DISK_BETA_A, "/Media/Diskette/Beta/Drive A:" },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_A_EJECT,
-    "/Media/Disk/Beta/Drive A:/Eject",
-    "/Media/Disk/Beta/Drive A:/Save As...", 0,
-    "/Media/Disk/Beta/Drive A:/Save", 0,
-    "/Media/Disk/Beta/Drive A:/Flip disk", 0,
-    "/Media/Disk/Beta/Drive A:/Write protect", 0 },
+    "/Media/Diskette/Beta/Drive A:/Eject",
+    "/Media/Diskette/Beta/Drive A:/Save As...", 0,
+    "/Media/Diskette/Beta/Drive A:/Save", 0,
+    "/Media/Diskette/Beta/Drive A:/Flip disk", 0,
+    "/Media/Diskette/Beta/Drive A:/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_A_FLIP_SET,
-    "/Media/Disk/Beta/Drive A:/Flip disk/Turn upside down",
-    "/Media/Disk/Beta/Drive A:/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Beta/Drive A:/Flip disk/Turn upside down",
+    "/Media/Diskette/Beta/Drive A:/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_A_WP_SET,
-    "/Media/Disk/Beta/Drive A:/Write protect/Enable",
-    "/Media/Disk/Beta/Drive A:/Write protect/Disable", 1 },
+    "/Media/Diskette/Beta/Drive A:/Write protect/Enable",
+    "/Media/Diskette/Beta/Drive A:/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_BETA_B, "/Media/Disk/Beta/Drive B:" },
+  { UI_MENU_ITEM_MEDIA_DISK_BETA_B, "/Media/Diskette/Beta/Drive B:" },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_B_EJECT,
-    "/Media/Disk/Beta/Drive B:/Eject",
-    "/Media/Disk/Beta/Drive B:/Save As...", 0,
-    "/Media/Disk/Beta/Drive B:/Save", 0,
-    "/Media/Disk/Beta/Drive B:/Flip disk", 0,
-    "/Media/Disk/Beta/Drive B:/Write protect", 0 },
+    "/Media/Diskette/Beta/Drive B:/Eject",
+    "/Media/Diskette/Beta/Drive B:/Save As...", 0,
+    "/Media/Diskette/Beta/Drive B:/Save", 0,
+    "/Media/Diskette/Beta/Drive B:/Flip disk", 0,
+    "/Media/Diskette/Beta/Drive B:/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_B_FLIP_SET,
-    "/Media/Disk/Beta/Drive B:/Flip disk/Turn upside down",
-    "/Media/Disk/Beta/Drive B:/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Beta/Drive B:/Flip disk/Turn upside down",
+    "/Media/Diskette/Beta/Drive B:/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_B_WP_SET,
-    "/Media/Disk/Beta/Drive B:/Write protect/Enable",
-    "/Media/Disk/Beta/Drive B:/Write protect/Disable", 1 },
+    "/Media/Diskette/Beta/Drive B:/Write protect/Enable",
+    "/Media/Diskette/Beta/Drive B:/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_BETA_C, "/Media/Disk/Beta/Drive C:" },
+  { UI_MENU_ITEM_MEDIA_DISK_BETA_C, "/Media/Diskette/Beta/Drive C:" },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_C_EJECT,
-    "/Media/Disk/Beta/Drive C:/Eject",
-    "/Media/Disk/Beta/Drive C:/Save As...", 0,
-    "/Media/Disk/Beta/Drive C:/Save", 0,
-    "/Media/Disk/Beta/Drive C:/Flip disk", 0,
-    "/Media/Disk/Beta/Drive C:/Write protect", 0 },
+    "/Media/Diskette/Beta/Drive C:/Eject",
+    "/Media/Diskette/Beta/Drive C:/Save As...", 0,
+    "/Media/Diskette/Beta/Drive C:/Save", 0,
+    "/Media/Diskette/Beta/Drive C:/Flip disk", 0,
+    "/Media/Diskette/Beta/Drive C:/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_C_FLIP_SET,
-    "/Media/Disk/Beta/Drive C:/Flip disk/Turn upside down",
-    "/Media/Disk/Beta/Drive C:/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Beta/Drive C:/Flip disk/Turn upside down",
+    "/Media/Diskette/Beta/Drive C:/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_C_WP_SET,
-    "/Media/Disk/Beta/Drive C:/Write protect/Enable",
-    "/Media/Disk/Beta/Drive C:/Write protect/Disable", 1 },
+    "/Media/Diskette/Beta/Drive C:/Write protect/Enable",
+    "/Media/Diskette/Beta/Drive C:/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_BETA_D, "/Media/Disk/Beta/Drive D:" },
+  { UI_MENU_ITEM_MEDIA_DISK_BETA_D, "/Media/Diskette/Beta/Drive D:" },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_D_EJECT,
-    "/Media/Disk/Beta/Drive D:/Eject",
-    "/Media/Disk/Beta/Drive D:/Save As...", 0,
-    "/Media/Disk/Beta/Drive D:/Save", 0,
-    "/Media/Disk/Beta/Drive D:/Flip disk", 0,
-    "/Media/Disk/Beta/Drive D:/Write protect", 0 },
+    "/Media/Diskette/Beta/Drive D:/Eject",
+    "/Media/Diskette/Beta/Drive D:/Save As...", 0,
+    "/Media/Diskette/Beta/Drive D:/Save", 0,
+    "/Media/Diskette/Beta/Drive D:/Flip disk", 0,
+    "/Media/Diskette/Beta/Drive D:/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_D_FLIP_SET,
-    "/Media/Disk/Beta/Drive D:/Flip disk/Turn upside down",
-    "/Media/Disk/Beta/Drive D:/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Beta/Drive D:/Flip disk/Turn upside down",
+    "/Media/Diskette/Beta/Drive D:/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_BETA_D_WP_SET,
-    "/Media/Disk/Beta/Drive D:/Write protect/Enable",
-    "/Media/Disk/Beta/Drive D:/Write protect/Disable", 1 },
+    "/Media/Diskette/Beta/Drive D:/Write protect/Enable",
+    "/Media/Diskette/Beta/Drive D:/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_PLUSD, "/Media/Disk/+D" },
+  { UI_MENU_ITEM_MEDIA_DISK_PLUSD, "/Media/Diskette/+D" },
 
-  { UI_MENU_ITEM_MEDIA_DISK_PLUSD_1, "/Media/Disk/+D/Drive 1" },
+  { UI_MENU_ITEM_MEDIA_DISK_PLUSD_1, "/Media/Diskette/+D/Drive 1" },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_EJECT,
-    "/Media/Disk/+D/Drive 1/Eject",
-    "/Media/Disk/+D/Drive 1/Save As...", 0,
-    "/Media/Disk/+D/Drive 1/Save", 0,
-    "/Media/Disk/+D/Drive 1/Flip disk", 0,
-    "/Media/Disk/+D/Drive 1/Write protect", 0 },
+    "/Media/Diskette/+D/Drive 1/Eject",
+    "/Media/Diskette/+D/Drive 1/Save As...", 0,
+    "/Media/Diskette/+D/Drive 1/Save", 0,
+    "/Media/Diskette/+D/Drive 1/Flip disk", 0,
+    "/Media/Diskette/+D/Drive 1/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_FLIP_SET,
-    "/Media/Disk/+D/Drive 1/Flip disk/Turn upside down",
-    "/Media/Disk/+D/Drive 1/Flip disk/Turn back", 1 },
+    "/Media/Diskette/+D/Drive 1/Flip disk/Turn upside down",
+    "/Media/Diskette/+D/Drive 1/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUSD_1_WP_SET,
-    "/Media/Disk/+D/Drive 1/Write protect/Enable",
-    "/Media/Disk/+D/Drive 1/Write protect/Disable", 1 },
+    "/Media/Diskette/+D/Drive 1/Write protect/Enable",
+    "/Media/Diskette/+D/Drive 1/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_PLUSD_2, "/Media/Disk/+D/Drive 2" },
+  { UI_MENU_ITEM_MEDIA_DISK_PLUSD_2, "/Media/Diskette/+D/Drive 2" },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_EJECT,
-    "/Media/Disk/+D/Drive 2/Eject",
-    "/Media/Disk/+D/Drive 2/Save As...", 0,
-    "/Media/Disk/+D/Drive 2/Save", 0,
-    "/Media/Disk/+D/Drive 2/Flip disk", 0,
-    "/Media/Disk/+D/Drive 2/Write protect", 0 },
+    "/Media/Diskette/+D/Drive 2/Eject",
+    "/Media/Diskette/+D/Drive 2/Save As...", 0,
+    "/Media/Diskette/+D/Drive 2/Save", 0,
+    "/Media/Diskette/+D/Drive 2/Flip disk", 0,
+    "/Media/Diskette/+D/Drive 2/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_FLIP_SET,
-    "/Media/Disk/+D/Drive 2/Flip disk/Turn upside down",
-    "/Media/Disk/+D/Drive 2/Flip disk/Turn back", 1 },
+    "/Media/Diskette/+D/Drive 2/Flip disk/Turn upside down",
+    "/Media/Diskette/+D/Drive 2/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_PLUSD_2_WP_SET,
-    "/Media/Disk/+D/Drive 2/Write protect/Enable",
-    "/Media/Disk/+D/Drive 2/Write protect/Disable", 1 },
+    "/Media/Diskette/+D/Drive 2/Write protect/Enable",
+    "/Media/Diskette/+D/Drive 2/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK, "/Media/Disk/Didaktik 80" },
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK, "/Media/Diskette/Didaktik 80" },
 
-  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A, "/Media/Disk/Didaktik 80/Drive A" },
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A, "/Media/Diskette/Didaktik 80/Drive A" },
 
   { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A_EJECT,
-    "/Media/Disk/Didaktik 80/Drive A/Eject",
-    "/Media/Disk/Didaktik 80/Drive A/Save As...", 0,
-    "/Media/Disk/Didaktik 80/Drive A/Save", 0,
-    "/Media/Disk/Didaktik 80/Drive A/Flip disk", 0,
-    "/Media/Disk/Didaktik 80/Drive A/Write protect", 0 },
+    "/Media/Diskette/Didaktik 80/Drive A/Eject",
+    "/Media/Diskette/Didaktik 80/Drive A/Save As...", 0,
+    "/Media/Diskette/Didaktik 80/Drive A/Save", 0,
+    "/Media/Diskette/Didaktik 80/Drive A/Flip disk", 0,
+    "/Media/Diskette/Didaktik 80/Drive A/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A_FLIP_SET,
-    "/Media/Disk/Didaktik 80/Drive A/Flip disk/Turn upside down",
-    "/Media/Disk/Didaktik 80/Drive A/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Didaktik 80/Drive A/Flip disk/Turn upside down",
+    "/Media/Diskette/Didaktik 80/Drive A/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_A_WP_SET,
-    "/Media/Disk/Didaktik 80/Drive A/Write protect/Enable",
-    "/Media/Disk/Didaktik 80/Drive A/Write protect/Disable", 1 },
+    "/Media/Diskette/Didaktik 80/Drive A/Write protect/Enable",
+    "/Media/Diskette/Didaktik 80/Drive A/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B, "/Media/Disk/Didaktik 80/Drive B" },
+  { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B, "/Media/Diskette/Didaktik 80/Drive B" },
 
   { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B_EJECT,
-    "/Media/Disk/Didaktik 80/Drive B/Eject",
-    "/Media/Disk/Didaktik 80/Drive B/Save As...", 0,
-    "/Media/Disk/Didaktik 80/Drive B/Save", 0,
-    "/Media/Disk/Didaktik 80/Drive B/Flip disk", 0,
-    "/Media/Disk/Didaktik 80/Drive B/Write protect", 0 },
+    "/Media/Diskette/Didaktik 80/Drive B/Eject",
+    "/Media/Diskette/Didaktik 80/Drive B/Save As...", 0,
+    "/Media/Diskette/Didaktik 80/Drive B/Save", 0,
+    "/Media/Diskette/Didaktik 80/Drive B/Flip disk", 0,
+    "/Media/Diskette/Didaktik 80/Drive B/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B_FLIP_SET,
-    "/Media/Disk/Didaktik 80/Drive B/Flip disk/Turn upside down",
-    "/Media/Disk/Didaktik 80/Drive B/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Didaktik 80/Drive B/Flip disk/Turn upside down",
+    "/Media/Diskette/Didaktik 80/Drive B/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DIDAKTIK_B_WP_SET,
-    "/Media/Disk/Didaktik 80/Drive B/Write protect/Enable",
-    "/Media/Disk/Didaktik 80/Drive B/Write protect/Disable", 1 },
+    "/Media/Diskette/Didaktik 80/Drive B/Write protect/Enable",
+    "/Media/Diskette/Didaktik 80/Drive B/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE, "/Media/Disk/DISCiPLE" },
+  { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE, "/Media/Diskette/DISCiPLE" },
 
-  { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_1, "/Media/Disk/DISCiPLE/Drive 1" },
+  { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_1, "/Media/Diskette/DISCiPLE/Drive 1" },
 
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_1_EJECT,
-    "/Media/Disk/DISCiPLE/Drive 1/Eject",
-    "/Media/Disk/DISCiPLE/Drive 1/Save As...", 0,
-    "/Media/Disk/DISCiPLE/Drive 1/Save", 0,
-    "/Media/Disk/DISCiPLE/Drive 1/Flip disk", 0,
-    "/Media/Disk/DISCiPLE/Drive 1/Write protect", 0 },
+    "/Media/Diskette/DISCiPLE/Drive 1/Eject",
+    "/Media/Diskette/DISCiPLE/Drive 1/Save As...", 0,
+    "/Media/Diskette/DISCiPLE/Drive 1/Save", 0,
+    "/Media/Diskette/DISCiPLE/Drive 1/Flip disk", 0,
+    "/Media/Diskette/DISCiPLE/Drive 1/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_1_FLIP_SET,
-    "/Media/Disk/DISCiPLE/Drive 1/Flip disk/Turn upside down",
-    "/Media/Disk/DISCiPLE/Drive 1/Flip disk/Turn back", 1 },
+    "/Media/Diskette/DISCiPLE/Drive 1/Flip disk/Turn upside down",
+    "/Media/Diskette/DISCiPLE/Drive 1/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_1_WP_SET,
-    "/Media/Disk/DISCiPLE/Drive 1/Write protect/Enable",
-    "/Media/Disk/DISCiPLE/Drive 1/Write protect/Disable", 1 },
+    "/Media/Diskette/DISCiPLE/Drive 1/Write protect/Enable",
+    "/Media/Diskette/DISCiPLE/Drive 1/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_2, "/Media/Disk/DISCiPLE/Drive 2" },
+  { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_2, "/Media/Diskette/DISCiPLE/Drive 2" },
 
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_2_EJECT,
-    "/Media/Disk/DISCiPLE/Drive 2/Eject",
-    "/Media/Disk/DISCiPLE/Drive 2/Save As...", 0,
-    "/Media/Disk/DISCiPLE/Drive 2/Save", 0,
-    "/Media/Disk/DISCiPLE/Drive 2/Flip disk", 0,
-    "/Media/Disk/DISCiPLE/Drive 2/Write protect", 0 },
+    "/Media/Diskette/DISCiPLE/Drive 2/Eject",
+    "/Media/Diskette/DISCiPLE/Drive 2/Save As...", 0,
+    "/Media/Diskette/DISCiPLE/Drive 2/Save", 0,
+    "/Media/Diskette/DISCiPLE/Drive 2/Flip disk", 0,
+    "/Media/Diskette/DISCiPLE/Drive 2/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_2_FLIP_SET,
-    "/Media/Disk/DISCiPLE/Drive 2/Flip disk/Turn upside down",
-    "/Media/Disk/DISCiPLE/Drive 2/Flip disk/Turn back", 1 },
+    "/Media/Diskette/DISCiPLE/Drive 2/Flip disk/Turn upside down",
+    "/Media/Diskette/DISCiPLE/Drive 2/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_DISCIPLE_2_WP_SET,
-    "/Media/Disk/DISCiPLE/Drive 2/Write protect/Enable",
-    "/Media/Disk/DISCiPLE/Drive 2/Write protect/Disable", 1 },
+    "/Media/Diskette/DISCiPLE/Drive 2/Write protect/Enable",
+    "/Media/Diskette/DISCiPLE/Drive 2/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_OPUS, "/Media/Disk/Opus" },
+  { UI_MENU_ITEM_MEDIA_DISK_OPUS, "/Media/Diskette/Opus" },
 
-  { UI_MENU_ITEM_MEDIA_DISK_OPUS_1, "/Media/Disk/Opus/Drive 1" },
+  { UI_MENU_ITEM_MEDIA_DISK_OPUS_1, "/Media/Diskette/Opus/Drive 1" },
 
   { UI_MENU_ITEM_MEDIA_DISK_OPUS_1_EJECT,
-    "/Media/Disk/Opus/Drive 1/Eject",
-    "/Media/Disk/Opus/Drive 1/Save As...", 0,
-    "/Media/Disk/Opus/Drive 1/Save", 0,
-    "/Media/Disk/Opus/Drive 1/Flip disk", 0,
-    "/Media/Disk/Opus/Drive 1/Write protect", 0 },
+    "/Media/Diskette/Opus/Drive 1/Eject",
+    "/Media/Diskette/Opus/Drive 1/Save As...", 0,
+    "/Media/Diskette/Opus/Drive 1/Save", 0,
+    "/Media/Diskette/Opus/Drive 1/Flip disk", 0,
+    "/Media/Diskette/Opus/Drive 1/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_OPUS_1_FLIP_SET,
-    "/Media/Disk/Opus/Drive 1/Flip disk/Turn upside down",
-    "/Media/Disk/Opus/Drive 1/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Opus/Drive 1/Flip disk/Turn upside down",
+    "/Media/Diskette/Opus/Drive 1/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_OPUS_1_WP_SET,
-    "/Media/Disk/Opus/Drive 1/Write protect/Enable",
-    "/Media/Disk/Opus/Drive 1/Write protect/Disable", 1 },
+    "/Media/Diskette/Opus/Drive 1/Write protect/Enable",
+    "/Media/Diskette/Opus/Drive 1/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_DISK_OPUS_2, "/Media/Disk/Opus/Drive 2" },
+  { UI_MENU_ITEM_MEDIA_DISK_OPUS_2, "/Media/Diskette/Opus/Drive 2" },
 
   { UI_MENU_ITEM_MEDIA_DISK_OPUS_2_EJECT,
-    "/Media/Disk/Opus/Drive 2/Eject",
-    "/Media/Disk/Opus/Drive 2/Save As...", 0,
-    "/Media/Disk/Opus/Drive 2/Save", 0,
-    "/Media/Disk/Opus/Drive 2/Flip disk", 0,
-    "/Media/Disk/Opus/Drive 2/Write protect", 0 },
+    "/Media/Diskette/Opus/Drive 2/Eject",
+    "/Media/Diskette/Opus/Drive 2/Save As...", 0,
+    "/Media/Diskette/Opus/Drive 2/Save", 0,
+    "/Media/Diskette/Opus/Drive 2/Flip disk", 0,
+    "/Media/Diskette/Opus/Drive 2/Write protect", 0 },
 
   { UI_MENU_ITEM_MEDIA_DISK_OPUS_2_FLIP_SET,
-    "/Media/Disk/Opus/Drive 2/Flip disk/Turn upside down",
-    "/Media/Disk/Opus/Drive 2/Flip disk/Turn back", 1 },
+    "/Media/Diskette/Opus/Drive 2/Flip disk/Turn upside down",
+    "/Media/Diskette/Opus/Drive 2/Flip disk/Turn back", 1 },
 
   { UI_MENU_ITEM_MEDIA_DISK_OPUS_2_WP_SET,
-    "/Media/Disk/Opus/Drive 2/Write protect/Enable",
-    "/Media/Disk/Opus/Drive 2/Write protect/Disable", 1 },
+    "/Media/Diskette/Opus/Drive 2/Write protect/Enable",
+    "/Media/Diskette/Opus/Drive 2/Write protect/Disable", 1 },
 
-  { UI_MENU_ITEM_MEDIA_IDE, "/Media/IDE" },
+  { UI_MENU_ITEM_MEDIA_IDE, "/Media/Storage" },
 
-  { UI_MENU_ITEM_MEDIA_IDE_SIMPLE8BIT, "/Media/IDE/Simple 8-bit" },
+  { UI_MENU_ITEM_MEDIA_IDE_SIMPLE8BIT, "/Media/Storage/Simple 8-bit" },
 
   { UI_MENU_ITEM_MEDIA_IDE_SIMPLE8BIT_MASTER_EJECT,
-    "/Media/IDE/Simple 8-bit/Master/Commit",
-    "/Media/IDE/Simple 8-bit/Master/Eject", 0 },
+    "/Media/Storage/Simple 8-bit/Master/Commit",
+    "/Media/Storage/Simple 8-bit/Master/Eject", 0 },
 
   { UI_MENU_ITEM_MEDIA_IDE_SIMPLE8BIT_SLAVE_EJECT,
-    "/Media/IDE/Simple 8-bit/Slave/Commit",
-    "/Media/IDE/Simple 8-bit/Slave/Eject", 0 },
+    "/Media/Storage/Simple 8-bit/Slave/Commit",
+    "/Media/Storage/Simple 8-bit/Slave/Eject", 0 },
 
-  { UI_MENU_ITEM_MEDIA_IDE_ZXATASP, "/Media/IDE/ZXATASP" },
+  { UI_MENU_ITEM_MEDIA_IDE_ZXATASP, "/Media/Storage/ZXATASP" },
 
   { UI_MENU_ITEM_MEDIA_IDE_ZXATASP_MASTER_EJECT,
-    "/Media/IDE/ZXATASP/Master/Commit",
-    "/Media/IDE/ZXATASP/Master/Eject", 0 },
+    "/Media/Storage/ZXATASP/Master/Commit",
+    "/Media/Storage/ZXATASP/Master/Eject", 0 },
 
   { UI_MENU_ITEM_MEDIA_IDE_ZXATASP_SLAVE_EJECT,
-    "/Media/IDE/ZXATASP/Slave/Commit",
-    "/Media/IDE/ZXATASP/Slave/Eject", 0 },
+    "/Media/Storage/ZXATASP/Slave/Commit",
+    "/Media/Storage/ZXATASP/Slave/Eject", 0 },
 
-  { UI_MENU_ITEM_MEDIA_IDE_ZXCF, "/Media/IDE/ZXCF CompactFlash" },
+  { UI_MENU_ITEM_MEDIA_IDE_ZXCF, "/Media/Storage/ZXCF CompactFlash" },
 
   { UI_MENU_ITEM_MEDIA_IDE_ZXCF_EJECT,
-    "/Media/IDE/ZXCF CompactFlash/Commit",
-    "/Media/IDE/ZXCF CompactFlash/Eject", 0 },
+    "/Media/Storage/ZXCF CompactFlash/Commit",
+    "/Media/Storage/ZXCF CompactFlash/Eject", 0 },
 
-  { UI_MENU_ITEM_MEDIA_IDE_DIVIDE, "/Media/IDE/DivIDE" },
+  { UI_MENU_ITEM_MEDIA_IDE_DIVIDE, "/Media/Storage/DivIDE" },
 
   { UI_MENU_ITEM_MEDIA_IDE_DIVIDE_MASTER_EJECT,
-    "/Media/IDE/DivIDE/Master/Commit",
-    "/Media/IDE/DivIDE/Master/Eject", 0 },
+    "/Media/Storage/DivIDE/Master/Commit",
+    "/Media/Storage/DivIDE/Master/Eject", 0 },
 
   { UI_MENU_ITEM_MEDIA_IDE_DIVIDE_SLAVE_EJECT,
-    "/Media/IDE/DivIDE/Slave/Commit",
-    "/Media/IDE/DivIDE/Slave/Eject", 0 },
+    "/Media/Storage/DivIDE/Slave/Commit",
+    "/Media/Storage/DivIDE/Slave/Eject", 0 },
 
-  { UI_MENU_ITEM_MEDIA_IDE_DIVMMC, "/Media/IDE/DivMMC" },
+  { UI_MENU_ITEM_MEDIA_IDE_DIVMMC, "/Media/Storage/DivMMC" },
 
   { UI_MENU_ITEM_MEDIA_IDE_DIVMMC_EJECT,
-    "/Media/IDE/DivMMC/Commit",
-    "/Media/IDE/DivMMC/Eject", 0 },
+    "/Media/Storage/DivMMC/Commit",
+    "/Media/Storage/DivMMC/Eject", 0 },
 
-  { UI_MENU_ITEM_MEDIA_IDE_ZXMMC, "/Media/IDE/ZXMMC" },
+  { UI_MENU_ITEM_MEDIA_IDE_ZXMMC, "/Media/Storage/ZXMMC" },
 
   { UI_MENU_ITEM_MEDIA_IDE_ZXMMC_EJECT,
-    "/Media/IDE/ZXMMC/Commit",
-    "/Media/IDE/ZXMMC/Eject", 0 },
+    "/Media/Storage/ZXMMC/Commit",
+    "/Media/Storage/ZXMMC/Eject", 0 },
 
   { UI_MENU_ITEM_RECORDING,
     "/File/Recording/Stop", 
@@ -739,7 +739,7 @@ ui_tape_write( void )
 
   fuse_emulation_pause();
 
-  filename = ui_get_save_filename( "Fuse - Write Tape" );
+  filename = ui_get_save_filename( "De-Fuse - Write Tape" );
   if( !filename ) { fuse_emulation_unpause(); return 1; }
 
   tape_write( filename );
@@ -759,7 +759,7 @@ ui_mdr_write( int which, int saveas )
 
   fuse_emulation_pause();
 
-  snprintf( title, 80, "Fuse - Write Microdrive Cartridge %i", which + 1 );
+  snprintf( title, 80, "De-Fuse - Write Microdrive Cartridge %i", which + 1 );
 
   if( saveas ) {
     filename = ui_get_save_filename( title );

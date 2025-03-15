@@ -69,7 +69,7 @@ menu_select_roms_with_title( const char *title, size_t start, size_t n,
   fuse_emulation_pause();
 
   /* Give me a new dialog box */
-  snprintf( buffer, 256, "Fuse - Select ROMs - %s", title );
+  snprintf( buffer, 256, "De-Fuse - Select ROMs - %s", title );
   dialog = gtkstock_dialog_new( buffer, NULL );
 
   info.start = start;
@@ -135,7 +135,7 @@ select_new_rom( GtkWidget *widget GCC_UNUSED, gpointer data )
 
   GtkWidget *entry = data;
 
-  filename = ui_get_open_filename( "Fuse - Select ROM" );
+  filename = ui_get_open_filename( "De-Fuse - Select ROM" );
   if( !filename ) return;
 
   gtk_entry_set_text( GTK_ENTRY( entry ), filename );

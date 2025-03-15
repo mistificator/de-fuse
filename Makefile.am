@@ -21,11 +21,11 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-bin_PROGRAMS = fuse
+bin_PROGRAMS = de-fuse
 
 noinst_PROGRAMS =
 
-fuse_SOURCES = display.c \
+de_fuse_SOURCES = display.c \
 	event.c \
 	fuse.c \
 	input.c \
@@ -56,7 +56,7 @@ fuse_SOURCES = display.c \
 	uimedia.c \
 	utils.c
 
-fuse_LDADD = \
+de_fuse_LDADD = \
              $(PTHREAD_LIBS) \
              $(LIBSPECTRUM_LIBS) \
              $(GTK_LIBS) \
@@ -66,12 +66,16 @@ fuse_LDADD = \
              $(XML_LIBS)
 
 if USE_SDL
-fuse_LDADD += $(SDL_LIBS)
+de_fuse_LDADD += $(SDL_LIBS)
 endif
 
-fuse_DEPENDENCIES =
+if USE_QT
+de_fuse_LDADD += $(QT_LIBS)
+endif
 
-EXTRA_fuse_SOURCES =
+de_fuse_DEPENDENCIES =
+
+EXTRA_de_fuse_SOURCES =
 
 BUILT_SOURCES = options.h settings.c settings.h
 
@@ -161,9 +165,9 @@ pkgdata_DATA =
 ## Resources for Windows executables
 if COMPAT_WIN32
 
-fuse_SOURCES += windres.rc
-fuse_LDADD += windres.o
-fuse_DEPENDENCIES += windres.o
+de_fuse_SOURCES += windres.rc
+de_fuse_LDADD += windres.o
+de_fuse_DEPENDENCIES += windres.o
 
 windres.o: windres.rc data/win32/winfuse.ico data/win32/fuse.manifest $(ui_win32_res)
 	$(AM_V_GEN)$(WINDRES) -I$(srcdir) -I. $(srcdir)/windres.rc $(LIBSPECTRUM_CFLAGS) $(CPPFLAGS) windres.o
@@ -182,10 +186,10 @@ include man/Makefile.am
 include peripherals/Makefile.am
 include perl/Makefile.am
 include pokefinder/Makefile.am
-include roms/Makefile.am
 include sound/Makefile.am
 include timer/Makefile.am
 include ui/Makefile.am
+include ui/qt/Makefile.am
 include ui/fb/Makefile.am
 include ui/gtk/Makefile.am
 include ui/null/Makefile.am

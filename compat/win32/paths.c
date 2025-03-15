@@ -102,7 +102,7 @@ compat_get_next_path( path_context *ctx )
   case 1:
     path2 = getenv( "APPDATA" );
     if( !path2 ) return 0;
-    snprintf( ctx->path, PATH_MAX, "%s" FUSE_DIR_SEP_STR "Fuse" 
+    snprintf( ctx->path, PATH_MAX, "%s" FUSE_DIR_SEP_STR "De-Fuse" 
               FUSE_DIR_SEP_STR "%s", path2, path_segment );
 
     return 1;

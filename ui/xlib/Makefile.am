@@ -22,14 +22,14 @@
 
 if UI_X
 
-fuse_SOURCES += $(ui_xlib_files)
+de_fuse_SOURCES += $(ui_xlib_files)
 
 BUILT_SOURCES += $(ui_xlib_built)
 
 endif
 
 
-EXTRA_fuse_SOURCES += $(ui_xlib_files)
+EXTRA_de_fuse_SOURCES += $(ui_xlib_files)
 
 CLEANFILES += $(ui_xlib_built)
 

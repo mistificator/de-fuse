@@ -278,10 +278,48 @@ machine_load_rom_bank_from_file( memory_page* bank_map, int page_num,
 {
   int error;
   utils_file rom;
+  static int using_opense_rom = 0;
 
   error = utils_read_auxiliary_file( filename, &rom, UTILS_AUXILIARY_ROM );
+
   if( error == -1 ) {
-    ui_error( UI_ERROR_ERROR, "couldn't find ROM '%s'", filename );
+
+    if(! strcmp( filename, "48.rom"      ) ||
+       ! strcmp( filename, "tc2048.rom"  ) ||
+       ! strcmp( filename, "128-1.rom"   ) ||
+       ! strcmp( filename, "plus2-1.rom" ) ||
+       ! strcmp( filename, "plus3-1.rom" ) ||
+       ! strcmp( filename, "plus3-3.rom" ) ) {
+
+      error = utils_read_auxiliary_file( "opense.rom", &rom, UTILS_AUXILIARY_ROM );
+      custom = 1;
+
+      if( error != -1 && ! using_opense_rom ) {
+
+        extern int config_file_present;
+        using_opense_rom = 1;
+
+        if( ! config_file_present ) {
+          ui_error( UI_ERROR_INFO, "Original Spectrum ROM '%s' not found.\n"
+                                   "Using opense.rom instead.\n"
+                                   "See README.Debian for details.", filename );
+        }
+      }
+
+    } else if(! strcmp( filename, "128-0.rom"   ) ||
+              ! strcmp( filename, "plus2-0.rom" ) ||
+              ! strcmp( filename, "plus3-0.rom" ) ||
+              ! strcmp( filename, "plus3-2.rom" ) ) {
+
+      error = utils_read_auxiliary_file( "opense-stub.rom", &rom, UTILS_AUXILIARY_ROM );
+      custom = 1;
+
+    }
+
+  }
+
+  if( error == -1 ) {
+    ui_error( UI_ERROR_ERROR, "couldn't find ROM '%s' - See README.Debian for details", filename );
     return 1;
   }
   if( error ) return error;

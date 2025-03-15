@@ -19,24 +19,24 @@ dnl
 dnl E-mail: philip-fuse@shadowmagic.org.uk
 
 dnl Package version
-m4_define([fuse_version], [1.6.0])
+m4_define([fuse_version], [1.6.0+])
 
 dnl Product full version
 m4_define([fuse_major_version], [1])
 m4_define([fuse_minor_version], [6])
 m4_define([fuse_micro_version], [0])
-m4_define([fuse_nano_version],  [0])
+m4_define([fuse_nano_version],  [1])
 m4_define([fuse_full_version], [fuse_major_version.fuse_minor_version.fuse_micro_version.fuse_nano_version])
 m4_define([fuse_rc_version], [fuse_major_version,fuse_minor_version,fuse_micro_version,fuse_nano_version])
 
 dnl Package info
-m4_define([fuse_copyright], ["(c) 1999-2023 Philip Kendall and others"])
-m4_define([fuse_url], [http://fuse-emulator.sourceforge.net/])
-m4_define([fuse_bugreport], [http://sourceforge.net/p/fuse-emulator/bugs/])
+m4_define([fuse_copyright], ["(c) 1999-2024 Philip Kendall and respected others, and ZXLDR"])
+m4_define([fuse_url], [https://github.com/mistificator/de-fuse])
+m4_define([fuse_bugreport], [https://github.com/mistificator/de-fuse/issues])
 
-AC_INIT([fuse],[fuse_version],[fuse_bugreport],[fuse],[fuse_url])
+AC_INIT([de-fuse],[fuse_version],[fuse_bugreport],[de-fuse],[fuse_url])
 AC_CONFIG_SRCDIR(fuse.c)
-AC_CONFIG_MACRO_DIR([m4])
+dnl AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
 AC_CANONICAL_HOST
 
@@ -88,7 +88,7 @@ case "$host_os" in
   mingw32*)
     AC_CHECK_TOOL([WINDRES], [windres])
     if test -z "$WINDRES" ; then
-      AC_MSG_ERROR([windres is required to compile Fuse for $host hosts])
+      AC_MSG_ERROR([windres is required to compile De-Fuse for $host hosts])
     fi
     AC_CHECK_PROGS([MAN2HTML], [man2html])
     AC_CHECK_PROGS([GROFF], [groff])
@@ -125,6 +125,23 @@ if test x"$ac_cv_string_strcasecmp" = "xno" ; then
   AX_STRINGS_STRCASECMP
 fi
 
+dnl Check whether to use zlib (the UNIX version is called z, Win32 zdll)
+AC_MSG_CHECKING(whether to use zlib)
+AC_ARG_WITH(zlib,
+[  --without-zlib          don't use zlib],
+if test "$withval" = no; then zlib=no; else zlib=yes; fi,
+zlib=yes)
+AC_MSG_RESULT($zlib)
+have_zlib="no"
+if test "$zlib" = yes; then
+  AC_CHECK_HEADERS(
+    zlib.h,
+    [AC_SEARCH_LIBS(compress2, z zdll)
+     have_zlib="yes"]
+  )
+fi
+AM_CONDITIONAL([HAVE_ZLIB], [test "$ac_cv_header_zlib_h" = yes])
+
 dnl Allow the user to say that various libraries are in one place
 AC_ARG_WITH(local-prefix,
 [  --with-local-prefix=PFX local libraries installed in PFX (optional)],
@@ -133,24 +150,18 @@ if test "$prefix" != "NONE"; then
   CPPFLAGS="$CPPFLAGS -I$prefix/include"; LDFLAGS="$LDFLAGS -L$prefix/lib"
 fi)
 
-dnl Check that libspectrum is available and that it is new enough
-PKG_CHECK_MODULES([LIBSPECTRUM], [libspectrum >= 1.5.0])
+dnl Check if supplied libspectrum should have its own internal GLib replacement
+AC_ARG_WITH(fake-glib,
+[  --with-fake-glib        use internal GLib replacement],
+if test "$withval" = no; then fakeglib=no; else fakeglib=yes; fi,
+fakeglib=no)
+AC_MSG_RESULT($fakeglib)
 
-dnl Check if supplied libspectrum has its own internal GLib replacement
-AC_MSG_CHECKING(whether libspectrum has its own internal GLib replacement)
+dnl Check that libspectrum is available and that it is new
 ac_save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $LIBSPECTRUM_CFLAGS"
-AC_PREPROC_IFELSE(
-  [AC_LANG_SOURCE([
-#include <libspectrum.h>
-#if LIBSPECTRUM_HAS_GLIB_REPLACEMENT == 0
-#error "GLib replacement not found"
-#endif
-  ])],
-  [fakeglib=yes; AC_MSG_RESULT(yes)],
-  [fakeglib=no; AC_MSG_RESULT(no)]
-)
+AX_SUBDIRS_CONFIGURE([libspectrum], [--with-fake-glib="$fakeglib"])
 CPPFLAGS="$ac_save_CPPFLAGS"
+CPPFLAGS="$CPPFLAGS -I./libspectrum/"; LDFLAGS="$LDFLAGS -L./libspectrum/.libs/ -lspectrum"
 
 # If we're not libspectrum's own internal GLib replacement, we must use the
 # real thing
@@ -162,6 +173,7 @@ AS_IF([test "$fakeglib" = no], [
     [AC_MSG_ERROR([GLib not found, and libspectrum has no internal replacement])]
   )
 ])
+CPPFLAGS="$CPPFLAGS -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include"
 
 dnl Check if supplied libspectrum has support for compressed szx files
 AC_MSG_CHECKING(whether libspectrum supports compressed szx snaps)
@@ -186,31 +198,55 @@ dnl we like, and then don't look at the other options
 
 AC_PATH_XTRA
 
-dnl Look for Win32 UI (default=no)
-AC_MSG_CHECKING(whether Win32 UI requested)
-AC_ARG_WITH(win32,
-[  --with-win32            use Win32 for user interface],
-if test "$withval" = no; then win32=no; else win32=yes; fi,
-win32=auto)
+dnl Check C++ globally, because autoconf can't handle conditional compiler check '
+AC_PROG_CXX
 
-if test "$win32" = auto; then
-case "$host_os" in
-  mingw32*)
-    win32=yes
-    ;;
-  *)
-    win32=no
-    ;;
-esac
+dnl Look for Qt UI (default=no)
+if test -z "$UI"; then
+  AC_MSG_CHECKING(whether Qt UI requested)
+  AC_ARG_WITH(qt,
+  [  --with-qt               use Qt for user interface],
+  if test "$withval" = no; then qt=no; else qt=yes; fi,
+  qt=no)
+  AC_MSG_RESULT($qt)
+  if test "$qt" = yes; then
+
+dnl It'll be better to check C++ compiler here, but it's impossible ''
+dnl    AC_PROG_CXX
+    AX_HAVE_QT
+    CXXFLAGS="$CXXFLAGS $QT_CXXFLAGS -fpermissive"
+    LIBS="$LIBS $QT_LIBS"
+    AC_DEFINE([UI_QT], 1, [Defined if Qt UI in use])
+    UI=qt; 
+  fi
 fi
-AC_MSG_RESULT($win32)
 
-if test "$win32" = yes; then
-  AC_CHECK_HEADER(windows.h,
-                  LIBS="$LIBS -mwindows -lcomctl32 -lwinmm";
-                  AC_DEFINE([UI_WIN32], 1, [Defined if Win32 UI in use])
-                  UI=win32,
-                  AC_MSG_ERROR([Win32 UI not found]))
+dnl Look for Win32 UI (default=no)
+if test -z "$UI"; then
+    AC_MSG_CHECKING(whether Win32 UI requested)
+    AC_ARG_WITH(win32,
+    [  --with-win32            use Win32 for user interface],
+    if test "$withval" = no; then win32=no; else win32=yes; fi,
+    win32=no)
+
+dnl    if test "$win32" = auto; then
+dnl    case "$host_os" in
+dnl      mingw32*)
+dnl        win32=yes
+dnl        ;;
+dnl      *)
+dnl        win32=no
+dnl        ;;
+dnl    esac
+dnl    fi
+    AC_MSG_RESULT($win32)
+
+    if test "$win32" = yes; then
+      AC_CHECK_HEADER(windows.h,
+                      AC_DEFINE([UI_WIN32], 1, [Defined if Win32 UI in use])
+                      UI=win32,
+                      AC_MSG_ERROR([Win32 UI not found]))
+    fi
 fi
 
 dnl Look for framebuffer interface for SA1110 (default=no)
@@ -454,6 +490,7 @@ if test -z "$UI"; then
   AC_DEFINE([USE_WIDGET], 1, [Defined if we're using a widget-based UI])
 fi
 
+AM_CONDITIONAL(UI_QT, test "$UI" = qt)
 AM_CONDITIONAL(UI_FB, test "$UI" = fb)
 AM_CONDITIONAL(UI_GTK, test "$UI" = gtk)
 AM_CONDITIONAL(UI_NULL, test "$UI" = null)
@@ -554,6 +591,21 @@ dnl Drivers are added to this list in order of preference, so the
 dnl first one will be selected unless one is chosen explicitly.
 audio_driver_list=""
 
+dnl Check if Qt audio is available
+if test "$UI" = qt; then
+  [audio_driver_list="$audio_driver_list qt"]
+fi
+
+dnl Check if pulseaudio is available (experimental)
+AC_CHECK_LIB( pulse-simple, pa_simple_new,
+  [AC_CHECK_HEADER(
+    pulse/simple.h,
+    [audio_driver_list="$audio_driver_list pulseaudio"],
+    [AC_MSG_WARN(pulse/simple.h not found - no pulseaudio output)]
+  )],
+  [AC_MSG_WARN(pa_simple_new not found - no pulseaudio output)]
+)
+
 dnl Check if a version of libasound which supplies pcm is available
 AC_CHECK_LIB( asound, snd_pcm_hw_params_set_period_size_near,
   [AC_CHECK_HEADER(
@@ -633,16 +685,6 @@ if test "$wii" = yes; then
   audio_driver_list="$audio_driver_list wii"
 fi
 
-dnl Check if pulseaudio is available (experimental)
-AC_CHECK_LIB( pulse-simple, pa_simple_new,
-  [AC_CHECK_HEADER(
-    pulse/simple.h,
-    [audio_driver_list="$audio_driver_list pulseaudio"],
-    [AC_MSG_WARN(pulse/simple.h not found - no pulseaudio output)]
-  )],
-  [AC_MSG_WARN(pa_simple_new not found - no pulseaudio output)]
-)
-
 dnl No audio driver - this is the last one of the list
 audio_driver_list="$audio_driver_list null"
 
@@ -712,6 +754,9 @@ case $audio_driver in
     ;;
   pulseaudio)
     SOUND_LIBADD='sound/pulsesound.$(OBJEXT)' SOUND_LIBS='-lpulse-simple -lpulse'
+    ;;
+  qt)
+    SOUND_LIBADD='' SOUND_LIBS=''
     ;;
   null)
     SOUND_LIBADD='sound/nullsound.$(OBJEXT)' SOUND_LIBS=''
@@ -964,8 +1009,15 @@ AM_CONDITIONAL(COMPAT_UNIX, test "$COMPAT_OSNAME" = 'unix')
 AM_CONDITIONAL(COMPAT_WII, test "$COMPAT_OSNAME" = 'wii')
 AM_CONDITIONAL(COMPAT_WIN32, test "$COMPAT_OSNAME" = 'win32')
 
+if test "$COMPAT_OSNAME" = 'win32'; then
+    LIBS="$LIBS -mwindows -lcomctl32 -lwinmm";
+fi
+
 dnl This tells the Makefile to use SDL_CFLAGS and SDL_LIBS during the build
 AM_CONDITIONAL(USE_SDL, test "$use_sdl" = "yes")
+
+dnl This tells the Makefile to use Qt during the build
+AM_CONDITIONAL(USE_QT, test "$qt" = "yes")
 
 dnl Decide whether to install desktop and mime files
 AC_ARG_ENABLE(desktop-integration,
@@ -1064,9 +1116,9 @@ echo "zlib support: ${LIBSPEC_HAVE_ZLIB:-no}"
 echo "bzip2 support: ${LIBSPEC_HAVE_BZ2:-no}"
 echo "audiofile support: ${LIBSPEC_HAVE_AUDIOFILE:-no}"
 echo ""
-echo "********************"
-echo "*** Fuse options ***"
-echo "********************"
+echo "***********************"
+echo "*** De-Fuse options ***"
+echo "***********************"
 echo ""
 echo "User interface: ${UI}"
 if test "${UI}" = "gtk"; then
@@ -1093,7 +1145,8 @@ echo "TTX2000 S support: ${build_ttx2000s}"
 echo "Desktop integration: ${desktopintegration}"
 
 if test "${test_build}" != ""; then
-  echo ""
+echo ""
+echo "Type 'make' to compile De-Fuse"
   echo "*********************"
   echo "*** Testing build ***"
   echo "*********************"
@@ -1103,5 +1156,5 @@ if test "${test_build}" != ""; then
 fi
 
 echo ""
-echo "Type 'make' to compile Fuse"
+echo "Type 'make' to compile De-Fuse"
 echo ""

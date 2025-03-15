@@ -72,15 +72,16 @@ MENU_CALLBACK( menu_file_scalablevectorgraphics_stopcapture );
 MENU_CALLBACK( menu_file_movie_stop );
 MENU_CALLBACK( menu_file_movie_pause );
 
+MENU_CALLBACK( menu_view_screenfilter );
+MENU_DETAIL( menu_filter_detail );
+MENU_CALLBACK( menu_view_fullscreen );
+
 MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_machine_select );
 MENU_CALLBACK_WITH_ACTION( menu_options_selectroms_peripheral_select );
-MENU_CALLBACK( menu_options_filter );
-MENU_DETAIL( menu_filter_detail );
-MENU_CALLBACK( menu_options_fullscreen );
 MENU_CALLBACK( menu_options_save );
 
-MENU_CALLBACK( menu_machine_profiler_start );
-MENU_CALLBACK( menu_machine_profiler_stop );
+MENU_CALLBACK( menu_debug_profiler_start );
+MENU_CALLBACK( menu_debug_profiler_stop );
 MENU_CALLBACK( menu_machine_nmi );
 MENU_CALLBACK( menu_machine_multifaceredbutton );
 MENU_CALLBACK( menu_machine_didaktiksnap );
@@ -136,14 +137,14 @@ MENU_CALLBACK( menu_file_movie_record );
 MENU_CALLBACK( menu_file_movie_record_recordfromrzx );
 
 MENU_CALLBACK( menu_options_general );
-MENU_CALLBACK( menu_options_media );
-MENU_CALLBACK( menu_options_sound );
-MENU_CALLBACK( menu_options_peripherals_general );
+MENU_CALLBACK( menu_options_internals_loaders );
+MENU_CALLBACK( menu_options_internals_sound );
+MENU_CALLBACK( menu_options_peripherals_devices );
+MENU_CALLBACK( menu_options_peripherals_storages );
 MENU_CALLBACK( menu_options_peripherals_sound );
-MENU_CALLBACK( menu_options_peripherals_disk );
-MENU_CALLBACK( menu_options_rzx );
-MENU_CALLBACK( menu_options_movie );
-MENU_CALLBACK( menu_options_diskoptions );
+MENU_CALLBACK( menu_options_recording_rzx );
+MENU_CALLBACK( menu_options_recording_movie );
+MENU_CALLBACK( menu_options_internals_diskettes );
 MENU_DETAIL( menu_plus3a_detail );
 MENU_DETAIL( menu_plus3b_detail );
 MENU_DETAIL( menu_beta128a_detail );
@@ -167,10 +168,10 @@ MENU_CALLBACK( menu_machine_pause );
 MENU_CALLBACK_WITH_ACTION( menu_machine_reset );
 MENU_CALLBACK( menu_machine_select );
 MENU_DETAIL( menu_machine_detail );
-MENU_CALLBACK( menu_machine_debugger );
-MENU_CALLBACK( menu_machine_pokefinder );
-MENU_CALLBACK( menu_machine_pokememory );
-MENU_CALLBACK( menu_machine_memorybrowser );
+MENU_CALLBACK( menu_debug_debugger );
+MENU_CALLBACK( menu_debug_pokefinder );
+MENU_CALLBACK( menu_debug_pokememory );
+MENU_CALLBACK( menu_debug_memorybrowser );
 
 MENU_CALLBACK( menu_help_keyboard );
 MENU_CALLBACK( menu_help_about );

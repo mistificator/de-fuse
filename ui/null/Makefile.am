@@ -21,7 +21,7 @@
 
 if UI_NULL
 
-fuse_SOURCES += $(ui_null_files)
+de_fuse_SOURCES += $(ui_null_files)
 
 BUILT_SOURCES += $(ui_null_built)
 

@@ -22,7 +22,7 @@
 
 if UI_WII
 
-fuse_SOURCES += $(ui_wii_files)
+de_fuse_SOURCES += $(ui_wii_files)
 
 BUILT_SOURCES += $(ui_wii_built)
 

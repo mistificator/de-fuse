@@ -147,7 +147,7 @@ create_mem_list( void )
 }
 
 void
-menu_machine_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
+menu_debug_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
                             gpointer data GCC_UNUSED )
 {
   GtkWidget *dialog, *box, *content_area, *list, *scrollbar;
@@ -160,7 +160,7 @@ menu_machine_memorybrowser( GtkAction *gtk_action GCC_UNUSED,
 
   error = gtkui_get_monospaced_font( &font ); if( error ) return;
 
-  dialog = gtkstock_dialog_new( "Fuse - Memory Browser", NULL );
+  dialog = gtkstock_dialog_new( "De-Fuse - Memory Browser", NULL );
 
   gtkstock_create_close( dialog, NULL, NULL, FALSE );
 

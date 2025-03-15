@@ -22,7 +22,7 @@
 
 */
 
-#include "config.h"
+#include <config.h>
 
 #include <errno.h>
 #include <stdio.h>
@@ -424,7 +424,7 @@ menu_get_scaler( scaler_available_fn selector )
       options[ count++ ] = scaler_name( i );
     }
 
-  info.title = "Select scaler";
+  info.title = "Screen filter";
   info.options = options;
   info.count = count;
   info.finish_all = 1;
@@ -449,7 +449,7 @@ menu_file_exit( int action )
   if( menu_exit_open ) return;
 
   menu_exit_open = 1;
-  if( widget_do_query( "Exit Fuse?" ) || !widget_query.confirm ) {
+  if( widget_do_query( "Exit De-Fuse?" ) || !widget_query.confirm ) {
     menu_exit_open = 0;
     return;
   }
@@ -472,49 +472,49 @@ menu_options_general( int action )
 }
 
 void
-menu_options_media( int action )
+menu_options_internals_loaders( int action )
 {
   widget_do_media();
 }
 
 void
-menu_options_peripherals_general( int action )
+menu_options_peripherals_devices( int action )
 {
-  widget_do_peripherals_general();
+  widget_do_peripherals_devices();
 }
 
 void
 menu_options_peripherals_sound( int action )
 {
-  widget_do_peripherals_sound();
+  widget_do_peripherals_devices();
 }
 
 void
-menu_options_peripherals_disk( int action )
+menu_options_peripherals_storages( int action )
 {
-  widget_do_peripherals_disk();
+  widget_do_peripherals_storages();
 }
 
 void
-menu_options_sound( int action )
+menu_options_internals_sound( int action )
 {
   widget_do_sound();
 }
 
 void
-menu_options_rzx( int action )
+menu_options_recording_rzx( int action )
 {
   widget_do_rzx();
 }
 
 void
-menu_options_movie( int action )
+menu_options_recording_movie( int action )
 {
   widget_do_movie();
 }
 
 void
-menu_options_diskoptions( int action )
+menu_options_internals_diskettes( int action )
 {
   widget_do_diskoptions();
 }
@@ -698,26 +698,26 @@ menu_machine_select( int action )
 }
 
 void
-menu_machine_debugger( int action )
+menu_debug_debugger( int action )
 {
   debugger_mode = DEBUGGER_MODE_HALTED;
   widget_do_debugger();
 }
 
 void
-menu_machine_pokememory( int action )
+menu_debug_pokememory( int action )
 {
   widget_do_pokemem();
 }
 
 void
-menu_machine_pokefinder( int action )
+menu_debug_pokefinder( int action )
 {
   widget_do_pokefinder();
 }
 
 void
-menu_machine_memorybrowser( int action )
+menu_debug_memorybrowser( int action )
 {
   widget_do_memorybrowser();
 }

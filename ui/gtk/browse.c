@@ -144,7 +144,7 @@ create_dialog( void )
   GtkWidget *scrolled_window, *content_area;
 
   /* Give me a new dialog box */
-  dialog = gtkstock_dialog_new( "Fuse - Browse Tape",
+  dialog = gtkstock_dialog_new( "De-Fuse - Browse Tape",
 				G_CALLBACK( delete_dialog ) );
   content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 

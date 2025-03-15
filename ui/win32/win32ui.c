@@ -288,6 +288,81 @@ fuse_window_proc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
   return( DefWindowProc( hWnd, msg, wParam, lParam ) );
 }
 
+// https://stackoverflow.com/a/4023686
+LPSTR* CommandLineToArgvA(LPSTR lpCmdLine, INT *pNumArgs)
+{
+    int retval;
+    retval = MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, lpCmdLine, -1, NULL, 0);
+    if (!SUCCEEDED(retval))
+        return NULL;
+
+    LPWSTR lpWideCharStr = (LPWSTR)malloc(retval * sizeof(WCHAR));
+    if (lpWideCharStr == NULL)
+        return NULL;
+
+    retval = MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, lpCmdLine, -1, lpWideCharStr, retval);
+    if (!SUCCEEDED(retval))
+    {
+        free(lpWideCharStr);
+        return NULL;
+    }
+
+    int numArgs;
+    LPWSTR* args;
+    args = CommandLineToArgvW(lpWideCharStr, &numArgs);
+    free(lpWideCharStr);
+    if (args == NULL)
+        return NULL;
+
+    int storage = numArgs * sizeof(LPSTR);
+    for (int i = 0; i < numArgs; ++ i)
+    {
+        BOOL lpUsedDefaultChar = FALSE;
+        retval = WideCharToMultiByte(CP_ACP, 0, args[i], -1, NULL, 0, NULL, &lpUsedDefaultChar);
+        if (!SUCCEEDED(retval))
+        {
+            LocalFree(args);
+            return NULL;
+        }
+
+        storage += retval;
+    }
+
+    LPSTR* result = (LPSTR*)LocalAlloc(LMEM_FIXED, storage);
+    if (result == NULL)
+    {
+        LocalFree(args);
+        return NULL;
+    }
+
+    int bufLen = storage - numArgs * sizeof(LPSTR);
+    LPSTR buffer = ((LPSTR)result) + numArgs * sizeof(LPSTR);
+    for (int i = 0; i < numArgs; ++ i)
+    {
+        if (bufLen <= 0)
+		{
+			break;
+		}
+        BOOL lpUsedDefaultChar = FALSE;
+        retval = WideCharToMultiByte(CP_ACP, 0, args[i], -1, buffer, bufLen, NULL, &lpUsedDefaultChar);
+        if (!SUCCEEDED(retval))
+        {
+            LocalFree(result);
+            LocalFree(args);
+            return NULL;
+        }
+
+        result[i] = buffer;
+        buffer += retval;
+        bufLen -= retval;
+    }
+
+    LocalFree(args);
+
+    *pNumArgs = numArgs;
+    return result;
+}
+
 /* this is where windows program begins */
 int WINAPI
 WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
@@ -298,20 +373,9 @@ WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
   fuse_nCmdShow = nCmdShow;
   fuse_hPrevInstance = hPrevInstance;
 
-/* HACK: __argc, __argv are broken and return zero when using mingwrt 4.0+
-   on MinGW.
-   HACK: MinGW-w64 based toolchains neither feature _argc nor _argv. The 32 bit
-   incarnation only defines __MINGW32__. This leads to build breakage due to
-   missing declarations. Luckily MinGW-w64 based toolchains define
-   __MINGW64_VERSION_foo macros inside _mingw.h, which is included from all
-   system headers. Thus we abuse that to detect them.
-*/
-#if defined( __GNUC__ ) && defined( __MINGW32__ ) \
-                        && !defined( __MINGW64_VERSION_MAJOR )
-  return fuse_main( _argc, _argv );
-#else
-  return fuse_main( __argc, __argv );
-#endif
+  int argc = 0;
+  char * argv = CommandLineToArgvA( GetCommandLineA(), &argc );
+  return fuse_main( argc, argv );
 
   /* FIXME: how do deal with returning wParam */
 }
@@ -323,7 +387,7 @@ ui_init( int *argc, char ***argv )
   WNDCLASS wc;
 
   if( !fuse_hPrevInstance ) {
-    wc.lpszClassName = "Fuse";
+    wc.lpszClassName = "De-Fuse";
     wc.lpfnWndProc = fuse_window_proc;
     wc.style = CS_OWNDC;
     wc.hInstance = fuse_hInstance;
@@ -339,7 +403,7 @@ ui_init( int *argc, char ***argv )
   }
 
   /* create the window */
-  fuse_hWnd = CreateWindow( "Fuse", "Fuse", WS_OVERLAPPED | WS_CAPTION |
+  fuse_hWnd = CreateWindow( "De-Fuse (based on Fuse)", "De-Fuse (based on Fuse)", WS_OVERLAPPED | WS_CAPTION |
     WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
     NULL, NULL, fuse_hInstance, NULL );
@@ -442,16 +506,16 @@ ui_error_specific( ui_error_level severity, const char *message )
   switch( severity ) {
 
   case UI_ERROR_INFO:
-    MessageBox( fuse_hWnd, message, "Fuse - Info", MB_ICONINFORMATION | MB_OK );
+    MessageBox( fuse_hWnd, message, "De-Fuse - Info", MB_ICONINFORMATION | MB_OK );
     break;
   case UI_ERROR_WARNING:
-    MessageBox( fuse_hWnd, message, "Fuse - Warning", MB_ICONWARNING | MB_OK );
+    MessageBox( fuse_hWnd, message, "De-Fuse - Warning", MB_ICONWARNING | MB_OK );
     break;
   case UI_ERROR_ERROR:
-    MessageBox( fuse_hWnd, message, "Fuse - Error", MB_ICONERROR | MB_OK );
+    MessageBox( fuse_hWnd, message, "De-Fuse - Error", MB_ICONERROR | MB_OK );
     break;
   default:
-    MessageBox( fuse_hWnd, message, "Fuse - (Unknown Error Level)",
+    MessageBox( fuse_hWnd, message, "De-Fuse - (Unknown Error Level)",
                 MB_ICONINFORMATION | MB_OK );
     break;
 
@@ -482,7 +546,7 @@ void
 menu_file_exit( int action )
 {
  /* FIXME: this should really be sending WM_CLOSE, not duplicate code */
-  if( win32ui_confirm( "Exit Fuse?" ) ) {
+  if( win32ui_confirm( "Exit De-Fuse?" ) ) {
 
     if( menu_check_media_changed() ) return;
 
@@ -507,7 +571,7 @@ menu_get_scaler( scaler_available_fn selector )
   }
 
   /* Populate win32ui_select_info */
-  items.dialog_title = TEXT( "Fuse - Select Scaler" );
+  items.dialog_title = TEXT( "Screen filter" );
   items.labels = malloc( count * sizeof( char * ) );
   items.length = count; 
 
@@ -614,7 +678,7 @@ menu_machine_select( int action )
   fuse_emulation_pause();
 
   /* Populate win32ui_select_info */
-  items.dialog_title = TEXT( "Fuse - Select Machine" );
+  items.dialog_title = TEXT( "De-Fuse - Select Machine" );
   items.labels = malloc( machine_count * sizeof( char * ) );
   items.length = machine_count; 
 
@@ -642,7 +706,7 @@ menu_machine_select( int action )
 }
 
 void
-menu_machine_debugger( int action )
+menu_debug_debugger( int action )
 {
   debugger_mode = DEBUGGER_MODE_HALTED;
   if( paused ) ui_debugger_activate();
@@ -739,7 +803,7 @@ ui_confirm_joystick( libspectrum_joystick libspectrum_type, int inputs )
 
   /* Populate win32ui_select_info */
   /* FIXME: libspectrum_joystick_name is not unicode compliant */
-  _sntprintf( title, ARRAY_SIZE( title ), _T( "Fuse - Configure %s Joystick" ),
+  _sntprintf( title, ARRAY_SIZE( title ), _T( "De-Fuse - Configure %s Joystick" ),
 	    libspectrum_joystick_name( libspectrum_type ) );
   items.dialog_title = title;
   items.length = JOYSTICK_CONN_COUNT; 

@@ -22,7 +22,7 @@
 
 if UI_SDL
 
-fuse_SOURCES += $(ui_sdl_files)
+de_fuse_SOURCES += $(ui_sdl_files)
 
 BUILT_SOURCES += $(ui_sdl_built)
 
