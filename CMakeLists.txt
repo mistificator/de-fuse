@@ -30,6 +30,35 @@ target_include_directories(${PROJECT_NAME}
 
 include(cmake/config.cmake)
 
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/settings.c
+    COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/settings.pl ${SRCDIR} ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat > ${CMAKE_CURRENT_SOURCE_DIR}/settings.c
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat ${CMAKE_CURRENT_SOURCE_DIR}/settings.pl
+    VERBATIM
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
+    COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/settings-header.pl ${SRCDIR} ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat > ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat ${CMAKE_CURRENT_SOURCE_DIR}/settings-header.pl
+    VERBATIM
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/options.h
+    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+    COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl - public > ${CMAKE_CURRENT_SOURCE_DIR}/options.h
+    COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse.pm ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse/Dialog.pm
+    VERBATIM
+)
+
 target_sources(${PROJECT_NAME}
     PRIVATE
 #sources
@@ -265,7 +294,6 @@ target_sources(${PROJECT_NAME}
     ./z80/z80_macros.h
 )
 
-
 if (LINUX)
     target_sources(${PROJECT_NAME}
         PRIVATE
@@ -361,6 +389,7 @@ if (${SoundDevice} STREQUAL "Qt")
 endif()
 
 if (${HAVE_GTK})
+    set_define(UI_GTK)
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/gtk/binary.c
@@ -390,6 +419,7 @@ if (${HAVE_GTK})
 endif()
 
 if (${UI} STREQUAL "FrameBuffer")
+    set_define(UI_FB)
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/fb/fbdisplay.c
@@ -404,7 +434,8 @@ if (${UI} STREQUAL "FrameBuffer")
     )
 endif()
 
-if (${UI} STREQUAL "Widget")
+if (${SimpleUI})
+    set_define(USE_WIDGET)
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/widget/about.c
@@ -430,9 +461,12 @@ if (${UI} STREQUAL "Widget")
         ./ui/widget/widget.h
         ./ui/widget/widget_internals.h
     )
+else()
+
 endif()
 
 if (${UI} STREQUAL "X11")
+    set_define(UI_X)
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/xlib/keysyms.c
@@ -451,6 +485,7 @@ if (${UI} STREQUAL "X11")
 endif()
 
 if (${UI} STREQUAL "null")
+    set_define(UI_NULL)
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/null/null_ui.c
@@ -458,6 +493,51 @@ if (${UI} STREQUAL "null")
 endif()
 
 if (${UI} STREQUAL "Qt")
+    set_define(UI_QT)
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/keysyms.cpp
+        COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.pl qt ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.dat > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/keysyms.cpp
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.dat ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.pl
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.ui
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl qt ui > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.ui
+        COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.cpp
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl qt cpp > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.cpp
+        COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.cpp
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.cpp
+        COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse.pm ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse/Dialog.pm
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options_internals.h
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options_internals.h
+        COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse.pm ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse/Dialog.pm
+        VERBATIM
+    )
+
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/qt/debugger.cpp
@@ -477,6 +557,7 @@ if (${UI} STREQUAL "Qt")
 endif()
 
 if (${UI} STREQUAL "SDL")
+    set_define(UI_SDL)
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./timer/sdl.c
@@ -492,6 +573,7 @@ if (${UI} STREQUAL "SDL")
 endif()
 
 if (WIN32 AND ${UI} STREQUAL "Generic")
+    set_define(UI_WIN32)
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/win32/about.c
@@ -570,6 +652,8 @@ add_custom_target(__perl_scripts_${PROJECT_NAME}
     ./keysyms.pl
     ./menu_data.pl
     ./perl/cpp-perl.pl
+    ./perl/Fuse.pm
+    ./perl/Fuse/Dialog.pm
     ./settings-header.pl
     ./settings.pl
     ./ui/gtk/options-header.pl
@@ -586,4 +670,8 @@ add_custom_target(__perl_scripts_${PROJECT_NAME}
     ./ui/win32/options.pl
     ./ui/xlib/xstatusbar.pl
     ./z80/z80.pl
+
+    ./ui/options.dat
+    ./menu_data.dat
+    ./settings.dat
 )

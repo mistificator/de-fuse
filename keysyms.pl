@@ -386,7 +386,7 @@ foreach( @keys ) {
 
 print << "CODE";
 
-  { 0, 0 }			/* End marker: DO NOT MOVE! */
+  { 0, (input_key)0 }			/* End marker: DO NOT MOVE! */
 
 };
 
@@ -416,7 +416,7 @@ print "\nkeysyms_map_t unicode_keysyms_map[] = {\n\n";
 
 print << "CODE";
 
-  { 0, 0 }			/* End marker: DO NOT MOVE! */
+  { 0, (input_key)0 }			/* End marker: DO NOT MOVE! */
 
 };
 
@@ -459,7 +459,7 @@ keysyms_map_t oem_keysyms_map[] = {
   { '/',             INPUT_KEY_slash        },
   { '_',             INPUT_KEY_underscore   },
 
-  { 0, 0 }			/* End marker: DO NOT MOVE! */
+  { 0, (input_key)0 }			/* End marker: DO NOT MOVE! */
 
 };
 

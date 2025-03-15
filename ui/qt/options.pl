@@ -49,6 +49,17 @@ extern "C"
 
 #ifdef UI_QT                /* Use this file if we're using QT */
 
+#include "qt_ui.hpp"
+
+#include <QDialog>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QLabel>
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QGroupBox>
+#include <QPushButton>
+
 extern "C" 
 {
   #include "compat.h"
@@ -60,15 +71,6 @@ extern "C"
   #include "settings.h"
   #include "utils.h"
 }
-
-#include <QDialog>
-#include <QComboBox>
-#include <QLineEdit>
-#include <QLabel>
-#include <QBoxLayout>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QPushButton>
 
 static int
 option_enumerate_combo( const char * const *options, char *value, int count,
@@ -225,7 +227,7 @@ CODE
 
   QPushButton * _ok = DeFuseWindow::addOkCancelButtons( _dialog );
   QObject::connect( _ok, &QPushButton::clicked, [=]() {
-    menu_options_$_->{name}_t *ptr = & dialog;
+    auto *ptr = const_cast<menu_options_$_->{name}_t *>(& dialog);
 CODE
 
     if( $_->{postcheck} ) {
@@ -257,8 +259,12 @@ CODE
         } elsif( $widget->{type} eq "Combo" ) {
 
 	    print << "CODE";
-    libspectrum_free( settings_current.$widget->{value} );
-    settings_current.$widget->{value} = dynamic_cast<QComboBox *>( ptr->$widget->{value} )->currentIndex();
+    {
+        libspectrum_free( settings_current.$widget->{value} );
+        auto currentText = dynamic_cast<QComboBox *>( ptr->$widget->{value} )->currentText().toUtf8();
+        settings_current.$widget->{value} = (char *)libspectrum_malloc( currentText.count() + 1 );
+        ::strcpy( settings_current.$widget->{value}, currentText.constData() );
+    }
 
 CODE
     	} else {
