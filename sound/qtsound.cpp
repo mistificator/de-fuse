@@ -1,6 +1,8 @@
 
 extern "C" {
+#ifdef HAVE_CONFIG
     #include "config.h"
+#endif
     #include "settings.h"
     #include "sound.h"
 }

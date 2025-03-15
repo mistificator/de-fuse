@@ -23,7 +23,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <stdio.h>
 #include <string.h>

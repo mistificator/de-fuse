@@ -18,7 +18,9 @@ partially reimplemented in C by Gergely Szasz for FUSE
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <limits.h>
 #include <string.h>

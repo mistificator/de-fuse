@@ -42,7 +42,9 @@ print Fuse::GPL( 'options.cpp: options dialog boxes',
 
 extern "C" 
 {
-  #include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 }
 
 #ifdef UI_QT                /* Use this file if we're using QT */

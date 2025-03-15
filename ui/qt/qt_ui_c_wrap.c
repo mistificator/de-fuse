@@ -1,4 +1,6 @@
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include "keyboard.h"
 #include "ui/ui.h"

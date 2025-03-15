@@ -21,7 +21,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <winsock2.h>
 #include <ws2tcpip.h>

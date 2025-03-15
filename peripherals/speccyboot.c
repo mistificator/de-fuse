@@ -24,7 +24,9 @@
    
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include "compat.h"
 #include "debugger/debugger.h"

@@ -53,6 +53,7 @@ AC_SUBST(FUSE_COPYRIGHT)
 AC_SUBST(FUSE_URL)
 
 dnl Definitions for config.h
+AC_DEFINE (HAVE_CONFIG)
 AC_DEFINE([FUSE_RC_VERSION], [fuse_rc_version],
           [Define version information for win32 executables])
 AC_DEFINE([FUSE_COPYRIGHT], [fuse_copyright], [Define copyright of Fuse])

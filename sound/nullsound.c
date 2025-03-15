@@ -17,7 +17,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 /* Dummy functions for when we don't have a sound device; should never be
    called, so just abort if they are */

@@ -21,7 +21,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include "debugger.h"
 #include "debugger_internals.h"
