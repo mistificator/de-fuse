@@ -6,7 +6,9 @@
 
 extern "C"
 {
+#ifdef HAVE_CONFIG
     #include <config.h>
+#endif
 #ifdef HAVE_LIB_GLIB
     #include <glib.h>
 #endif				/* #ifdef HAVE_LIB_GLIB */

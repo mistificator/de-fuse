@@ -105,7 +105,7 @@ register_scalers( int force_scaler )
 scaler_type
 menu_get_scaler( scaler_available_fn selector )
 {
-    DeFuseWindow::instance()->selectScaler( [=](int i)->int { return selector(i); } );
+    DeFuseWindow::instance()->selectScaler( [=](int i)->int { return selector((scaler_type)(i)); } );
     DeFuseWindow::instance()->needToRepaint();
     return current_scaler;
 }
@@ -208,7 +208,7 @@ ui_get_open_filename( const char *title )
     {
         return nullptr;
     }
-    char * filename = libspectrum_malloc(_filename.length() + 1);
+    char * filename = (char *)libspectrum_malloc(_filename.length() + 1);
     ::memset(filename, 0, _filename.length() + 1);
     ::strncpy(filename, _filename.toLocal8Bit().constData(), _filename.length());
     return filename;
@@ -229,7 +229,7 @@ ui_get_save_filename( const char *title )
     {
         return nullptr;
     }
-    char * filename = libspectrum_malloc(_filename.length() + 1);
+    char * filename = (char *)libspectrum_malloc(_filename.length() + 1);
     ::memset(filename, 0, _filename.length() + 1);
     ::strncpy(filename, _filename.toLocal8Bit().constData(), _filename.length());
     return filename;

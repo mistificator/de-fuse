@@ -71,7 +71,7 @@ void DeFuseHexView::updateHexView()
             new QTableWidgetItem(QString::number(val, 16).rightJustified(2, '0')));
         ui->tbCharView->setItem(
             addr / width, addr % width,
-            new QTableWidgetItem(val >= 32 ? QString::fromLatin1(& val, 1) : QString('.')));
+            new QTableWidgetItem(val >= 32 ? QString::fromLatin1(reinterpret_cast<char *>(& val), 1) : QString('.')));
     }
 
     ui->tbHexView->resizeColumnsToContents();

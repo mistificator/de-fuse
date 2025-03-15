@@ -3,7 +3,10 @@
 
 #include <QApplication>
 #include <QMessageBox>
+#include <QCheckBox>
+#include <QLineEdit>
 #include <QButtonGroup>
+#include <QGroupBox>
 #include <QKeyEvent>
 #include <QFileDialog>
 #include <QBitmap>
@@ -92,12 +95,12 @@ void DeFuseWindow::closeEvent(QCloseEvent * ce)
     }
 }
 
-int DeFuseWindow::ask(char * text)
+int DeFuseWindow::ask(const char * text)
 {
     return settings_current.confirm_actions ? QMessageBox::question(this, "Question", text) == QMessageBox::Yes : 1;
 }
 
-void DeFuseWindow::message(char * text)
+void DeFuseWindow::message(const char *text)
 {
     QMessageBox::information(this, "Information", text);
 }
@@ -125,7 +128,7 @@ void DeFuseWindow::selectMachine()
 {
     selectSomething("De-Fuse - Select Machine", machine_current->machine, machine_count,
         [](int i)->QPair<int, QString> { return qMakePair(machine_types[i]->machine, libspectrum_machine_name( machine_types[i]->machine )); },
-        [](int machine, bool not_test)->int { if (not_test) { machine_select( machine ); } return machine; });
+        [](int machine, bool not_test)->int { if (not_test) { machine_select( (libspectrum_machine)machine ); } return machine; });
 
     machine_status->setText( libspectrum_machine_name( machine_current->machine ) );
 }
@@ -133,8 +136,8 @@ void DeFuseWindow::selectMachine()
 void DeFuseWindow::selectScaler( std::function<int(int)> selector )
 {
     selectSomething("De-Fuse - Screen filter", current_scaler, SCALER_NUM,
-        [](int i)->QPair<int, QString> { return qMakePair(i, scaler_name( i )); },
-        [=](int scaler, bool not_test)->int { if (!not_test) { return selector(scaler) ? scaler : -1; } scaler_select_scaler( scaler ); return (current_scaler = scaler); });
+        [](int i)->QPair<int, QString> { return qMakePair(i, scaler_name( (scaler_type)i )); },
+        [=](int scaler, bool not_test)->int { if (!not_test) { return selector(scaler) ? scaler : -1; } scaler_select_scaler( (scaler_type)scaler ); return (current_scaler = (scaler_type)scaler); });
 }
 
 void  DeFuseWindow::selectSomething(QString title, int current, int count, std::function<QPair<int, QString>(int)> label_fn, std::function<int(int, bool)> apply_fn)
@@ -289,7 +292,7 @@ void DeFuseWindow::checkForWindowResize(QPixmap & new_px)
 {
     if (!isMaximized())
     {
-        QPixmap * prev_px = ui->screenWidget->pixmap();
+        const auto prev_px = ui->screenWidget->pixmap();
         if (new_px.size() != prev_px->size())
         {
             ui->screenWidget->setPixmap(QPixmap());

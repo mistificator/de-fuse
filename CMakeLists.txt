@@ -8,7 +8,13 @@ include(libspectrum/cmake/config.cmake)
 add_subdirectory(libspectrum)
 
 add_executable(${PROJECT_NAME})
+add_definitions(-DVERSION="1.6.0.1")
+add_definitions("-DFUSE_COPYRIGHT=\"(c) 1999-2024 Philip Kendall and respected others, and ZXLDR\"")
+add_definitions(-DFUSE_URL="https://github.com/mistificator/de-fuse")
+add_definitions(-DPACKAGE_URL="https://github.com/mistificator/de-fuse")
+add_definitions(-DFUSE_BUGREPORT="https://github.com/mistificator/de-fuse/issues")
 add_definitions(-DFUSEDATADIR="${CMAKE_CURRENT_SOURCE_DIR}/roms")
+add_definitions(-DSCALER_DATA_SIZE=4)
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
@@ -30,19 +36,6 @@ target_sources(${PROJECT_NAME}
     ./compat/dirname.c
     ./compat/getopt.c
     ./compat/getopt1.c
-    ./compat/linux/relative_paths.c
-    ./compat/unix/dir.c
-    ./compat/unix/file.c
-    ./compat/unix/osname.c
-    ./compat/unix/paths.c
-    ./compat/unix/relative_paths.c
-    ./compat/unix/socket.c
-    ./compat/unix/timer.c
-    ./compat/unix/tuntap.c
-    ./compat/win32/osname.c
-    ./compat/win32/paths.c
-    ./compat/win32/socket.c
-    ./compat/win32/timer.c
     ./debugger/breakpoint.c
     ./debugger/command.c
     ./debugger/commandl.c
@@ -139,135 +132,31 @@ target_sources(${PROJECT_NAME}
     ./settings.c
     ./slt.c
     ./snapshot.c
-    ./sound/alsasound.c
-    ./sound/aosound.c
     ./sound/blipbuffer.c
-    ./sound/coreaudiosound.c
-    ./sound/dxsound.c
-    ./sound/hpsound.c
-    ./sound/moc_qtsound.cpp
-    ./sound/nullsound.c
-    ./sound/osssound.c
-    ./sound/pulsesound.c
-    ./sound/qtsound.cpp
-    ./sound/sdlsound.c
     ./sound/sfifo.c
-    ./sound/sunsound.c
-    ./sound/wiisound.c
-    ./sound/win32sound.c
     ./sound.c
     ./spectrum.c
     ./svg.c
     ./tape.c
     ./timer/native.c
-    ./timer/sdl.c
     ./timer/timer.c
-    ./ui/fb/fbdisplay.c
-    ./ui/fb/fbjoystick.c
-    ./ui/fb/fbkeyboard.c
-    ./ui/fb/fbmouse.c
-    ./ui/fb/fbui.c
-    ./ui/gtk/binary.c
-    ./ui/gtk/browse.c
-    ./ui/gtk/confirm.c
-    ./ui/gtk/debugger.c
-    ./ui/gtk/fileselector.c
-    ./ui/gtk/gtkcompat.c
-    ./ui/gtk/gtkdisplay.c
-    ./ui/gtk/gtkjoystick.c
-    ./ui/gtk/gtkkeyboard.c
-    ./ui/gtk/gtkmouse.c
-    ./ui/gtk/gtkui.c
-    ./ui/gtk/memory.c
-    ./ui/gtk/memory_gtk2.c
-    ./ui/gtk/picture.c
-    ./ui/gtk/pokefinder.c
-    ./ui/gtk/pokemem.c
-    ./ui/gtk/rollback.c
-    ./ui/gtk/roms.c
-    ./ui/gtk/statusbar.c
-    ./ui/gtk/stock.c
-    ./ui/null/null_ui.c
-    ./ui/qt/debugger.cpp
-    ./ui/qt/hexview.cpp
-    ./ui/qt/keysyms.cpp
-    ./ui/qt/menu_data.cpp
-    ./ui/qt/moc_debugger.cpp
-    ./ui/qt/moc_hexview.cpp
-    ./ui/qt/moc_qt_ui.cpp
-    ./ui/qt/moc_tapebrowser.cpp
-    ./ui/qt/options.cpp
-    ./ui/qt/qrc_qt_ui.cpp
-    ./ui/qt/qt_ui.cpp
-    ./ui/qt/qt_ui_c_wrap.c
-    ./ui/qt/tapebrowser.cpp
     ./ui/scaler/scaler.c
     ./ui/scaler/scalers.c
-    ./ui/scaler/scaler_hq2x.c
-    ./ui/scaler/scaler_hq3x.c
-    ./ui/scaler/scaler_hq4x.c
-    ./ui/sdl/sdldisplay.c
-    ./ui/sdl/sdljoystick.c
-    ./ui/sdl/sdlkeyboard.c
-    ./ui/sdl/sdlui.c
+#    ./ui/scaler/scaler_hq2x.c
+#    ./ui/scaler/scaler_hq3x.c
+#    ./ui/scaler/scaler_hq4x.c
     ./ui/uijoystick.c
-    ./ui/widget/about.c
-    ./ui/widget/binary.c
-    ./ui/widget/browse.c
-    ./ui/widget/debugger.c
-    ./ui/widget/error.c
-    ./ui/widget/filesel.c
-    ./ui/widget/memory.c
-    ./ui/widget/menu.c
-    ./ui/widget/menu_data.c
-    ./ui/widget/options.c
-    ./ui/widget/picture.c
-    ./ui/widget/pokefinder.c
-    ./ui/widget/pokemem.c
-    ./ui/widget/query.c
-    ./ui/widget/roms.c
-    ./ui/widget/select.c
-    ./ui/widget/text.c
-    ./ui/widget/widget.c
-    ./ui/win32/about.c
-    ./ui/win32/binary.c
-    ./ui/win32/browse.c
-    ./ui/win32/confirm.c
-    ./ui/win32/debugger.c
-    ./ui/win32/fileselector.c
-    ./ui/win32/hyperlinks.c
-    ./ui/win32/memorybrowser.c
-    ./ui/win32/picture.c
-    ./ui/win32/pokefinder.c
-    ./ui/win32/pokemem.c
-    ./ui/win32/rollback.c
-    ./ui/win32/roms.c
-    ./ui/win32/statusbar.c
-    ./ui/win32/win32display.c
-    ./ui/win32/win32joystick.c
-    ./ui/win32/win32keyboard.c
-    ./ui/win32/win32mouse.c
-    ./ui/win32/win32ui.c
-    ./ui/xlib/keysyms.c
-    ./ui/xlib/xdisplay.c
-    ./ui/xlib/xerror.c
-    ./ui/xlib/xjoystick.c
-    ./ui/xlib/xkeyboard.c
-    ./ui/xlib/xpixmaps.c
-    ./ui/xlib/xpixmaps.c.in
-    ./ui/xlib/xui.c
     ./ui.c
     ./uidisplay.c
     ./uimedia.c
     ./utils.c
-    ./z80/coretest.c
-    ./z80/opcodes_base.c
+#    ./z80/opcodes_base.c
     ./z80/z80.c
-    ./z80/z80_cb.c
-    ./z80/z80_ddfd.c
-    ./z80/z80_ddfdcb.c
+#    ./z80/z80_cb.c
+#    ./z80/z80_ddfd.c
+#    ./z80/z80_ddfdcb.c
     ./z80/z80_debugger_variables.c
-    ./z80/z80_ed.c
+#    ./z80/z80_ed.c
     ./z80/z80_ops.c
 
     ./bitmap.h
@@ -357,66 +246,290 @@ target_sources(${PROJECT_NAME}
     ./slt.h
     ./snapshot.h
     ./sound/blipbuffer.h
-    ./sound/qtsound.hpp
     ./sound/sfifo.h
     ./sound.h
     ./spectrum.h
     ./svg.h
     ./tape.h
     ./timer/timer.h
-    ./ui/fb/fbdisplay.h
-    ./ui/fb/fbkeyboard.h
-    ./ui/fb/fbmouse.h
-    ./ui/gtk/gtkcompat.h
-    ./ui/gtk/gtkinternals.h
-    ./ui/qt/debugger.hpp
-    ./ui/qt/hexview.hpp
-    ./ui/qt/options_internals.h
-    ./ui/qt/qt_ui.hpp
-    ./ui/qt/tapebrowser.hpp
-    ./ui/qt/ui_debugger.h
-    ./ui/qt/ui_debugger.hpp
-    ./ui/qt/ui_hexview.h
-    ./ui/qt/ui_hexview.hpp
-    ./ui/qt/ui_qt_ui.h
-    ./ui/qt/ui_qt_ui.hpp
-    ./ui/qt/ui_tapebrowser.h
-    ./ui/qt/ui_tapebrowser.hpp
     ./ui/scaler/scaler.h
     ./ui/scaler/scaler_internals.h
-    ./ui/sdl/sdldisplay.h
-    ./ui/sdl/sdljoystick.h
-    ./ui/sdl/sdlkeyboard.h
     ./ui/ui.h
     ./ui/uidisplay.h
     ./ui/uijoystick.h
     ./ui/uimedia.h
-    ./ui/widget/options_internals.h
-    ./ui/widget/widget.h
-    ./ui/widget/widget_internals.h
-    ./ui/win32/about.h
-    ./ui/win32/binary.h
-    ./ui/win32/browse.h
-    ./ui/win32/debugger.h
-    ./ui/win32/hyperlinks.h
-    ./ui/win32/memorybrowser.h
-    ./ui/win32/picture.h
-    ./ui/win32/pokefinder.h
-    ./ui/win32/pokemem.h
-    ./ui/win32/rollback.h
-    ./ui/win32/roms.h
-    ./ui/win32/select_template.h
-    ./ui/win32/win32internals.h
-    ./ui/win32/win32joystick.h
-    ./ui/xlib/xdisplay.h
-    ./ui/xlib/xkeyboard.h
-    ./ui/xlib/xui.h
     ./utils.h
     ./z80/z80.h
     ./z80/z80_checks.h
     ./z80/z80_internals.h
     ./z80/z80_macros.h
 )
+
+
+if (LINUX)
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./compat/linux/relative_paths.c
+    )
+elseif (UNIX)
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./compat/unix/dir.c
+        ./compat/unix/file.c
+        ./compat/unix/osname.c
+        ./compat/unix/paths.c
+        ./compat/unix/relative_paths.c
+        ./compat/unix/socket.c
+        ./compat/unix/timer.c
+        ./compat/unix/tuntap.c
+    )
+endif()
+
+if (WIN32)
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./compat/win32/osname.c
+        ./compat/win32/paths.c
+        ./compat/win32/socket.c
+        ./compat/win32/timer.c
+    )
+endif()
+
+if (${SoundDevice} STREQUAL "Qt" OR ${UI} STREQUAL "Qt")
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        Qt5::Core Qt5::Multimedia Qt5::Widgets Qt5::Gui
+    )
+endif()
+
+if (${SoundDevice} STREQUAL "null")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./sound/nullsound.c
+    )
+endif()
+
+if (${SoundDevice} STREQUAL "SDL")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./sound/sdlsound.c
+    )
+endif()
+
+if (WIN32)
+    if (${SoundDevice} STREQUAL "Generic")
+        target_sources(${PROJECT_NAME}
+            PRIVATE
+            ./sound/win32sound.c
+        )
+    endif()
+    if (${SoundDevice} STREQUAL "DirectX")
+        target_sources(${PROJECT_NAME}
+            PRIVATE
+            ./sound/dxsound.c
+        )
+    endif()
+endif()
+
+if (${SoundDevice} STREQUAL "LibAO")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./sound/aosound.c
+    )
+endif()
+
+if (${SoundDevice} STREQUAL "ALSA")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./sound/alsasound.c
+    )
+endif()
+
+if (${SoundDevice} STREQUAL "PulseAudio")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./sound/pulsesound.c
+    )
+endif()
+
+if (${SoundDevice} STREQUAL "Qt")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./sound/qtsound.cpp
+        ./sound/qtsound.hpp
+    )
+endif()
+
+if (${HAVE_GTK})
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./ui/gtk/binary.c
+        ./ui/gtk/browse.c
+        ./ui/gtk/confirm.c
+        ./ui/gtk/debugger.c
+        ./ui/gtk/fileselector.c
+        ./ui/gtk/gtkcompat.c
+        ./ui/gtk/gtkdisplay.c
+        ./ui/gtk/gtkjoystick.c
+        ./ui/gtk/gtkkeyboard.c
+        ./ui/gtk/gtkmouse.c
+        ./ui/gtk/gtkui.c
+        ./ui/gtk/memory.c
+        ./ui/gtk/memory_gtk2.c
+        ./ui/gtk/picture.c
+        ./ui/gtk/pokefinder.c
+        ./ui/gtk/pokemem.c
+        ./ui/gtk/rollback.c
+        ./ui/gtk/roms.c
+        ./ui/gtk/statusbar.c
+        ./ui/gtk/stock.c
+
+        ./ui/gtk/gtkcompat.h
+        ./ui/gtk/gtkinternals.h
+    )
+endif()
+
+if (${UI} STREQUAL "FrameBuffer")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./ui/fb/fbdisplay.c
+        ./ui/fb/fbjoystick.c
+        ./ui/fb/fbkeyboard.c
+        ./ui/fb/fbmouse.c
+        ./ui/fb/fbui.c
+
+        ./ui/fb/fbdisplay.h
+        ./ui/fb/fbkeyboard.h
+        ./ui/fb/fbmouse.h
+    )
+endif()
+
+if (${UI} STREQUAL "Widget")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./ui/widget/about.c
+        ./ui/widget/binary.c
+        ./ui/widget/browse.c
+        ./ui/widget/debugger.c
+        ./ui/widget/error.c
+        ./ui/widget/filesel.c
+        ./ui/widget/memory.c
+        ./ui/widget/menu.c
+        ./ui/widget/menu_data.c
+        ./ui/widget/options.c
+        ./ui/widget/picture.c
+        ./ui/widget/pokefinder.c
+        ./ui/widget/pokemem.c
+        ./ui/widget/query.c
+        ./ui/widget/roms.c
+        ./ui/widget/select.c
+        ./ui/widget/text.c
+        ./ui/widget/widget.c
+
+        ./ui/widget/options_internals.h
+        ./ui/widget/widget.h
+        ./ui/widget/widget_internals.h
+    )
+endif()
+
+if (${UI} STREQUAL "X11")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./ui/xlib/keysyms.c
+        ./ui/xlib/xdisplay.c
+        ./ui/xlib/xerror.c
+        ./ui/xlib/xjoystick.c
+        ./ui/xlib/xkeyboard.c
+        ./ui/xlib/xpixmaps.c
+        ./ui/xlib/xpixmaps.c.in
+        ./ui/xlib/xui.c
+
+        ./ui/xlib/xdisplay.h
+        ./ui/xlib/xkeyboard.h
+        ./ui/xlib/xui.h
+    )
+endif()
+
+if (${UI} STREQUAL "null")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./ui/null/null_ui.c
+    )
+endif()
+
+if (${UI} STREQUAL "Qt")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./ui/qt/debugger.cpp
+        ./ui/qt/hexview.cpp
+        ./ui/qt/keysyms.cpp
+        ./ui/qt/menu_data.cpp
+        ./ui/qt/options.cpp
+        ./ui/qt/qt_ui.cpp
+        ./ui/qt/tapebrowser.cpp
+
+        ./ui/qt/debugger.hpp
+        ./ui/qt/hexview.hpp
+        ./ui/qt/options_internals.h
+        ./ui/qt/qt_ui.hpp
+        ./ui/qt/tapebrowser.hpp
+    )
+endif()
+
+if (${UI} STREQUAL "SDL")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./timer/sdl.c
+        ./ui/sdl/sdldisplay.c
+        ./ui/sdl/sdljoystick.c
+        ./ui/sdl/sdlkeyboard.c
+        ./ui/sdl/sdlui.c
+
+        ./ui/sdl/sdldisplay.h
+        ./ui/sdl/sdljoystick.h
+        ./ui/sdl/sdlkeyboard.h
+    )
+endif()
+
+if (WIN32 AND ${UI} STREQUAL "Generic")
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ./ui/win32/about.c
+        ./ui/win32/binary.c
+        ./ui/win32/browse.c
+        ./ui/win32/confirm.c
+        ./ui/win32/debugger.c
+        ./ui/win32/fileselector.c
+        ./ui/win32/hyperlinks.c
+        ./ui/win32/memorybrowser.c
+        ./ui/win32/picture.c
+        ./ui/win32/pokefinder.c
+        ./ui/win32/pokemem.c
+        ./ui/win32/rollback.c
+        ./ui/win32/roms.c
+        ./ui/win32/statusbar.c
+        ./ui/win32/win32display.c
+        ./ui/win32/win32joystick.c
+        ./ui/win32/win32keyboard.c
+        ./ui/win32/win32mouse.c
+        ./ui/win32/win32ui.c
+
+        ./ui/win32/about.h
+        ./ui/win32/binary.h
+        ./ui/win32/browse.h
+        ./ui/win32/debugger.h
+        ./ui/win32/hyperlinks.h
+        ./ui/win32/memorybrowser.h
+        ./ui/win32/picture.h
+        ./ui/win32/pokefinder.h
+        ./ui/win32/pokemem.h
+        ./ui/win32/rollback.h
+        ./ui/win32/roms.h
+        ./ui/win32/select_template.h
+        ./ui/win32/win32internals.h
+        ./ui/win32/win32joystick.h
+    )
+endif()
 
 add_custom_target(__autotools_files_${PROJECT_NAME}
     SOURCES

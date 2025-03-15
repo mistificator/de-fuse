@@ -20,8 +20,8 @@ class DeFuseWindow: public QMainWindow
     Q_OBJECT
 public:
     static DeFuseWindow * instance();
-    int ask(char *);
-    void message(char *);
+    int ask(const char *);
+    void message(const char *);
     void showKeyboard();
     void about();
     void selectMachine();
