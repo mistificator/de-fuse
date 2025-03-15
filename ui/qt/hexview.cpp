@@ -1,5 +1,5 @@
-#include "hexview.hpp"
-#include "ui_hexview.hpp"
+#include "hexview.h"
+#include "ui_hexview.h"
 
 #include <QScrollBar>
 

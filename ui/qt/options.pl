@@ -49,7 +49,7 @@ extern "C"
 
 #ifdef UI_QT                /* Use this file if we're using QT */
 
-#include "qt_ui.hpp"
+#include "qt_ui.h"
 
 #include <QDialog>
 #include <QComboBox>

@@ -1,5 +1,5 @@
-#include "qt_ui.hpp"
-#include "ui_qt_ui.hpp"
+#include "qt_ui.h"
+#include "ui_menu_data.h"
 
 #include <QApplication>
 #include <QMessageBox>

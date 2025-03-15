@@ -1,5 +1,5 @@
-#include "tapebrowser.hpp"
-#include "ui_tapebrowser.hpp"
+#include "tapebrowser.h"
+#include "ui_tapebrowser.h"
 
 extern "C"
 {

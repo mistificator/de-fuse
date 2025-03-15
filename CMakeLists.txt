@@ -349,6 +349,9 @@ if (WIN32)
 endif()
 
 if (${SoundDevice} STREQUAL "Qt" OR ${UI} STREQUAL "Qt")
+    set_property(TARGET ${PROJECT_NAME} PROPERTY AUTOMOC ON)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY AUTOUIC ON)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY AUTORCC ON)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
         Qt5::Core Qt5::Multimedia Qt5::Widgets Qt5::Gui
@@ -409,7 +412,7 @@ if (${SoundDevice} STREQUAL "Qt")
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./sound/qtsound.cpp
-        ./sound/qtsound.hpp
+        ./sound/qtsound.h
     )
 endif()
 
@@ -573,11 +576,17 @@ if (${UI} STREQUAL "Qt")
         ./ui/qt/qt_ui.cpp
         ./ui/qt/tapebrowser.cpp
 
-        ./ui/qt/debugger.hpp
-        ./ui/qt/hexview.hpp
+        ./ui/qt/debugger.h
+        ./ui/qt/hexview.h
         ./ui/qt/options_internals.h
-        ./ui/qt/qt_ui.hpp
-        ./ui/qt/tapebrowser.hpp
+        ./ui/qt/qt_ui.h
+        ./ui/qt/tapebrowser.h
+
+        ./ui/qt/qt_ui.qrc
+        ./ui/qt/debugger.ui
+        ./ui/qt/hexview.ui
+        ./ui/qt/menu_data.ui
+        ./ui/qt/tapebrowser.ui
     )
 endif()
 

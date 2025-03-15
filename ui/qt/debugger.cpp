@@ -1,5 +1,5 @@
-#include "debugger.hpp"
-#include "ui_debugger.hpp"
+#include "debugger.h"
+#include "ui_debugger.h"
 
 #include <QMenu>
 #include <QWheelEvent>

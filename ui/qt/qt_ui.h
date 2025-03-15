@@ -7,9 +7,9 @@
 #include <QImage>
 #include <functional>
 
-#include "debugger.hpp"
-#include "hexview.hpp"
-#include "tapebrowser.hpp"
+#include "debugger.h"
+#include "hexview.h"
+#include "tapebrowser.h"
 
 QT_BEGIN_NAMESPACE
     namespace Ui { class DeFuseWindow; }
@@ -20,6 +20,7 @@ class DeFuseWindow: public QMainWindow
     Q_OBJECT
 public:
     static DeFuseWindow * instance();
+    ~DeFuseWindow() override {}
     int ask(const char *);
     void message(const char *);
     void showKeyboard();

@@ -7,7 +7,7 @@ extern "C" {
     #include "sound.h"
 }
 
-#include "qtsound.hpp"
+#include "qtsound.h"
 #include <QtMultimedia/QAudioFormat>
 #include <QApplication>
 #include <QDebug>
