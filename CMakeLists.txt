@@ -18,6 +18,7 @@ add_definitions(-DFUSEDATADIR="${CMAKE_CURRENT_SOURCE_DIR}/roms")
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 17)
 
+add_dependencies(${PROJECT_NAME} libspectrum)
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
     libspectrum
