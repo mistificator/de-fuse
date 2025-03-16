@@ -101,9 +101,13 @@ print hashline( __LINE__ ), << 'CODE';
 
 /* The name of our configuration file */
 #ifdef WIN32
-#define CONFIG_FILE_NAME "fuse.cfg"
+    #ifdef HAVE_LIB_XML2
+        #define CONFIG_FILE_NAME "de-fuse.xml"
+    #else
+        #define CONFIG_FILE_NAME "de-fuse.ini"
+    #endif
 #else				/* #ifdef WIN32 */
-#define CONFIG_FILE_NAME ".fuserc"
+    #define CONFIG_FILE_NAME ".defuserc"
 #endif				/* #ifdef WIN32 */
 
 /* The current settings of options, etc */

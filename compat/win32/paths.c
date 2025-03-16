@@ -123,4 +123,5 @@ compat_get_next_path( path_context *ctx )
 
   ui_error( UI_ERROR_ERROR, "unknown path_context state %d", ctx->state );
   fuse_abort();
+  return -1;
 }
