@@ -80,11 +80,11 @@ add_custom_command(
 set_source_files_properties(./ui/scaler/scalers.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=2")
 set_source_files_properties(./ui/scaler/scalers_4.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=4")
 
-add_custom_target(generated_${PROJECT_NAME}
+add_custom_target(__generated_${PROJECT_NAME}
     SOURCES
     settings.c settings.h ./ui/${OPTIONS_DIR}/options.h ./ui/scaler/scalers_4.c
 )
-add_dependencies(${PROJECT_NAME} generated_${PROJECT_NAME})
+add_dependencies(${PROJECT_NAME} __generated_${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME}
     PRIVATE
@@ -348,23 +348,30 @@ if (UNIX)
 endif()
 
 if (WIN32)
+    set_define(PTW32_STATIC_LIB)
+    set(PTHREAD_BUILD_SHARED OFF)
+    add_subdirectory(./compat/win32/pthread-win)
+
     target_include_directories(${PROJECT_NAME}
         PRIVATE
         ./compat/win32
+        ./compat/win32/pthread-win/include
     )
-    if (NOT HAVE_PTHREAD)
-        set_define(HAVE_PTHREAD)
-        target_include_directories(${PROJECT_NAME}
-            PRIVATE
-            ./compat/win32/pthread
-        )
-    endif()
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./compat/win32/osname.c
         ./compat/win32/paths.c
         ./compat/win32/socket.c
         ./compat/win32/timer.c
+
+        ./compat/unix/file.c
+        ./compat/unix/tuntap.c
+    )
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        ws2_32
+
+        pthread
     )
 endif()
 
@@ -586,7 +593,7 @@ if (${UI} STREQUAL "Qt")
         VERBATIM
     )
 
-    target_sources(generated_${PROJECT_NAME}
+    target_sources(__generated_${PROJECT_NAME}
         PRIVATE
         ./ui/${OPTIONS_DIR}/keysyms.cpp
         ./ui/${OPTIONS_DIR}/menu_data.ui

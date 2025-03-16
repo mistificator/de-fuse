@@ -26,6 +26,10 @@
     #include "config.h"
 #endif
 
+#include "ui/ui.h"
+
+#if (__linux__ || HAVE_IFTUN_H)
+
 #include <fcntl.h>
 #include <string.h>
 #include <sys/types.h>
@@ -34,8 +38,6 @@
 #include <linux/if_tun.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
-
-#include "ui/ui.h"
 
 int
 compat_get_tap( const char *interface_name )
@@ -59,3 +61,14 @@ compat_get_tap( const char *interface_name )
 
   return fd;
 }
+
+#else
+
+int
+compat_get_tap( const char *interface_name )
+{
+    ui_error( UI_ERROR_ERROR, "TUN/TAP device not implemented" );
+    return -1;
+}
+
+#endif

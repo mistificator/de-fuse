@@ -21,6 +21,7 @@
 
 */
 
+#include "internals.h"
 #include <string.h>
 #ifdef HAVE_STRINGS_STRCASECMP
 #include <strings.h>

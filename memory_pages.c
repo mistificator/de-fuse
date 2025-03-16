@@ -32,7 +32,7 @@
 #include <strings.h>
 #endif      /* #ifdef HAVE_STRINGS_STRCASECMP */
 
-#include "libspectrum.h"
+#include "internals.h"
 
 #include "debugger/debugger.h"
 #include "display.h"

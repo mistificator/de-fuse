@@ -100,6 +100,8 @@ set_property(CACHE SoundDevice PROPERTY STRINGS ${SoundDevices})
 
 # configure
 
+check_include(linux/if_tun.h    HAVE_IFTUN_H)
+
 set(BLIP_BUFFER_ACCURACY 32 CACHE STRING "Blip Buffer accuracy ")
 set(BUILD_SPECCYBOOT ON CACHE BOOL "SpeccyBoot support")
 set(BUILD_SPECTRANET ON CACHE BOOL "spectranet support")

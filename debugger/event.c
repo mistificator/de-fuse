@@ -22,6 +22,7 @@
 
 */
 
+#include "internals.h"
 #ifdef HAVE_CONFIG
     #include "config.h"
 #endif

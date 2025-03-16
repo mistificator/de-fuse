@@ -34,7 +34,7 @@
 #include <glib.h>
 #endif				/* #ifdef HAVE_LIB_GLIB */
 
-#include "libspectrum.h"
+#include "internals.h"
 
 #include "debugger_internals.h"
 #include "fuse.h"

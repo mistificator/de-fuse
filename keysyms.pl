@@ -337,20 +337,22 @@ CODE
 
 # Comment to unbreak Emacs' perl mode
 
-print << "CODE";
-
-#include "input.h"
-#include "keyboard.h"
-
-CODE
-
-# Comment to unbreak Emacs' perl mode
-
 foreach my $header ( @{ $ui_data{$ui}{headers} } ) {
     print "#include <$header>\n";
 }
 
-print "\nkeysyms_map_t keysyms_map[] = {\n\n";
+print  << "CODE";
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "input.h"
+#include "keyboard.h"
+
+keysyms_map_t keysyms_map[] = {
+
+CODE
 
 KEY:
 foreach( @keys ) {
@@ -389,6 +391,11 @@ print << "CODE";
   { 0, (input_key)0 }			/* End marker: DO NOT MOVE! */
 
 };
+
+#ifdef __cplusplus
+}
+#endif
+
 
 CODE
 

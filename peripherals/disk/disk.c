@@ -35,7 +35,7 @@
     #include <unistd.h>
 #endif
 
-#include "libspectrum.h"
+#include "internals.h"
 
 #include "bitmap.h"
 #include "crc.h"
