@@ -34,10 +34,15 @@
 #include <time.h>
 
 #ifdef WIN32
-#include <windows.h>
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+    #include <windows.h>
 #endif				/* #ifdef WIN32 */
 
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+#endif
 
 /* We need to include SDL.h on Mac O X and Windows to do some magic
    bootstrapping by redefining main. As we now allow SDL joystick code to be

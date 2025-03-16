@@ -6,6 +6,9 @@
 #include <QKeyEvent>
 #include <QDebug>
 
+#include <array>
+#include <tuple>
+
 extern "C"
 {
     #include "fuse.h"

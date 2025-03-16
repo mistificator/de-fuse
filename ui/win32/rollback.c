@@ -27,6 +27,9 @@
 #endif
 
 #include <tchar.h>
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <commctrl.h> /* windows.h must be included prior to commctrl.h */
 

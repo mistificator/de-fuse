@@ -26,7 +26,9 @@
 #endif
 
 #include <stdio.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+#endif
 
 #include "libspectrum.h"
 

@@ -456,7 +456,7 @@ static int
 scr_write( const char *filename, const int data_size,
            data_write_fn scr_data_write )
 {
-  libspectrum_byte scr_data[ data_size ];
+  libspectrum_byte * scr_data = (libspectrum_byte *)malloc( data_size );
   int x, y;
 
   memset( scr_data, 0, data_size );
@@ -467,7 +467,9 @@ scr_write( const char *filename, const int data_size,
     }
   }
 
-  return utils_write_file( filename, scr_data, data_size );
+  int rc = utils_write_file( filename, scr_data, data_size );
+  free( scr_data );
+  return rc;
 }
 
 static void

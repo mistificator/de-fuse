@@ -31,7 +31,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+#endif
 
 #include "libspectrum.h"
 #ifdef HAVE_ZLIB_H

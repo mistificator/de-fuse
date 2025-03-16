@@ -25,6 +25,9 @@
     #include "config.h"
 #endif
 
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <windowsx.h> /* for GET_X_LPARAM and GET_Y_LPARAM */
 

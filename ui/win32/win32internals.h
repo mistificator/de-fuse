@@ -24,6 +24,9 @@
 #ifndef FUSE_WIN32INTERNALS_H
 #define FUSE_WIN32INTERNALS_H
 
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <commctrl.h>
 #include <commdlg.h>

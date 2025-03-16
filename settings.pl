@@ -72,7 +72,10 @@ print hashline( __LINE__ ), << 'CODE';
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+
+#ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+#endif
 
 #ifdef HAVE_GETOPT_LONG		/* Did our libc include getopt_long? */
 #include <getopt.h>

@@ -25,7 +25,7 @@
     #include "config.h"
 #endif
 
-#include <winsock2.h>
+#include <WinSock2.h>
 #include <ws2tcpip.h>
 
 #include "compat.h"
