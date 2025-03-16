@@ -44,26 +44,28 @@ include(cmake/config.cmake)
 #    message(STATUS "${_variableName}=${${_variableName}}")
 #endforeach()
 
+set(CHDIR ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/settings.c
-    COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/settings.pl ${SRCDIR} ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat > ${CMAKE_CURRENT_SOURCE_DIR}/settings.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat ${CMAKE_CURRENT_SOURCE_DIR}/settings.pl
+    COMMAND ${CHDIR} ${PERL_EXECUTABLE} -I./perl settings.pl ./ settings.dat > ${CMAKE_CURRENT_SOURCE_DIR}/settings.c
+    DEPENDS settings.dat settings.pl
     VERBATIM
 )
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
-    COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/settings-header.pl ${SRCDIR} ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat > ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/settings.dat ${CMAKE_CURRENT_SOURCE_DIR}/settings-header.pl
+    COMMAND ${CHDIR} ${PERL_EXECUTABLE} -I./perl settings-header.pl ./ settings.dat > ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
+    DEPENDS settings.dat settings-header.pl
     VERBATIM
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/options.h
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.h
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-    COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl - public > ${CMAKE_CURRENT_SOURCE_DIR}/options.h
+    COMMAND ${CHDIR} ${PERL_EXECUTABLE} -I./perl ./perl/cpp-perl.pl ./tmp-config.h ./ui/options.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl ./ui/${OPTIONS_DIR}/options-header.pl - public > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.h
     COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse.pm ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse/Dialog.pm
+    DEPENDS ./ui/options.dat ./ui/${OPTIONS_DIR}/options-header.pl ./perl/cpp-perl.pl ./perl/Fuse.pm ./perl/Fuse/Dialog.pm
     VERBATIM
 )
 
@@ -71,11 +73,17 @@ add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers_4.c
     COMMAND ${CMAKE_COMMAND} -E rm -f -- ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers_4.c
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers.c ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers_4.c
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/scaler/scalers.c
+    DEPENDS ./ui/scaler/scalers.c
     VERBATIM
 )
 set_source_files_properties(./ui/scaler/scalers.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=2")
 set_source_files_properties(./ui/scaler/scalers_4.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=4")
+
+add_custom_target(generated_${PROJECT_NAME}
+    SOURCES
+    settings.c settings.h ./ui/${OPTIONS_DIR}/options.h ./ui/scaler/scalers_4.c
+)
+add_dependencies(${PROJECT_NAME} generated_${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME}
     PRIVATE
@@ -526,45 +534,54 @@ if (${UI} STREQUAL "Qt")
 
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/keysyms.cpp
-        COMMAND ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.pl qt ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.dat > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/keysyms.cpp
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.dat ${CMAKE_CURRENT_SOURCE_DIR}/keysyms.pl
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} -I./perl keysyms.pl qt keysyms.dat > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/keysyms.cpp
+        DEPENDS keysyms.dat keysyms.pl
         VERBATIM
     )
 
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.ui
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl qt ui > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.ui
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config.h menu_data.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl menu_data.pl qt ui > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.ui
         COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl
+        DEPENDS menu_data.dat menu_data.pl ./perl/cpp-perl.pl
         VERBATIM
     )
 
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.cpp
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl qt cpp > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.cpp
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config.h menu_data.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl menu_data.pl qt cpp > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.cpp
         COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.dat ${CMAKE_CURRENT_SOURCE_DIR}/menu_data.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl
+        DEPENDS menu_data.dat menu_data.pl ./perl/cpp-perl.pl
         VERBATIM
     )
 
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.cpp
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.cpp
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config.h ./ui/options.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl ./ui/${OPTIONS_DIR}/options.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.cpp
         COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse.pm ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse/Dialog.pm
+        DEPENDS ./ui/options.dat ./ui/${OPTIONS_DIR}/options.pl ./perl/cpp-perl.pl ./perl/Fuse.pm ./perl/Fuse/Dialog.pm
         VERBATIM
     )
 
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options_internals.h
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat | ${PERL_EXECUTABLE} -I${CMAKE_CURRENT_SOURCE_DIR}/perl ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options_internals.h
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config.h ./ui/options.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl ./ui/${OPTIONS_DIR}/options-header.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options_internals.h
         COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config.h
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ui/options.dat ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options-header.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/cpp-perl.pl ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse.pm ${CMAKE_CURRENT_SOURCE_DIR}/perl/Fuse/Dialog.pm
+        DEPENDS ./ui/options.dat ./ui/${OPTIONS_DIR}/options-header.pl ./perl/cpp-perl.pl ./perl/Fuse.pm ./perl/Fuse/Dialog.pm
         VERBATIM
+    )
+
+    target_sources(generated_${PROJECT_NAME}
+        PRIVATE
+        ./ui/${OPTIONS_DIR}/keysyms.cpp
+        ./ui/${OPTIONS_DIR}/menu_data.ui
+        ./ui/${OPTIONS_DIR}/menu_data.cpp
+        ./ui/${OPTIONS_DIR}/options.cpp
+        ./ui/${OPTIONS_DIR}/options_internals.h
     )
 
     target_sources(${PROJECT_NAME}

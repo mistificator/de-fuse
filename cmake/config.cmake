@@ -3,15 +3,12 @@ find_package(PkgConfig)
 set(UIs)
 set(SoundDevices)
 
-set(OPTIONS_DIR widget)
-
 # Qt
 
 find_package(Qt5 COMPONENTS Core Widgets Gui Multimedia)
 if (Qt5_FOUND)
     set(UIs ${UIs} Qt)
     set(SoundDevices ${SoundDevices} Qt)
-    set(OPTIONS_DIR qt)
 endif()
 
 # SDL
@@ -51,7 +48,6 @@ endif()
 
 if (WIN32)
     set(UIs ${UIs} Generic)
-    set(OPTIONS_DIR win32)
 endif()
 
 if (LINUX)
@@ -66,6 +62,14 @@ set_property(CACHE UI PROPERTY STRINGS ${UIs})
 set(SimpleUI OFF CACHE BOOL "")
 if (${SimpleUI})
     set(OPTIONS_DIR widget)
+elseif(${UI} STREQUAL "Qt")
+    set(OPTIONS_DIR qt)
+elseif(${UI} MATCHES "$Gtk")
+    set(OPTIONS_DIR gtk)
+elseif(${UI} STREQUAL "SDL")
+    set(OPTIONS_DIR sdl)
+elseif(${UI} STREQUAL "Generic" AND WIN32)
+    set(OPTIONS_DIR win32)
 endif()
 
 # Audio
