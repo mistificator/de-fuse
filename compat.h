@@ -68,9 +68,15 @@
     BUILD_BUG_ON_ZERO(SAME_TYPE((a), &(*a)))
 #endif
 
-#define ARRAY_SIZE(a) ( \
-  (sizeof(a) / sizeof(*a)) \
-   + MUST_BE_ARRAY(a))
+#ifndef ARRAY_SIZE
+    #if (!defined(_MSC_VER))
+    #define ARRAY_SIZE(a) ( \
+      (sizeof(a) / sizeof(*a)) \
+       + MUST_BE_ARRAY(a))
+    #else
+        #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+    #endif
+#endif
 
 #ifndef HAVE_DIRNAME
 char *dirname( char *path );
