@@ -18,6 +18,10 @@ add_definitions(-DFUSEDATADIR="${CMAKE_CURRENT_SOURCE_DIR}/roms")
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 17)
 
+if(MSVC AND WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
+
 add_dependencies(${PROJECT_NAME} libspectrum)
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
@@ -202,7 +206,6 @@ target_sources(${PROJECT_NAME}
 #    ./ui/scaler/scaler_hq2x.c
 #    ./ui/scaler/scaler_hq3x.c
 #    ./ui/scaler/scaler_hq4x.c
-    ./ui/uijoystick.c
     ./ui.c
     ./uidisplay.c
     ./uimedia.c
@@ -349,9 +352,11 @@ endif()
 
 if (WIN32)
     set_define(PTW32_STATIC_LIB)
+    unset(PTHREAD_BUILD_SHARED)
     set(PTHREAD_BUILD_SHARED OFF)
     add_subdirectory(./compat/win32/pthread-win)
 
+    set_define(UNICODE)
     target_include_directories(${PROJECT_NAME}
         PRIVATE
         ./compat/win32
@@ -405,11 +410,19 @@ if (WIN32)
             PRIVATE
             ./sound/win32sound.c
         )
+        target_link_libraries(${PROJECT_NAME}
+            PRIVATE
+            winmm
+        )
     endif()
     if (${SoundDevice} STREQUAL "DirectX")
         target_sources(${PROJECT_NAME}
             PRIVATE
             ./sound/dxsound.c
+        )
+        target_link_libraries(${PROJECT_NAME}
+            PRIVATE
+            dsound
         )
     endif()
 endif()
@@ -623,6 +636,8 @@ if (${UI} STREQUAL "Qt")
         ./ui/qt/hexview.ui
         ./ui/qt/menu_data.ui
         ./ui/qt/tapebrowser.ui
+
+        ./ui/uijoystick.c
     )
 endif()
 
@@ -644,6 +659,79 @@ endif()
 
 if (WIN32 AND ${UI} STREQUAL "Generic")
     set_define(UI_WIN32)
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/keysyms.c
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} -I./perl keysyms.pl win32 keysyms.dat > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/keysyms.c
+        DEPENDS keysyms.dat keysyms.pl
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.h
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-1.h
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config-1.h menu_data.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl menu_data.pl win32 h > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.h
+        COMMAND ${RM} ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-1.h
+        DEPENDS menu_data.dat menu_data.pl ./perl/cpp-perl.pl
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.c
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-2.h
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config-2.h menu_data.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl menu_data.pl win32 c > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.c
+        COMMAND ${RM} ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-2.h
+        DEPENDS menu_data.dat menu_data.pl ./perl/cpp-perl.pl
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.rc
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-3.h
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config-3.h menu_data.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl menu_data.pl win32 rc > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/menu_data.rc
+        COMMAND ${RM} ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-3.h
+        DEPENDS menu_data.dat menu_data.pl ./perl/cpp-perl.pl
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.c
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-4.h
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config-4.h ./ui/options.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl ./ui/${OPTIONS_DIR}/options.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.c
+        COMMAND ${RM} ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-4.h
+        DEPENDS ./ui/options.dat ./ui/${OPTIONS_DIR}/options.pl ./perl/cpp-perl.pl ./perl/Fuse.pm ./perl/Fuse/Dialog.pm
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options_internals.h
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-5.h
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config-5.h ./ui/options.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl ./ui/${OPTIONS_DIR}/options-header.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options_internals.h
+        COMMAND ${RM} ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-5.h
+        DEPENDS ./ui/options.dat ./ui/${OPTIONS_DIR}/options-header.pl ./perl/cpp-perl.pl ./perl/Fuse.pm ./perl/Fuse/Dialog.pm
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.rc
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-6.h
+        COMMAND ${CHDIR} ${PERL_EXECUTABLE} ./perl/cpp-perl.pl tmp-config-6.h ./ui/options.dat | ${CHDIR} ${PERL_EXECUTABLE} -I./perl ./ui/${OPTIONS_DIR}/options-resource.pl - > ${CMAKE_CURRENT_SOURCE_DIR}/ui/${OPTIONS_DIR}/options.rc
+        COMMAND ${RM} ${CMAKE_CURRENT_SOURCE_DIR}/tmp-config-6.h
+        DEPENDS ./ui/options.dat ./ui/${OPTIONS_DIR}/options-resource.pl ./perl/cpp-perl.pl ./perl/Fuse.pm ./perl/Fuse/Dialog.pm
+        VERBATIM
+    )
+
+    target_sources(__generated_${PROJECT_NAME}
+        PRIVATE
+        ./ui/${OPTIONS_DIR}/keysyms.c
+        ./ui/${OPTIONS_DIR}/menu_data.h
+        ./ui/${OPTIONS_DIR}/menu_data.c
+        ./ui/${OPTIONS_DIR}/menu_data.rc
+        ./ui/${OPTIONS_DIR}/options.c
+        ./ui/${OPTIONS_DIR}/options_internals.h
+        ./ui/${OPTIONS_DIR}/options.rc
+    )
+
     target_sources(${PROJECT_NAME}
         PRIVATE
         ./ui/win32/about.c
@@ -680,7 +768,19 @@ if (WIN32 AND ${UI} STREQUAL "Generic")
         ./ui/win32/select_template.h
         ./ui/win32/win32internals.h
         ./ui/win32/win32joystick.h
+
+        ./ui/${OPTIONS_DIR}/keysyms.c
+        ./ui/${OPTIONS_DIR}/menu_data.h
+        ./ui/${OPTIONS_DIR}/menu_data.c
+        ./ui/${OPTIONS_DIR}/options.c
+        ./ui/${OPTIONS_DIR}/options_internals.h
     )
+
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        comctl32
+    )
+
 endif()
 
 if (HAVE_ZLIB_H)

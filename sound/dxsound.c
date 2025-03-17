@@ -30,6 +30,7 @@
 #endif
 #include <windows.h>
 #include <mmsystem.h>
+#include <initguid.h>
 #include <dsound.h>
 
 #include "settings.h"
