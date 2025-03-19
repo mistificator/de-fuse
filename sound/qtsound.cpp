@@ -161,6 +161,6 @@ void sound_lowlevel_frame( libspectrum_signed_word *data, int len )
 
     device->play(buf);
 
-    while (device && device->written() - device->processed() > 0)
+    while (device && device->written() - device->processed() > sound_framesiz)
         qApp->processEvents(QEventLoop::AllEvents, 0);
 }
