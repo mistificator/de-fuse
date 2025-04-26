@@ -1,6 +1,15 @@
+#ifndef QT_UI_C_WRAP_H
+#define QT_UI_C_WRAP_H
+
+extern "C"
+{
+
 #ifdef HAVE_CONFIG
     #include "config.h"
 #endif
+
+#include <libspectrum.h>
+#include <display.h>
 
 #include "keyboard.h"
 #include "ui/ui.h"
@@ -583,3 +592,7 @@ menu_help_about( int action )
 {
     DeFuseWindow::instance()->about();
 }
+
+} // extern "C"
+
+#endif

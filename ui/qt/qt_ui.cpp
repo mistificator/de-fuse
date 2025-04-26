@@ -14,12 +14,8 @@
 
 #include "menu_data.cpp"
 #include "options.cpp"
-extern "C"
-{
-    #include <libspectrum.h>
-    #include <display.h>
-    #include "qt_ui_c_wrap.c"
-}
+
+#include "qt_ui_c_wrap.h"
 
 // very strange piece of sh..
 #if (-1ULL == -1UL) && (defined(WIN32)  && defined(__GNUC__))
@@ -66,7 +62,7 @@ DeFuseWindow::DeFuseWindow(QWidget * _parent): QMainWindow(_parent), ui(new Ui::
 //    grabKeyboard();
     setFocusPolicy(Qt::WheelFocus);
 
-    ui->menu_help->addAction("About Qt...", []()
+    ui->menu_help->addAction("About Qt...", this, []()
     {
         QMessageBox::aboutQt(DeFuseWindow::instance());
     });
@@ -195,7 +191,7 @@ void DeFuseWindow::selectRom( const char *title, size_t start, size_t count, int
         _gb->setLayout(_hbox);
         _vbox->addWidget(_gb);
 
-        QObject::connect(_btn, &QPushButton::clicked, [=]() {
+        QObject::connect(_btn, &QPushButton::clicked, this, [_le]() {
             const char * filename = ui_get_open_filename( "De-Fuse - Select ROM" );
             if( !filename ) return;
             _le->setText( filename );

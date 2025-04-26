@@ -94,7 +94,7 @@ compat_get_next_path( path_context *ctx )
       buffer[ PATH_MAX - 1 ] = '\0';
     } else {
       DWORD retval; 
-      retval = GetModuleFileName( NULL, buffer, PATH_MAX );
+      retval = GetModuleFileNameA( NULL, buffer, PATH_MAX );
       if( !retval ) return 0;
     }
 

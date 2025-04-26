@@ -638,6 +638,8 @@ if (${UI} STREQUAL "Qt")
         ./ui/qt/tapebrowser.ui
 
         ./ui/uijoystick.c
+
+        ./ui/qt/qt_ui_c_wrap.h
     )
 endif()
 
