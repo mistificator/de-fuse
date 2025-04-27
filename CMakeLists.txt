@@ -356,7 +356,7 @@ if (WIN32)
     set(PTHREAD_BUILD_SHARED OFF)
     add_subdirectory(./compat/win32/pthread-win)
 
-    set_define(UNICODE)
+#    set_define(UNICODE) # native WIN32 code is not ready for UNICODE
     target_include_directories(${PROJECT_NAME}
         PRIVATE
         ./compat/win32

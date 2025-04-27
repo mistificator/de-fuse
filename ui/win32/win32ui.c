@@ -376,7 +376,7 @@ WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
   fuse_hPrevInstance = hPrevInstance;
 
   int argc = 0;
-  char * argv = CommandLineToArgvA( GetCommandLineA(), &argc );
+  char ** argv = CommandLineToArgvA( GetCommandLineA(), &argc );
   return fuse_main( argc, argv );
 
   /* FIXME: how do deal with returning wParam */
@@ -388,24 +388,24 @@ ui_init( int *argc, char ***argv )
   /* register window class */
   WNDCLASS wc;
 
-  if( !fuse_hPrevInstance ) {
-    wc.lpszClassName = "De-Fuse";
-    wc.lpfnWndProc = fuse_window_proc;
-    wc.style = CS_OWNDC;
-    wc.hInstance = fuse_hInstance;
-    wc.hIcon = LoadIcon( fuse_hInstance, "win32_icon" );
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
-    wc.hbrBackground = (HBRUSH)( COLOR_WINDOW+1 );
-    wc.lpszMenuName = "win32_menu";
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
+  wc.lpszClassName = "DeFuse";
+  wc.lpfnWndProc = fuse_window_proc;
+  wc.style = CS_OWNDC;
+  wc.hInstance = fuse_hInstance;
+  wc.hIcon = LoadIcon( fuse_hInstance, "win32_icon" );
+  wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+  wc.hbrBackground = (HBRUSH)( COLOR_WINDOW+1 );
+  wc.lpszMenuName = "win32_menu";
+  wc.cbClsExtra = 0;
+  wc.cbWndExtra = 0;
 
+  if( !fuse_hPrevInstance ) {
     if( !RegisterClass( &wc ) )
       return 0;
   }
 
   /* create the window */
-  fuse_hWnd = CreateWindow( "De-Fuse (based on Fuse)", "De-Fuse (based on Fuse)", WS_OVERLAPPED | WS_CAPTION |
+  fuse_hWnd = CreateWindow( wc.lpszClassName, "De-Fuse (based on Fuse)", WS_OVERLAPPED | WS_CAPTION |
     WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
     NULL, NULL, fuse_hInstance, NULL );
