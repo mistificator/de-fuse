@@ -771,11 +771,28 @@ if (WIN32 AND ${UI} STREQUAL "Generic")
         ./ui/win32/win32internals.h
         ./ui/win32/win32joystick.h
 
-        ./ui/${OPTIONS_DIR}/keysyms.c
-        ./ui/${OPTIONS_DIR}/menu_data.h
-        ./ui/${OPTIONS_DIR}/menu_data.c
-        ./ui/${OPTIONS_DIR}/options.c
-        ./ui/${OPTIONS_DIR}/options_internals.h
+        ./ui/win32/about.rc
+        ./ui/win32/binary.rc
+        ./ui/win32/browse.rc
+        ./ui/win32/debugger.rc
+        ./ui/win32/memorybrowser.rc
+        ./ui/win32/picture.rc
+        ./ui/win32/pokefinder.rc
+        ./ui/win32/pokemem.rc
+        ./ui/win32/rollback.rc
+        ./ui/win32/roms.rc
+        ./ui/win32/select_template.rc
+        ./ui/win32/statusbar.rc
+#        ./ui/win32/win32joystick.rc
+
+        ./ui/win32/keysyms.c
+        ./ui/win32/menu_data.h
+        ./ui/win32/menu_data.c
+        ./ui/win32/options.c
+        ./ui/win32/options_internals.h
+
+        ./ui/win32/menu_data.rc
+        ./ui/win32/options.rc
     )
 
     target_link_libraries(${PROJECT_NAME}

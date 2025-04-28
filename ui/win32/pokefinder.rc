@@ -22,6 +22,7 @@
 */
 
 #include "pokefinder.h"
+#include <winresrc.h>
 
 IDD_POKEFINDER DIALOGEX DISCARDABLE 6,6,330,49
 CAPTION "De-Fuse - Poke Finder"
