@@ -48,9 +48,11 @@ libspectrum_word
 ptrdiff_t win32display_pitch = DISPLAY_SCREEN_WIDTH *
                                sizeof( libspectrum_word );
 
+static int rgb_index = 0;
+#define FINAL_RGB_IMAGE 2
 /* An RGB image of the Spectrum screen; slightly bigger than the real
    screen to handle the smoothing filters which read around each pixel */
-static unsigned char rgb_image[ 4 * 2 * ( DISPLAY_SCREEN_HEIGHT + 4 ) *
+static unsigned char rgb_image[3][ 4 * 2 * ( DISPLAY_SCREEN_HEIGHT + 4 ) *
                                         ( DISPLAY_SCREEN_WIDTH  + 3 )   ];
 static const int rgb_pitch = ( DISPLAY_SCREEN_WIDTH + 3 ) * 4;
 
@@ -134,9 +136,10 @@ win32display_init( void )
 
   black = settings_current.bw_tv ? bw_colours[0] : win32display_colours[0];
 
+  rgb_index = 0;
   for( y = 0; y < DISPLAY_SCREEN_HEIGHT + 4; y++ )
     for( x = 0; x < DISPLAY_SCREEN_WIDTH + 3; x++ )
-      *(libspectrum_dword*)( rgb_image + y * rgb_pitch + 4 * x ) = black;
+      *(libspectrum_dword*)( rgb_image[FINAL_RGB_IMAGE] + y * rgb_pitch + 4 * x ) = black;
 
   /* create the back buffer */
 
@@ -338,18 +341,39 @@ uidisplay_area( int x, int y, int w, int h )
   /* Create the RGB image */
   for( yy = y; yy < y + h; yy++ ) {
 
-    libspectrum_dword *rgb; libspectrum_word *display;
+    libspectrum_dword *rgb[3], *rgb_0, *rgb_1, *rgb_f, *rgb_i; libspectrum_word *display;
 
-    rgb = (libspectrum_dword*)( rgb_image + ( yy + 2 ) * rgb_pitch );
-    rgb += x + 1;
+    for ( i = 0; i < 3; i++) {
+      rgb[i] = ( libspectrum_dword* )( rgb_image[i] + ( yy + 2 ) * rgb_pitch );
+      rgb[i] += x + 1;
+    }
+    rgb_f = rgb[FINAL_RGB_IMAGE];
 
     display = &win32display_image[yy][x];
 
-    for( i = 0; i < w; i++, rgb++, display++ ) *rgb = palette[ *display ];
+    if ( settings_current.pretty_gigascreen ) {
+      rgb_0 = rgb[0];
+      rgb_1 = rgb[1];
+      rgb_i = rgb[ rgb_index ];
+      for( i = 0; i < w; ++i, ++display, ++rgb_i ) {
+        *rgb_i = palette[ *display ];
+      }
+      if ( rgb_index == 1 ) {
+        for( i = 0; i < w; ++i, ++rgb_f, ++rgb_0, ++rgb_1 ) {
+          ((libspectrum_byte *)rgb_f)[0] = ((unsigned short)((libspectrum_byte *)rgb_0)[0] + ((libspectrum_byte *)rgb_1)[0]) >> 1 ;
+          ((libspectrum_byte *)rgb_f)[1] = ((unsigned short)((libspectrum_byte *)rgb_0)[1] + ((libspectrum_byte *)rgb_1)[1]) >> 1 ;
+          ((libspectrum_byte *)rgb_f)[2] = ((unsigned short)((libspectrum_byte *)rgb_0)[2] + ((libspectrum_byte *)rgb_1)[2]) >> 1 ;
+        }
+      }
+    } else {
+      for( i = 0; i < w; ++i, ++display, ++rgb_f ) *rgb_f = palette[ *display ];
+    }
   }
 
+  rgb_index = (rgb_index + 1) & 0x01;
+
   /* Create scaled image */
-  scaler_proc32( &rgb_image[ ( y + 2 ) * rgb_pitch + 4 * ( x + 1 ) ],
+  scaler_proc32( &rgb_image[FINAL_RGB_IMAGE][ ( y + 2 ) * rgb_pitch + 4 * ( x + 1 ) ],
                  rgb_pitch,
                  &scaled_image[ scaled_y * scaled_pitch + 4 * scaled_x ],
                  scaled_pitch, w, h );
