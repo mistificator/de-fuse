@@ -17,7 +17,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 /* This is necessary to prevent warnings from the calls to
    snd_pcm_[hs]w_params_alloca() */

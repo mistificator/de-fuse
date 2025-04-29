@@ -33,9 +33,12 @@ install-win32: all
 	cp $(top_srcdir)/lib/*.png $(DESTDIR)/lib
 	cp $(top_srcdir)/lib/*.scr $(DESTDIR)/lib
 	test "$(UI)" != "sdl" || cp $(top_builddir)/ui/widget/fuse.font $(DESTDIR)/ui/widget
-#	Copy fuse executable (we should manually copy the required libraries)
-	cp $(top_builddir)/.libs/fuse$(EXEEXT) $(DESTDIR) || \
-	cp $(top_builddir)/fuse$(EXEEXT) $(DESTDIR)
+#	Copy de-fuse executable
+	cp $(top_builddir)/.libs/de-fuse$(EXEEXT) $(DESTDIR) || \
+	cp $(top_builddir)/de-fuse$(EXEEXT) $(DESTDIR)
+#	Copy libraries
+	cp $(top_builddir)/libspectrum/.libs/*.dll $(DESTDIR)
+	cp $(top_builddir)/libspectrum/*.dll $(DESTDIR)
 #	Get text files
 	for file in AUTHORS ChangeLog COPYING README; \
 	  do cp "$(top_srcdir)/$$file" "$(DESTDIR)/$$file.txt"; \

@@ -34,7 +34,9 @@
  * #endif
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include "input.h"
 #include "uijoystick.h"

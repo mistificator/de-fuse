@@ -21,7 +21,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>

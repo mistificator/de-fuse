@@ -26,7 +26,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <errno.h>
 #ifdef HAVE_LIBGEN_H
@@ -34,7 +36,9 @@
 #endif				/* #ifdef HAVE_LIBGEN_H */
 #include <string.h>
 #include <ui/ui.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+#endif
 
 #include "libspectrum.h"
 

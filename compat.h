@@ -68,9 +68,15 @@
     BUILD_BUG_ON_ZERO(SAME_TYPE((a), &(*a)))
 #endif
 
-#define ARRAY_SIZE(a) ( \
-  (sizeof(a) / sizeof(*a)) \
-   + MUST_BE_ARRAY(a))
+#ifndef ARRAY_SIZE
+    #if (!defined(_MSC_VER))
+    #define ARRAY_SIZE(a) ( \
+      (sizeof(a) / sizeof(*a)) \
+       + MUST_BE_ARRAY(a))
+    #else
+        #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+    #endif
+#endif
 
 #ifndef HAVE_DIRNAME
 char *dirname( char *path );
@@ -170,15 +176,26 @@ int compat_get_tap( const char *interface_name );
 
 /* Socket handling */
 
-#ifdef WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(__GNUC__)
+#include <io.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <basetsd.h>
 #define COMPAT_ENOTCONN WSAENOTCONN
 #define COMPAT_EWOULDBLOCK WSAEWOULDBLOCK
 #define COMPAT_EINPROGRESS WSAEINPROGRESS
 #define COMPAT_ECONNREFUSED WSAECONNREFUSED
 typedef SOCKET compat_socket_t;
 typedef SOCKADDR compat_sockaddr;
+typedef SSIZE_T ssize_t;
+#ifndef HAVE_UNISTD_H
+    /* Values for the second argument to access.
+       These may be OR'd together.  */
+    #define	R_OK	4		/* Test for read permission.  */
+    #define	W_OK	2		/* Test for write permission.  */
+    #define	X_OK	1		/* Test for execute permission.  */
+    #define	F_OK	0		/* Test for existence.  */
+#endif
 #elif GEKKO
 /* no sockets under WII, just define the minimum
    to feed the below compat_ declarations  */

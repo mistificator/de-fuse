@@ -23,7 +23,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 #include <tchar.h>
 
 #include "debugger/debugger.h"
@@ -288,6 +290,81 @@ fuse_window_proc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
   return( DefWindowProc( hWnd, msg, wParam, lParam ) );
 }
 
+// https://stackoverflow.com/a/4023686
+LPSTR* CommandLineToArgvA(LPSTR lpCmdLine, INT *pNumArgs)
+{
+    int retval;
+    retval = MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, lpCmdLine, -1, NULL, 0);
+    if (!SUCCEEDED(retval))
+        return NULL;
+
+    LPWSTR lpWideCharStr = (LPWSTR)malloc(retval * sizeof(WCHAR));
+    if (lpWideCharStr == NULL)
+        return NULL;
+
+    retval = MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, lpCmdLine, -1, lpWideCharStr, retval);
+    if (!SUCCEEDED(retval))
+    {
+        free(lpWideCharStr);
+        return NULL;
+    }
+
+    int numArgs;
+    LPWSTR* args;
+    args = CommandLineToArgvW(lpWideCharStr, &numArgs);
+    free(lpWideCharStr);
+    if (args == NULL)
+        return NULL;
+
+    int storage = numArgs * sizeof(LPSTR);
+    for (int i = 0; i < numArgs; ++ i)
+    {
+        BOOL lpUsedDefaultChar = FALSE;
+        retval = WideCharToMultiByte(CP_ACP, 0, args[i], -1, NULL, 0, NULL, &lpUsedDefaultChar);
+        if (!SUCCEEDED(retval))
+        {
+            LocalFree(args);
+            return NULL;
+        }
+
+        storage += retval;
+    }
+
+    LPSTR* result = (LPSTR*)LocalAlloc(LMEM_FIXED, storage);
+    if (result == NULL)
+    {
+        LocalFree(args);
+        return NULL;
+    }
+
+    int bufLen = storage - numArgs * sizeof(LPSTR);
+    LPSTR buffer = ((LPSTR)result) + numArgs * sizeof(LPSTR);
+    for (int i = 0; i < numArgs; ++ i)
+    {
+        if (bufLen <= 0)
+		{
+			break;
+		}
+        BOOL lpUsedDefaultChar = FALSE;
+        retval = WideCharToMultiByte(CP_ACP, 0, args[i], -1, buffer, bufLen, NULL, &lpUsedDefaultChar);
+        if (!SUCCEEDED(retval))
+        {
+            LocalFree(result);
+            LocalFree(args);
+            return NULL;
+        }
+
+        result[i] = buffer;
+        buffer += retval;
+        bufLen -= retval;
+    }
+
+    LocalFree(args);
+
+    *pNumArgs = numArgs;
+    return result;
+}
+
 /* this is where windows program begins */
 int WINAPI
 WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
@@ -298,20 +375,9 @@ WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
   fuse_nCmdShow = nCmdShow;
   fuse_hPrevInstance = hPrevInstance;
 
-/* HACK: __argc, __argv are broken and return zero when using mingwrt 4.0+
-   on MinGW.
-   HACK: MinGW-w64 based toolchains neither feature _argc nor _argv. The 32 bit
-   incarnation only defines __MINGW32__. This leads to build breakage due to
-   missing declarations. Luckily MinGW-w64 based toolchains define
-   __MINGW64_VERSION_foo macros inside _mingw.h, which is included from all
-   system headers. Thus we abuse that to detect them.
-*/
-#if defined( __GNUC__ ) && defined( __MINGW32__ ) \
-                        && !defined( __MINGW64_VERSION_MAJOR )
-  return fuse_main( _argc, _argv );
-#else
-  return fuse_main( __argc, __argv );
-#endif
+  int argc = 0;
+  char ** argv = CommandLineToArgvA( GetCommandLineA(), &argc );
+  return fuse_main( argc, argv );
 
   /* FIXME: how do deal with returning wParam */
 }
@@ -322,24 +388,24 @@ ui_init( int *argc, char ***argv )
   /* register window class */
   WNDCLASS wc;
 
-  if( !fuse_hPrevInstance ) {
-    wc.lpszClassName = "De-Fuse";
-    wc.lpfnWndProc = fuse_window_proc;
-    wc.style = CS_OWNDC;
-    wc.hInstance = fuse_hInstance;
-    wc.hIcon = LoadIcon( fuse_hInstance, "win32_icon" );
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
-    wc.hbrBackground = (HBRUSH)( COLOR_WINDOW+1 );
-    wc.lpszMenuName = "win32_menu";
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
+  wc.lpszClassName = "DeFuse";
+  wc.lpfnWndProc = fuse_window_proc;
+  wc.style = CS_OWNDC;
+  wc.hInstance = fuse_hInstance;
+  wc.hIcon = LoadIcon( fuse_hInstance, "win32_icon" );
+  wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+  wc.hbrBackground = (HBRUSH)( COLOR_WINDOW+1 );
+  wc.lpszMenuName = "win32_menu";
+  wc.cbClsExtra = 0;
+  wc.cbWndExtra = 0;
 
+  if( !fuse_hPrevInstance ) {
     if( !RegisterClass( &wc ) )
       return 0;
   }
 
   /* create the window */
-  fuse_hWnd = CreateWindow( "De-Fuse (based on Fuse)", "De-Fuse (based on Fuse)", WS_OVERLAPPED | WS_CAPTION |
+  fuse_hWnd = CreateWindow( wc.lpszClassName, "De-Fuse (based on Fuse)", WS_OVERLAPPED | WS_CAPTION |
     WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
     NULL, NULL, fuse_hInstance, NULL );

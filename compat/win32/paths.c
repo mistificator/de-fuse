@@ -21,13 +21,18 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #ifdef HAVE_LIBGEN_H
 #include <libgen.h>
 #endif				/* #ifdef HAVE_LIBGEN_H */
 #include <stdlib.h>
 #include <string.h>
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 
 #include "compat.h"
@@ -89,7 +94,7 @@ compat_get_next_path( path_context *ctx )
       buffer[ PATH_MAX - 1 ] = '\0';
     } else {
       DWORD retval; 
-      retval = GetModuleFileName( NULL, buffer, PATH_MAX );
+      retval = GetModuleFileNameA( NULL, buffer, PATH_MAX );
       if( !retval ) return 0;
     }
 
@@ -118,4 +123,5 @@ compat_get_next_path( path_context *ctx )
 
   ui_error( UI_ERROR_ERROR, "unknown path_context state %d", ctx->state );
   fuse_abort();
+  return -1;
 }

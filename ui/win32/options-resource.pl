@@ -39,6 +39,7 @@ print Fuse::GPL( 'options.rc: options dialog boxes',
    Do not edit unless you know what you\'re doing! */
 
 #include "options_internals.h"
+#include <winresrc.h>
 CODE
 
 foreach( @dialogs ) {

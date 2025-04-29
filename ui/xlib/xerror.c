@@ -21,11 +21,14 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <stdarg.h>
 #include <stdio.h>
 
+#include <sys/types.h>
 #include <X11/Xlib.h>
 
 #include "fuse.h"

@@ -23,14 +23,16 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <string.h>
 #ifdef HAVE_STRINGS_STRCASECMP
 #include <strings.h>
 #endif      /* #ifdef HAVE_STRINGS_STRCASECMP */
 
-#include "libspectrum.h"
+#include "internals.h"
 
 #include "debugger/debugger.h"
 #include "display.h"
@@ -775,10 +777,11 @@ trap_check_rom( trap_type type )
     ui_error( UI_ERROR_ERROR,
               "trap_check_rom: machine type is LIBSPECTRUM_MACHINE_UNKNOWN" );
     fuse_abort();
-
+    return 0;
   }
 
   ui_error( UI_ERROR_ERROR, "trap_check_rom: unknown machine type %d",
             machine_current->machine );
   fuse_abort();
+  return -1;
 }

@@ -22,8 +22,13 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 
 #include "ui/ui.h"
@@ -42,27 +47,27 @@ static LPCTSTR file_filter = TEXT(
 "*.csw;*.ltp;*.pzx;*.raw;*.spc;*.sta;*.tzx;*.tap;*.wav;"
 "*.d40;*.d80;*.dsk;*.fdi;*.img;*.mgt;*.opd;*.opu;*.sad;*.scl;*.td0;*.trd;*.udi;"
 "*.dck;*.rom;*.hdf;*.mdr;*.fmf;*.rzx;"
-"*.bin;*.log;*.mlt;*.png;*.pok;*.scr;*.svg"
+"*.bin;*.log;*.mlt;*.png;*.pok;*.scr;*.svg")
 #ifdef LIBSPECTRUM_SUPPORTS_ZLIB_COMPRESSION
-";*.gz;*.zip"
+TEXT(";*.gz;*.zip")
 #endif
 #ifdef LIBSPECTRUM_SUPPORTS_BZ2_COMPRESSION
-";*.bz2"
+TEXT(";*.bz2")
 #endif
-"\0"
+TEXT("\0"
 "All Files (*.*)\0"
 "*.*\0"
 "Auxiliary Files (*.scr;*.mlt;*.pok;*.png;*.svg;...)\0"
-"*.bin;*.log;*.mlt;*.png;*.pok;*.scr;*.svg\0"
+"*.bin;*.log;*.mlt;*.png;*.pok;*.scr;*.svg\0")
 #ifdef LIBSPECTRUM_SUPPORTS_ZLIB_COMPRESSION
-"Compressed files (*.gz;*.zip;...)\0"
-"*.gz;*.zip"
+TEXT("Compressed files (*.gz;*.zip;...)\0"
+"*.gz;*.zip")
 #ifdef LIBSPECTRUM_SUPPORTS_BZ2_COMPRESSION
-";*.bz2"
+TEXT(";*.bz2")
 #endif
-"\0"
+TEXT("\0")
 #endif
-"Disk Files (*.dsk;*.udi;*.scl;*.trd;*.fdi;...)\0"
+TEXT("Disk Files (*.dsk;*.udi;*.scl;*.trd;*.fdi;...)\0"
 "*.d40;*.d80;*.dsk;*.fdi;*.img;*.mgt;*.opd;*.opu;*.sad;*.scl;*.td0;*.trd;*.udi\0"
 "Dock Files (*.dck;*.rom)\0"
 "*.dck;*.rom\0"

@@ -31,7 +31,9 @@
  *  * http://www.cpcwiki.eu/index.php/SP0256
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <stdio.h>
 
@@ -41,7 +43,10 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+#endif
+
 #include <string.h>
 
 #include "compat.h"

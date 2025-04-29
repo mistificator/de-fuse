@@ -22,7 +22,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include "libspectrum.h"
 
@@ -235,6 +237,7 @@ joystick_press( int which, joystick_button button, int press )
   ui_error( UI_ERROR_ERROR, "%s:joystick_press:unknown joystick type %d",
 	    __FILE__, type );
   fuse_abort();
+  return 0;
 }
 
 /* Read functions for specific interfaces */

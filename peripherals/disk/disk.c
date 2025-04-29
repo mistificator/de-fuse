@@ -21,7 +21,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <string.h>
 #ifdef HAVE_STRINGS_STRCASECMP
@@ -29,9 +31,11 @@
 #endif      /* #ifdef HAVE_STRINGS_STRCASECMP */
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+#endif
 
-#include "libspectrum.h"
+#include "internals.h"
 
 #include "bitmap.h"
 #include "crc.h"
@@ -40,6 +44,7 @@
 #include "trdos.h"
 #include "ui/ui.h"
 #include "utils.h"
+#include "compat.h"
 
 /* The ordering of these strings must match the order of the 
  * disk_error_t enumeration in disk.h */

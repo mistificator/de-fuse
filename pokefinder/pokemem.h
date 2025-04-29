@@ -24,7 +24,9 @@
 #ifndef POKEMEM_H
 #define POKEMEM_H
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #ifdef HAVE_LIB_GLIB
 #include <glib.h>

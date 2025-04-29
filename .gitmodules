@@ -1,0 +1,6 @@
+[submodule "libspectrum"]
+	path = libspectrum
+	url = https://github.com/mistificator/libspectrum.git
+[submodule "compat/win32/pthread-win"]
+	path = compat/win32/pthread-win
+	url = https://github.com/mistificator/pthread-win.git

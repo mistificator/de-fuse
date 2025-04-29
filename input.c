@@ -21,7 +21,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include "fuse.h"
 #include "input.h"
@@ -357,6 +359,7 @@ get_fire_button_key( int which, input_key button )
   ui_error( UI_ERROR_ERROR, "get_fire_button_key: which = %d, button = %d",
 	    which, button );
   fuse_abort();
+  return KEYBOARD_NONE;
 }
 
 static int

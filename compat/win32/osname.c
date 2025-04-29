@@ -22,20 +22,25 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 
 #include "ui/ui.h"
 
 int compat_osname( char *osname, size_t length )
 {
-  OSVERSIONINFO buf;
+  OSVERSIONINFOA buf;
   const char *windows_name;
   int error;
 
   buf.dwOSVersionInfoSize = sizeof( buf );
-  error = GetVersionEx( &buf );
+  error = GetVersionExA( &buf );
   if( error == 0 ) {
     ui_error( UI_ERROR_ERROR, "error getting system information." );
     return 1;

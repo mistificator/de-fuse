@@ -23,7 +23,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #ifdef HAVE_LIB_XML2
 #include <errno.h>

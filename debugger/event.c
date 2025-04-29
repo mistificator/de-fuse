@@ -22,7 +22,10 @@
 
 */
 
-#include "config.h"
+#include "internals.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <string.h>
 #ifdef HAVE_STRINGS_STRCASECMP

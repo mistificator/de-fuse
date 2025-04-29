@@ -23,7 +23,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 #include "peripherals/joystick.h"
 
 #if !defined USE_JOYSTICK || defined HAVE_JSW_H

@@ -23,13 +23,18 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #endif				/* #ifdef WIN32 */
 

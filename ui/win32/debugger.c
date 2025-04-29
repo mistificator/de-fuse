@@ -24,7 +24,9 @@
 
 */
 
-#include "config.h"
+#ifdef HAVE_CONFIG
+    #include "config.h"
+#endif
 
 /* FIXME: is that needed?
 #include <stdio.h>
@@ -34,6 +36,9 @@
 #include "libspectrum.h"
 #include <stdlib.h>
 #include <tchar.h>
+#ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
  
 #include "debugger/debugger.h"
@@ -784,7 +789,7 @@ update_memory_map( void )
                           WM_SETTEXT, ( WPARAM ) 0, ( LPARAM ) buffer );
 
       /* FIXME: memory_source_description is not unicode */
-      _snprintf( buffer, 40, TEXT( "%s %d" ),
+      _sntprintf( buffer, 40, TEXT( "%s %d" ),
                  memory_source_description( page->source ), page->page_num );
 
       SendDlgItemMessage( fuse_hDBGWnd, IDC_DBG_MAP11 + ( row * 4 ) + 1,

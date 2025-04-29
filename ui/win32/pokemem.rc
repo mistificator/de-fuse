@@ -22,6 +22,7 @@
 */
 
 #include "pokemem.h"
+#include <winresrc.h>
 
 IDD_POKEMEM DIALOGEX DISCARDABLE 6,6,314,171
 CAPTION "De-Fuse - Poke Memory"
