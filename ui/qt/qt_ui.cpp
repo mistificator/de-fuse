@@ -266,15 +266,28 @@ void DeFuseWindow::drawScreen()
                 }
             }            
             const auto scale = scaler_get_scaling_factor(current_scaler);
-            QPixmap px =
-                QPixmap::fromImage(
-                    image->scaled(
-                        w * scale,
-                        h * scale,
-                        Qt::KeepAspectRatio,
-                        Qt::FastTransformation
-                    )
-                );
+
+            QImage scaled_image;
+            if (current_scaler <= SCALER_QUADSIZE)
+            {
+                scaled_image =
+                        image->scaled(
+                            w * scale,
+                            h * scale,
+                            Qt::KeepAspectRatio,
+                            Qt::FastTransformation
+                        );
+            }
+            else
+            {
+                scaled_image = QImage(w * scale, h * scale, QImage::Format_RGB32);
+                auto scaler_proc = scaler_get_proc32(current_scaler);
+                const int rgb_pitch = image->bytesPerLine();
+                scaler_proc((const libspectrum_byte *)image->bits(), rgb_pitch,
+                            (libspectrum_byte *)scaled_image.bits(), scale * rgb_pitch, w, h);
+            }
+            QPixmap px = QPixmap::fromImage(scaled_image);
+
             checkForWindowResize(px);
             // extremely stupid way to update screen
             ui->screenWidget->setPixmap(px);

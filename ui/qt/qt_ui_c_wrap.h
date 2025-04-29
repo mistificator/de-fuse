@@ -98,6 +98,9 @@ register_scalers( int force_scaler )
     scaler_register( SCALER_DOUBLESIZE );
     scaler_register( SCALER_TRIPLESIZE );
     scaler_register( SCALER_QUADSIZE );
+    scaler_register( SCALER_HQ2X );
+    scaler_register( SCALER_HQ3X );
+    scaler_register( SCALER_HQ4X );
   }
   scaler_register( SCALER_NORMAL );
 
