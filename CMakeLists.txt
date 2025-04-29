@@ -84,9 +84,14 @@ add_custom_command(
 set_source_files_properties(./ui/scaler/scalers.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=2")
 set_source_files_properties(./ui/scaler/scalers_4.c PROPERTIES COMPILE_DEFINITIONS "SCALER_DATA_SIZE=4")
 
+file(GLOB ALL_ROMS "${CMAKE_SOURCE_DIR}/roms/*.rom")
 add_custom_target(__generated_${PROJECT_NAME}
     SOURCES
     settings.c settings.h ./ui/${OPTIONS_DIR}/options.h ./ui/scaler/scalers_4.c
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/lib ${CMAKE_BINARY_DIR}/lib
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/roms
+    COMMAND ${CMAKE_COMMAND} -E copy ${ALL_ROMS} ${CMAKE_BINARY_DIR}/roms/
 )
 add_dependencies(${PROJECT_NAME} __generated_${PROJECT_NAME})
 
@@ -378,6 +383,7 @@ if (WIN32)
 
         pthread
     )
+
 endif()
 
 if (${SoundDevice} STREQUAL "Qt" OR ${UI} STREQUAL "Qt")
